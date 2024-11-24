@@ -1,0 +1,45 @@
+{
+  "name": "eleva",
+  "version": "0.1.0-alpha",
+  "description": "Modern Lightweight Frontend Framework",
+  "main": "./src/index.js",
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "keywords": [
+    "modern",
+    "frontend",
+    "framework",
+    "lightweight",
+    "fast",
+    "ui",
+    "components",
+    "speed",
+    "performance"
+  ],
+  "author": {
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raafat@gmail.com",
+    "url": "https://www.tarekraafat.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TarekRaafat/eleva.git"
+  },
+  "bugs": {
+    "url": "https://github.com/TarekRaafat/eleva/issues",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
