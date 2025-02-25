@@ -1,19 +1,52 @@
 {
   "name": "eleva",
-  "version": "0.1.0-alpha",
-  "description": "Modern Lightweight Frontend Framework",
-  "main": "./src/index.js",
-  "directories": {
-    "doc": "docs",
-    "example": "examples",
-    "test": "test"
+  "version": "1.0.0-alpha",
+  "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
+  "type": "module",
+  "main": "dist/eleva.js",
+  "module": "dist/eleva.esm.js",
+  "unpkg": "dist/eleva.min.js",
+  "types": "dust/eleva.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/eleva.js",
+      "import": "./dist/eleva.esm.js"
+    }
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "build:types": "tsc --emitDeclarationOnly",
+    "build:types:bundle": "rollup -c rollup.dts.config.js",
+    "build:all": "npm run build && npm run build:types && npm run build:types:bundle",
+    "test": "jest",
+    "lint": "eslint src/**/*.js",
+    "size": "size-limit",
+    "prepublishOnly": "npm run build && npm run build:types && npm run build:types:bundle && npm test"
   },
-  "jest": {
-    "testEnvironment": "node"
+  "devDependencies": {
+    "@babel/core": "^7.22.1",
+    "@babel/preset-env": "^7.22.4",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-commonjs": "^28.0.2",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@size-limit/preset-app": "^11.2.0",
+    "eslint": "^9.0.0",
+    "jest": "^29.6.1",
+    "rollup": "^4.34.8",
+    "rollup-plugin-dts": "^6.1.1",
+    "size-limit": "^11.2.0",
+    "typescript": "^5.1.6"
   },
+  "size-limit": [
+    {
+      "limit": "5 kB",
+      "path": "dist/eleva.min.js",
+      "name": "eleva",
+      "brotli": false
+    }
+  ],
   "keywords": [
     "modern",
     "frontend",
@@ -30,6 +63,7 @@
     "email": "tarek.m.raafat@gmail.com",
     "url": "https://www.tarekraafat.com"
   },
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TarekRaafat/eleva.git"
@@ -38,8 +72,15 @@
     "url": "https://github.com/TarekRaafat/eleva/issues",
     "email": "tarek.m.raafat@gmail.com"
   },
-  "license": "MIT",
-  "devDependencies": {
-    "jest": "^29.7.0"
-  }
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test"
+  },
+  "files": [
+    "dist",
+    "types",
+    "src"
+  ],
+  "sideEffects": false
 }

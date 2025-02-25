@@ -1,1 +1,10 @@
+# Experimentation Lab
 .exp
+plugins
+
+# Dependencies
+node_modules
+
+# Cleanup
+.DS_Store
+.vscode

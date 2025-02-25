@@ -1,0 +1,128 @@
+{
+  "env": {
+    "browser": true,
+    "es2022": true,
+    "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:jsdoc/recommended",
+    "plugin:prettier/recommended"
+  ],
+  "plugins": ["import", "jsdoc", "jest"],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "rules": {
+    /* Code Quality */
+    "complexity": ["warn", 10],
+    "curly": ["error", "multi-line"],
+    "default-case": "error",
+    "dot-notation": "error",
+    "eqeqeq": ["error", "smart"],
+    "max-depth": ["warn", 4],
+    "max-lines-per-function": ["warn", 50],
+    "no-var": "error",
+    "prefer-const": "error",
+    "prefer-template": "error",
+
+    /* Best Practices */
+    "array-callback-return": "error",
+    "block-scoped-var": "error",
+    "consistent-return": "error",
+    "guard-for-in": "error",
+    "no-alert": "error",
+    "no-console": "warn",
+    "no-else-return": "error",
+    "no-eval": "error",
+    "no-floating-decimal": "error",
+    "no-implicit-coercion": "error",
+    "no-implied-eval": "error",
+    "no-lone-blocks": "error",
+    "no-magic-numbers": [
+      "warn",
+      { "ignore": [0, 1], "ignoreArrayIndexes": true }
+    ],
+    "no-multi-spaces": "error",
+    "no-new": "error",
+    "no-param-reassign": "error",
+    "no-return-assign": "error",
+    "no-self-compare": "error",
+    "no-throw-literal": "error",
+    "no-unused-expressions": "error",
+    "no-useless-call": "error",
+    "radix": "error",
+    "require-await": "warn",
+    "vars-on-top": "error",
+    "yoda": "error",
+
+    /* Style */
+    "camelcase": ["error", { "properties": "always" }],
+    "new-cap": ["error", { "capIsNewExceptions": ["Signal"] }],
+    "no-multiple-empty-lines": ["error", { "max": 1 }],
+    "one-var": ["error", "never"],
+
+    /* Modules */
+    "import/order": [
+      "error",
+      {
+        "groups": [
+          "builtin",
+          "external",
+          "internal",
+          "parent",
+          "sibling",
+          "index"
+        ],
+        "newlines-between": "always"
+      }
+    ],
+    "import/no-cycle": "error",
+    "import/no-self-import": "error",
+
+    /* Documentation */
+    "jsdoc/require-param-description": "off",
+    "jsdoc/require-returns-description": "off",
+    "jsdoc/check-param-names": "error",
+    "jsdoc/check-tag-names": "error",
+    "jsdoc/require-jsdoc": [
+      "warn",
+      {
+        "require": {
+          "FunctionDeclaration": true,
+          "MethodDefinition": true,
+          "ClassDeclaration": true
+        }
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": ["test/**/*.js"],
+      "env": {
+        "jest/globals": true
+      },
+      "rules": {
+        "max-lines-per-function": "off",
+        "no-magic-numbers": "off",
+        "jsdoc/require-jsdoc": "off"
+      }
+    }
+  ],
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js"]
+      }
+    },
+    "jsdoc": {
+      "mode": "typescript"
+    }
+  },
+  "globals": {
+    "Signal": "readonly",
+    "eleva": "readonly"
+  }
+}
