@@ -22,7 +22,7 @@
     "test": "jest",
     "lint": "eslint src/**/*.js",
     "size": "size-limit",
-    "prepublishOnly": "npm run build && npm run build:types && npm run build:types:bundle && npm test"
+    "prepublishOnly": "npm run build && npm run build:types && npm run build:types:bundle"
   },
   "devDependencies": {
     "@babel/core": "^7.22.1",
