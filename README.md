@@ -3,9 +3,14 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
 
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
-[![License](https://img.shields.io/npm/l/eleva.svg?style=flat)](LICENSE)
-[![Build Status](https://img.shields.io/travis/TarekRaafat/eleva.svg?style=flat)](https://travis-ci.org/TarekRaafat/eleva)
+![100% Javascript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
+![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-green.svg)
+![npm bundle size](https://img.shields.io/bundlephobia/min/eleva)
+![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/eleva)
+[![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva)
+
 
 > **Stability Notice**: This is `v1.0.0-alpha` - APIs may change significantly until stable release.  
 > Not recommended for production use yet. Follow the [versioning guide](#versioning) for updates.
