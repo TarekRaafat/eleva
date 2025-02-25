@@ -89,7 +89,7 @@ Or include it directly in your HTML via a CDN:
 Here's a minimal example to help you get started:
 
 ```js
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 
 const app = new Eleva("MyApp");
 
@@ -258,9 +258,8 @@ The **Emitter** implements a publish-subscribe pattern for inter-component commu
 _Example:_
 
 ```js
-const emitter = new Emitter();
-emitter.on("greet", (name) => console.log(`Hello, ${name}!`));
-emitter.emit("greet", "Alice"); // Logs: "Hello, Alice!"
+emit("greet", "Alice");
+on("greet", (name) => console.log(`Hello, ${name}!`)); // Logs: "Hello, Alice!"
 ```
 
 ### Renderer
@@ -408,9 +407,9 @@ const app = new Eleva("MyApp");
 
 // Component A emits an event
 app.component("ComponentA", {
-  setup: ({ emitter }) => {
+  setup: ({ emit }) => {
     function sendMessage() {
-      emitter.emit("customEvent", "Hello from A");
+      emit("customEvent", "Hello from A");
     }
     return { sendMessage };
   },
@@ -419,8 +418,8 @@ app.component("ComponentA", {
 
 // Component B listens for the event
 app.component("ComponentB", {
-  setup: ({ emitter }) => {
-    emitter.on("customEvent", (msg) => console.log(msg));
+  setup: ({ on }) => {
+    on("customEvent", (msg) => console.log(msg));
     return {};
   },
   template: () => `<div>Component B</div>`,

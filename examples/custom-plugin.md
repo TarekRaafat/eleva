@@ -29,7 +29,7 @@ In your main application file, import and use your plugin:
 
 ```js
 // main.js (for an ES module example)
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 import MyPlugin from "./myPlugin.js";
 
 const app = new Eleva("PluginApp");

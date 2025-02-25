@@ -226,7 +226,7 @@ Or include it directly in your HTML via CDN:
 
 ```js
 // Import Eleva (using ES modules)
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 
 // Create a new Eleva instance
 const app = new Eleva("MyApp");
@@ -334,7 +334,7 @@ Include Eleva via a script tag, and it will be available as a global variable:
 - **`.mount(selectorOrElement, compName, props)`**  
   Mount a component to the DOM.
 
-For detailed API documentation, please check the [docs](docs/) folder.
+For detailed API documentation, please check the [docs](docs/index.md) folder.
 
 ---
 
@@ -414,5 +414,5 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 [Documentation](/docs/index.md) |
 [Examples](/examples) |
-[Changelog](https://github.com/TarekRaafat/eleva/changelog) |
+[Changelog](/changelog.md) |
 [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions)
