@@ -7,8 +7,8 @@ _Built with love for native JavaScript—because sometimes, less really is more!
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
 ![100% Javascript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
 ![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-green.svg)
-![npm bundle size](https://img.shields.io/bundlephobia/min/eleva)
-![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/eleva)
+[![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
+[![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
 
