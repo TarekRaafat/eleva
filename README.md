@@ -423,6 +423,10 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
+[![NPM](https://nodei.co/npm/eleva.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/eleva/)
+
+---
+
 [Documentation](/docs/index.md) |
 [Examples](/examples) |
 [Changelog](/changelog.md) |
