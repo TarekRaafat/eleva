@@ -13,7 +13,7 @@ _Built with love for native JavaScript—because sometimes, less really is more!
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
 
 > **Stability Notice**: This is `v1.0.0-alpha` - APIs may change significantly until stable release.  
-> Not recommended for production use yet. Follow the [versioning guide](#versioning) for updates.
+> Not recommended for production use yet. Follow the [versioning guide](#version-guide) for updates.
 
 **Version:** `1.0.0-alpha`
 
