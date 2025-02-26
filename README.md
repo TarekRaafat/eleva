@@ -187,7 +187,7 @@ I've run some preliminary benchmarks to give you a rough idea of how Eleva stack
 
 | Framework | Bundle Size (minified) | Initial Load Time | DOM Update Speed |
 | --------- | ---------------------- | ----------------- | ---------------- |
-| **Eleva** | ~4 KB                  | ~35 ms            | ~2 ms            |
+| **Eleva** | **~4 KB**              | **~35 ms**        | **~2 ms**        |
 | React     | ~110 KB                | ~100 ms           | ~4 ms            |
 | Vue       | ~80 KB                 | ~80 ms            | ~3 ms            |
 | Angular   | ~500 KB                | ~250 ms           | ~6 ms            |
