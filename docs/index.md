@@ -81,7 +81,13 @@ npm install eleva
 Or include it directly in your HTML via a CDN:
 
 ```html
+<!-- unpkg -->
 <script src="https://unpkg.com/eleva/dist/eleva.min.js"></script>
+```
+
+```html
+<!-- jsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
 ```
 
 ### Quick Start Guide

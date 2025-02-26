@@ -9,8 +9,8 @@ _Built with love for native JavaScript—because sometimes, less really is more!
 ![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-green.svg)
 ![npm bundle size](https://img.shields.io/bundlephobia/min/eleva)
 ![npm package minimized gzipped size](https://img.shields.io/bundlejs/size/eleva)
-[![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva)
 
+<!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
 
 > **Stability Notice**: This is `v1.0.0-alpha` - APIs may change significantly until stable release.  
 > Not recommended for production use yet. Follow the [versioning guide](#versioning) for updates.
@@ -220,7 +220,13 @@ npm install eleva
 Or include it directly in your HTML via CDN:
 
 ```html
+<!-- unpkg -->
 <script src="https://unpkg.com/eleva/dist/eleva.min.js"></script>
+```
+
+```html
+<!-- jsDelivr -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
 ```
 
 ---
