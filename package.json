@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.0-alpha",
+  "version": "1.1.0-alpha",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
   "main": "dist/eleva.js",

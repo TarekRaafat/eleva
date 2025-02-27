@@ -1,6 +1,6 @@
 /**
- * 🎨 Renderer: Handles DOM patching, diffing, and attribute updates.
- *
+ * @class 🎨 Renderer
+ * @classdesc Handles DOM patching, diffing, and attribute updates.
  * Provides methods for efficient DOM updates by diffing the new and old DOM structures
  * and applying only the necessary changes.
  */

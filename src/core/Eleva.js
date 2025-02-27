@@ -6,23 +6,39 @@ import { Emitter } from "../modules/Emitter.js";
 import { Renderer } from "../modules/Renderer.js";
 
 /**
- * 🧩 Eleva Core: Signal-based component runtime framework with lifecycle, scoped styles, and plugins.
- *
- * The Eleva class is the core of the framework. It manages component registration,
- * plugin integration, lifecycle hooks, event handling, and DOM rendering.
+ * @typedef {Object} ComponentDefinition
+ * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
+ *           A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+ * @property {function(Object<string, any>): string} template
+ *           A function that returns the HTML template string for the component.
+ * @property {function(Object<string, any>): string} [style]
+ *           An optional function that returns scoped CSS styles as a string.
+ * @property {Object<string, ComponentDefinition>} [children]
+ *           An optional mapping of CSS selectors to child component definitions.
+ */
+
+/**
+ * @class 🧩 Eleva
+ * @classdesc Signal-based component runtime framework with lifecycle hooks, scoped styles, and plugin support.
+ * Manages component registration, plugin integration, event handling, and DOM rendering.
  */
 export class Eleva {
   /**
    * Creates a new Eleva instance.
    *
    * @param {string} name - The name of the Eleva instance.
-   * @param {object} [config={}] - Optional configuration for the instance.
+   * @param {Object<string, any>} [config={}] - Optional configuration for the instance.
    */
   constructor(name, config = {}) {
+    /** @type {string} */
     this.name = name;
+    /** @type {Object<string, any>} */
     this.config = config;
+    /** @type {Object<string, ComponentDefinition>} */
     this._components = {};
+    /** @type {Array<Object>} */
     this._plugins = [];
+    /** @private */
     this._lifecycleHooks = [
       "onBeforeMount",
       "onMount",
@@ -30,6 +46,7 @@ export class Eleva {
       "onUpdate",
       "onUnmount",
     ];
+    /** @private {boolean} */
     this._isMounted = false;
     this.emitter = new Emitter();
     this.renderer = new Renderer();
@@ -38,8 +55,8 @@ export class Eleva {
   /**
    * Integrates a plugin with the Eleva framework.
    *
-   * @param {object} [plugin] - The plugin object which should have an install function.
-   * @param {object} [options={}] - Optional options to pass to the plugin.
+   * @param {Object} plugin - The plugin object which should have an `install` function.
+   * @param {Object<string, any>} [options={}] - Optional options to pass to the plugin.
    * @returns {Eleva} The Eleva instance (for chaining).
    */
   use(plugin, options = {}) {
@@ -54,7 +71,7 @@ export class Eleva {
    * Registers a component with the Eleva instance.
    *
    * @param {string} name - The name of the component.
-   * @param {object} definition - The component definition including setup, template, style, and children.
+   * @param {ComponentDefinition} definition - The component definition including setup, template, style, and children.
    * @returns {Eleva} The Eleva instance (for chaining).
    */
   component(name, definition) {
@@ -65,22 +82,25 @@ export class Eleva {
   /**
    * Mounts a registered component to a DOM element.
    *
-   * @param {string|HTMLElement} selectorOrElement - A CSS selector string or DOM element where the component will be mounted.
-   * @param {string} compName - The name of the component to mount.
-   * @param {object} [props={}] - Optional properties to pass to the component.
+   * @param {HTMLElement} container - A DOM element where the component will be mounted.
+   * @param {string|ComponentDefinition} compName - The name of the component to mount or a component definition.
+   * @param {Object<string, any>} [props={}] - Optional properties to pass to the component.
    * @returns {object|Promise<object>} An object representing the mounted component instance, or a Promise that resolves to it for asynchronous setups.
-   * @throws Will throw an error if the container or component is not found.
+   * @throws {Error} If the container is not found or if the component is not registered.
    */
-  mount(selectorOrElement, compName, props = {}) {
-    const container =
-      typeof selectorOrElement === "string"
-        ? document.querySelector(selectorOrElement)
-        : selectorOrElement;
-    if (!container)
-      throw new Error(`Container not found: ${selectorOrElement}`);
+  mount(container, compName, props = {}) {
+    if (!container) throw new Error(`Container not found: ${container}`);
 
-    const definition = this._components[compName];
-    if (!definition) throw new Error(`Component "${compName}" not registered.`);
+    let definition;
+    if (typeof compName === "string") {
+      definition = this._components[compName];
+      if (!definition)
+        throw new Error(`Component "${compName}" not registered.`);
+    } else if (typeof compName === "object") {
+      definition = compName;
+    } else {
+      throw new Error("Invalid component parameter.");
+    }
 
     const { setup, template, style, children } = definition;
     const context = {
@@ -94,7 +114,7 @@ export class Eleva {
     /**
      * Processes the mounting of the component.
      *
-     * @param {object} data - Data returned from the component's setup function.
+     * @param {Object<string, any>} data - Data returned from the component's setup function.
      * @returns {object} An object with the container, merged context data, and an unmount function.
      */
     const processMount = (data) => {
@@ -140,6 +160,8 @@ export class Eleva {
         data: mergedContext,
         /**
          * Unmounts the component, cleaning up watchers, child components, and clearing the container.
+         *
+         * @returns {void}
          */
         unmount: () => {
           watcherUnsubscribers.forEach((fn) => fn());
@@ -150,20 +172,16 @@ export class Eleva {
       };
     };
 
-    // Handle asynchronous setup if needed.
-    const setupResult = setup(context);
-    if (setupResult && typeof setupResult.then === "function") {
-      return setupResult.then((data) => processMount(data));
-    } else {
-      const data = setupResult || {};
-      return processMount(data);
-    }
+    // Handle asynchronous setup.
+    return Promise.resolve(
+      typeof setup === "function" ? setup(context) : {}
+    ).then((data) => processMount(data));
   }
 
   /**
    * Prepares default no-operation lifecycle hook functions.
    *
-   * @returns {object} An object with keys for lifecycle hooks mapped to empty functions.
+   * @returns {Object<string, function(): void>} An object with keys for lifecycle hooks mapped to empty functions.
    * @private
    */
   _prepareLifecycleHooks() {
@@ -177,7 +195,7 @@ export class Eleva {
    * Processes DOM elements for event binding based on attributes starting with "@".
    *
    * @param {HTMLElement} container - The container element in which to search for events.
-   * @param {object} context - The current context containing event handler definitions.
+   * @param {Object<string, any>} context - The current context containing event handler definitions.
    * @private
    */
   _processEvents(container, context) {
@@ -200,8 +218,8 @@ export class Eleva {
    *
    * @param {HTMLElement} container - The container element.
    * @param {string} compName - The component name used to identify the style element.
-   * @param {Function} styleFn - A function that returns CSS styles as a string.
-   * @param {object} context - The current context for style interpolation.
+   * @param {function(Object<string, any>): string} [styleFn] - A function that returns CSS styles as a string.
+   * @param {Object<string, any>} context - The current context for style interpolation.
    * @private
    */
   _injectStyles(container, compName, styleFn, context) {
@@ -222,23 +240,23 @@ export class Eleva {
    * Mounts child components within the parent component's container.
    *
    * @param {HTMLElement} container - The parent container element.
-   * @param {object} children - An object mapping child component selectors to their definitions.
-   * @param {Array} childInstances - An array to store the mounted child component instances.
+   * @param {Object<string, ComponentDefinition>} [children] - An object mapping child component selectors to their definitions.
+   * @param {Array<object>} childInstances - An array to store the mounted child component instances.
    * @private
    */
   _mountChildren(container, children, childInstances) {
     childInstances.forEach((child) => child.unmount());
     childInstances.length = 0;
 
-    Object.keys(children || {}).forEach((childName) => {
-      container.querySelectorAll(childName).forEach((childEl) => {
+    Object.keys(children || {}).forEach((childSelector) => {
+      container.querySelectorAll(childSelector).forEach((childEl) => {
         const props = {};
         [...childEl.attributes].forEach(({ name, value }) => {
           if (name.startsWith("eleva-prop-")) {
             props[name.slice("eleva-prop-".length)] = value;
           }
         });
-        const instance = this.mount(childEl, childName, props);
+        const instance = this.mount(childEl, children[childSelector], props);
         childInstances.push(instance);
       });
     });

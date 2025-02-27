@@ -27,7 +27,6 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
     - [Lifecycle Hooks](#lifecycle-hooks)
     - [Component Registration \& Mounting](#component-registration--mounting)
     - [Children Components \& Passing Props](#children-components--passing-props)
-      - [Passing Props](#passing-props)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
   - [5. Plugin System](#5-plugin-system)
@@ -49,7 +48,7 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
 
 ## 1. Introduction
 
-Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Born from my passion for native JavaScript, Eleva stays true to the language by avoiding unnecessary syntax or bloat. Its goal is to empower you to build modular and high-performance apps without the overhead of larger frameworks.
+Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Born from a passion for native JavaScript, Eleva stays true to the language by avoiding unnecessary syntax or bloat. Its goal is to empower you to build modular and high-performance apps without the overhead of larger frameworks.
 
 ---
 
@@ -92,14 +91,16 @@ Or include it directly in your HTML via a CDN:
 
 ### Quick Start Guide
 
-Here's a minimal example to help you get started:
+Below is a minimal example to help you get started. Notice that the `mount` method now expects a DOM element as the first argument (instead of a CSS selector string) and returns a Promise, ensuring consistent asynchronous handling:
 
 ```js
 import Eleva from "eleva";
 
 const app = new Eleva("MyApp");
 
+// Register a component
 app.component("HelloWorld", {
+  // The setup method is now optional; if omitted, an empty object is used as state.
   setup({ signal }) {
     const count = signal(0);
     return { count };
@@ -113,7 +114,10 @@ app.component("HelloWorld", {
   `,
 });
 
-app.mount("#app", "HelloWorld");
+// Mount the component by providing a DOM element
+app.mount(document.getElementById("app"), "HelloWorld").then((instance) => {
+  console.log("Component mounted:", instance);
+});
 ```
 
 Ensure you have an HTML element with the id `app` where the component will be mounted.
@@ -143,12 +147,12 @@ console.log(output); // "Hello, World!"
 
 ### Template Interpolation
 
-In Eleva, there are two methods for embedding dynamic data into your templates: native JavaScript template literals using `${var}` and Eleva's custom Handlebars-like syntax using `{{var}}`.
+Eleva supports two methods for embedding dynamic data into your templates: native JavaScript template literals (`${...}`) and Eleva’s custom Handlebars-like syntax (`{{...}}`).
 
 **Standard Template Literals (`${var}`):**
 
 - **Immediate & Static:**  
-  When using `${...}` within a JavaScript template literal, the expression is evaluated immediately, and its current value is inserted into the string. This substitution is a one-time operation and does not update automatically if the value changes.
+  Evaluated immediately within the JavaScript template literal. The substitution occurs only once.
 
   _Example:_
 
@@ -159,7 +163,7 @@ In Eleva, there are two methods for embedding dynamic data into your templates: 
 **Handlebars-like Interpolation (`{{var}}`):**
 
 - **Dynamic & Reactive:**  
-  Eleva's TemplateEngine processes the `{{...}}` syntax within component templates. It replaces these placeholders with corresponding values from the component’s data context (which may include reactive signals), ensuring the UI updates automatically when the underlying data changes.
+  Eleva processes the `{{...}}` syntax within component templates to enable reactive updates as data changes.
 
   _Example:_
 
@@ -169,81 +173,71 @@ In Eleva, there are two methods for embedding dynamic data into your templates: 
 
 **When to Use Each:**
 
-- Use **`${var}`** when you need static, one-time interpolation.
-- Use **`{{var}}`** in your Eleva component templates to enable dynamic, reactive data binding.
-
-This dual approach lets you benefit from the simplicity of native JavaScript where appropriate while harnessing Eleva's reactivity for dynamic interfaces.
+- Use **`${var}`** for one-time, static content.
+- Use **`{{var}}`** for dynamic, reactive data binding.
 
 ### Setup Context vs. Event Context
 
-In Eleva, it's important to understand how data flows during component initialization and when handling events. Two key contexts are used:
+Understanding how data flows during component initialization and event handling is key:
 
 #### Setup Context
 
 - **When It’s Used:**  
-  The setup context is provided to your component’s `setup` function when the component is initialized. This is where you define your component’s initial state, create reactive signals, and set up helper functions.
-
+  Passed to the component’s `setup` function during initialization.
 - **What It Contains:**  
-  It typically includes utilities (like the `signal` function), component properties, and lifecycle hooks. The data returned from the `setup` function forms the reactive state for your component.
+  Utilities (like the `signal` function), component props, and lifecycle hooks. The returned data forms the component’s reactive state.
 
-- **Example:**
-  ```js
-  const MyComponent = {
-    setup: ({ signal }) => {
-      const counter = signal(0);
-      return { counter };
-    },
-    template: (ctx) => `
-      <div>
-        <p>Counter: ${ctx.counter}</p>
-      </div>
-    `,
-  };
-  ```
+_Example:_
+
+```js
+const MyComponent = {
+  setup: ({ signal }) => {
+    const counter = signal(0);
+    return { counter };
+  },
+  template: (ctx) => `
+    <div>
+      <p>Counter: ${ctx.counter}</p>
+    </div>
+  `,
+};
+```
 
 #### Event Context
 
 - **When It’s Used:**  
-  The event context comes into play when an event handler is triggered—for example, when a user clicks a button or presses a key. The handler is executed with a context that includes both the reactive state (from setup) and the event object.
-
+  Provided when an event handler is triggered (e.g., a button click).
 - **What It Contains:**  
-  It contains the same reactive data as defined in the setup plus the event-specific data (such as `e.target`, `e.key`, etc.). This allows you to handle user interactions while still accessing your component’s state.
+  The reactive state from `setup` along with event-specific data (like `event.target`).
 
-- **Example:**
-  ```js
-  const MyComponent = {
-    setup: ({ signal }) => {
-      const counter = signal(0);
-      function increment(event) {
-        console.log("Event type:", event.type);
-        counter.value++;
-      }
-      return { counter, increment };
-    },
-    template: (ctx) => `
-      <div>
-        <p>Counter: ${ctx.counter}</p>
-        <button @click="increment">Increment</button>
-      </div>
-    `,
-  };
-  ```
+_Example:_
 
-**Summary:**
-
-- **Setup Context:**  
-  Provided during component initialization in the `setup` function. Used to define and return the reactive state and helper functions.
-
-- **Event Context:**  
-  Provided when an event is triggered. Includes both the reactive state (from setup) and the event object for handling user interactions.
+```js
+const MyComponent = {
+  setup: ({ signal }) => {
+    const counter = signal(0);
+    function increment(event) {
+      console.log("Event type:", event.type);
+      counter.value++;
+    }
+    return { counter, increment };
+  },
+  template: (ctx) => `
+    <div>
+      <p>Counter: ${ctx.counter}</p>
+      <button @click="increment">Increment</button>
+    </div>
+  `,
+};
+```
 
 ### Signal
 
-**Signals** enable fine-grained reactivity by allowing you to update only the parts of the DOM that change.
+**Signals** provide fine-grained reactivity by updating only the affected DOM parts.
 
 - **Constructor:** `new Signal(initialValue)` creates a reactive data holder.
-- **Getter/Setter:** Use `signal.value` to access or update the value.
-- **Watch:** `signal.watch(callback)` registers a function that runs when the signal's value changes.
+- **Getter/Setter:** Access or update via `signal.value`.
+- **Watch:** `signal.watch(callback)` registers a function to execute on changes.
 
 _Example:_
 
@@ -255,7 +249,7 @@ count.value = 1; // Logs: "Count updated: 1"
 
 ### Emitter
 
-The **Emitter** implements a publish-subscribe pattern for inter-component communication.
+The **Emitter** enables inter-component communication using a publish-subscribe pattern.
 
 - **`on(event, handler)`**: Registers an event handler.
 - **`off(event, handler)`**: Removes an event handler.
@@ -264,40 +258,43 @@ The **Emitter** implements a publish-subscribe pattern for inter-component commu
 _Example:_
 
 ```js
-emit("greet", "Alice");
 on("greet", (name) => console.log(`Hello, ${name}!`)); // Logs: "Hello, Alice!"
+emit("greet", "Alice");
 ```
 
 ### Renderer
 
-The **Renderer** manages DOM patching and diffing to ensure efficient updates.
+The **Renderer** efficiently updates the DOM through diffing and patching.
 
-- **`patchDOM(container, newHtml)`**: Updates the content of a container.
-- **`diff(oldParent, newParent)`**: Compares and applies updates between two DOM trees.
-- **`updateAttributes(oldEl, newEl)`**: Synchronizes attributes of two elements.
+- **`patchDOM(container, newHtml)`**: Updates container content.
+- **`diff(oldParent, newParent)`**: Applies updates by comparing DOM trees.
+- **`updateAttributes(oldEl, newEl)`**: Synchronizes element attributes.
 
 #### Diffing Algorithm & Renderer Details
 
-Eleva’s renderer uses a diffing algorithm to compare the new virtual DOM with the current DOM. It then updates only the changed parts, which leads to highly efficient updates. This approach minimizes reflows and repaints in the browser, ensuring smooth performance even in complex applications.
+Eleva’s renderer minimizes reflows by updating only the changed parts of the DOM.
 
 ### Eleva (Core)
 
-The **Eleva** class orchestrates the entire framework—from component registration and mounting to plugin integration and lifecycle management.
+The **Eleva** class orchestrates component registration, mounting, plugin integration, and lifecycle management.
 
-- **`new Eleva(name, config)`**: Creates an Eleva instance.
+- **`new Eleva(name, config)`**: Creates an instance.
 - **`use(plugin, options)`**: Integrates a plugin.
 - **`component(name, definition)`**: Registers a new component.
-- **`mount(selectorOrElement, compName, props)`**: Mounts a component to the DOM.
+- **`mount(container, compName, props)`**: Mounts a component to the DOM.
+
+  _Note:_ The `mount` method now accepts a DOM element (not a CSS selector string) and supports both a component name (string) or a direct component definition (object). It also returns a Promise, even for synchronous setups.  
+  Additionally, the `setup` method is optional; if omitted, Eleva defaults to an empty state object.
 
 ### Lifecycle Hooks
 
-Eleva provides lifecycle hooks that allow you to execute code at specific stages of a component's life. Common hooks include:
+Eleva provides hooks to execute code at specific stages of a component’s lifecycle:
 
-- **onBeforeMount:** Called before the component is mounted.
-- **onMount:** Called after the component is mounted.
-- **onBeforeUpdate:** Called before the component updates.
-- **onUpdate:** Called after the component updates.
-- **onUnmount:** Called before the component is unmounted.
+- **onBeforeMount:** Called before mounting.
+- **onMount:** Called after mounting.
+- **onBeforeUpdate:** Called before an update.
+- **onUpdate:** Called after an update.
+- **onUnmount:** Called before unmounting.
 
 _Example:_
 
@@ -315,25 +312,55 @@ const MyComponent = {
 
 ### Component Registration & Mounting
 
-Components in Eleva are registered using the `component` method and mounted using the `mount` method. Registration associates a unique name with a component definition, while mounting attaches the component to a specific DOM element.
+Components are registered using `component()` and mounted with `mount()`. The new version allows for greater flexibility:
 
-_Example:_
+- **Flexible Registration:**  
+  You can mount a globally registered component by name (string) or pass a component definition object directly.
+- **Optional Setup Method:**  
+  The `setup()` function is optional. If not provided, Eleva defaults to an empty object for component state.
+
+- **Updated Mount Signature:**  
+  The `mount` method now requires a DOM element as its container and returns a Promise.
+
+_Example (Global Registration):_
 
 ```js
 const app = new Eleva("MyApp");
 app.component("HelloWorld", {
-  /* component definition */
+  setup({ signal }) {
+    const count = signal(0);
+    return { count };
+  },
+  template: (ctx) => `
+    <div>
+      <h1>Hello, Eleva! 👋</h1>
+      <p>Count: ${ctx.count}</p>
+      <button @click="() => count++">Increment</button>
+    </div>
+  `,
 });
-app.mount("#app", "HelloWorld");
+app.mount(document.getElementById("app"), "HelloWorld").then((instance) => {
+  console.log("Component mounted:", instance);
+});
+```
+
+_Example (Direct Component Definition):_
+
+```js
+const DirectComponent = {
+  template: () => `<div>Directly mounted component without setup</div>`,
+};
+
+const app = new Eleva("MyApp");
+app.mount(document.getElementById("app"), DirectComponent).then((instance) => {
+  console.log("Direct component mounted:", instance);
+});
 ```
 
 ### Children Components & Passing Props
 
-In Eleva, you can build complex, modular user interfaces by nesting components. This allows you to compose smaller, reusable pieces (child components) within a larger parent component. Data can be passed from the parent to the child through **props**.
-
-#### Passing Props
-
-Props are attributes passed from a parent component to its child components. In Eleva, attributes prefixed with `eleva-prop-` are automatically recognized as props and are made available to the child component in the `props` object.
+Eleva allows you to nest components. A parent can include child components in its template and pass data to them via props.  
+Attributes prefixed with `eleva-prop-` are automatically parsed as props.
 
 _Example:_
 
@@ -352,41 +379,28 @@ const ChildComponent = {
   `,
 };
 
-// Define the Parent Component
+// Define the Parent Component with local child registration
 const ParentComponent = {
-  setup: () => {
-    return {};
-  },
   template: () => `
     <div>
       <h1>Parent Component</h1>
-      <!-- The attribute "eleva-prop-title" is passed as a prop "title" to the child component -->
       <child-comp eleva-prop-title="Hello from Parent"></child-comp>
     </div>
   `,
-  // Specify child components using the "children" property
   children: {
     "child-comp": ChildComponent,
   },
 };
 
-// Register and mount components
 const app = new Eleva("TestApp");
 app.component("parent-comp", ParentComponent);
-app.component("child-comp", ChildComponent);
-app.mount("#app", "parent-comp");
+app.mount(document.getElementById("app"), "parent-comp");
 ```
-
-**Explanation:**
-
-- The parent component's template includes `<child-comp eleva-prop-title="Hello from Parent"></child-comp>`.
-- The attribute `eleva-prop-title` is interpreted as a prop named `title` in the child component.
-- In the child component, the `setup` function accesses this value via `context.props.title`.
-- This mechanism enables you to pass data from the parent to the child, ensuring that your components remain modular and configurable.
 
 ### Style Injection & Scoped CSS
 
-Eleva supports component-scoped styling via the `style` function defined in a component. The styles you return from this function are injected into the component’s container, ensuring they do not leak into the global scope.
+Eleva supports component-scoped styling through an optional `style` function defined in a component.  
+The styles are injected into the component’s container to avoid global leakage.
 
 _Example:_
 
@@ -404,7 +418,7 @@ const MyComponent = {
 
 ### Inter-Component Communication
 
-Inter-component communication in Eleva is primarily handled through the built-in **Emitter**. Components can publish and subscribe to custom events, allowing for loosely coupled interactions between different parts of your application.
+Inter-component communication is facilitated by the built-in **Emitter**. Components can publish and subscribe to events, enabling decoupled interactions.
 
 _Example:_
 
@@ -431,19 +445,19 @@ app.component("ComponentB", {
   template: () => `<div>Component B</div>`,
 });
 
-app.mount("#app", "ComponentA");
-app.mount("#app", "ComponentB");
+app.mount(document.getElementById("app"), "ComponentA");
+app.mount(document.getElementById("app"), "ComponentB");
 ```
 
 ---
 
 ## 5. Plugin System
 
-Eleva is built to be easily extendable through plugins. Official plugins, such as the Eleva Router Plugin, enhance Eleva’s capabilities without introducing extra complexity.
+Eleva is built to be easily extendable through plugins.
 
 ### Creating a Plugin
 
-A plugin in Eleva is an object with an `install` method:
+A plugin is an object with an `install` method:
 
 ```js
 const MyPlugin = {
@@ -460,13 +474,13 @@ export default MyPlugin;
 
 ### Plugin Architecture
 
-The plugin architecture in Eleva is designed for simplicity and modularity. Plugins can:
+Plugins can:
 
 - Modify or extend the Eleva instance.
 - Add new methods or properties.
 - Enhance component behavior.
 
-This architecture allows you to build and integrate plugins effortlessly, making Eleva highly customizable for any project.
+This modular approach makes Eleva highly customizable.
 
 ---
 
@@ -474,14 +488,14 @@ This architecture allows you to build and integrate plugins effortlessly, making
 
 Debugging in Eleva can be streamlined by:
 
-- **Console Logging:** Use `console.log` in your lifecycle hooks, event handlers, or during state changes to trace execution.
+- **Console Logging:** Use `console.log` within lifecycle hooks and event handlers to trace execution.
 - **Watchers:** Leverage signal watchers to monitor state changes.
-- **Developer Tools:** Use your browser's developer tools to inspect the DOM and monitor network requests.
+- **Developer Tools:** Use browser dev tools to inspect the DOM and track network activity.
 
 Additional recommendations:
 
-- **Verbose Mode:** Consider adding a verbose or debug mode in your Eleva configuration to log more details during development.
-- **Error Handling:** Implement try-catch blocks within your `setup` functions or event handlers to gracefully handle errors.
+- **Verbose Mode:** Enable verbose or debug mode in your Eleva configuration to log detailed information during development.
+- **Error Handling:** Use try-catch blocks within `setup` functions or event handlers to manage errors gracefully.
 
 ---
 
@@ -489,18 +503,18 @@ Additional recommendations:
 
 ### Best Practices
 
-- **Keep It Modular:** Break your application into small, reusable components.
-- **Leverage Reactivity:** Use signals effectively to minimize DOM updates.
-- **Write Clean Templates:** Use `{{...}}` for dynamic content and keep your template logic simple.
-- **Test Thoroughly:** Write tests for your components and plugins to ensure reliability.
-- **Document Your Code:** Maintain clear documentation for both your application and any custom plugins you develop.
+- **Keep It Modular:** Divide your application into small, reusable components.
+- **Leverage Reactivity:** Use signals effectively to update only the parts of the DOM that change.
+- **Clean Templates:** Use `{{...}}` for dynamic content and keep template logic simple.
+- **Test Thoroughly:** Write tests for components and plugins to ensure stability.
+- **Document Your Code:** Maintain clear documentation for both your application and custom plugins.
 
 ### Use Cases
 
-- **Small to Medium Projects:** Ideal for lightweight web apps and websites where performance is key.
-- **Performance-Critical Applications:** When low bundle size and fast rendering are essential.
-- **Rapid Prototyping:** Quickly build prototypes with a minimalistic, developer-friendly API.
-- **Highly Customizable Applications:** Leverage the unopinionated nature of Eleva to build custom solutions without imposed restrictions.
+- **Small to Medium Projects:** Ideal for lightweight apps and websites where performance matters.
+- **Performance-Critical Applications:** Low bundle size and fast rendering are essential.
+- **Rapid Prototyping:** Quickly build prototypes with Eleva's minimalistic API.
+- **Highly Customizable Applications:** Benefit from Eleva's unopinionated architecture to create tailored solutions.
 
 ---
 
@@ -512,7 +526,7 @@ For practical examples and tutorials, refer to the following guides:
 - [Todo App Example](../examples/todo-app.md)
 - [Creating a Custom Plugin](../examples/custom-plugin.md)
 
-These examples provide step-by-step instructions and real-world usage scenarios for Eleva.
+These guides provide step-by-step instructions and real-world usage scenarios.
 
 ---
 
@@ -522,7 +536,7 @@ These examples provide step-by-step instructions and real-world usage scenarios 
 _A:_ Not yet—Eleva is currently in alpha. While it's a powerful tool, expect changes until a stable release is announced.
 
 **Q: How do I report issues or request features?**  
-_A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page for any bugs or feature requests.
+_A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
 
 **Q: Can I use Eleva with TypeScript?**  
 _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep your codebase strongly typed.
@@ -531,39 +545,39 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 
 ## 10. Version Guide
 
-I follow [Semantic Versioning (SemVer)](https://semver.org/) for Eleva. Here's a quick rundown:
+Eleva follows [Semantic Versioning (SemVer)](https://semver.org/):
 
 - **Major Version (X.0.0):**  
-  Indicates breaking changes or a major overhaul. For example, moving from `1.0.0` to `2.0.0`.
+  Breaking changes or major overhauls (e.g., `1.0.0` to `2.0.0`).
 
 - **Minor Version (1.X.0):**  
-  Introduces new features in a backward-compatible manner, e.g., `1.1.0`.
+  New features in a backward-compatible manner (e.g., `1.1.0`).
 
 - **Patch Version (1.0.X):**  
-  Contains backward-compatible bug fixes and minor improvements, e.g., `1.0.1`.
+  Bug fixes and minor improvements (e.g., `1.0.1`).
 
 - **Pre-release Identifiers:**  
-  Suffixes like `-alpha`, `-beta`, or `-rc` denote that the version is not yet stable (e.g., `1.0.0-alpha`).
+  Suffixes like `-alpha`, `-beta`, or `-rc` indicate unstable versions (e.g., `1.0.0-alpha`).
 
 ### Migration Guidelines
 
-When upgrading between versions, pay attention to:
+When upgrading:
 
-- **Breaking Changes:** Review the changelog for any major updates.
-- **Deprecated Features:** Ensure that your code does not rely on features marked for deprecation.
-- **Testing:** Thoroughly test your application after upgrading to catch any issues early.
+- **Review Breaking Changes:** Consult the changelog for major updates.
+- **Check Deprecated Features:** Ensure your code doesn’t rely on removed features.
+- **Test Your Application:** Thoroughly test after upgrading to catch any issues early.
 
 ---
 
 ## 11. Contributing
 
-Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please check out the [CONTRIBUTING](../CONTRIBUTING.md) file for detailed guidelines on how to get started.
+Contributions are welcome! Whether you’re fixing bugs, adding features, or improving documentation, your input is invaluable. Please check out the [CONTRIBUTING](../CONTRIBUTING.md) file for detailed guidelines on how to get started.
 
 ---
 
 ## 12. Changelog
 
-For a detailed log of all changes and updates, please refer to the [Changelog](../changelog.md). This document tracks all significant updates from each release.
+For a detailed log of all changes and updates, please refer to the [Changelog](../changelog.md).
 
 ---
 

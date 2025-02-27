@@ -1,8 +1,8 @@
 /**
- * ⚡ Signal: Fine-grained reactivity.
- *
+ * @class ⚡ Signal
+ * @classdesc Fine-grained reactivity.
  * A reactive data holder that notifies registered watchers when its value changes,
- * allowing for fine-grained DOM patching rather than full re-renders.
+ * enabling fine-grained DOM patching rather than full re-renders.
  */
 export class Signal {
     /**
@@ -28,9 +28,9 @@ export class Signal {
     /**
      * Registers a watcher function that will be called whenever the signal's value changes.
      *
-     * @param {Function} fn - The callback function to invoke on value change.
-     * @returns {Function} A function to unsubscribe the watcher.
+     * @param {function(any): void} fn - The callback function to invoke on value change.
+     * @returns {function(): boolean} A function to unsubscribe the watcher.
      */
-    watch(fn: Function): Function;
+    watch(fn: (arg0: any) => void): () => boolean;
 }
 //# sourceMappingURL=Signal.d.ts.map
