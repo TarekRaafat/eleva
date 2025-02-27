@@ -148,7 +148,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~4 KB minified and ~1.9 KB gzipped.
+- **Lightweight:** Approximately ~4 KB minified and ~1.8 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
