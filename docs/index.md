@@ -7,6 +7,16 @@
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 
+<br>
+<br>
+
+<p align="center">
+  <img src="./imgs/Eleva Logo.png" alt="Eleva Logo" width="50%">
+</p>
+
+<br>
+<br>
+
 Welcome to the official documentation for **Eleva**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you’re new to JavaScript or an experienced developer, this guide will help you understand Eleva’s core concepts, architecture, and how to integrate and extend it in your projects.
 
 ---

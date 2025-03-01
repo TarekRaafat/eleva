@@ -9,6 +9,16 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 
+<br>
+<br>
+
+<p align="center">
+  <img src="./docs/imgs/Eleva Logo.png" alt="Eleva Logo" width="50%">
+</p>
+
+<br>
+<br>
+
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
 
