@@ -262,8 +262,10 @@ const todoAppComponent = {
 const eleva = new Eleva("ToDoApp");
 eleva.component("todo-app", todoAppComponent);
 // Mount the to‑do app into the #app container.
-eleva.mount("#app", "todo-app");
+eleva.mount(document.querySelector("#app"), "todo-app");
 ```
+
+Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/KwKaobd?editors=1010)
 
 ### What the Code Does
 

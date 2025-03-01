@@ -1,13 +1,25 @@
 /**
+ * Defines the structure and behavior of a component.
  * @typedef {Object} ComponentDefinition
  * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
- *           A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+ *           Optional setup function that initializes the component's reactive state and lifecycle.
+ *           Receives props and context as an argument and should return an object containing the component's state.
+ *           Can return either a synchronous object or a Promise that resolves to an object for async initialization.
+ *
  * @property {function(Object<string, any>): string} template
- *           A function that returns the HTML template string for the component.
+ *           Required function that defines the component's HTML structure.
+ *           Receives the merged context (props + setup data) and must return an HTML template string.
+ *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
+ *
  * @property {function(Object<string, any>): string} [style]
- *           An optional function that returns scoped CSS styles as a string.
+ *           Optional function that defines component-scoped CSS styles.
+ *           Receives the merged context and returns a CSS string that will be automatically scoped to the component.
+ *           Styles are injected into the component's container and only affect elements within it.
+ *
  * @property {Object<string, ComponentDefinition>} [children]
- *           An optional mapping of CSS selectors to child component definitions.
+ *           Optional object that defines nested child components.
+ *           Keys are CSS selectors that match elements in the template where child components should be mounted.
+ *           Values are ComponentDefinition objects that define the structure and behavior of each child component.
  */
 /**
  * @class 🧩 Eleva
@@ -24,24 +36,26 @@ export class Eleva {
     constructor(name: string, config?: {
         [x: string]: any;
     });
-    /** @type {string} */
+    /** @type {string} The unique identifier name for this Eleva instance */
     name: string;
-    /** @type {Object<string, any>} */
+    /** @type {Object<string, any>} Optional configuration object for the Eleva instance */
     config: {
         [x: string]: any;
     };
-    /** @type {Object<string, ComponentDefinition>} */
+    /** @type {Object<string, ComponentDefinition>} Object storing registered component definitions by name */
     _components: {
         [x: string]: ComponentDefinition;
     };
-    /** @type {Array<Object>} */
-    _plugins: Array<Object>;
-    /** @private */
+    /** @private {Array<Object>} Collection of installed plugin instances */
+    private _plugins;
+    /** @private {string[]} Array of lifecycle hook names supported by the component */
     private _lifecycleHooks;
-    /** @private {boolean} */
+    /** @private {boolean} Flag indicating if component is currently mounted */
     private _isMounted;
-    emitter: Emitter;
-    renderer: Renderer;
+    /** @private {Emitter} Instance of the event emitter for handling component events */
+    private emitter;
+    /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
+    private renderer;
     /**
      * Integrates a plugin with the Eleva framework.
      *
@@ -107,9 +121,14 @@ export class Eleva {
      */
     private _mountChildren;
 }
+/**
+ * Defines the structure and behavior of a component.
+ */
 export type ComponentDefinition = {
     /**
-     * A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+     * Optional setup function that initializes the component's reactive state and lifecycle.
+     * Receives props and context as an argument and should return an object containing the component's state.
+     * Can return either a synchronous object or a Promise that resolves to an object for async initialization.
      */
     setup?: ((arg0: {
         [x: string]: any;
@@ -119,24 +138,28 @@ export type ComponentDefinition = {
         [x: string]: any;
     }>)) | undefined;
     /**
-     *           A function that returns the HTML template string for the component.
+     *           Required function that defines the component's HTML structure.
+     *           Receives the merged context (props + setup data) and must return an HTML template string.
+     *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
      */
     template: (arg0: {
         [x: string]: any;
     }) => string;
     /**
-     * An optional function that returns scoped CSS styles as a string.
+     * Optional function that defines component-scoped CSS styles.
+     * Receives the merged context and returns a CSS string that will be automatically scoped to the component.
+     * Styles are injected into the component's container and only affect elements within it.
      */
     style?: ((arg0: {
         [x: string]: any;
     }) => string) | undefined;
     /**
-     * An optional mapping of CSS selectors to child component definitions.
+     * Optional object that defines nested child components.
+     * Keys are CSS selectors that match elements in the template where child components should be mounted.
+     * Values are ComponentDefinition objects that define the structure and behavior of each child component.
      */
     children?: {
         [x: string]: ComponentDefinition;
     } | undefined;
 };
-import { Emitter } from "../modules/Emitter.js";
-import { Renderer } from "../modules/Renderer.js";
 //# sourceMappingURL=Eleva.d.ts.map

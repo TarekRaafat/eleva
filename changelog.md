@@ -6,7 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [v1.1.0-alpha] ✨ - 27-02-2025
+## [v1.2.0-alpha] ✨ - 01-03-2025
+
+### ➕ Added
+
+- **Enhanced Inline Documentation and JSDoc Comments**
+  - Added detailed JSDoc annotations for private members (e.g., in `Signal` and `Emitter` classes) to clarify internal behavior.
+  - Updated the `ComponentDefinition` typedef with more descriptive explanations for each property.
+  - Improved inline comments in the `Eleva` core class, providing detailed documentation for properties, parameters, and internal methods.
+
+### 🎛️ Changed
+
+- **Context Object Update in Mounting Process**
+  - The component mounting context now includes the entire `emitter` instance instead of exposing separate `emit` and `on` functions. This change simplifies event handling in component setup.
+- **Minor Code Refactoring & Documentation Enhancements**
+  - Formatting and comment improvements across the codebase for better readability and maintainability.
+
+> **Note:** These changes are internal improvements and documentation enhancements.
+
+---
+
+## [v1.1.0-alpha] - 27-02-2025
 
 ### ➕ Added
 

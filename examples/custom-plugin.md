@@ -48,7 +48,7 @@ app.component("HelloWorld", {
 });
 
 // Mount the component to the DOM
-app.mount("#app", "HelloWorld");
+app.mount(document.querySelector("#app"), "HelloWorld");
 ```
 
 If you're using a UMD build, adjust the script tags accordingly and ensure your plugin file is loaded before your main script.

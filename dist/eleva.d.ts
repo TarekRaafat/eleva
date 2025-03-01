@@ -1,77 +1,25 @@
 /**
- * @class 🎙️ Emitter
- * @classdesc Robust inter-component communication with event bubbling.
- * Implements a basic publish-subscribe pattern for event handling, allowing components
- * to communicate through custom events.
- */
-declare class Emitter {
-    /** @type {Object.<string, Function[]>} */
-    events: {
-        [x: string]: Function[];
-    };
-    /**
-     * Registers an event handler for the specified event.
-     *
-     * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The function to call when the event is emitted.
-     */
-    on(event: string, handler: (...args: any[]) => void): void;
-    /**
-     * Removes a previously registered event handler.
-     *
-     * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The handler function to remove.
-     */
-    off(event: string, handler: (...args: any[]) => void): void;
-    /**
-     * Emits an event, invoking all handlers registered for that event.
-     *
-     * @param {string} event - The event name.
-     * @param {...any} args - Additional arguments to pass to the event handlers.
-     */
-    emit(event: string, ...args: any[]): void;
-}
-
-/**
- * @class 🎨 Renderer
- * @classdesc Handles DOM patching, diffing, and attribute updates.
- * Provides methods for efficient DOM updates by diffing the new and old DOM structures
- * and applying only the necessary changes.
- */
-declare class Renderer {
-    /**
-     * Patches the DOM of a container element with new HTML content.
-     *
-     * @param {HTMLElement} container - The container element to patch.
-     * @param {string} newHtml - The new HTML content to apply.
-     */
-    patchDOM(container: HTMLElement, newHtml: string): void;
-    /**
-     * Diffs two DOM trees (old and new) and applies updates to the old DOM.
-     *
-     * @param {HTMLElement} oldParent - The original DOM element.
-     * @param {HTMLElement} newParent - The new DOM element.
-     */
-    diff(oldParent: HTMLElement, newParent: HTMLElement): void;
-    /**
-     * Updates the attributes of an element to match those of a new element.
-     *
-     * @param {HTMLElement} oldEl - The element to update.
-     * @param {HTMLElement} newEl - The element providing the updated attributes.
-     */
-    updateAttributes(oldEl: HTMLElement, newEl: HTMLElement): void;
-}
-
-/**
+ * Defines the structure and behavior of a component.
  * @typedef {Object} ComponentDefinition
  * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
- *           A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+ *           Optional setup function that initializes the component's reactive state and lifecycle.
+ *           Receives props and context as an argument and should return an object containing the component's state.
+ *           Can return either a synchronous object or a Promise that resolves to an object for async initialization.
+ *
  * @property {function(Object<string, any>): string} template
- *           A function that returns the HTML template string for the component.
+ *           Required function that defines the component's HTML structure.
+ *           Receives the merged context (props + setup data) and must return an HTML template string.
+ *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
+ *
  * @property {function(Object<string, any>): string} [style]
- *           An optional function that returns scoped CSS styles as a string.
+ *           Optional function that defines component-scoped CSS styles.
+ *           Receives the merged context and returns a CSS string that will be automatically scoped to the component.
+ *           Styles are injected into the component's container and only affect elements within it.
+ *
  * @property {Object<string, ComponentDefinition>} [children]
- *           An optional mapping of CSS selectors to child component definitions.
+ *           Optional object that defines nested child components.
+ *           Keys are CSS selectors that match elements in the template where child components should be mounted.
+ *           Values are ComponentDefinition objects that define the structure and behavior of each child component.
  */
 /**
  * @class 🧩 Eleva
@@ -88,24 +36,26 @@ declare class Eleva {
     constructor(name: string, config?: {
         [x: string]: any;
     });
-    /** @type {string} */
+    /** @type {string} The unique identifier name for this Eleva instance */
     name: string;
-    /** @type {Object<string, any>} */
+    /** @type {Object<string, any>} Optional configuration object for the Eleva instance */
     config: {
         [x: string]: any;
     };
-    /** @type {Object<string, ComponentDefinition>} */
+    /** @type {Object<string, ComponentDefinition>} Object storing registered component definitions by name */
     _components: {
         [x: string]: ComponentDefinition;
     };
-    /** @type {Array<Object>} */
-    _plugins: Array<Object>;
-    /** @private */
+    /** @private {Array<Object>} Collection of installed plugin instances */
+    private _plugins;
+    /** @private {string[]} Array of lifecycle hook names supported by the component */
     private _lifecycleHooks;
-    /** @private {boolean} */
+    /** @private {boolean} Flag indicating if component is currently mounted */
     private _isMounted;
-    emitter: Emitter;
-    renderer: Renderer;
+    /** @private {Emitter} Instance of the event emitter for handling component events */
+    private emitter;
+    /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
+    private renderer;
     /**
      * Integrates a plugin with the Eleva framework.
      *
@@ -171,9 +121,14 @@ declare class Eleva {
      */
     private _mountChildren;
 }
+/**
+ * Defines the structure and behavior of a component.
+ */
 type ComponentDefinition = {
     /**
-     * A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+     * Optional setup function that initializes the component's reactive state and lifecycle.
+     * Receives props and context as an argument and should return an object containing the component's state.
+     * Can return either a synchronous object or a Promise that resolves to an object for async initialization.
      */
     setup?: ((arg0: {
         [x: string]: any;
@@ -183,19 +138,25 @@ type ComponentDefinition = {
         [x: string]: any;
     }>)) | undefined;
     /**
-     *           A function that returns the HTML template string for the component.
+     *           Required function that defines the component's HTML structure.
+     *           Receives the merged context (props + setup data) and must return an HTML template string.
+     *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
      */
     template: (arg0: {
         [x: string]: any;
     }) => string;
     /**
-     * An optional function that returns scoped CSS styles as a string.
+     * Optional function that defines component-scoped CSS styles.
+     * Receives the merged context and returns a CSS string that will be automatically scoped to the component.
+     * Styles are injected into the component's container and only affect elements within it.
      */
     style?: ((arg0: {
         [x: string]: any;
     }) => string) | undefined;
     /**
-     * An optional mapping of CSS selectors to child component definitions.
+     * Optional object that defines nested child components.
+     * Keys are CSS selectors that match elements in the template where child components should be mounted.
+     * Values are ComponentDefinition objects that define the structure and behavior of each child component.
      */
     children?: {
         [x: string]: ComponentDefinition;

@@ -1,6 +1,6 @@
 # Eleva Documentation
 
-Welcome to the official documentation for **Eleva**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. This guide is designed to help you understand how Eleva works, how to integrate it into your projects, and how to extend its functionality through plugins.
+Welcome to the official documentation for **Eleva**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you’re new to JavaScript or an experienced developer, this guide will help you understand Eleva’s core concepts, architecture, and how to integrate and extend it in your projects.
 
 ---
 
@@ -10,74 +10,102 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
   - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-introduction)
   - [2. Design Philosophy](#2-design-philosophy)
-  - [3. Getting Started](#3-getting-started)
+  - [3. Core Principles](#3-core-principles)
+  - [4. Getting Started](#4-getting-started)
     - [Installation](#installation)
-    - [Quick Start Guide](#quick-start-guide)
-  - [4. Core Concepts](#4-core-concepts)
+    - [Quick Start Tutorial](#quick-start-tutorial)
+  - [5. Core Concepts](#5-core-concepts)
     - [TemplateEngine](#templateengine)
     - [Template Interpolation](#template-interpolation)
     - [Setup Context vs. Event Context](#setup-context-vs-event-context)
       - [Setup Context](#setup-context)
       - [Event Context](#event-context)
-    - [Signal](#signal)
-    - [Emitter](#emitter)
-    - [Renderer](#renderer)
-      - [Diffing Algorithm \& Renderer Details](#diffing-algorithm--renderer-details)
+    - [Signal (Reactivity)](#signal-reactivity)
+    - [Emitter (Event Handling)](#emitter-event-handling)
+    - [Renderer (DOM Diffing)](#renderer-dom-diffing)
     - [Eleva (Core)](#eleva-core)
     - [Lifecycle Hooks](#lifecycle-hooks)
     - [Component Registration \& Mounting](#component-registration--mounting)
     - [Children Components \& Passing Props](#children-components--passing-props)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
-  - [5. Plugin System](#5-plugin-system)
+  - [6. Architecture \& Data Flow](#6-architecture--data-flow)
+    - [Key Components](#key-components)
+    - [Data Flow Process](#data-flow-process)
+    - [Visual Overview](#visual-overview)
+    - [Benefits](#benefits)
+  - [7. Plugin System](#7-plugin-system)
     - [Creating a Plugin](#creating-a-plugin)
     - [Plugin Architecture](#plugin-architecture)
-  - [6. Debugging \& Developer Tools](#6-debugging--developer-tools)
-  - [7. Best Practices \& Use Cases](#7-best-practices--use-cases)
+  - [8. Debugging \& Developer Tools](#8-debugging--developer-tools)
+  - [9. Best Practices \& Use Cases](#9-best-practices--use-cases)
     - [Best Practices](#best-practices)
     - [Use Cases](#use-cases)
-  - [8. Examples and Tutorials](#8-examples-and-tutorials)
-  - [9. FAQ](#9-faq)
-  - [10. Version Guide](#10-version-guide)
+  - [10. Examples and Tutorials](#10-examples-and-tutorials)
+  - [11. FAQ](#11-faq)
+  - [12. Troubleshooting \& Migration Guidelines](#12-troubleshooting--migration-guidelines)
+    - [Troubleshooting](#troubleshooting)
     - [Migration Guidelines](#migration-guidelines)
-  - [11. Contributing](#11-contributing)
-  - [12. Changelog](#12-changelog)
-  - [13. License](#13-license)
+  - [13. API Reference](#13-api-reference)
+  - [14. Contributing](#14-contributing)
+  - [15. Community \& Support](#15-community--support)
+  - [16. Changelog](#16-changelog)
+  - [17. License](#17-license)
 
 ---
 
 ## 1. Introduction
 
-Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Born from a passion for native JavaScript, Eleva stays true to the language by avoiding unnecessary syntax or bloat. Its goal is to empower you to build modular and high-performance apps without the overhead of larger frameworks.
+Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Its goal is to empower developers who value simplicity, performance, and full control over their application to build modular and high-performance apps without the overhead of larger frameworks.
 
 ---
 
 ## 2. Design Philosophy
 
-**Eleva is an unopinionated library.**
+**Eleva is unopinionated.** Unlike many frameworks that enforce a specific project structure or coding paradigm, Eleva provides only the minimal core with a flexible plugin system, leaving architectural decisions in your hands. This means:
 
-Unlike many frameworks that enforce a specific project structure or coding paradigm, Eleva provides a minimal core with a flexible plugin system. This means:
-
-- **🔄 Flexibility:** You’re free to architect your application as you see fit, without being forced into a rigid structure.
-- **🎯 Native JavaScript:** Eleva is built using pure vanilla JavaScript, so it integrates seamlessly with your existing code without introducing unfamiliar syntax.
-- **⚙️ Configurability:** With a simple API and optional plugins, you can extend Eleva's functionality to suit your project's unique requirements.
-- **🆓 Freedom:** You decide the best way to implement features, allowing for both simple and complex applications without unnecessary constraints.
-
-This unopinionated approach makes Eleva versatile and ideal for developers who prefer to have full control over their application's design.
+- **🔄 Flexibility:** Architect your application as you prefer.
+- **🎯 Native JavaScript:** Enjoy seamless integration with your existing code.
+- **⚙️ Configurability:** Extend functionality with a simple API and plugins.
+- **🆓 Freedom:** Build both simple and complex applications without unnecessary constraints.
 
 ---
 
-## 3. Getting Started
+## 3. Core Principles
+
+At the heart of Eleva are a few fundamental principles that guide its design and usage:
+
+- **Minimalism:**  
+  Eleva includes only the essential features needed for building functional, high-performance applications without added complexity.
+
+- **Reactivity:**  
+  With its signal-based reactivity, Eleva updates only the parts of the UI that change, ensuring smooth and efficient DOM updates.
+
+- **Simplicity:**  
+  Built using pure vanilla JavaScript, Eleva offers a shallow learning curve and seamless integration with existing projects.
+
+- **Modularity:**  
+  Each component is self-contained, making your application scalable and maintainable.
+
+- **Flexibility:**  
+  Eleva’s unopinionated nature allows you to choose your own architectural patterns and extend the framework with plugins as needed.
+
+- **Performance:**  
+  Designed to be lightweight and efficient, Eleva is ideal for performance-critical applications.
+
+---
+
+## 4. Getting Started
 
 ### Installation
 
-You can install Eleva via npm:
+Install via npm:
 
 ```bash
 npm install eleva
 ```
 
-Or include it directly in your HTML via a CDN:
+Or include via CDN:
 
 ```html
 <!-- unpkg -->
@@ -89,18 +117,18 @@ Or include it directly in your HTML via a CDN:
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
 ```
 
-### Quick Start Guide
+### Quick Start Tutorial
 
-Below is a minimal example to help you get started. Notice that the `mount` method now expects a DOM element as the first argument (instead of a CSS selector string) and returns a Promise, ensuring consistent asynchronous handling:
+Below is a step-by-step tutorial to help you get started. This example demonstrates component registration, state creation, and mounting using a DOM element (not a selector), with asynchronous handling.
 
 ```js
 import Eleva from "eleva";
 
 const app = new Eleva("MyApp");
 
-// Register a component
+// Define a simple component
 app.component("HelloWorld", {
-  // The setup method is now optional; if omitted, an empty object is used as state.
+  // Optional setup: if omitted, Eleva defaults to an empty state
   setup({ signal }) {
     const count = signal(0);
     return { count };
@@ -108,33 +136,30 @@ app.component("HelloWorld", {
   template: (ctx) => `
     <div>
       <h1>Hello, Eleva! 👋</h1>
-      <p>Count: ${ctx.count}</p>
-      <button @click="() => count++">Increment</button>
+      <p>Count: ${ctx.count.value}</p>
+      <button @click="() => count.value++">Increment</button>
     </div>
   `,
 });
 
-// Mount the component by providing a DOM element
-app.mount(document.getElementById("app"), "HelloWorld").then((instance) => {
-  console.log("Component mounted:", instance);
-});
+// Mount the component by providing a DOM element and handling the returned Promise
+app
+  .mount(document.getElementById("app"), "HelloWorld")
+  .then((instance) => console.log("Component mounted:", instance));
 ```
 
-Ensure you have an HTML element with the id `app` where the component will be mounted.
+For interactive demos, check out our [CodePen Example](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010).
 
 ---
 
-## 4. Core Concepts
+## 5. Core Concepts
 
 ### TemplateEngine
 
 The **TemplateEngine** is responsible for parsing templates and evaluating embedded expressions.
 
-- **`parse(template, data)`**  
-  Replaces `{{ expression }}` patterns with evaluated values from `data`.
-
-- **`evaluate(expr, data)`**  
-  Safely evaluates a JavaScript expression within the provided context.
+- **`parse(template, data)`**: Replaces `{{ expression }}` with values from `data`.
+- **`evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context.
 
 _Example:_
 
@@ -147,34 +172,28 @@ console.log(output); // "Hello, World!"
 
 ### Template Interpolation
 
-Eleva supports two methods for embedding dynamic data into your templates: native JavaScript template literals (`${...}`) and Eleva’s custom Handlebars-like syntax (`{{...}}`).
+Eleva supports two methods for dynamic content:
 
-**Standard Template Literals (`${var}`):**
+1. **Native Template Literals (`${...}`):**  
+   Evaluated once, providing static content.
 
-- **Immediate & Static:**  
-  Evaluated immediately within the JavaScript template literal. The substitution occurs only once.
+_Example:_
 
-  _Example:_
+```js
+const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "World"
+```
 
-  ```js
-  const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "World"
-  ```
+2. **Handlebars-like Syntax (`{{...}}`):**  
+   Enables dynamic, reactive updates.
 
-**Handlebars-like Interpolation (`{{var}}`):**
-
-- **Dynamic & Reactive:**  
-  Eleva processes the `{{...}}` syntax within component templates to enable reactive updates as data changes.
-
-  _Example:_
-
-  ```html
-  <p>Hello, {{ name }}!</p>
-  ```
+```html
+<p>Hello, {{ name }}!</p>
+```
 
 **When to Use Each:**
 
-- Use **`${var}`** for one-time, static content.
-- Use **`{{var}}`** for dynamic, reactive data binding.
+- Use **`${...}`** for one-time, static content.
+- Use **`{{...}}`** for dynamic, reactive data binding.
 
 ### Setup Context vs. Event Context
 
@@ -182,10 +201,10 @@ Understanding how data flows during component initialization and event handling 
 
 #### Setup Context
 
-- **When It’s Used:**  
+- **When It’s Used:**
   Passed to the component’s `setup` function during initialization.
-- **What It Contains:**  
-  Utilities (like the `signal` function), component props, and lifecycle hooks. The returned data forms the component’s reactive state.
+- **What It Contains:**
+  Utilities (like the `signal` function), component props, emitter, and lifecycle hooks. The returned data forms the component’s reactive state.
 
 _Example:_
 
@@ -197,7 +216,7 @@ const MyComponent = {
   },
   template: (ctx) => `
     <div>
-      <p>Counter: ${ctx.counter}</p>
+      <p>Counter: ${ctx.counter.value}</p>
     </div>
   `,
 };
@@ -205,9 +224,9 @@ const MyComponent = {
 
 #### Event Context
 
-- **When It’s Used:**  
+- **When It’s Used:**
   Provided when an event handler is triggered (e.g., a button click).
-- **What It Contains:**  
+- **What It Contains:**
   The reactive state from `setup` along with event-specific data (like `event.target`).
 
 _Example:_
@@ -224,16 +243,16 @@ const MyComponent = {
   },
   template: (ctx) => `
     <div>
-      <p>Counter: ${ctx.counter}</p>
+      <p>Counter: ${ctx.counter.value}</p>
       <button @click="increment">Increment</button>
     </div>
   `,
 };
 ```
 
-### Signal
+### Signal (Reactivity)
 
-**Signals** provide fine-grained reactivity by updating only the affected DOM parts.
+The **Signal** provides fine-grained reactivity by updating only the affected DOM parts.
 
 - **Constructor:** `new Signal(initialValue)` creates a reactive data holder.
 - **Getter/Setter:** Access or update via `signal.value`.
@@ -243,13 +262,13 @@ _Example:_
 
 ```js
 const count = new Signal(0);
-count.watch((newValue) => console.log("Count updated:", newValue));
+count.watch((newVal) => console.log("Count updated:", newVal));
 count.value = 1; // Logs: "Count updated: 1"
 ```
 
-### Emitter
+### Emitter (Event Handling)
 
-The **Emitter** enables inter-component communication using a publish-subscribe pattern.
+The **Emitter** enables inter-component communication through events and using a publish–subscribe pattern.
 
 - **`on(event, handler)`**: Registers an event handler.
 - **`off(event, handler)`**: Removes an event handler.
@@ -262,33 +281,26 @@ on("greet", (name) => console.log(`Hello, ${name}!`)); // Logs: "Hello, Alice!"
 emit("greet", "Alice");
 ```
 
-### Renderer
+### Renderer (DOM Diffing)
 
 The **Renderer** efficiently updates the DOM through diffing and patching.
 
-- **`patchDOM(container, newHtml)`**: Updates container content.
+- **`patchDOM(container, newHtml)`**: Updates container content with the new HTML.
 - **`diff(oldParent, newParent)`**: Applies updates by comparing DOM trees.
 - **`updateAttributes(oldEl, newEl)`**: Synchronizes element attributes.
 
-#### Diffing Algorithm & Renderer Details
-
-Eleva’s renderer minimizes reflows by updating only the changed parts of the DOM.
-
 ### Eleva (Core)
 
-The **Eleva** class orchestrates component registration, mounting, plugin integration, and lifecycle management.
+The **Eleva** class orchestrates component registration, mounting, plugin integration, lifecycle management, and events.
 
 - **`new Eleva(name, config)`**: Creates an instance.
 - **`use(plugin, options)`**: Integrates a plugin.
 - **`component(name, definition)`**: Registers a new component.
-- **`mount(container, compName, props)`**: Mounts a component to the DOM.
-
-  _Note:_ The `mount` method now accepts a DOM element (not a CSS selector string) and supports both a component name (string) or a direct component definition (object). It also returns a Promise, even for synchronous setups.  
-  Additionally, the `setup` method is optional; if omitted, Eleva defaults to an empty state object.
+- **`mount(container, compName, props)`**: Mounts a component to a DOM element (returns a Promise).
 
 ### Lifecycle Hooks
 
-Eleva provides hooks to execute code at specific stages of a component’s lifecycle:
+Execute code at various stages of a component’s lifecycle:
 
 - **onBeforeMount:** Called before mounting.
 - **onMount:** Called after mounting.
@@ -312,15 +324,7 @@ const MyComponent = {
 
 ### Component Registration & Mounting
 
-Components are registered using `component()` and mounted with `mount()`. The new version allows for greater flexibility:
-
-- **Flexible Registration:**  
-  You can mount a globally registered component by name (string) or pass a component definition object directly.
-- **Optional Setup Method:**  
-  The `setup()` function is optional. If not provided, Eleva defaults to an empty object for component state.
-
-- **Updated Mount Signature:**  
-  The `mount` method now requires a DOM element as its container and returns a Promise.
+Register components globally or directly, then mount using a DOM element.
 
 _Example (Global Registration):_
 
@@ -334,8 +338,8 @@ app.component("HelloWorld", {
   template: (ctx) => `
     <div>
       <h1>Hello, Eleva! 👋</h1>
-      <p>Count: ${ctx.count}</p>
-      <button @click="() => count++">Increment</button>
+      <p>Count: ${ctx.count.value}</p>
+      <button @click="() => count.value++">Increment</button>
     </div>
   `,
 });
@@ -348,18 +352,18 @@ _Example (Direct Component Definition):_
 
 ```js
 const DirectComponent = {
-  template: () => `<div>Directly mounted component without setup</div>`,
+  template: () => `<div>No setup needed!</div>`,
 };
 
 const app = new Eleva("MyApp");
-app.mount(document.getElementById("app"), DirectComponent).then((instance) => {
-  console.log("Direct component mounted:", instance);
-});
+app
+  .mount(document.getElementById("app"), DirectComponent)
+  .then((instance) => console.log("Mounted Direct:", instance));
 ```
 
 ### Children Components & Passing Props
 
-Eleva allows you to nest components. A parent can include child components in its template and pass data to them via props.  
+Eleva allows you to nest components. A parent can include child components in its template and pass data to them via props.
 Attributes prefixed with `eleva-prop-` are automatically parsed as props.
 
 _Example:_
@@ -399,7 +403,7 @@ app.mount(document.getElementById("app"), "parent-comp");
 
 ### Style Injection & Scoped CSS
 
-Eleva supports component-scoped styling through an optional `style` function defined in a component.  
+Eleva supports component-scoped styling through an optional `style` function defined in a component.
 The styles are injected into the component’s container to avoid global leakage.
 
 _Example:_
@@ -409,7 +413,7 @@ const MyComponent = {
   style: (ctx) => `
     .my-component {
       color: blue;
-      padding: 1rem;
+      padding: {{ctx.padding}}rem;
     }
   `,
   template: (ctx) => `<div class="my-component">Styled Component</div>`,
@@ -423,23 +427,21 @@ Inter-component communication is facilitated by the built-in **Emitter**. Compon
 _Example:_
 
 ```js
-const app = new Eleva("MyApp");
-
 // Component A emits an event
 app.component("ComponentA", {
-  setup: ({ emit }) => {
+  setup: ({ emitter }) => {
     function sendMessage() {
-      emit("customEvent", "Hello from A");
+      emitter.emit("customEvent", "Hello from A");
     }
     return { sendMessage };
   },
-  template: (ctx) => `<button @click="sendMessage">Send Message</button>`,
+  template: () => `<button @click="sendMessage">Send Message</button>`,
 });
 
 // Component B listens for the event
 app.component("ComponentB", {
-  setup: ({ on }) => {
-    on("customEvent", (msg) => console.log(msg));
+  setup: ({ emitter }) => {
+    emitter.on("customEvent", (msg) => console.log(msg));
     return {};
   },
   template: () => `<div>Component B</div>`,
@@ -451,9 +453,95 @@ app.mount(document.getElementById("app"), "ComponentB");
 
 ---
 
-## 5. Plugin System
+## 6. Architecture & Data Flow
 
-Eleva is built to be easily extendable through plugins.
+Eleva’s design emphasizes clarity, modularity, and performance. This section explains how data flows through the framework and how its key components interact, providing more clarity on the underlying mechanics.
+
+### Key Components
+
+1. **Component Definition:**  
+   Components are plain JavaScript objects that describe a UI segment. They typically include:
+
+   - A **`template`** function that returns HTML with interpolation placeholders.
+   - An optional **`setup()`** function for initializing state (using reactive signals).
+   - An optional **`style`** function for scoped CSS.
+   - An optional **`children`** object for nested components.
+
+2. **Signals (Reactivity):**
+   Signals are reactive data holders that notify watchers when their values change, triggering re-renders of the affected UI.
+
+3. **TemplateEngine (Rendering):**
+   This module processes template strings by replacing placeholders (e.g., `{{ count }}`) with live data, enabling dynamic rendering.
+
+4. **Renderer (DOM Diffing and Patching):**
+   The Renderer compares the new virtual DOM with the current DOM and patches only the parts that have changed, ensuring high performance and efficient updates.
+
+5. **Emitter (Event Handling):**
+   The Emitter implements a publish–subscribe pattern to allow components to communicate by emitting and listening to custom events.
+
+### Data Flow Process
+
+1. **Initialization:**
+
+   - **Registration:** Components are registered via `app.component()`.
+   - **Mounting:** `app.mount()` creates a context (including props, lifecycle hooks, and an `emitter` property) and executes `setup()` (if present) to create a reactive state.
+
+2. **Rendering:**
+
+   - The **template** function is called with the combined context and reactive state.
+   - The **TemplateEngine** parses the template, replacing expressions like `{{ count }}` with the current values.
+   - The **Renderer** takes the resulting HTML and patches it into the DOM, ensuring only changes are applied.
+
+3. **Reactivity:**
+
+   - When a signal’s value changes (e.g., through a user event), its watcher triggers a re-run of the template.
+   - The Renderer diffs the new HTML against the current DOM and applies only the necessary changes.
+
+4. **Events:**
+   - Eleva binds event listeners (e.g., `@click`) during rendering.
+   - When an event occurs, the handler is executed with the current state and event details.
+   - Components can also emit custom events via the Emitter for cross-component communication.
+
+### Visual Overview
+
+```
+[Component Registration]
+         │
+         ▼
+[Mounting & Context Creation]
+         │
+         ▼
+[setup() Execution]
+         │
+         ▼
+[Template Function Produces HTML]
+         │
+         ▼
+[TemplateEngine Processes HTML]
+         │
+         ▼
+[Renderer Patches the DOM] ◂────────┐
+         │                          │
+         ▼                          │
+[User Interaction / Signal Change]  │
+         │                          │
+         ▼                          │ ↺
+[Signal Watchers Trigger Re-render] │
+         │                          │
+         ▼                          │
+[Renderer Diffs the DOM]   ─────────┘
+```
+
+### Benefits
+
+- **Modularity:** Each component encapsulates its own logic and state, making it easy to reuse and maintain.
+- **Efficiency:** Only the changed parts of the DOM are updated, ensures smooth performance even in complex applications.
+- **Predictability:** One-way data flow (state → template → DOM) simplifies debugging.
+- **Extensibility:** Clear separation of concerns facilitates custom logic and plugins.
+
+---
+
+## 7. Plugin System
 
 ### Creating a Plugin
 
@@ -484,107 +572,133 @@ This modular approach makes Eleva highly customizable.
 
 ---
 
-## 6. Debugging & Developer Tools
+## 8. Debugging & Developer Tools
 
-Debugging in Eleva can be streamlined by:
-
-- **Console Logging:** Use `console.log` within lifecycle hooks and event handlers to trace execution.
-- **Watchers:** Leverage signal watchers to monitor state changes.
-- **Developer Tools:** Use browser dev tools to inspect the DOM and track network activity.
-
-Additional recommendations:
-
-- **Verbose Mode:** Enable verbose or debug mode in your Eleva configuration to log detailed information during development.
-- **Error Handling:** Use try-catch blocks within `setup` functions or event handlers to manage errors gracefully.
+- **Console Logging:** Use `console.log` in lifecycle hooks and event handlers.
+- **Watchers:** Utilize signal watchers to monitor state changes.
+- **Browser Dev Tools:** Inspect the DOM and network activity.
+- **Verbose Mode:** Enable debug mode for detailed logs.
+- **Error Handling:** Wrap code in try-catch blocks where necessary.
 
 ---
 
-## 7. Best Practices & Use Cases
+## 9. Best Practices & Use Cases
 
 ### Best Practices
 
-- **Keep It Modular:** Divide your application into small, reusable components.
-- **Leverage Reactivity:** Use signals effectively to update only the parts of the DOM that change.
-- **Clean Templates:** Use `{{...}}` for dynamic content and keep template logic simple.
-- **Test Thoroughly:** Write tests for components and plugins to ensure stability.
-- **Document Your Code:** Maintain clear documentation for both your application and custom plugins.
+- **Modularity:** Build your application using small, reusable components.
+- **Reactivity:** Use signals to update only the necessary parts of your UI.
+- **Simplicity:** Keep templates clean and logic minimal.
+- **Testing:** Write tests for components and plugins.
+- **Documentation:** Maintain clear documentation for your application and custom plugins.
 
 ### Use Cases
 
 - **Small to Medium Projects:** Ideal for lightweight apps and websites where performance matters.
 - **Performance-Critical Applications:** Low bundle size and fast rendering are essential.
-- **Rapid Prototyping:** Quickly build prototypes with Eleva's minimalistic API.
-- **Highly Customizable Applications:** Benefit from Eleva's unopinionated architecture to create tailored solutions.
+- **Rapid Prototyping:** Quick experimentation and proof-of-concept projects.
+- **Highly Customizable Solutions:** Benefit from Eleva's unopinionated architecture to tailor the framework using plugins and custom logic.
 
 ---
 
-## 8. Examples and Tutorials
+## 10. Examples and Tutorials
 
-For practical examples and tutorials, refer to the following guides:
+Explore these guides for real-world examples:
 
 - [Basic Counter Example](../examples/counter.md)
 - [Todo App Example](../examples/todo-app.md)
 - [Creating a Custom Plugin](../examples/custom-plugin.md)
 
-These guides provide step-by-step instructions and real-world usage scenarios.
+Interactive demos are also available on [CodePen](https://codepen.io/collection/dGGqWr) for you to experiment live.
 
 ---
 
-## 9. FAQ
+## 11. FAQ
 
-**Q: Is Eleva production-ready?**  
+**Q: Is Eleva production-ready?**
 _A:_ Not yet—Eleva is currently in alpha. While it's a powerful tool, expect changes until a stable release is announced.
 
-**Q: How do I report issues or request features?**  
+**Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
 
-**Q: Can I use Eleva with TypeScript?**  
+**Q: Can I use Eleva with TypeScript?**
 _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep your codebase strongly typed.
 
 ---
 
-## 10. Version Guide
+## 12. Troubleshooting & Migration Guidelines
 
-Eleva follows [Semantic Versioning (SemVer)](https://semver.org/):
+### Troubleshooting
 
-- **Major Version (X.0.0):**  
-  Breaking changes or major overhauls (e.g., `1.0.0` to `2.0.0`).
+- **Common Issues:**
 
-- **Minor Version (1.X.0):**  
-  New features in a backward-compatible manner (e.g., `1.1.0`).
-
-- **Patch Version (1.0.X):**  
-  Bug fixes and minor improvements (e.g., `1.0.1`).
-
-- **Pre-release Identifiers:**  
-  Suffixes like `-alpha`, `-beta`, or `-rc` indicate unstable versions (e.g., `1.0.0-alpha`).
+  - Check your console for error messages.
+  - Verify that the correct DOM element is passed to `mount()`.
+  - Ensure that component names and definitions are correct.
 
 ### Migration Guidelines
 
-When upgrading:
-
-- **Review Breaking Changes:** Consult the changelog for major updates.
-- **Check Deprecated Features:** Ensure your code doesn’t rely on removed features.
-- **Test Your Application:** Thoroughly test after upgrading to catch any issues early.
+- **Review Breaking Changes:** Always check the changelog when upgrading.
+- **Update Deprecated Features:** Adjust your code to remove any deprecated API usage.
+- **Thorough Testing:** Test your application after each upgrade to catch potential issues.
 
 ---
 
-## 11. Contributing
+## 13. API Reference
 
-Contributions are welcome! Whether you’re fixing bugs, adding features, or improving documentation, your input is invaluable. Please check out the [CONTRIBUTING](../CONTRIBUTING.md) file for detailed guidelines on how to get started.
+Detailed API documentation with parameter descriptions, return values, and usage examples can be found in the [docs](docs/index.md) folder.
+
+- **TemplateEngine:**  
+  `parse(template, data)` and `evaluate(expr, data)`
+
+- **Signal:**  
+  `new Signal(value)`, getter/setter for `signal.value`, and `signal.watch(fn)`
+
+- **Emitter:**  
+  Methods: `on(event, handler)`, `off(event, handler)`, and `emit(event, ...args)`
+
+- **Renderer:**  
+  Methods: `patchDOM(container, newHtml)`, `diff(oldParent, newParent)`, and `updateAttributes(oldEl, newEl)`
+
+- **Eleva (Core):**  
+  `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`
+
+> **Note:** In v1.2.0-alpha, the mounting context now includes an `emitter` property (instead of separate `emit` and `on` functions). Use `context.emitter.on(...)` and `context.emitter.emit(...)` for event handling.
 
 ---
 
-## 12. Changelog
+## 14. Contributing
+
+Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please checkout the [CONTRIBUTING](../CONTRIBUTING.md) file for detailed guidelines on how to get started.
+
+---
+
+## 15. Community & Support
+
+Join our community for support, discussions, and collaboration:
+
+- **GitHub Discussions:** [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
+- **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
+- **Chat:** (Optional: Add links to a Discord/Slack channel if available)
+
+---
+
+## 16. Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](../changelog.md).
 
+> **Latest Update (v1.2.0-alpha):**
+>
+> - Enhanced inline documentation and JSDoc comments throughout the codebase.
+> - Updated the mounting context to include an `emitter` property for simplified event handling.
+> - Minor refactoring and improved parameter descriptions in the core classes.
+
 ---
 
-## 13. License
+## 17. License
 
 Eleva is open-source and available under the [MIT License](../LICENSE).
 
 ---
 
-Thank you for exploring Eleva! I hope this documentation helps you build amazing, high-performance frontend applications using pure vanilla JavaScript. For further information and community support, please visit the [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions) page.
+Thank you for exploring Eleva! I hope this documentation helps you build amazing, high-performance frontend applications using pure vanilla JavaScript. For further information, interactive demos, and community support, please visit the [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions) page.

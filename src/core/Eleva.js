@@ -6,15 +6,27 @@ import { Emitter } from "../modules/Emitter.js";
 import { Renderer } from "../modules/Renderer.js";
 
 /**
+ * Defines the structure and behavior of a component.
  * @typedef {Object} ComponentDefinition
  * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
- *           A setup function that initializes the component state and returns an object or a promise that resolves to an object.
+ *           Optional setup function that initializes the component's reactive state and lifecycle.
+ *           Receives props and context as an argument and should return an object containing the component's state.
+ *           Can return either a synchronous object or a Promise that resolves to an object for async initialization.
+ *
  * @property {function(Object<string, any>): string} template
- *           A function that returns the HTML template string for the component.
+ *           Required function that defines the component's HTML structure.
+ *           Receives the merged context (props + setup data) and must return an HTML template string.
+ *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
+ *
  * @property {function(Object<string, any>): string} [style]
- *           An optional function that returns scoped CSS styles as a string.
+ *           Optional function that defines component-scoped CSS styles.
+ *           Receives the merged context and returns a CSS string that will be automatically scoped to the component.
+ *           Styles are injected into the component's container and only affect elements within it.
+ *
  * @property {Object<string, ComponentDefinition>} [children]
- *           An optional mapping of CSS selectors to child component definitions.
+ *           Optional object that defines nested child components.
+ *           Keys are CSS selectors that match elements in the template where child components should be mounted.
+ *           Values are ComponentDefinition objects that define the structure and behavior of each child component.
  */
 
 /**
@@ -30,15 +42,15 @@ export class Eleva {
    * @param {Object<string, any>} [config={}] - Optional configuration for the instance.
    */
   constructor(name, config = {}) {
-    /** @type {string} */
+    /** @type {string} The unique identifier name for this Eleva instance */
     this.name = name;
-    /** @type {Object<string, any>} */
+    /** @type {Object<string, any>} Optional configuration object for the Eleva instance */
     this.config = config;
-    /** @type {Object<string, ComponentDefinition>} */
+    /** @type {Object<string, ComponentDefinition>} Object storing registered component definitions by name */
     this._components = {};
-    /** @type {Array<Object>} */
+    /** @private {Array<Object>} Collection of installed plugin instances */
     this._plugins = [];
-    /** @private */
+    /** @private {string[]} Array of lifecycle hook names supported by the component */
     this._lifecycleHooks = [
       "onBeforeMount",
       "onMount",
@@ -46,9 +58,11 @@ export class Eleva {
       "onUpdate",
       "onUnmount",
     ];
-    /** @private {boolean} */
+    /** @private {boolean} Flag indicating if component is currently mounted */
     this._isMounted = false;
+    /** @private {Emitter} Instance of the event emitter for handling component events */
     this.emitter = new Emitter();
+    /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
     this.renderer = new Renderer();
   }
 
@@ -102,11 +116,27 @@ export class Eleva {
       throw new Error("Invalid component parameter.");
     }
 
+    /**
+     * Destructure the component definition to access core functionality.
+     * - setup: Optional function for component initialization and state management
+     * - template: Required function that returns the component's HTML structure
+     * - style: Optional function for component-scoped CSS styles
+     * - children: Optional object defining nested child components
+     */
     const { setup, template, style, children } = definition;
+
+    /**
+     * Creates the initial context object for the component instance.
+     * This context provides core functionality and will be merged with setup data.
+     * @type {Object<string, any>}
+     * @property {Object<string, any>} props - Component properties passed during mounting
+     * @property {Emitter} emitter - Event emitter instance for component event handling
+     * @property {function(any): Signal} signal - Factory function to create reactive Signal instances
+     * @property {Object<string, function(): void>} ...lifecycleHooks - Prepared lifecycle hook functions
+     */
     const context = {
       props,
-      emit: this.emitter.emit.bind(this.emitter),
-      on: this.emitter.on.bind(this.emitter),
+      emitter: this.emitter,
       signal: (v) => new Signal(v),
       ...this._prepareLifecycleHooks(),
     };
@@ -149,6 +179,11 @@ export class Eleva {
         }
       };
 
+      /**
+       * Sets up reactive watchers for all Signal instances in the component's data.
+       * When a Signal's value changes, the component will re-render to reflect the updates.
+       * Stores unsubscribe functions to clean up watchers when component unmounts.
+       */
       Object.values(data).forEach((val) => {
         if (val instanceof Signal) watcherUnsubscribers.push(val.watch(render));
       });

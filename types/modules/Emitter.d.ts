@@ -5,7 +5,7 @@
  * to communicate through custom events.
  */
 export class Emitter {
-    /** @type {Object.<string, Function[]>} */
+    /** @type {Object.<string, Function[]>} Storage for event handlers mapped by event name */
     events: {
         [x: string]: Function[];
     };

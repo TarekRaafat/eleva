@@ -36,15 +36,17 @@ In this tutorial, you'll build a simple counter application using Eleva. The cou
      template: (ctx) => `
        <div style="font-family: sans-serif; text-align: center; margin-top: 50px;">
          <h1>Counter Example</h1>
-         <p style="font-size: 2em;">${ctx.count}</p>
-         <button style="padding: 10px 20px; font-size: 1em;" @click="() => count++">Increment</button>
+         <p style="font-size: 2em;">${ctx.count.value}</p>
+         <button style="padding: 10px 20px; font-size: 1em;" @click="() => count.value++">Increment</button>
        </div>
      `,
    });
 
    // Mount the 'Counter' component to the #app element
-   app.mount("#app", "Counter");
+   app.mount(document.querySelector("#app"), "Counter");
    ```
+
+   Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/dPyNmqm?editors=1010)
 
 ## Running the Example
 

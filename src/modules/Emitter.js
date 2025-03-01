@@ -11,7 +11,7 @@ export class Emitter {
    * Creates a new Emitter instance.
    */
   constructor() {
-    /** @type {Object.<string, Function[]>} */
+    /** @type {Object.<string, Function[]>} Storage for event handlers mapped by event name */
     this.events = {};
   }
 

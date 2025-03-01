@@ -1,7 +1,6 @@
-# Eleva
+# Eleva 🚀
 
-**A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
-_Built with love for native JavaScript—because sometimes, less really is more!_ 😊
+Pure JavaScript, Pure Performance, Simply Elegant.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
@@ -10,12 +9,15 @@ _Built with love for native JavaScript—because sometimes, less really is more!
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 
+**A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
+_Built with love for native JavaScript—because sometimes, less really is more!_ 😊
+
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
 
-> **Stability Notice**: This is `v1.1.0-alpha` - APIs may change significantly until the stable release.  
+> **Stability Notice**: This is `v1.2.0-alpha` - APIs may change significantly until the stable release.  
 > Not recommended for production use yet. Follow the [versioning guide](#version-guide) for updates.
 
-**Version:** `1.1.0-alpha`
+**Version:** `1.2.0-alpha`
 
 Welcome to Eleva! This is my humble, experimental playground for a fresh approach to frontend development. Eleva was born out of my genuine passion for pure vanilla JavaScript—no frameworks, no bloat, just the power of native code. I hope you'll have fun exploring, testing, and contributing to make Eleva even better. 🚀
 
@@ -23,7 +25,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Table of Contents
 
-- [Eleva](#eleva)
+- [Eleva 🚀](#eleva-)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
@@ -127,9 +129,9 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (Alpha/Beta):** Early versions like `1.1.0-alpha` indicate the API is still evolving. Expect frequent updates and share your feedback!
+- **Pre-release Versions (Alpha/Beta):** Early versions like `1.2.0-alpha` indicate the API is still evolving. Expect frequent updates and share your feedback!
 - **Semantic Versioning:** Once stable, I’ll follow semantic versioning strictly to clearly communicate any breaking changes.
-- **Fresh Start:** This release (`1.1.0-alpha`) marks a significant update with new features and improvements.
+- **Fresh Start:** This release (`1.2.0-alpha`) marks a significant update with enhanced inline documentation, improved JSDoc annotations, and a refined mounting context that now includes an `emitter` property.
 
 ---
 
@@ -138,9 +140,9 @@ I believe in clear versioning that reflects the maturity of the project:
 I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 - **🔢 Major Version:** Breaking changes or major overhauls (e.g., from `1.0.0` to `2.0.0`).
-- **🔢 Minor Version:** New features in a backward-compatible manner (e.g., from `1.0.0` to `1.1.0`).
+- **🔢 Minor Version:** New features in a backward-compatible manner (e.g., from `1.1.0` to `1.2.0`).
 - **🔢 Patch Version:** Backward-compatible bug fixes and minor improvements (e.g., `1.0.1`).
-- **📌 Pre-release Identifiers:** Suffixes like `-alpha`, `-beta`, or `-rc` denote unstable releases (e.g., `1.1.0-alpha`).
+- **📌 Pre-release Identifiers:** Suffixes like `-alpha`, `-beta`, or `-rc` denote unstable releases (e.g., `1.2.0-alpha`).
 
 ---
 
@@ -226,8 +228,8 @@ app.component("HelloWorld", {
   template: ({ count }) => `
     <div>
       <h1>Hello, Eleva! 👋</h1>
-      <p>Count: ${count}</p>
-      <button @click="() => count++">Increment</button>
+      <p>Count: ${count.value}</p>
+      <button @click="() => count.value++">Increment</button>
     </div>
   `,
 });
@@ -235,6 +237,8 @@ app.component("HelloWorld", {
 // Mount the component to a DOM element (not a selector).
 app.mount(document.getElementById("app"), "HelloWorld");
 ```
+
+Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010)
 
 ### UMD Example
 
@@ -260,8 +264,8 @@ Include Eleva via a script tag and use the global variable:
         template: ({ count }) => `
           <div>
             <h1>Hello, Eleva! 👋</h1>
-            <p>Count: ${count}</p>
-            <button @click="() => count++">Increment</button>
+            <p>Count: ${count.value}</p>
+            <button @click="() => count.value++">Increment</button>
           </div>
         `,
       });
@@ -270,6 +274,8 @@ Include Eleva via a script tag and use the global variable:
   </body>
 </html>
 ```
+
+Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1010)
 
 ---
 
@@ -303,11 +309,11 @@ Include Eleva via a script tag and use the global variable:
 ### Renderer
 
 - **`patchDOM(container, newHtml)`**  
-  Efficiently update the DOM.
+  Efficiently updates the DOM.
 - **`diff(oldParent, newParent)`**  
-  Compare and update DOM trees.
+  Compares and updates DOM trees.
 - **`updateAttributes(oldEl, newEl)`**  
-  Sync element attributes.
+  Synchronizes element attributes.
 
 ### Eleva (Core)
 
@@ -319,7 +325,7 @@ Include Eleva via a script tag and use the global variable:
   Register a component.
 - **`.mount(container, compName, props)`**  
   Mount a component to the DOM.  
-  _Note:_ This method now expects a DOM element (not a CSS selector) and supports both global component names (strings) and direct component definitions (objects). It returns a Promise, ensuring consistent asynchronous handling.
+  _Note:_ The mounting context now includes an `emitter` property (the full event emitter instance) for simplified event handling. Use `context.emitter.on(...)` and `context.emitter.emit(...)` for event management.
 
 For detailed API documentation, please check the [docs](docs/index.md) folder.
 
@@ -348,7 +354,7 @@ I welcome developers to dive in and experiment with Eleva! Here’s how to get s
    npm run dev
    ```
 
-4. **Build for Production:**
+4. **Build for Production without TypeScript Declarations:**
 
    ```bash
    npm run build
@@ -359,6 +365,12 @@ I welcome developers to dive in and experiment with Eleva! Here’s how to get s
    ```bash
    npm run build:types
    npm run build:types:bundle
+   ```
+
+6. **Build for Production with TypeScript Declarations:**
+
+   ```bash
+   npm run build:all
    ```
 
 ---

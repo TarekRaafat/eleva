@@ -11,8 +11,10 @@ export class Signal {
      * @param {*} value - The initial value of the signal.
      */
     constructor(value: any);
-    _value: any;
-    _watchers: Set<any>;
+    /** @private {*} Internal storage for the signal's current value */
+    private _value;
+    /** @private {Set<function>} Collection of callback functions to be notified when value changes */
+    private _watchers;
     /**
      * Sets a new value for the signal and notifies all registered watchers if the value has changed.
      *
