@@ -605,11 +605,11 @@ This modular approach makes Eleva highly customizable.
 
 Explore these guides for real-world examples:
 
-- [Basic Counter Example](../examples/counter.md)
-- [Todo App Example](../examples/todo-app.md)
-- [Creating a Custom Plugin](../examples/custom-plugin.md)
+- [Basic Counter Example](https://github.com/TarekRaafat/eleva/blob/master/examples/counter.md)
+- [Todo App Example](https://github.com/TarekRaafat/eleva/blob/master/examples/todo-app.md)
+- [Creating a Custom Plugin](https://github.com/TarekRaafat/eleva/blob/master/examples/custom-plugin.md)
 
-Interactive demos are also available on [CodePen](https://codepen.io/collection/dGGqWr) for you to experiment live.
+Interactive demos are also available on Eleva's [CodePen Collection](https://codepen.io/collection/dGGqWr) for you to experiment live.
 
 ---
 
@@ -646,7 +646,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 
 ## 13. API Reference
 
-Detailed API documentation with parameter descriptions, return values, and usage examples can be found in the [docs](docs/index.md) folder.
+Detailed API documentation with parameter descriptions, return values, and usage examples can be found in the [docs](https://github.com/TarekRaafat/eleva/blob/master/docs/index.md) folder.
 
 - **TemplateEngine:**  
   `parse(template, data)` and `evaluate(expr, data)`
@@ -669,7 +669,7 @@ Detailed API documentation with parameter descriptions, return values, and usage
 
 ## 14. Contributing
 
-Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please checkout the [CONTRIBUTING](../CONTRIBUTING.md) file for detailed guidelines on how to get started.
+Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please checkout the [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md) file for detailed guidelines on how to get started.
 
 ---
 
@@ -684,7 +684,7 @@ Join our community for support, discussions, and collaboration:
 
 ## 16. Changelog
 
-For a detailed log of all changes and updates, please refer to the [Changelog](../changelog.md).
+For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/changelog.md).
 
 > **Latest Update (v1.2.0-alpha):**
 >
@@ -696,7 +696,7 @@ For a detailed log of all changes and updates, please refer to the [Changelog](.
 
 ## 17. License
 
-Eleva is open-source and available under the [MIT License](../LICENSE).
+Eleva is open-source and available under the [MIT License](https://github.com/TarekRaafat/eleva/blob/master/LICENSE).
 
 ---
 
