@@ -679,7 +679,6 @@ Join our community for support, discussions, and collaboration:
 
 - **GitHub Discussions:** [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
 - **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
-- **Chat:** (Optional: Add links to a Discord/Slack channel if available)
 
 ---
 
