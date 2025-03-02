@@ -165,7 +165,7 @@ app
   .then((instance) => console.log("Component mounted:", instance));
 ```
 
-For interactive demos, check out our [CodePen Example](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010).
+For interactive demos, check out the [CodePen Example](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010).
 
 ---
 
@@ -694,8 +694,9 @@ Contributions are welcome! Whether you're fixing bugs, adding features, or impro
 
 Join our community for support, discussions, and collaboration:
 
-- **GitHub Discussions:** [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
+- **GitHub Discussions:** For general questions or new ideas please start a discussion on [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
 - **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
+- **Stack Overflow:** For technical questions and support, please post your question on Stack Overflow using any of these tags [eleva](https://stackoverflow.com/questions/tagged/eleva), [eleva.js](https://stackoverflow.com/questions/tagged/eleva.js)
 
 ---
 
