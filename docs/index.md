@@ -28,10 +28,11 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
   - [1. Introduction](#1-introduction)
   - [2. Design Philosophy](#2-design-philosophy)
   - [3. Core Principles](#3-core-principles)
-  - [4. Getting Started](#4-getting-started)
+  - [4. Performance Benchmarks](#4-performance-benchmarks)
+  - [5. Getting Started](#5-getting-started)
     - [Installation](#installation)
     - [Quick Start Tutorial](#quick-start-tutorial)
-  - [5. Core Concepts](#5-core-concepts)
+  - [6. Core Concepts](#6-core-concepts)
     - [TemplateEngine](#templateengine)
     - [Template Interpolation](#template-interpolation)
     - [Setup Context vs. Event Context](#setup-context-vs-event-context)
@@ -46,28 +47,28 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
     - [Children Components \& Passing Props](#children-components--passing-props)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
-  - [6. Architecture \& Data Flow](#6-architecture--data-flow)
+  - [7. Architecture \& Data Flow](#7-architecture--data-flow)
     - [Key Components](#key-components)
     - [Data Flow Process](#data-flow-process)
     - [Visual Overview](#visual-overview)
     - [Benefits](#benefits)
-  - [7. Plugin System](#7-plugin-system)
+  - [8. Plugin System](#8-plugin-system)
     - [Creating a Plugin](#creating-a-plugin)
     - [Plugin Architecture](#plugin-architecture)
-  - [8. Debugging \& Developer Tools](#8-debugging--developer-tools)
-  - [9. Best Practices \& Use Cases](#9-best-practices--use-cases)
+  - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
+  - [10. Best Practices \& Use Cases](#10-best-practices--use-cases)
     - [Best Practices](#best-practices)
     - [Use Cases](#use-cases)
-  - [10. Examples and Tutorials](#10-examples-and-tutorials)
-  - [11. FAQ](#11-faq)
-  - [12. Troubleshooting \& Migration Guidelines](#12-troubleshooting--migration-guidelines)
+  - [11. Examples and Tutorials](#11-examples-and-tutorials)
+  - [12. FAQ](#12-faq)
+  - [13. Troubleshooting \& Migration Guidelines](#13-troubleshooting--migration-guidelines)
     - [Troubleshooting](#troubleshooting)
     - [Migration Guidelines](#migration-guidelines)
-  - [13. API Reference](#13-api-reference)
-  - [14. Contributing](#14-contributing)
-  - [15. Community \& Support](#15-community--support)
-  - [16. Changelog](#16-changelog)
-  - [17. License](#17-license)
+  - [14. API Reference](#14-api-reference)
+  - [15. Contributing](#15-contributing)
+  - [16. Community \& Support](#16-community--support)
+  - [17. Changelog](#17-changelog)
+  - [18. License](#18-license)
 
 ---
 
@@ -112,7 +113,24 @@ At the heart of Eleva are a few fundamental principles that guide its design and
 
 ---
 
-## 4. Getting Started
+## 4. Performance Benchmarks
+
+Preliminary benchmarks illustrate Eleva’s efficiency compared to popular frameworks:
+
+| **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
+| ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
+| **Eleva** (Direct DOM)        | **1.8**              | **10**                     | **0.018**                | **0.25**                   | **3.02 (Best)**                                 |
+| **React** (Virtual DOM)       | 42                   | 40                         | 0.020                    | 0.25                       | 20.57                                           |
+| **Vue** (Reactive State)      | 33                   | 35                         | 0.021                    | 3.10                       | 17.78                                           |
+| **Angular** (Two-way Binding) | 80                   | 100                        | 0.021                    | 0.25                       | 45.07 (Slowest)                                 |
+
+Detailed [Benchmark Metrics Report](https://github.com/TarekRaafat/eleva/blob/master/benchmark.md)
+
+> ⚠️ **Disclaimer:** Benchmarks are based on internal tests and may vary by project and environment.
+
+---
+
+## 5. Getting Started
 
 ### Installation
 
@@ -169,7 +187,7 @@ For interactive demos, check out the [CodePen Example](https://codepen.io/tarekr
 
 ---
 
-## 5. Core Concepts
+## 6. Core Concepts
 
 ### TemplateEngine
 
@@ -470,7 +488,7 @@ app.mount(document.getElementById("app"), "ComponentB");
 
 ---
 
-## 6. Architecture & Data Flow
+## 7. Architecture & Data Flow
 
 Eleva’s design emphasizes clarity, modularity, and performance. This section explains how data flows through the framework and how its key components interact, providing more clarity on the underlying mechanics.
 
@@ -558,7 +576,7 @@ Eleva’s design emphasizes clarity, modularity, and performance. This section e
 
 ---
 
-## 7. Plugin System
+## 8. Plugin System
 
 ### Creating a Plugin
 
@@ -589,7 +607,7 @@ This modular approach makes Eleva highly customizable.
 
 ---
 
-## 8. Debugging & Developer Tools
+## 9. Debugging & Developer Tools
 
 - **Console Logging:** Use `console.log` in lifecycle hooks and event handlers.
 - **Watchers:** Utilize signal watchers to monitor state changes.
@@ -599,7 +617,7 @@ This modular approach makes Eleva highly customizable.
 
 ---
 
-## 9. Best Practices & Use Cases
+## 10. Best Practices & Use Cases
 
 ### Best Practices
 
@@ -618,7 +636,7 @@ This modular approach makes Eleva highly customizable.
 
 ---
 
-## 10. Examples and Tutorials
+## 11. Examples and Tutorials
 
 Explore these guides for real-world examples:
 
@@ -630,7 +648,7 @@ Interactive demos are also available on Eleva's [CodePen Collection](https://cod
 
 ---
 
-## 11. FAQ
+## 12. FAQ
 
 **Q: Is Eleva production-ready?**
 _A:_ Not yet—Eleva is currently in alpha. While it's a powerful tool, expect changes until a stable release is announced.
@@ -643,7 +661,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 
 ---
 
-## 12. Troubleshooting & Migration Guidelines
+## 13. Troubleshooting & Migration Guidelines
 
 ### Troubleshooting
 
@@ -661,7 +679,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 
 ---
 
-## 13. API Reference
+## 14. API Reference
 
 Detailed API documentation with parameter descriptions, return values, and usage examples can be found in the [docs](https://github.com/TarekRaafat/eleva/blob/master/docs/index.md) folder.
 
@@ -684,13 +702,13 @@ Detailed API documentation with parameter descriptions, return values, and usage
 
 ---
 
-## 14. Contributing
+## 15. Contributing
 
 Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please checkout the [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md) file for detailed guidelines on how to get started.
 
 ---
 
-## 15. Community & Support
+## 16. Community & Support
 
 Join our community for support, discussions, and collaboration:
 
@@ -700,7 +718,7 @@ Join our community for support, discussions, and collaboration:
 
 ---
 
-## 16. Changelog
+## 17. Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/changelog.md).
 
@@ -712,7 +730,7 @@ For a detailed log of all changes and updates, please refer to the [Changelog](h
 
 ---
 
-## 17. License
+## 18. License
 
 Eleva is open-source and available under the [MIT License](https://github.com/TarekRaafat/eleva/blob/master/LICENSE).
 
