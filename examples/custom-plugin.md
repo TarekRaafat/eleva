@@ -66,7 +66,7 @@ If you're using a UMD build, adjust the script tags accordingly and ensure your 
      </head>
      <body>
        <div id="app"></div>
-       <script src="https://unpkg.com/eleva/dist/eleva.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
        <script src="myPlugin.js"></script>
        <script src="main.js"></script>
      </body>
