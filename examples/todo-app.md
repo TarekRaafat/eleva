@@ -218,8 +218,11 @@ const todoAppComponent = {
         justify-content: space-between;
         align-items: center;
         padding: 0.5rem;
-        border-bottom: 1px solid #ddd;
+        border-top: 1px solid #ddd;
       }
+      .todo-item:first-child {
+			  border-top: 0;
+		  }
       .todo-item.completed span {
         text-decoration: line-through;
         color: #888;
