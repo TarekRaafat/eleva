@@ -114,4 +114,4 @@ For projects where **speed, simplicity, and efficiency matter**, Eleva is a stro
 
 This benchmark was conducted under specific test conditions and may **not reflect** real-world performance in all scenarios. **Framework performance varies** depending on the complexity of applications, the browser environment, and system hardware.
 
-We encourage developers to **run their own benchmarks** and provide feedback for continuous improvement of this document.
+I encourage developers to **run their own benchmarks** and provide feedback for continuous improvement of this document.
