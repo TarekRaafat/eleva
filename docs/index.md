@@ -1,4 +1,4 @@
-# Eleva Documentation
+# Eleva.js - Pure JavaScript, Pure Performance
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
@@ -23,7 +23,7 @@ Welcome to the official documentation for **Eleva**, a minimalist, lightweight, 
 
 ## Table of Contents
 
-- [Eleva Documentation](#eleva-documentation)
+- [Eleva.js - Pure JavaScript, Pure Performance](#elevajs---pure-javascript-pure-performance)
   - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-introduction)
   - [2. Design Philosophy](#2-design-philosophy)
