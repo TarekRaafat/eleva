@@ -171,14 +171,16 @@ Eleva is crafted for performance:
 
 Preliminary benchmarks illustrate Eleva’s efficiency compared to popular frameworks:
 
-| Framework | Bundle Size (minified) | Initial Load Time | DOM Update Speed |
-| --------- | ---------------------- | ----------------- | ---------------- |
-| **Eleva** | **~4 KB**              | **~35 ms**        | **~2 ms**        |
-| React     | ~110 KB                | ~100 ms           | ~4 ms            |
-| Vue       | ~80 KB                 | ~80 ms            | ~3 ms            |
-| Angular   | ~500 KB                | ~250 ms           | ~6 ms            |
+| **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
+| ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
+| **Eleva** (Direct DOM)        | **1.8**              | **10**                     | **0.018**                | **0.25**                   | **3.02 (Best)**                                 |
+| **React** (Virtual DOM)       | 42                   | 40                         | 0.020                    | 0.25                       | 20.57                                           |
+| **Vue** (Reactive State)      | 33                   | 35                         | 0.021                    | 3.10                       | 17.78                                           |
+| **Angular** (Two-way Binding) | 80                   | 100                        | 0.021                    | 0.25                       | 45.07 (Slowest)                                 |
 
-> ⚠️ **Disclaimer:** Benchmarks are based on internal tests with a minimal counter component and may vary by project and environment.
+Detailed [Benchmark Metrics Report](benchmark.md)
+
+> ⚠️ **Disclaimer:** Benchmarks are based on internal tests and may vary by project and environment.
 
 ---
 
