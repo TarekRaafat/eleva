@@ -720,7 +720,7 @@ Join our community for support, discussions, and collaboration:
 
 ## 17. Changelog
 
-For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/changelog.md).
+For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).
 
 > **Latest Update (v1.2.0-alpha):**
 >

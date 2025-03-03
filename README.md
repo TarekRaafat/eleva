@@ -429,5 +429,5 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 [Documentation](/docs/index.md) |
 [Examples](/examples) |
-[Changelog](/changelog.md) |
+[Changelog](/CHANGELOG.md) |
 [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions)
