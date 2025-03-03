@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [v1.2.0-alpha] ✨ - 01-03-2025
+## v1.2.0-alpha ✨ (01-03-2025)
 
 ### ➕ Added
 
@@ -26,7 +26,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [v1.1.0-alpha] - 27-02-2025
+## v1.1.0-alpha (27-02-2025)
 
 ### ➕ Added
 
@@ -63,7 +63,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## [v1.0.0-alpha] - 26-02-2025
+## v1.0.0-alpha (26-02-2025)
 
 ### ➕ Added
 
