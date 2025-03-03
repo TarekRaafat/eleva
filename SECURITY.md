@@ -1,4 +1,4 @@
-# Security Policy for Eleva Framework
+# Security Policy for Eleva
 
 ## Overview
 
