@@ -6,7 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.0-alpha ✨ (01-03-2025)
+## v1.2.1-alpha ✨ (04-03-2025)
+
+### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+### 🎛️ Changed
+
+- _N/A_ – No changes in this release.
+
+### 🔧 Fixed
+
+- **Package.json File:**
+  - Fixed the `types` path.
+
+---
+
+## v1.2.0-alpha (01-03-2025)
 
 ### ➕ Added
 
@@ -21,6 +38,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - The component mounting context now includes the entire `emitter` instance instead of exposing separate `emit` and `on` functions. This change simplifies event handling in component setup.
 - **Minor Code Refactoring & Documentation Enhancements**
   - Formatting and comment improvements across the codebase for better readability and maintainability.
+
+### 🔧 Fixed
+
+- _N/A_ – No bug fixes in this release.
 
 > **Note:** These changes are internal improvements and documentation enhancements.
 
