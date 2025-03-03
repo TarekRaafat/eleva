@@ -6,7 +6,7 @@
   "main": "dist/eleva.js",
   "module": "dist/eleva.esm.js",
   "unpkg": "dist/eleva.min.js",
-  "types": "dust/eleva.d.ts",
+  "types": "dist/eleva.d.ts",
   "exports": {
     ".": {
       "require": "./dist/eleva.js",
