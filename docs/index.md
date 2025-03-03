@@ -124,7 +124,7 @@ Preliminary benchmarks illustrate Eleva’s efficiency compared to popular frame
 | **Vue** (Reactive State)      | 33                   | 35                         | 0.021                    | 3.10                       | 17.78                                           |
 | **Angular** (Two-way Binding) | 80                   | 100                        | 0.021                    | 0.25                       | 45.07 (Slowest)                                 |
 
-Detailed [Benchmark Metrics Report](https://github.com/TarekRaafat/eleva/blob/master/benchmark.md)
+Detailed [Benchmark Metrics Report](https://github.com/TarekRaafat/eleva/blob/master/BENCHMARK.md)
 
 > ⚠️ **Disclaimer:** Benchmarks are based on internal tests and may vary by project and environment.
 
