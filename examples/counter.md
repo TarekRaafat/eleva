@@ -15,7 +15,7 @@ In this tutorial, you'll build a simple counter application using Eleva. The cou
      </head>
      <body>
        <div id="app"></div>
-       <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
        <script src="counter.js"></script>
      </body>
    </html>

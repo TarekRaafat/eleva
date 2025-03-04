@@ -48,7 +48,7 @@ The application is built with Eleva, a lightweight frontend runtime framework in
      <body>
        <div id="app"></div>
        <!-- Load the minified UMD build of Eleva from CDN -->
-       <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
        <!-- Load your Todo App code -->
        <script src="todo-app.js"></script>
      </body>
