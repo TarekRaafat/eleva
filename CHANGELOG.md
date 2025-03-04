@@ -6,7 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.1-alpha ✨ (04-03-2025)
+## v1.2.2-alpha ✨ (04-03-2025)
+
+### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+### 🎛️ Changed
+
+- _N/A_ – No changes in this release.
+
+### 🔧 Fixed
+
+- **README, DOCS, and Examples:**
+  - Fixed the `jsDelivr` CDN URLs.
+
+---
+
+## v1.2.1-alpha (04-03-2025)
 
 ### ➕ Added
 
