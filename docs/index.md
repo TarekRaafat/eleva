@@ -724,11 +724,9 @@ Join our community for support, discussions, and collaboration:
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).
 
-> **Latest Update (v1.2.0-alpha):**
+> **Latest Update (v1.2.2-alpha):**
 >
-> - Enhanced inline documentation and JSDoc comments throughout the codebase.
-> - Updated the mounting context to include an `emitter` property for simplified event handling.
-> - Minor refactoring and improved parameter descriptions in the core classes.
+> - Documentation Updates
 
 ---
 

@@ -24,10 +24,10 @@ _Built with love for native JavaScript—because sometimes, less really is more!
 
 <!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
 
-> **Stability Notice**: This is `v1.2.0-alpha` - APIs may change significantly until the stable release.  
+> **Stability Notice**: This is `v1.2.2-alpha` - APIs may change significantly until the stable release.  
 > Not recommended for production use yet. Follow the [versioning guide](#version-guide) for updates.
 
-**Version:** `1.2.0-alpha`
+**Version:** `1.2.2-alpha`
 
 Welcome to Eleva! This is my humble, experimental playground for a fresh approach to frontend development. Eleva was born out of my genuine passion for pure vanilla JavaScript—no frameworks, no bloat, just the power of native code. I hope you'll have fun exploring, testing, and contributing to make Eleva even better. 🚀
 
