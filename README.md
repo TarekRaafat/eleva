@@ -267,7 +267,7 @@ Include Eleva via a script tag and use the global variable:
   </head>
   <body>
     <div id="app"></div>
-    <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
     <script>
       const app = new Eleva("MyApp");
       app.component("HelloWorld", {
