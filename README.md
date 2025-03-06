@@ -23,6 +23,7 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 
 <br>
 <br>
+<br>
 
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
