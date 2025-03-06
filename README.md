@@ -3,9 +3,10 @@
 Pure JavaScript, Pure Performance, Simply Elegant.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
 ![100% Javascript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
-![Zero Dependencies](https://img.shields.io/badge/Dependencies-0-green.svg)
+![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 
@@ -13,10 +14,8 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 
 <p align="center">
-  <img src="./docs/imgs/Eleva Logo.png" alt="Eleva Logo" width="50%">
+  <a href="https://github.com/TarekRaafat/eleva"><img src="./docs/imgs/Eleva Logo.png" alt="Eleva Logo" width="50%"></a>
 </p>
-
-<br>
 
 <p align="center">
   <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="Eleva - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
