@@ -12,7 +12,7 @@
 <br>
 
 <p align="center">
-  <a href="https://tarekraafat.github.io/eleva/"><img src="./imgs/Eleva Logo.png" alt="Eleva Logo" width="50%"></a>
+  <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/Eleva Logo.png" alt="Eleva Logo" width="50%"></a>
 </p>
 
 <p align="center">
