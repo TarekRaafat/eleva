@@ -541,6 +541,7 @@ Eleva’s design emphasizes clarity, modularity, and performance. This section e
    - The Renderer diffs the new HTML against the current DOM and applies only the necessary changes.
 
 4. **Events:**
+
    - Eleva binds event listeners (e.g., `@click`) during rendering.
    - When an event occurs, the handler is executed with the current state and event details.
    - Components can also emit custom events via the Emitter for cross-component communication.
