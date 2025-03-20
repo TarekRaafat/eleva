@@ -1,4 +1,4 @@
-# Eleva 🚀
+# Eleva.js 🚀
 
 Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -9,6 +9,7 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
+[![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva)
 
 <br>
 <br>
@@ -41,7 +42,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Table of Contents
 
-- [Eleva 🚀](#eleva-)
+- [Eleva.js 🚀](#elevajs-)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
