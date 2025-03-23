@@ -74,7 +74,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Introduction
 
-Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy libraries to build amazing user interfaces—sometimes, the simplest approach is the most powerful.
+Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy frameworks or libraries to build amazing user interfaces—sometimes, the simplest approach is the most powerful.
 
 **My Inspiration:**  
 The idea behind Eleva comes from a deep appreciation for native JavaScript. I wanted to create a tool that stays true to the language without introducing new syntax or complexity, making it easy to integrate into your projects.
@@ -90,7 +90,7 @@ The idea behind Eleva comes from a deep appreciation for native JavaScript. I wa
 
 ## Design Philosophy
 
-**Eleva is an unopinionated library.**
+**Eleva is an unopinionated framework.**
 
 Unlike many frameworks that enforce a specific project structure or coding paradigm, Eleva provides a minimal core with a flexible plugin system. This means:
 
@@ -107,7 +107,7 @@ This unopinionated approach makes Eleva versatile and ideal for developers who w
 
 Eleva is built with meticulous attention to detail and a deep passion for pure vanilla JavaScript. Every aspect of its design and architecture is handcrafted with the developer in mind. This makes Eleva not only innovative but also a solid foundation for your projects.
 
-- **🎨 Craftsmanship:** Every line of code is written with care, keeping the library lightweight, efficient, and easy to understand.
+- **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-Centric:** Its intuitive API and minimal core mean you spend less time wrestling with the framework and more time building your application.
 - **🌟 Innovative & Fresh:** Stick to pure vanilla JavaScript and avoid unnecessary abstractions.
 - **🏗️ Solid & Reliable:** Focused on performance and modularity, Eleva scales with your project’s needs.
