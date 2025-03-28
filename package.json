@@ -10,7 +10,8 @@
   "exports": {
     ".": {
       "require": "./dist/eleva.js",
-      "import": "./dist/eleva.esm.js"
+      "import": "./dist/eleva.esm.js",
+      "types": "./dist/eleva.d.ts"
     }
   },
   "scripts": {
@@ -21,6 +22,7 @@
     "build:all": "npm run clean && npm run build && npm run build:types && npm run build:types:bundle",
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:watch": "jest --watch",
     "codecov": "npx codecov",
     "lint": "eslint src/**/*.js",
     "size": "size-limit",
@@ -74,19 +76,51 @@
     }
   ],
   "keywords": [
-    "modern",
-    "frontend",
-    "framework",
-    "lightweight",
-    "fast",
-    "ui",
-    "components",
-    "speed",
-    "performance",
+    "modern javascript framework",
+    "lightweight JavaScript framework",
+    "lightweight JS framework",
+    "frontend performance optimization",
+    "frontend performance",
+    "performance optimization",
+    "tiny footprint",
+    "minimal framework",
+    "fast framework",
+    "highly performant",
+    "lightweight framework",
+    "frontend optimization",
+    "small bundle size",
+    "tree-shakable",
+    "ui components",
+    "vanilla JavaScript",
     "vanilla-js",
-    "frontend-runtime",
-    "framework-runtime",
-    "web-components"
+    "vanilla framework",
+    "vanilla JavaScript framework",
+    "signal-based reactivity",
+    "reactivity",
+    "frontend runtime",
+    "runtime framework",
+    "web components",
+    "javascript framework",
+    "frontend framework",
+    "direct DOM",
+    "high performance",
+    "open source",
+    "modular",
+    "developer friendly",
+    "efficient",
+    "scalable",
+    "pure JavaScript",
+    "minimalist framework",
+    "high-speed rendering",
+    "unopinionated",
+    "typescript",
+    "typescript support",
+    "single-page applications",
+    "UI library",
+    "web development",
+    "web development framework",
+    "web development tools",
+    "micro frontends"
   ],
   "author": {
     "name": "Tarek Raafat",
@@ -94,7 +128,7 @@
     "url": "https://www.tarekraafat.com"
   },
   "license": "MIT",
-  "homepage": "https://tarekraafat.github.io/eleva",
+  "homepage": "https://elevajs.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/TarekRaafat/eleva.git"
@@ -106,7 +140,10 @@
   "directories": {
     "doc": "docs",
     "example": "examples",
-    "test": "test"
+    "test": "test",
+    "dist": "dist",
+    "src": "src",
+    "types": "types"
   },
   "files": [
     "dist",
@@ -114,8 +151,21 @@
     "src"
   ],
   "sideEffects": false,
-  "funding": {
-    "type": "individual",
-    "url": "https://github.com/sponsors/TarekRaafat"
-  }
+  "funding": [
+    {
+      "type": "github",
+      "url": "https://github.com/sponsors/TarekRaafat"
+    },
+    {
+      "type": "buymeacoffee",
+      "url": "https://www.buymeacoffee.com/tarekraafat"
+    }
+  ],
+  "browserslist": [
+    "> 0.5%",
+    "last 2 versions",
+    "not dead",
+    "not op_mini all",
+    "not ie 11"
+  ]
 }
