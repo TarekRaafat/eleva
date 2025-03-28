@@ -16,4 +16,4 @@ node_modules
 .env
 
 # Ignore coverage reports
-coverage/
+coverage
