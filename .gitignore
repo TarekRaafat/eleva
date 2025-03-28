@@ -1,6 +1,9 @@
 # Experimentation Lab
 .exp
 plugins
+docs/index.html
+docs/js
+docs/styles
 
 # Dependencies
 node_modules
@@ -8,3 +11,6 @@ node_modules
 # Cleanup
 .DS_Store
 .vscode
+
+# Environment variables
+.env

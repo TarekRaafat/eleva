@@ -18,33 +18,59 @@
     "build": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "build:types:bundle": "rollup -c rollup.dts.config.js",
-    "build:all": "npm run build && npm run build:types && npm run build:types:bundle",
+    "build:all": "npm run clean && npm run build && npm run build:types && npm run build:types:bundle",
     "test": "jest",
+    "test:coverage": "jest --coverage",
+    "codecov": "npx codecov",
     "lint": "eslint src/**/*.js",
     "size": "size-limit",
-    "prepublishOnly": "npm run build && npm run build:types && npm run build:types:bundle"
+    "clean": "rimraf dist types",
+    "prepublishOnly": "npm run lint && npm run test && npm run build:all",
+    "prepare": "npm run build:all"
+  },
+  "engines": {
+    "node": ">=16"
   },
   "devDependencies": {
-    "@babel/core": "^7.22.1",
-    "@babel/preset-env": "^7.22.4",
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@codecov/rollup-plugin": "^1.9.0",
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^28.0.2",
     "@rollup/plugin-node-resolve": "^16.0.0",
     "@rollup/plugin-terser": "^0.4.4",
     "@size-limit/preset-app": "^11.2.0",
+    "babel-jest": "^29.7.0",
     "eslint": "^9.0.0",
+    "eslint-plugin-prettier": "^5.2.5",
+    "husky": "^9.1.7",
     "jest": "^29.6.1",
+    "jest-environment-jsdom": "^29.7.0",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
     "rollup": "^4.34.8",
     "rollup-plugin-dts": "^6.1.1",
     "size-limit": "^11.2.0",
     "typescript": "^5.1.6"
+  },
+  "lint-staged": {
+    "src/**/*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "size-limit": [
     {
       "limit": "5 kB",
       "path": "dist/eleva.min.js",
       "name": "eleva",
-      "brotli": false
+      "brotli": true
     }
   ],
   "keywords": [
@@ -56,7 +82,11 @@
     "ui",
     "components",
     "speed",
-    "performance"
+    "performance",
+    "vanilla-js",
+    "frontend-runtime",
+    "framework-runtime",
+    "web-components"
   ],
   "author": {
     "name": "Tarek Raafat",
@@ -83,5 +113,9 @@
     "types",
     "src"
   ],
-  "sideEffects": false
+  "sideEffects": false,
+  "funding": {
+    "type": "individual",
+    "url": "https://github.com/sponsors/TarekRaafat"
+  }
 }

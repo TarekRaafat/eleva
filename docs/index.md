@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
 ![100% Javascript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
 ![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)
+[![Coverage Status](https://codecov.io/gh/TarekRaafat/eleva/branch/main/graph/badge.svg)](https://codecov.io/gh/TarekRaafat/eleva)
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva)
