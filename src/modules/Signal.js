@@ -17,6 +17,8 @@ export class Signal {
     this._value = value;
     /** @private {Set<function>} Collection of callback functions to be notified when value changes */
     this._watchers = new Set();
+    /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
+    this._pending = false;
   }
 
   /**
@@ -36,7 +38,7 @@ export class Signal {
   set value(newVal) {
     if (newVal !== this._value) {
       this._value = newVal;
-      this._watchers.forEach((fn) => fn(newVal));
+      this._notifyWatchers();
     }
   }
 
@@ -49,5 +51,23 @@ export class Signal {
   watch(fn) {
     this._watchers.add(fn);
     return () => this._watchers.delete(fn);
+  }
+
+  /**
+   * Notifies all registered watchers of a value change using microtask scheduling.
+   * Uses a pending flag to batch multiple synchronous updates into a single notification.
+   * All watcher callbacks receive the current value when executed.
+   *
+   * @private
+   * @returns {void}
+   */
+  _notifyWatchers() {
+    if (!this._pending) {
+      this._pending = true;
+      queueMicrotask(() => {
+        this._pending = false;
+        this._watchers.forEach((fn) => fn(this._value));
+      });
+    }
   }
 }

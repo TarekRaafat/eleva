@@ -26,9 +26,16 @@ export class Renderer {
    * @param {HTMLElement} newParent - The new DOM element.
    */
   diff(oldParent, newParent) {
-    const oldNodes = Array.from(oldParent.childNodes);
-    const newNodes = Array.from(newParent.childNodes);
+    // Fast path for identical nodes
+    if (oldParent.isEqualNode(newParent)) return;
+
+    const oldNodes =
+      oldParent && oldParent.childNodes ? Array.from(oldParent.childNodes) : [];
+    const newNodes =
+      newParent && newParent.childNodes ? Array.from(newParent.childNodes) : [];
+
     const max = Math.max(oldNodes.length, newNodes.length);
+
     for (let i = 0; i < max; i++) {
       const oldNode = oldNodes[i];
       const newNode = newNodes[i];

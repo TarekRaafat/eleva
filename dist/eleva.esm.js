@@ -13,6 +13,7 @@ class TemplateEngine {
    * @returns {string} The resulting string with evaluated values.
    */
   static parse(template, data) {
+    if (!template.trim()) return "";
     return template.replace(/\{\{\s*(.*?)\s*\}\}/g, (_, expr) => {
       const value = this.evaluate(expr, data);
       return value === undefined ? "" : value;
@@ -28,9 +29,10 @@ class TemplateEngine {
    */
   static evaluate(expr, data) {
     try {
+      if (!expr.trim()) return "";
       const keys = Object.keys(data);
       const values = Object.values(data);
-      const result = new Function(...keys, `return ${expr}`)(...values);
+      const result = new Function(...keys, `try { return ${expr}; } catch (e) { return ""; }`)(...values);
       return result === undefined ? "" : result;
     } catch (error) {
       console.error(`Template evaluation error:`, {
@@ -60,6 +62,8 @@ class Signal {
     this._value = value;
     /** @private {Set<function>} Collection of callback functions to be notified when value changes */
     this._watchers = new Set();
+    /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
+    this._pending = false;
   }
 
   /**
@@ -79,7 +83,7 @@ class Signal {
   set value(newVal) {
     if (newVal !== this._value) {
       this._value = newVal;
-      this._watchers.forEach(fn => fn(newVal));
+      this._notifyWatchers();
     }
   }
 
@@ -92,6 +96,24 @@ class Signal {
   watch(fn) {
     this._watchers.add(fn);
     return () => this._watchers.delete(fn);
+  }
+
+  /**
+   * Notifies all registered watchers of a value change using microtask scheduling.
+   * Uses a pending flag to batch multiple synchronous updates into a single notification.
+   * All watcher callbacks receive the current value when executed.
+   *
+   * @private
+   * @returns {void}
+   */
+  _notifyWatchers() {
+    if (!this._pending) {
+      this._pending = true;
+      queueMicrotask(() => {
+        this._pending = false;
+        this._watchers.forEach(fn => fn(this._value));
+      });
+    }
   }
 }
 
@@ -169,8 +191,10 @@ class Renderer {
    * @param {HTMLElement} newParent - The new DOM element.
    */
   diff(oldParent, newParent) {
-    const oldNodes = Array.from(oldParent.childNodes);
-    const newNodes = Array.from(newParent.childNodes);
+    // Fast path for identical nodes
+    if (oldParent.isEqualNode(newParent)) return;
+    const oldNodes = oldParent && oldParent.childNodes ? Array.from(oldParent.childNodes) : [];
+    const newNodes = newParent && newParent.childNodes ? Array.from(newParent.childNodes) : [];
     const max = Math.max(oldNodes.length, newNodes.length);
     for (let i = 0; i < max; i++) {
       const oldNode = oldNodes[i];
@@ -389,6 +413,11 @@ class Eleva {
     };
 
     /**
+     * Use a local flag so each component instance tracks its own mounted state.
+     */
+    let isMounted = false;
+
+    /**
      * Processes the mounting of the component.
      *
      * @param {Object<string, any>} data - Data returned from the component's setup function.
@@ -401,6 +430,7 @@ class Eleva {
       };
       const watcherUnsubscribers = [];
       const childInstances = [];
+      const cleanupListeners = [];
       if (!this._isMounted) {
         mergedContext.onBeforeMount && mergedContext.onBeforeMount();
       } else {
@@ -414,12 +444,12 @@ class Eleva {
       const render = () => {
         const newHtml = TemplateEngine.parse(template(mergedContext), mergedContext);
         this.renderer.patchDOM(container, newHtml);
-        this._processEvents(container, mergedContext);
+        this._processEvents(container, mergedContext, cleanupListeners);
         this._injectStyles(container, compName, style, mergedContext);
         this._mountChildren(container, children, childInstances);
-        if (!this._isMounted) {
+        if (!isMounted) {
           mergedContext.onMount && mergedContext.onMount();
-          this._isMounted = true;
+          isMounted = true;
         } else {
           mergedContext.onUpdate && mergedContext.onUpdate();
         }
@@ -438,12 +468,13 @@ class Eleva {
         container,
         data: mergedContext,
         /**
-         * Unmounts the component, cleaning up watchers, child components, and clearing the container.
+         * Unmounts the component, cleaning up watchers and listeners, child components, and clearing the container.
          *
          * @returns {void}
          */
         unmount: () => {
           watcherUnsubscribers.forEach(fn => fn());
+          cleanupListeners.forEach(fn => fn());
           childInstances.forEach(child => child.unmount());
           mergedContext.onUnmount && mergedContext.onUnmount();
           container.innerHTML = "";
@@ -470,12 +501,14 @@ class Eleva {
 
   /**
    * Processes DOM elements for event binding based on attributes starting with "@".
+   * Tracks listeners for cleanup during unmount.
    *
    * @param {HTMLElement} container - The container element in which to search for events.
    * @param {Object<string, any>} context - The current context containing event handler definitions.
+   * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
    * @private
    */
-  _processEvents(container, context) {
+  _processEvents(container, context, cleanupListeners) {
     container.querySelectorAll("*").forEach(el => {
       [...el.attributes].forEach(({
         name,
@@ -487,6 +520,7 @@ class Eleva {
           if (typeof handler === "function") {
             el.addEventListener(event, handler);
             el.removeAttribute(name);
+            cleanupListeners.push(() => el.removeEventListener(event, handler));
           }
         }
       });

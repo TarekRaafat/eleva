@@ -142,6 +142,11 @@ export class Eleva {
     };
 
     /**
+     * Use a local flag so each component instance tracks its own mounted state.
+     */
+    let isMounted = false;
+
+    /**
      * Processes the mounting of the component.
      *
      * @param {Object<string, any>} data - Data returned from the component's setup function.
@@ -151,8 +156,9 @@ export class Eleva {
       const mergedContext = { ...context, ...data };
       const watcherUnsubscribers = [];
       const childInstances = [];
+      const cleanupListeners = [];
 
-      if (!this._isMounted) {
+      if (!this.isMounted) {
         mergedContext.onBeforeMount && mergedContext.onBeforeMount();
       } else {
         mergedContext.onBeforeUpdate && mergedContext.onBeforeUpdate();
@@ -168,12 +174,12 @@ export class Eleva {
           mergedContext
         );
         this.renderer.patchDOM(container, newHtml);
-        this._processEvents(container, mergedContext);
+        this._processEvents(container, mergedContext, cleanupListeners);
         this._injectStyles(container, compName, style, mergedContext);
         this._mountChildren(container, children, childInstances);
-        if (!this._isMounted) {
+        if (!isMounted) {
           mergedContext.onMount && mergedContext.onMount();
-          this._isMounted = true;
+          isMounted = true;
         } else {
           mergedContext.onUpdate && mergedContext.onUpdate();
         }
@@ -194,12 +200,13 @@ export class Eleva {
         container,
         data: mergedContext,
         /**
-         * Unmounts the component, cleaning up watchers, child components, and clearing the container.
+         * Unmounts the component, cleaning up watchers and listeners, child components, and clearing the container.
          *
          * @returns {void}
          */
         unmount: () => {
           watcherUnsubscribers.forEach((fn) => fn());
+          cleanupListeners.forEach((fn) => fn());
           childInstances.forEach((child) => child.unmount());
           mergedContext.onUnmount && mergedContext.onUnmount();
           container.innerHTML = "";
@@ -228,12 +235,14 @@ export class Eleva {
 
   /**
    * Processes DOM elements for event binding based on attributes starting with "@".
+   * Tracks listeners for cleanup during unmount.
    *
    * @param {HTMLElement} container - The container element in which to search for events.
    * @param {Object<string, any>} context - The current context containing event handler definitions.
+   * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
    * @private
    */
-  _processEvents(container, context) {
+  _processEvents(container, context, cleanupListeners) {
     container.querySelectorAll("*").forEach((el) => {
       [...el.attributes].forEach(({ name, value }) => {
         if (name.startsWith("@")) {
@@ -242,6 +251,7 @@ export class Eleva {
           if (typeof handler === "function") {
             el.addEventListener(event, handler);
             el.removeAttribute(name);
+            cleanupListeners.push(() => el.removeEventListener(event, handler));
           }
         }
       });

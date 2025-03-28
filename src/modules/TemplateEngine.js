@@ -15,6 +15,8 @@ export class TemplateEngine {
    * @returns {string} The resulting string with evaluated values.
    */
   static parse(template, data) {
+    if (!template.trim()) return "";
+
     return template.replace(/\{\{\s*(.*?)\s*\}\}/g, (_, expr) => {
       const value = this.evaluate(expr, data);
       return value === undefined ? "" : value;
@@ -30,6 +32,8 @@ export class TemplateEngine {
    */
   static evaluate(expr, data) {
     try {
+      if (!expr.trim()) return "";
+
       const keys = Object.keys(data);
       const values = Object.values(data);
       const result = new Function(...keys, `return ${expr}`)(...values);

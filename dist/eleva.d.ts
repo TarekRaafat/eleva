@@ -95,9 +95,11 @@ declare class Eleva {
     private _prepareLifecycleHooks;
     /**
      * Processes DOM elements for event binding based on attributes starting with "@".
+     * Tracks listeners for cleanup during unmount.
      *
      * @param {HTMLElement} container - The container element in which to search for events.
      * @param {Object<string, any>} context - The current context containing event handler definitions.
+     * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
      * @private
      */
     private _processEvents;
