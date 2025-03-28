@@ -32,7 +32,7 @@ class TemplateEngine {
       if (!expr.trim()) return "";
       const keys = Object.keys(data);
       const values = Object.values(data);
-      const result = new Function(...keys, `try { return ${expr}; } catch (e) { return ""; }`)(...values);
+      const result = new Function(...keys, `return ${expr}`)(...values);
       return result === undefined ? "" : result;
     } catch (error) {
       console.error(`Template evaluation error:`, {
@@ -431,7 +431,7 @@ class Eleva {
       const watcherUnsubscribers = [];
       const childInstances = [];
       const cleanupListeners = [];
-      if (!this._isMounted) {
+      if (!this.isMounted) {
         mergedContext.onBeforeMount && mergedContext.onBeforeMount();
       } else {
         mergedContext.onBeforeUpdate && mergedContext.onBeforeUpdate();
