@@ -28,6 +28,19 @@ describe("Renderer", () => {
     expect(oldEl.getAttribute("data-test")).toBe("new");
   });
 
+  test("updateAttributes updates element properties not in attributeToPropertyMap", () => {
+    const oldEl = document.createElement("div");
+    oldEl.id = "oldValue"; // Set a valid DOM property directly.
+  
+    const newEl = document.createElement("div");
+    newEl.setAttribute("id", "newValue"); // Add the attribute to the new element.
+  
+    renderer.updateAttributes(oldEl, newEl);
+  
+    // Verify that the DOM property on the old element is updated.
+    expect(oldEl.id).toBe("newValue");
+  });
+
   test("diff method replaces differing nodes", () => {
     container.innerHTML = `<div key="1">Old</div>`;
 
