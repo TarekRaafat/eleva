@@ -40,7 +40,7 @@
     "prepare": "npm run build:all"
   },
   "engines": {
-    "node": ">=16"
+    "node": ">=16.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.10",
