@@ -24,7 +24,6 @@ describe("TemplateEngine", () => {
 
 describe("TemplateEngine error handling", () => {
   test("should handle invalid templates", () => {
-    // Test for lines 42-47
     const engine = new TemplateEngine();
     const invalidTemplate = "{invalid}";
     expect(() => engine.compile(invalidTemplate)).toThrow();

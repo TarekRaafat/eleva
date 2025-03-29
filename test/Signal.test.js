@@ -44,7 +44,6 @@ describe("Signal", () => {
 
 describe("Signal edge cases", () => {
   test("should handle null listeners", () => {
-    // Test for line 65 branch
     const signal = new Signal();
     signal.listeners = null;
     expect(() => signal.emit("test")).toThrow();
