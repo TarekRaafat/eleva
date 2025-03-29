@@ -84,6 +84,80 @@ describe("Eleva (Core)", () => {
     expect(clickHandler).toHaveBeenCalledTimes(1);
   });
 
+  test("throws error if compName is invalid in mount", () => {
+    expect(() => app.mount(appContainer, 123)).toThrow("Invalid component parameter.");
+  });
+
+  test("handles missing setup function in component definition", async () => {
+    const component = {
+      template: () => `<div>No Setup</div>`,
+    };
+    app.component("no-setup-comp", component);
+
+    const instance = await app.mount(appContainer, "no-setup-comp");
+
+    expect(instance).toBeTruthy();
+    expect(appContainer.innerHTML).toContain("No Setup");
+  });
+
+  test("unmounts and remounts child components with updated props", async () => {
+    const ChildComponent = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>Child: ${ctx.title}</div>`,
+    };
+  
+    const ParentComponent = {
+      template: () => `
+        <div>
+          <child-comp eleva-prop-title="Initial Title"></child-comp>
+        </div>
+      `,
+      children: {
+        "child-comp": ChildComponent,
+      },
+    };
+  
+    app.component("parent-comp", ParentComponent);
+    app.component("child-comp", ChildComponent);
+  
+    // Mount the parent component with the initial child
+    const instance = await app.mount(appContainer, "parent-comp");
+    expect(appContainer.innerHTML).toContain("Child: Initial Title");
+  
+    // Update the child component's props
+    ParentComponent.template = () => `
+      <div>
+        <child-comp eleva-prop-title="Updated Title"></child-comp>
+      </div>
+    `;
+    await app.mount(appContainer, "parent-comp");
+  
+    // Verify the child component is unmounted and remounted with updated props
+    expect(appContainer.innerHTML).toContain("Child: Updated Title");
+    expect(appContainer.innerHTML).not.toContain("Child: Initial Title");
+  });
+
+  test("mounts child components with props extracted from attributes", async () => {
+    const ChildComponent = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>${ctx.title}</div>`,
+    };
+    const ParentComponent = {
+      template: () => `<div><child-comp eleva-prop-title="Hello"></child-comp></div>`,
+      children: {
+        "child-comp": ChildComponent,
+      },
+    };
+
+    app.component("parent-comp", ParentComponent);
+    app.component("child-comp", ChildComponent);
+
+    const instance = await app.mount(appContainer, "parent-comp");
+
+    expect(instance).toBeTruthy();
+    expect(appContainer.innerHTML).toContain("Hello");
+  });
+
   test("plugin integration extends Eleva instance", () => {
     const myPlugin = {
       install(eleva, options) {
