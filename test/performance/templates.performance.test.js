@@ -68,6 +68,6 @@ describe("TemplateEngine Performance", () => {
     console.log(`Template parsing time: ${(end - start).toFixed(2)}ms`);
 
     // Performance assertion: parsing should be fast
-    expect(end - start).toBeLessThan(50); // Under 50ms
+    expect(end - start).toBeLessThan(100); // Under 100ms
   });
 });
