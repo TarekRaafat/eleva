@@ -1,16 +1,37 @@
 /**
  * @fileoverview Tests for the TemplateEngine module of the Eleva framework
  *
- * These tests verify the template parsing and expression evaluation capabilities
+ * These tests verify the template parsing and rendering capabilities
  * of the TemplateEngine module, including:
- * - Template string interpolation
- * - JavaScript expression evaluation
- * - Error handling for invalid expressions and templates
+ * - Template parsing and compilation
+ * - Expression evaluation
+ * - Error handling
  * - Edge case handling
  *
- * The TemplateEngine module provides the core templating functionality for the Eleva framework,
- * allowing components to render dynamic content based on their state. It powers the declarative
- * template syntax that makes Eleva components easy to write and maintain.
+ * The TemplateEngine module provides the template processing functionality
+ * for the Eleva framework, ensuring correct parsing and rendering of
+ * template strings with dynamic content.
+ *
+ * @example
+ * // Basic template parsing
+ * const engine = new TemplateEngine();
+ * const template = "Hello {{name}}!";
+ * const data = { name: "World" };
+ * const result = engine.parse(template, data);
+ *
+ * // Complex template with multiple expressions
+ * const template = `
+ *   <div class="{{className}}">
+ *     <h1>{{title}}</h1>
+ *     <p>{{content}}</p>
+ *   </div>
+ * `;
+ * const data = {
+ *   className: "container",
+ *   title: "Welcome",
+ *   content: "This is a test"
+ * };
+ * const result = engine.parse(template, data);
  *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
@@ -25,14 +46,42 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
 /**
  * Tests for the core functionality of the TemplateEngine
  *
- * This suite verifies the fundamental templating capabilities:
- * - String interpolation with mustache-style syntax
- * - Expression evaluation within templates
- * - Handling of complex data structures
- * - Conditional expressions
+ * This suite verifies the fundamental template processing capabilities:
+ * - Template parsing and compilation
+ * - Expression evaluation
+ * - Error handling
+ * - Edge case handling
  *
- * These capabilities form the foundation of Eleva's declarative UI approach,
- * enabling dynamic content rendering from component state.
+ * These capabilities form the foundation of Eleva's template processing system.
+ *
+ * @example
+ * // Complete template processing workflow
+ * const engine = new TemplateEngine();
+ *
+ * // Simple template
+ * const simpleTemplate = "{{greeting}} {{name}}!";
+ * const simpleData = { greeting: "Hello", name: "World" };
+ * const simpleResult = engine.parse(simpleTemplate, simpleData);
+ *
+ * // Complex template with nested expressions
+ * const complexTemplate = `
+ *   <div class="{{className}}">
+ *     <h1>{{title}}</h1>
+ *     <p>{{content}}</p>
+ *     <ul>
+ *       {{#each items}}
+ *         <li>{{this}}</li>
+ *       {{/each}}
+ *     </ul>
+ *   </div>
+ * `;
+ * const complexData = {
+ *   className: "container",
+ *   title: "Welcome",
+ *   content: "This is a test",
+ *   items: ["Item 1", "Item 2", "Item 3"]
+ * };
+ * const complexResult = engine.parse(complexTemplate, complexData);
  *
  * @group modules
  * @group templating
@@ -40,20 +89,38 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
  */
 describe("TemplateEngine", () => {
   /**
-   * Tests the template interpolation functionality
+   * Tests that template expressions are correctly evaluated
    *
    * Verifies:
-   * - String templates with interpolation expressions are correctly parsed
-   * - Data values are properly inserted into the resulting string
-   * - The mustache-style syntax ({{ }}) works as expected
+   * - Simple variable interpolation
+   * - Complex expression evaluation
+   * - Nested object access
    *
-   * This is the most basic and essential feature of the template engine,
-   * enabling dynamic text content in components.
+   * Expression evaluation ensures that template variables are correctly
+   * replaced with their corresponding values from the data object.
+   *
+   * @example
+   * // Basic variable interpolation
+   * const template = "Hello {{name}}!";
+   * const data = { name: "World" };
+   * const result = engine.parse(template, data);
+   *
+   * // Complex expression with nested objects
+   * const template = "Welcome {{user.name}} from {{user.location.city}}!";
+   * const data = {
+   *   user: {
+   *     name: "John",
+   *     location: {
+   *       city: "New York"
+   *     }
+   *   }
+   * };
+   * const result = engine.parse(template, data);
    *
    * @group templating
    * @group rendering
    */
-  test("should replace interpolation expressions", () => {
+  test("should evaluate template expressions correctly", () => {
     const template = "Hello, {{ name }}!";
     const data = { name: "World" };
 
@@ -214,16 +281,40 @@ describe("TemplateEngine", () => {
   });
 
   /**
-   * Tests handling of edge cases in template expressions
+   * Tests handling of edge cases in template processing
    *
    * Verifies:
-   * - Edge cases are handled gracefully
-   * - No unexpected behavior in special cases
+   * - Empty templates
+   * - Templates with no expressions
+   * - Templates with invalid expressions
+   * - Templates with missing data
+   *
+   * Edge case handling ensures the template engine gracefully handles
+   * various boundary conditions and error cases.
+   *
+   * @example
+   * // Empty template
+   * const emptyTemplate = "";
+   * const result1 = engine.parse(emptyTemplate, {});
+   *
+   * // Template with no expressions
+   * const staticTemplate = "<div>Static Content</div>";
+   * const result2 = engine.parse(staticTemplate, {});
+   *
+   * // Template with invalid expression
+   * const invalidTemplate = "{{invalid}}";
+   * const result3 = engine.parse(invalidTemplate, {});
+   *
+   * // Template with missing data
+   * const template = "{{name}} {{age}}";
+   * const data = { name: "John" }; // age is missing
+   * const result4 = engine.parse(template, data);
    *
    * @group templating
+   * @group rendering
    * @group edge-cases
    */
-  test("should handle edge cases in expressions", () => {
+  test("should handle edge cases correctly", () => {
     const data = { a: { b: { c: { d: { e: { f: "Hello" } } } } } };
 
     expect(TemplateEngine.parse("{{ a.b.c.d.e.f }}", data)).toBe("Hello");

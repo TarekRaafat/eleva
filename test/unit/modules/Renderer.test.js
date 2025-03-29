@@ -13,6 +13,18 @@
  * for the Eleva framework, ensuring efficient and correct updates to
  * the document structure.
  *
+ * @example
+ * // Basic DOM patching
+ * const renderer = new Renderer();
+ * const container = document.createElement("div");
+ * renderer.patchDOM(container, "<p>New Content</p>");
+ *
+ * // Attribute synchronization
+ * const oldEl = document.createElement("div");
+ * const newEl = document.createElement("div");
+ * newEl.setAttribute("data-test", "new");
+ * renderer.updateAttributes(oldEl, newEl);
+ *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
  * @requires module:eleva/modules/Renderer
@@ -34,6 +46,23 @@ import { Renderer } from "../../../src/modules/Renderer.js";
  *
  * These capabilities form the foundation of Eleva's efficient
  * DOM manipulation system.
+ *
+ * @example
+ * // Complete rendering workflow
+ * const renderer = new Renderer();
+ * const container = document.createElement("div");
+ *
+ * // Initial render
+ * renderer.patchDOM(container, "<div key='1'>Initial</div>");
+ *
+ * // Update with new content
+ * renderer.patchDOM(container, "<div key='1'>Updated</div>");
+ *
+ * // Handle attribute changes
+ * const oldEl = container.firstChild;
+ * const newEl = document.createElement("div");
+ * newEl.setAttribute("data-test", "new");
+ * renderer.updateAttributes(oldEl, newEl);
  *
  * @group modules
  * @group rendering
@@ -65,6 +94,20 @@ describe("Renderer", () => {
    * updates to a DOM container, serving as the bridge between template rendering
    * and DOM updates.
    *
+   * @example
+   * // Basic DOM patching
+   * const container = document.createElement("div");
+   * container.innerHTML = "<p>Old</p>";
+   * renderer.patchDOM(container, "<p>New</p>");
+   *
+   * // Complex DOM patching with multiple elements
+   * renderer.patchDOM(container, `
+   *   <div class="wrapper">
+   *     <p>First</p>
+   *     <p>Second</p>
+   *   </div>
+   * `);
+   *
    * @group rendering
    * @group dom
    */
@@ -85,6 +128,27 @@ describe("Renderer", () => {
    *
    * Attribute synchronization ensures that element properties like class, style,
    * and data attributes are updated efficiently when component state changes.
+   *
+   * @example
+   * // Basic attribute synchronization
+   * const oldEl = document.createElement("div");
+   * oldEl.setAttribute("data-test", "old");
+   *
+   * const newEl = document.createElement("div");
+   * newEl.setAttribute("data-test", "new");
+   *
+   * renderer.updateAttributes(oldEl, newEl);
+   *
+   * // Multiple attributes
+   * const oldEl = document.createElement("div");
+   * oldEl.setAttribute("class", "old-class");
+   * oldEl.setAttribute("data-test", "old");
+   *
+   * const newEl = document.createElement("div");
+   * newEl.setAttribute("class", "new-class");
+   * newEl.setAttribute("data-test", "new");
+   *
+   * renderer.updateAttributes(oldEl, newEl);
    *
    * @group rendering
    * @group dom
@@ -404,9 +468,44 @@ describe("Renderer", () => {
    * This ensures the diffing algorithm works correctly with complex
    * component hierarchies and deeply nested DOM trees.
    *
-   * @group nested-structures
-   * @group recursion
-   * @group complex-dom
+   * @example
+   * // Deeply nested structure update
+   * const container = document.createElement("div");
+   * container.innerHTML = `
+   *   <div class="wrapper">
+   *     <div class="header">
+   *       <h1>Title</h1>
+   *       <nav>
+   *         <a href="#">Link 1</a>
+   *         <a href="#">Link 2</a>
+   *       </nav>
+   *     </div>
+   *     <div class="content">
+   *       <p>Content</p>
+   *     </div>
+   *   </div>
+   * `;
+   *
+   * const newHtml = `
+   *   <div class="wrapper">
+   *     <div class="header">
+   *       <h1>New Title</h1>
+   *       <nav>
+   *         <a href="#">New Link 1</a>
+   *         <a href="#">New Link 2</a>
+   *       </nav>
+   *     </div>
+   *     <div class="content">
+   *       <p>New Content</p>
+   *     </div>
+   *   </div>
+   * `;
+   *
+   * renderer.patchDOM(container, newHtml);
+   *
+   * @group rendering
+   * @group dom
+   * @group edge-cases
    */
   test("should handle deeply nested structures", () => {
     const container = document.createElement("div");

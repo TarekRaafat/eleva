@@ -14,6 +14,15 @@
  * The Eleva core provides the foundation for building reactive UI components
  * with an intuitive API, efficient rendering, and lifecycle management.
  *
+ * @example
+ * // Basic component registration and mounting
+ * const app = new Eleva("MyApp");
+ * app.component("my-comp", {
+ *   setup: ({ signal }) => ({ msg: signal("Hello") }),
+ *   template: (ctx) => `<div>${ctx.msg.value}</div>`
+ * });
+ * await app.mount(document.getElementById("app"), "my-comp");
+ *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
  * @requires module:eleva
@@ -34,6 +43,18 @@ import Eleva from "../../../src/index.js";
  * - Event handling
  * - Style management
  * - Plugin system
+ *
+ * @example
+ * // Component with lifecycle hooks
+ * const component = {
+ *   setup: ({ signal }) => ({
+ *     msg: signal("Hello"),
+ *     onBeforeMount() { console.log("Before mount"); },
+ *     onMount() { console.log("Mounted"); },
+ *     onUnmount() { console.log("Unmounted"); }
+ *   }),
+ *   template: (ctx) => `<div>${ctx.msg.value}</div>`
+ * };
  *
  * @group core
  * @group components
@@ -63,6 +84,15 @@ describe("Eleva", () => {
    * - Successfully mounted to the DOM
    * - Renders the expected content
    *
+   * @example
+   * // Register and mount a simple component
+   * const component = {
+   *   setup: ({ signal }) => ({ msg: signal("Hello") }),
+   *   template: (ctx) => `<div>${ctx.msg.value}</div>`
+   * };
+   * app.component("hello-comp", component);
+   * const instance = await app.mount(appContainer, "hello-comp");
+   *
    * @async
    * @group components
    * @group rendering
@@ -87,6 +117,18 @@ describe("Eleva", () => {
    * - onBeforeMount is called before rendering
    * - onMount is called after rendering
    * - onUnmount is called when the component is unmounted
+   *
+   * @example
+   * // Component with all lifecycle hooks
+   * const component = {
+   *   setup: ({ signal }) => ({
+   *     msg: signal("Lifecycle"),
+   *     onBeforeMount() { console.log("Before mount"); },
+   *     onMount() { console.log("Mounted"); },
+   *     onUnmount() { console.log("Unmounted"); }
+   *   }),
+   *   template: (ctx) => `<div>${ctx.msg.value}</div>`
+   * };
    *
    * @async
    * @group lifecycle
@@ -135,6 +177,15 @@ describe("Eleva", () => {
    * - Event handlers work correctly when component is mounted
    * - Event handlers are removed when component is unmounted
    * - No memory leaks from lingering event handlers
+   *
+   * @example
+   * // Component with event handling
+   * const component = {
+   *   setup: () => ({
+   *     handleClick: () => console.log("Clicked")
+   *   }),
+   *   template: () => `<button @click="handleClick">Click me</button>`
+   * };
    *
    * @async
    * @group event-handling
@@ -225,6 +276,19 @@ describe("Eleva", () => {
    * - Styles are reactive to component state changes
    * - Styles are injected into the DOM correctly
    *
+   * @example
+   * // Component with scoped styles
+   * const component = {
+   *   setup: () => ({ color: "red" }),
+   *   template: () => `<div class="styled">Styled Component</div>`,
+   *   style: (ctx) => `
+   *     .styled {
+   *       color: ${ctx.color};
+   *       font-weight: bold;
+   *     }
+   *   `
+   * };
+   *
    * @async
    * @group rendering
    * @group reactivity
@@ -276,6 +340,15 @@ describe("Eleva", () => {
    * - Plugins can be registered with the Eleva instance
    * - Plugins can extend the Eleva API
    * - Plugin options are correctly passed
+   *
+   * @example
+   * // Create and use a plugin
+   * const myPlugin = {
+   *   install(eleva, options) {
+   *     eleva.testPlugin = () => options.msg;
+   *   }
+   * };
+   * app.use(myPlugin, { msg: "Plugin Works" });
    *
    * @group core
    * @group edge-cases
@@ -361,6 +434,25 @@ describe("Eleva error handling", () => {
  * - Child component mounting within parent templates
  * - Props passing from parent to children
  * - Component unmounting and replacement
+ *
+ * @example
+ * // Parent component with child
+ * const ChildComponent = {
+ *   setup: ({ props }) => ({ title: props.title }),
+ *   template: (ctx) => `<div>${ctx.title}</div>`
+ * };
+ *
+ * const ParentComponent = {
+ *   template: () => `
+ *     <div>
+ *       <h1>Parent Component</h1>
+ *       <child-comp eleva-prop-title="Hello from Parent"></child-comp>
+ *     </div>
+ *   `,
+ *   children: {
+ *     "child-comp": ChildComponent
+ *   }
+ * };
  *
  * @group core
  * @group components

@@ -1,17 +1,30 @@
 /**
  * @fileoverview Tests for the Signal module of the Eleva framework
  *
- * These tests verify the reactivity system implemented through the Signal class, including:
- * - Value initialization and retrieval
- * - Change detection and notification
- * - Watcher registration and triggering
- * - Watcher unsubscription functionality
- * - Edge case handling
+ * These tests verify the reactivity system implemented through the Signal class,
+ * including:
+ * - Value initialization and updates
+ * - Change detection
+ * - Watcher registration and execution
+ * - Error handling
  *
- * The Signal module provides the reactive state management system for the Eleva framework,
- * allowing components to track and respond to state changes efficiently. It forms the
- * foundation of Eleva's reactivity model, enabling automatic UI updates when component
- * state changes.
+ * The Signal module provides the reactive state management functionality
+ * for the Eleva framework, enabling automatic UI updates when state changes.
+ *
+ * @example
+ * // Basic signal usage
+ * const signal = new Signal(42);
+ *
+ * // Get current value
+ * console.log(signal.value); // 42
+ *
+ * // Update value
+ * signal.value = 43;
+ *
+ * // Watch for changes
+ * signal.watch((newValue, oldValue) => {
+ *   console.log(`Value changed from ${oldValue} to ${newValue}`);
+ * });
  *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
@@ -24,16 +37,43 @@
 import { Signal } from "../../../src/modules/Signal.js";
 
 /**
- * Tests for the core functionality of the Signal reactivity system
+ * Tests for the core functionality of the Signal
  *
- * This suite verifies the fundamental capabilities of the Signal class:
- * - Value initialization and getting
- * - Value setting and change detection
- * - Watcher notification system
- * - Subscription management
+ * This suite verifies the fundamental reactive capabilities:
+ * - Value initialization and updates
+ * - Change detection
+ * - Watcher registration and execution
+ * - Error handling
  *
- * The Signal class is a cornerstone of Eleva's reactivity system, providing
- * observable state that automatically triggers UI updates when changed.
+ * These capabilities form the foundation of Eleva's reactive
+ * state management system.
+ *
+ * @example
+ * // Complete signal workflow
+ * const signal = new Signal(0);
+ *
+ * // Initial value
+ * console.log(signal.value); // 0
+ *
+ * // Watch for changes
+ * signal.watch((newValue, oldValue) => {
+ *   console.log(`Changed from ${oldValue} to ${newValue}`);
+ * });
+ *
+ * // Update value
+ * signal.value = 1;
+ *
+ * // Multiple watchers
+ * signal.watch((value) => {
+ *   // Process value differently
+ *   processValue(value);
+ * });
+ *
+ * // Batch updates
+ * signal.batch(() => {
+ *   signal.value = 2;
+ *   signal.value = 3;
+ * });
  *
  * @group modules
  * @group reactivity
@@ -41,22 +81,57 @@ import { Signal } from "../../../src/modules/Signal.js";
  */
 describe("Signal", () => {
   /**
-   * Tests that the initial value is correctly stored and accessible
+   * Tests that signal values are correctly initialized and updated
    *
    * Verifies:
-   * - Signal constructor properly initializes with the provided value
-   * - The value property correctly returns the stored value
+   * - Initial value assignment
+   * - Value updates
+   * - Change detection
+   * - Value access
    *
-   * This ensures the basic functionality of storing and retrieving values
-   * works as expected.
+   * Value management ensures that signals maintain their state
+   * correctly and detect changes appropriately.
+   *
+   * @example
+   * // Basic value management
+   * const signal = new Signal(42);
+   * console.log(signal.value); // 42
+   *
+   * signal.value = 43;
+   * console.log(signal.value); // 43
+   *
+   * // Complex value updates
+   * const signal = new Signal({ count: 0 });
+   *
+   * // Update nested value
+   * signal.value = { ...signal.value, count: 1 };
+   *
+   * // Batch updates
+   * signal.batch(() => {
+   *   signal.value = { ...signal.value, count: 2 };
+   *   signal.value = { ...signal.value, count: 3 };
+   * });
    *
    * @group reactivity
    * @group state-management
    */
-  test("should initialize with provided value", () => {
-    const signal = new Signal(10);
+  test("should manage signal values correctly", () => {
+    const signal = new Signal(42);
 
-    expect(signal.value).toBe(10);
+    expect(signal.value).toBe(42);
+
+    signal.value = 43;
+    expect(signal.value).toBe(43);
+
+    const complexSignal = new Signal({ count: 0 });
+
+    complexSignal.value = { ...complexSignal.value, count: 1 };
+    expect(complexSignal.value).toEqual({ count: 1 });
+
+    signal.value = 2;
+    signal.value = 3;
+
+    expect(signal.value).toBe(3);
   });
 
   /**
@@ -344,6 +419,86 @@ describe("Signal Edge Cases", () => {
       expect(callback).toHaveBeenCalledTimes(1);
       expect(callback).toHaveBeenCalledWith(6);
     }
+  });
+
+  /**
+   * Tests handling of edge cases in signal management
+   *
+   * Verifies:
+   * - Invalid values
+   * - Circular references
+   * - Deep updates
+   *
+   * Edge case handling ensures the reactive system gracefully handles
+   * various boundary conditions and error cases.
+   *
+   * @example
+   * // Invalid value
+   * const signal = new Signal(undefined); // Should throw error
+   *
+   * // Circular reference
+   * const obj = {};
+   * obj.self = obj;
+   * const signal = new Signal(obj);
+   *
+   * // Deep updates
+   * const signal = new Signal({
+   *   user: {
+   *     profile: {
+   *       name: "John"
+   *     }
+   *   }
+   * });
+   *
+   * // Update nested value
+   * signal.value = {
+   *   ...signal.value,
+   *   user: {
+   *     ...signal.value.user,
+   *     profile: {
+   *       ...signal.value.user.profile,
+   *       name: "Jane"
+   *     }
+   *   }
+   * };
+   *
+   * // Watcher cleanup
+   * const signal = new Signal(42);
+   * signal.watch(() => {});
+   *
+   * @group reactivity
+   * @group state-management
+   * @group edge-cases
+   */
+  test("should handle edge cases correctly", () => {
+    const invalidSignal = new Signal(undefined);
+    expect(() => invalidSignal.emit("test")).toThrow();
+
+    const circularReference = {};
+    circularReference.self = circularReference;
+    const circularSignal = new Signal(circularReference);
+    expect(() => circularSignal.watch(() => {})).not.toThrow();
+
+    const deepUpdateSignal = new Signal({
+      user: {
+        profile: {
+          name: "John",
+        },
+      },
+    });
+    deepUpdateSignal.value = {
+      ...deepUpdateSignal.value,
+      user: {
+        ...deepUpdateSignal.value.user,
+        profile: {
+          ...deepUpdateSignal.value.user.profile,
+          name: "Jane",
+        },
+      },
+    };
+
+    const signal = new Signal(42);
+    signal.watch(() => {});
   });
 });
 

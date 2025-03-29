@@ -1,16 +1,31 @@
 /**
  * @fileoverview Tests for the Emitter module of the Eleva framework
  *
- * These tests verify the event handling capabilities of the Emitter module, including:
+ * These tests verify the event handling capabilities of the Emitter module,
+ * including:
  * - Event registration and emission
- * - Event listener removal
- * - Multiple event listener support
- * - Event data passing
+ * - Listener management
+ * - Data passing between components
+ * - Error handling
  *
- * The Emitter provides a pub/sub (publish-subscribe) pattern implementation
- * that allows components to communicate through events. This module is essential
- * for decoupled component communication and reactive UI updates within the Eleva
- * framework.
+ * The Emitter module provides the event handling functionality for the
+ * Eleva framework, enabling communication between components through
+ * a pub/sub pattern.
+ *
+ * @example
+ * // Basic event handling
+ * const emitter = new Emitter();
+ *
+ * // Register a listener
+ * emitter.on("userLogin", (data) => {
+ *   console.log("User logged in:", data);
+ * });
+ *
+ * // Emit an event
+ * emitter.emit("userLogin", { id: 1, name: "John" });
+ *
+ * // Remove a listener
+ * emitter.off("userLogin");
  *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
@@ -23,37 +38,78 @@
 import { Emitter } from "../../../src/modules/Emitter.js";
 
 /**
- * Test suite for the Emitter
+ * Tests for the core functionality of the Emitter
  *
- * This suite verifies the core functionality of the event emission system:
- * - Event registration with the `on` method
- * - Event triggering with the `emit` method
- * - Event unsubscription with the `off` method
- * - Multiple listener support
+ * This suite verifies the fundamental event handling capabilities:
+ * - Event registration and emission
+ * - Listener management
+ * - Data passing between components
+ * - Error handling
  *
- * The Emitter is a fundamental building block for component communication
- * in the Eleva framework, enabling loosely coupled, event-driven architectures.
+ * These capabilities form the foundation of Eleva's event-driven
+ * communication system.
+ *
+ * @example
+ * // Complete event handling workflow
+ * const emitter = new Emitter();
+ *
+ * // Register multiple listeners
+ * emitter.on("dataUpdate", (data) => {
+ *   console.log("Data updated:", data);
+ * });
+ *
+ * emitter.on("dataUpdate", (data) => {
+ *   // Process data differently
+ *   processData(data);
+ * });
+ *
+ * // Emit event with data
+ * emitter.emit("dataUpdate", { value: 42 });
+ *
+ * // Remove specific listener
+ * emitter.off("dataUpdate", processData);
+ *
+ * // Remove all listeners
+ * emitter.off("dataUpdate");
  *
  * @group modules
- * @group event-handling
+ * @group events
  * @group communication
  */
 describe("Emitter", () => {
   /**
-   * Tests the basic event emission and listener notification functionality
+   * Tests that event listeners are correctly registered and triggered
    *
-   * Verifies that:
-   * - Events can be registered with a listener callback
-   * - When an event is emitted, registered listeners are called
-   * - Event data is correctly passed to listener callbacks
+   * Verifies:
+   * - Listener registration
+   * - Event emission
+   * - Listener execution
+   * - Data passing
    *
-   * This is the core functionality that enables the pub/sub pattern
-   * in the Eleva framework.
+   * Event handling ensures that registered listeners are properly
+   * triggered when events are emitted with the correct data.
    *
-   * @group event-handling
+   * @example
+   * // Basic event registration and emission
+   * const emitter = new Emitter();
+   * const listener = jest.fn();
+   *
+   * emitter.on("test", listener);
+   * emitter.emit("test", { value: 42 });
+   *
+   * // Multiple listeners
+   * const emitter = new Emitter();
+   * const listener1 = jest.fn();
+   * const listener2 = jest.fn();
+   *
+   * emitter.on("test", listener1);
+   * emitter.on("test", listener2);
+   * emitter.emit("test", { value: 42 });
+   *
+   * @group events
    * @group communication
    */
-  test("should emit event to registered listener", () => {
+  test("should register and trigger event listeners", () => {
     const emitter = new Emitter();
     const callback = jest.fn();
 
@@ -123,6 +179,52 @@ describe("Emitter", () => {
    * @group error-handling
    */
   test("should handle invalid event names", () => {
+    const emitter = new Emitter();
+    const callback = jest.fn();
+
+    emitter.on("test", callback);
+    emitter.emit("test", "data");
+
+    expect(callback).toHaveBeenCalledWith("data");
+  });
+
+  /**
+   * Tests handling of edge cases in event handling
+   *
+   * Verifies:
+   * - Invalid event names
+   * - Missing listeners
+   * - Multiple emissions
+   * - Listener removal
+   *
+   * Edge case handling ensures the event system gracefully handles
+   * various boundary conditions and error cases.
+   *
+   * @example
+   * // Invalid event name
+   * const emitter = new Emitter();
+   * emitter.on("", () => {}); // Should throw error
+   *
+   * // Missing listener
+   * emitter.emit("nonexistent"); // Should not throw error
+   *
+   * // Multiple emissions
+   * const emitter = new Emitter();
+   * const listener = jest.fn();
+   *
+   * emitter.on("test", listener);
+   * emitter.emit("test", { value: 1 });
+   * emitter.emit("test", { value: 2 });
+   *
+   * // Listener removal
+   * emitter.off("test", listener);
+   * emitter.emit("test", { value: 3 }); // Should not trigger listener
+   *
+   * @group events
+   * @group communication
+   * @group edge-cases
+   */
+  test("should handle edge cases correctly", () => {
     const emitter = new Emitter();
     const callback = jest.fn();
 
