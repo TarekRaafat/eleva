@@ -39,7 +39,7 @@ import { Emitter } from "../../../src/modules/Emitter.js";
  * @group event-handling
  * @group communication
  */
-describe("Emitter Core", () => {
+describe("Emitter Module", () => {
   /**
    * Tests the basic event emission and listener notification functionality
    *

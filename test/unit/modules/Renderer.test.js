@@ -38,7 +38,7 @@ import { Renderer } from "../../../src/modules/Renderer.js";
  * @group rendering
  * @group core-functionality
  */
-describe("Renderer", () => {
+describe("Renderer Module", () => {
   let container;
   let renderer;
 

@@ -42,7 +42,7 @@ import { Signal } from "../../../src/modules/Signal.js";
  * @group reactivity
  * @group core-functionality
  */
-describe("Signal Core", () => {
+describe("Signal Module", () => {
   /**
    * Tests that the initial value is correctly stored and accessible
    *

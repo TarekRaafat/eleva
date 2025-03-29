@@ -41,7 +41,7 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
  * @group templating
  * @group core-functionality
  */
-describe("TemplateEngine Core", () => {
+describe("TemplateEngine Module", () => {
   /**
    * Tests the template interpolation functionality
    *
