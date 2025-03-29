@@ -43,7 +43,7 @@ export default {
         [
           "@babel/preset-env",
           {
-            targets: "> 0.25%, not dead",
+            targets: "> 0.25%, not dead, not op_mini all, not ie 11",
             bugfixes: true,
             loose: true,
           },
