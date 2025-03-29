@@ -419,11 +419,6 @@
       };
 
       /**
-       * Use a local flag so each component instance tracks its own mounted state.
-       */
-      let isMounted = false;
-
-      /**
        * Processes the mounting of the component.
        *
        * @param {Object<string, any>} data - Data returned from the component's setup function.
@@ -437,7 +432,7 @@
         const watcherUnsubscribers = [];
         const childInstances = [];
         const cleanupListeners = [];
-        if (!this.isMounted) {
+        if (!this._isMounted) {
           mergedContext.onBeforeMount && mergedContext.onBeforeMount();
         } else {
           mergedContext.onBeforeUpdate && mergedContext.onBeforeUpdate();
@@ -453,9 +448,9 @@
           this._processEvents(container, mergedContext, cleanupListeners);
           this._injectStyles(container, compName, style, mergedContext);
           this._mountChildren(container, children, childInstances);
-          if (!isMounted) {
+          if (!this._isMounted) {
             mergedContext.onMount && mergedContext.onMount();
-            isMounted = true;
+            this._isMounted = true;
           } else {
             mergedContext.onUpdate && mergedContext.onUpdate();
           }
