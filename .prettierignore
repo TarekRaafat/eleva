@@ -4,3 +4,4 @@ coverage
 *.md
 *.json
 *.html
+*.map
