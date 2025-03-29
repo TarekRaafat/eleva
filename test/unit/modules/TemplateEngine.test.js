@@ -17,16 +17,13 @@
  * @requires module:eleva/modules/TemplateEngine
  * @category Unit
  * @group modules
- * @group templating
- * @group rendering
- * @group edge-cases
- * @group error-handling
+ * @group unit
  */
 
 import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
 
 /**
- * Tests for the core functionality of the TemplateEngine module
+ * Tests for the core functionality of the TemplateEngine
  *
  * This suite verifies the fundamental templating capabilities:
  * - String interpolation with mustache-style syntax
@@ -39,9 +36,9 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
  *
  * @group modules
  * @group templating
- * @group core-functionality
+ * @group rendering
  */
-describe("TemplateEngine Module", () => {
+describe("TemplateEngine", () => {
   /**
    * Tests the template interpolation functionality
    *
@@ -53,8 +50,8 @@ describe("TemplateEngine Module", () => {
    * This is the most basic and essential feature of the template engine,
    * enabling dynamic text content in components.
    *
-   * @group interpolation
-   * @group basic
+   * @group templating
+   * @group rendering
    */
   test("should replace interpolation expressions", () => {
     const template = "Hello, {{ name }}!";
@@ -74,8 +71,8 @@ describe("TemplateEngine Module", () => {
    * Expression evaluation enables complex logic within templates,
    * going beyond simple variable substitution.
    *
-   * @group evaluation
-   * @group expressions
+   * @group templating
+   * @group rendering
    */
   test("should evaluate valid expressions correctly", () => {
     const data = { a: 2, b: 3 };
@@ -93,9 +90,9 @@ describe("TemplateEngine Module", () => {
    * Support for nested properties allows templates to work with complex
    * state structures common in real-world applications.
    *
-   * @group interpolation
-   * @group nested-properties
-   * @group complex-data
+   * @group templating
+   * @group rendering
+   * @group edge-cases
    */
   test("should handle nested object properties", () => {
     const template = "User: {{ user.name }}, Age: {{ user.profile.age }}";
@@ -121,9 +118,9 @@ describe("TemplateEngine Module", () => {
    * Array access support is essential for rendering lists and collections
    * in templates.
    *
-   * @group interpolation
-   * @group arrays
-   * @group collection-access
+   * @group templating
+   * @group rendering
+   * @group edge-cases
    */
   test("should handle array indexing", () => {
     const template = "First item: {{ items[0] }}, Second item: {{ items[1] }}";
@@ -143,9 +140,9 @@ describe("TemplateEngine Module", () => {
    *
    * This ensures complex templates with multiple dynamic parts work correctly.
    *
-   * @group interpolation
-   * @group multiple-expressions
-   * @group complex-templates
+   * @group templating
+   * @group rendering
+   * @group edge-cases
    */
   test("should handle multiple interpolations", () => {
     const template = "{{ greeting }} {{ name }}! Your score is {{ score }}.";
@@ -166,9 +163,9 @@ describe("TemplateEngine Module", () => {
    * Conditional expressions enable dynamic content that changes based on
    * component state, a key feature for interactive UIs.
    *
-   * @group evaluation
-   * @group conditional-logic
-   * @group expressions
+   * @group templating
+   * @group rendering
+   * @group edge-cases
    */
   test("should evaluate conditional expressions", () => {
     const data = { age: 20 };
@@ -181,6 +178,55 @@ describe("TemplateEngine Module", () => {
     expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
       "Minor"
     );
+  });
+
+  /**
+   * Tests error handling for invalid expressions
+   *
+   * Verifies:
+   * - Invalid expressions are caught and reported
+   * - Error messages are descriptive and helpful
+   *
+   * @group templating
+   * @group error-handling
+   */
+  test("should handle invalid expressions", () => {
+    const data = { a: 1 };
+    const result = TemplateEngine.evaluate("a +* b", data);
+
+    expect(result).toBe("");
+  });
+
+  /**
+   * Tests error handling for template syntax errors
+   *
+   * Verifies:
+   * - Template syntax errors are caught and reported
+   * - Error messages are descriptive and helpful
+   *
+   * @group templating
+   * @group error-handling
+   */
+  test("should handle template syntax errors", () => {
+    const engine = new TemplateEngine();
+    const invalidTemplate = "{invalid}";
+    expect(() => engine.compile(invalidTemplate)).toThrow();
+  });
+
+  /**
+   * Tests handling of edge cases in template expressions
+   *
+   * Verifies:
+   * - Edge cases are handled gracefully
+   * - No unexpected behavior in special cases
+   *
+   * @group templating
+   * @group edge-cases
+   */
+  test("should handle edge cases in expressions", () => {
+    const data = { a: { b: { c: { d: { e: { f: "Hello" } } } } } };
+
+    expect(TemplateEngine.parse("{{ a.b.c.d.e.f }}", data)).toBe("Hello");
   });
 });
 
@@ -277,46 +323,6 @@ describe("TemplateEngine Edge Cases", () => {
  * @group robustness
  */
 describe("TemplateEngine Error Handling", () => {
-  /**
-   * Tests handling of invalid template syntax
-   *
-   * Verifies:
-   * - The engine throws appropriate errors for invalid template syntax
-   * - Malformed templates are not silently accepted
-   *
-   * Clear error reporting helps developers identify and fix template syntax issues.
-   *
-   * @group syntax-validation
-   * @group compiler
-   * @group developer-experience
-   */
-  test("should handle invalid templates gracefully", () => {
-    const engine = new TemplateEngine();
-    const invalidTemplate = "{invalid}";
-    expect(() => engine.compile(invalidTemplate)).toThrow();
-  });
-
-  /**
-   * Tests handling of syntax errors in expressions
-   *
-   * Verifies:
-   * - JavaScript syntax errors in expressions are caught
-   * - The system handles syntax errors gracefully
-   *
-   * This ensures that invalid JavaScript within templates won't crash
-   * the entire application.
-   *
-   * @group syntax-errors
-   * @group graceful-degradation
-   * @group robustness
-   */
-  test("should handle syntax errors gracefully", () => {
-    const data = { a: 1 };
-    const result = TemplateEngine.evaluate("a +* b", data);
-
-    expect(result).toBe("");
-  });
-
   /**
    * Tests handling of undefined data context
    *

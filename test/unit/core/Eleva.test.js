@@ -19,8 +19,7 @@
  * @requires module:eleva
  * @category Unit
  * @group core
- * @group components
- * @group lifecycle
+ * @group unit
  */
 
 import Eleva from "../../../src/index.js";
@@ -38,9 +37,9 @@ import Eleva from "../../../src/index.js";
  *
  * @group core
  * @group components
- * @group integration
+ * @group lifecycle
  */
-describe("Eleva (Core)", () => {
+describe("Eleva", () => {
   let app;
   let appContainer;
 
@@ -65,10 +64,10 @@ describe("Eleva (Core)", () => {
    * - Renders the expected content
    *
    * @async
-   * @group mounting
+   * @group components
    * @group rendering
    */
-  test("registers and mounts a component", async () => {
+  test("should register and mount a component", async () => {
     const component = {
       setup: ({ signal }) => ({ msg: signal("Hello") }),
       template: (ctx) => `<div>${ctx.msg.value}</div>`,
@@ -91,9 +90,8 @@ describe("Eleva (Core)", () => {
    *
    * @async
    * @group lifecycle
-   * @group hooks
    */
-  test("lifecycle hooks are called appropriately", async () => {
+  test("should call lifecycle hooks in the correct order", async () => {
     const onBeforeMountFn = jest.fn();
     const onMountFn = jest.fn();
     const onUnmountFn = jest.fn();
@@ -139,11 +137,10 @@ describe("Eleva (Core)", () => {
    * - No memory leaks from lingering event handlers
    *
    * @async
-   * @group events
-   * @group cleanup
+   * @group event-handling
    * @group memory-management
    */
-  test("cleans up event listeners on unmount", async () => {
+  test("should clean up event listeners on unmount", async () => {
     const clickHandler = jest.fn();
 
     const component = {
@@ -177,7 +174,7 @@ describe("Eleva (Core)", () => {
    * @group error-handling
    * @group validation
    */
-  test("throws error if compName is invalid in mount", () => {
+  test("should throw error if compName is invalid in mount", () => {
     expect(() => app.mount(appContainer, 123)).toThrow(
       "Invalid component parameter."
     );
@@ -192,7 +189,7 @@ describe("Eleva (Core)", () => {
    * @group error-handling
    * @group validation
    */
-  test("throws error if component is not registered", async () => {
+  test("should throw error if component is not registered", async () => {
     expect(() => {
       app.mount(appContainer, "non-existent-component");
     }).toThrow('Component "non-existent-component" not registered.');
@@ -206,9 +203,9 @@ describe("Eleva (Core)", () => {
    *
    * @async
    * @group components
-   * @group flexibility
+   * @group edge-cases
    */
-  test("handles missing setup function in component definition", async () => {
+  test("should handle missing setup function in component definition", async () => {
     const component = {
       template: () => `<div>No Setup</div>`,
     };
@@ -229,10 +226,10 @@ describe("Eleva (Core)", () => {
    * - Styles are injected into the DOM correctly
    *
    * @async
-   * @group styling
+   * @group rendering
    * @group reactivity
    */
-  test("injects component scoped styles", async () => {
+  test("should inject component scoped styles", async () => {
     const component = {
       setup: () => ({ color: "red" }),
       template: () => `<div class="styled">Styled Component</div>`,
@@ -280,10 +277,10 @@ describe("Eleva (Core)", () => {
    * - Plugins can extend the Eleva API
    * - Plugin options are correctly passed
    *
-   * @group plugins
-   * @group extensibility
+   * @group core
+   * @group edge-cases
    */
-  test("plugin integration extends Eleva instance", () => {
+  test("should extend Eleva instance with plugin integration", () => {
     const myPlugin = {
       install(eleva, options) {
         eleva.testPlugin = () => options.msg;
@@ -366,8 +363,8 @@ describe("Eleva error handling", () => {
  * - Component unmounting and replacement
  *
  * @group core
- * @group component-relationships
- * @group props
+ * @group components
+ * @group rendering
  */
 describe("Children Components & Passing Props", () => {
   let app;
@@ -397,7 +394,7 @@ describe("Children Components & Passing Props", () => {
    * @group props
    * @group component-composition
    */
-  test("mounts child components with props extracted from attributes", async () => {
+  test("should mount child components with props extracted from attributes", async () => {
     const ChildComponent = {
       setup: ({ props }) => ({ title: props.title }),
       template: (ctx) => `<div>${ctx.title}</div>`,
@@ -433,7 +430,7 @@ describe("Children Components & Passing Props", () => {
    * @group component-replacement
    * @group memory-management
    */
-  test("unmounts existing child components before mounting new ones", async () => {
+  test("should unmount existing child components before mounting new ones", async () => {
     const ChildComponent1 = {
       setup: ({ props }) => ({ title: props.title }),
       template: (ctx) => `<div>Child 1: ${ctx.title}</div>`,
@@ -480,7 +477,7 @@ describe("Children Components & Passing Props", () => {
    * @group component-composition
    * @group rendering
    */
-  test("child component receives props from parent", async () => {
+  test("should pass props from parent to child component", async () => {
     const ChildComponent = {
       setup: ({ props }) => ({ title: props.title }),
       template: (ctx) => `<div>Child: ${ctx.title}</div>`,

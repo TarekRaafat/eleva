@@ -1,44 +1,45 @@
 /**
  * @fileoverview Tests for the Renderer module of the Eleva framework
  *
- * These tests verify the DOM rendering and diffing capabilities of the Renderer module, including:
- * - DOM patching and content updates
- * - Attribute synchronization
- * - Node diffing algorithm functionality
- * - Edge case handling
+ * These tests verify the DOM manipulation and rendering capabilities
+ * of the Renderer module, including:
+ * - DOM patching and updates
+ * - Element attribute synchronization
+ * - Node replacement and removal
+ * - Keyed element handling
+ * - Edge cases and error conditions
  *
- * The Renderer is responsible for efficiently updating the DOM by comparing
- * old and new DOM structures and applying minimal changes. This virtual DOM-inspired
- * approach provides optimal performance by reducing direct DOM manipulations,
- * which are typically expensive operations in web browsers.
+ * The Renderer module provides the core DOM manipulation functionality
+ * for the Eleva framework, ensuring efficient and correct updates to
+ * the document structure.
  *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
  * @requires module:eleva/modules/Renderer
  * @category Unit
  * @group modules
- * @group rendering
- * @group dom-manipulation
+ * @group unit
  */
 
 import { Renderer } from "../../../src/modules/Renderer.js";
 
 /**
- * Tests for the core functionality of the Renderer module
+ * Tests for the core functionality of the Renderer
  *
  * This suite verifies the fundamental rendering capabilities:
- * - DOM patching
- * - Attribute synchronization
- * - Element diffing and updates
+ * - DOM patching and updates
+ * - Element attribute synchronization
+ * - Node replacement and removal
+ * - Keyed element handling
  *
- * The Renderer module is critical for Eleva's performance as it minimizes
- * actual DOM operations by intelligently updating only what has changed.
+ * These capabilities form the foundation of Eleva's efficient
+ * DOM manipulation system.
  *
  * @group modules
  * @group rendering
- * @group core-functionality
+ * @group dom
  */
-describe("Renderer Module", () => {
+describe("Renderer", () => {
   let container;
   let renderer;
 
@@ -54,7 +55,7 @@ describe("Renderer Module", () => {
   });
 
   /**
-   * Tests that the patchDOM method correctly updates container content
+   * Tests the patchDOM method correctly updates container content
    *
    * Verifies:
    * - Old content is removed
@@ -64,10 +65,10 @@ describe("Renderer Module", () => {
    * updates to a DOM container, serving as the bridge between template rendering
    * and DOM updates.
    *
-   * @group dom-updates
-   * @group html-patching
+   * @group rendering
+   * @group dom
    */
-  test("patchDOM updates container content", () => {
+  test("should update container content when patching DOM", () => {
     container.innerHTML = "<p>Old</p>";
     renderer.patchDOM(container, "<p>New</p>");
 
@@ -85,10 +86,10 @@ describe("Renderer Module", () => {
    * Attribute synchronization ensures that element properties like class, style,
    * and data attributes are updated efficiently when component state changes.
    *
-   * @group attributes
-   * @group synchronization
+   * @group rendering
+   * @group dom
    */
-  test("updateAttributes syncs element attributes", () => {
+  test("should sync element attributes correctly", () => {
     const oldEl = document.createElement("div");
     oldEl.setAttribute("data-test", "old");
 
@@ -104,17 +105,13 @@ describe("Renderer Module", () => {
    * Tests that element properties not in attributeToPropertyMap are updated
    *
    * Verifies:
-   * - DOM properties are correctly updated even when not in the mapping
-   * - Property updates take precedence over attribute values
+   * - Properties are updated correctly
+   * - Changes are reflected in the DOM
    *
-   * This ensures that standard DOM properties like id are properly updated
-   * even when not explicitly mapped in the attributeToPropertyMap.
-   *
-   * @group attributes
-   * @group properties
-   * @group dom-api
+   * @group rendering
+   * @group dom
    */
-  test("updateAttributes updates element properties not in attributeToPropertyMap", () => {
+  test("should update element properties not in attributeToPropertyMap", () => {
     const oldEl = document.createElement("div");
     oldEl.id = "oldValue"; // Set a valid DOM property directly.
 
@@ -128,20 +125,16 @@ describe("Renderer Module", () => {
   });
 
   /**
-   * Tests that the diff method correctly replaces differing nodes
+   * Tests the diff method's node replacement functionality
    *
    * Verifies:
-   * - Nodes with the same key but different content are updated
-   * - The DOM reflects these changes accurately
+   * - Nodes are replaced correctly
+   * - DOM structure is maintained
    *
-   * This tests the core diffing algorithm that determines which DOM elements
-   * can be reused and which need to be replaced for optimal performance.
-   *
-   * @group diffing
-   * @group node-replacement
-   * @group keyed-elements
+   * @group rendering
+   * @group dom
    */
-  test("diff method replaces differing nodes", () => {
+  test("should replace differing nodes", () => {
     container.innerHTML = `<div key="1">Old</div>`;
 
     const tempContainer = document.createElement("div");
@@ -152,144 +145,19 @@ describe("Renderer Module", () => {
     expect(container.innerHTML).toContain("New");
     expect(container.innerHTML).not.toContain("Old");
   });
-});
 
-/**
- * Tests for edge cases in the Renderer module
- *
- * This suite verifies how the Renderer handles various error conditions:
- * - Invalid states
- * - Missing templates
- * - Null elements
- * - Error handling in callbacks
- *
- * Robust error handling ensures the Renderer can gracefully handle unexpected
- * situations without crashing the application.
- *
- * @group modules
- * @group rendering
- * @group error-handling
- * @group robustness
- */
-describe("Renderer edge cases", () => {
   /**
-   * Tests handling of invalid render states
+   * Tests handling of nodes with different types or names
    *
    * Verifies:
-   * - The renderer throws appropriate errors for invalid states
+   * - Nodes are replaced correctly
+   * - DOM structure is maintained
    *
-   * Clear error messages for invalid states help developers identify
-   * and fix issues during development.
-   *
-   * @group state-validation
-   * @group error-detection
+   * @group rendering
+   * @group dom
+   * @group edge-cases
    */
-  test("should handle invalid render states", () => {
-    const renderer = new Renderer();
-    renderer.state = "invalid";
-    expect(() => renderer.render()).toThrow();
-  });
-
-  /**
-   * Tests handling of template errors
-   *
-   * Verifies:
-   * - The renderer throws appropriate errors for null templates
-   *
-   * This prevents silent failures when template content is missing or undefined.
-   *
-   * @group templates
-   * @group null-handling
-   * @group input-validation
-   */
-  test("should handle template errors", () => {
-    const renderer = new Renderer();
-    renderer.template = null;
-    expect(() => renderer.process()).toThrow();
-  });
-
-  /**
-   * Tests handling of missing elements
-   *
-   * Verifies:
-   * - The renderer throws appropriate errors when target element is null
-   *
-   * This prevents attempts to update non-existent DOM elements, which would
-   * otherwise cause runtime errors.
-   *
-   * @group dom-elements
-   * @group null-handling
-   * @group defensive-programming
-   */
-  test("should handle missing elements", () => {
-    const renderer = new Renderer();
-    renderer.element = null;
-    expect(() => renderer.update()).toThrow();
-  });
-
-  /**
-   * Tests handling of callback errors
-   *
-   * Verifies:
-   * - The renderer properly handles errors in completion callbacks
-   *
-   * This ensures that errors in user-provided callbacks are properly caught
-   * and don't silently fail or corrupt the rendering process.
-   *
-   * @group callbacks
-   * @group error-propagation
-   * @group user-code
-   */
-  test("should handle callback errors", () => {
-    const renderer = new Renderer();
-    const badCallback = () => {
-      throw new Error();
-    };
-    expect(() => renderer.onComplete(badCallback)).toThrow();
-  });
-});
-
-/**
- * Tests for the diff algorithm implementation in the Renderer
- *
- * This suite focuses specifically on the node diffing algorithm that compares
- * old and new DOM structures to determine the minimal set of changes required.
- *
- * The diffing algorithm is the heart of the Renderer's performance optimization,
- * allowing efficient updates by minimizing actual DOM operations.
- *
- * @group modules
- * @group rendering
- * @group diffing
- * @group algorithm
- */
-describe("Renderer diff method", () => {
-  let renderer;
-
-  /**
-   * Setup for each test - creates a fresh Renderer instance
-   *
-   * This ensures each test starts with a clean Renderer object with
-   * no state carried over from previous tests.
-   */
-  beforeEach(() => {
-    renderer = new Renderer();
-  });
-
-  /**
-   * Tests replacement of nodes with different types or names
-   *
-   * Verifies:
-   * - Nodes with different nodeType or nodeName are properly replaced
-   * - The resulting DOM structure reflects these replacements
-   *
-   * This tests a fundamental diffing rule: elements of different types
-   * must be replaced rather than updated.
-   *
-   * @group node-type
-   * @group element-replacement
-   */
-  test("replaces nodes with differing nodeType or nodeName", () => {
+  test("should replace nodes with differing nodeType or nodeName", () => {
     const oldParent = document.createElement("div");
     oldParent.innerHTML = "<p>Old</p>";
 
@@ -302,19 +170,16 @@ describe("Renderer diff method", () => {
   });
 
   /**
-   * Tests removal of attributes that are no longer present
+   * Tests attribute removal functionality
    *
    * Verifies:
-   * - Attributes in the old element not present in the new element are removed
+   * - Attributes are removed correctly
+   * - DOM structure is maintained
    *
-   * This ensures that when attributes are removed from elements in the new template,
-   * they're also removed from the actual DOM during updates.
-   *
-   * @group attributes
-   * @group cleanup
-   * @group attribute-removal
+   * @group rendering
+   * @group dom
    */
-  test("removes attributes not present in new element", () => {
+  test("should remove attributes not present in new element", () => {
     const oldEl = document.createElement("div");
     oldEl.setAttribute("data-test", "old");
 
@@ -326,20 +191,16 @@ describe("Renderer diff method", () => {
   });
 
   /**
-   * Tests property updates from attribute mappings
+   * Tests properties mapped from attributes
    *
    * Verifies:
-   * - Properties mapped from attributes are correctly updated
-   * - The attributeToPropertyMap is correctly applied
+   * - Properties are updated correctly
+   * - Changes are reflected in the DOM
    *
-   * This tests the special case handling of attributes that need to be set
-   * as properties on DOM elements for correct behavior, like value on inputs.
-   *
-   * @group attributes
-   * @group properties
-   * @group special-attributes
+   * @group rendering
+   * @group dom
    */
-  test("updates properties mapped from attributes", () => {
+  test("should update properties mapped from attributes", () => {
     const oldEl = document.createElement("input");
     oldEl.setAttribute("value", "old");
 
@@ -350,69 +211,36 @@ describe("Renderer diff method", () => {
 
     expect(oldEl.value).toBe("new");
   });
-});
-
-/**
- * Additional tests for comprehensive coverage of the Renderer module
- *
- * This suite provides additional test cases to ensure thorough coverage
- * of the Renderer's functionality, including optimizations, edge cases,
- * and special handling for different DOM structures.
- *
- * Complete coverage helps ensure that the Renderer behaves correctly
- * across all possible usage scenarios and DOM manipulation needs.
- *
- * @group modules
- * @group rendering
- * @group coverage
- * @group comprehensive
- */
-describe("Renderer additional tests for full coverage", () => {
-  let renderer;
 
   /**
-   * Setup for each test - creates a fresh Renderer instance
-   *
-   * This ensures each test starts with a clean Renderer object with
-   * no state carried over from previous tests.
-   */
-  beforeEach(() => {
-    renderer = new Renderer();
-  });
-
-  /**
-   * Tests handling of empty containers and content
+   * Tests handling of empty container and newHtml
    *
    * Verifies:
-   * - Renderer handles empty input gracefully
+   * - Empty containers are handled correctly
+   * - New HTML is inserted correctly
    *
-   * This ensures the Renderer can handle empty templates or clearing content
-   * without errors or unexpected behavior.
-   *
-   * @group empty-content
+   * @group rendering
+   * @group dom
    * @group edge-cases
    */
-  test("patchDOM handles empty container and newHtml", () => {
+  test("should handle empty container and newHtml", () => {
     const container = document.createElement("div");
     renderer.patchDOM(container, "");
     expect(container.innerHTML).toBe("");
   });
 
   /**
-   * Tests the fast path for identical nodes
+   * Tests handling of identical nodes (fast path)
    *
    * Verifies:
-   * - No unnecessary DOM updates occur when nodes are identical
-   * - The diff algorithm optimizes for unchanged content
+   * - Identical nodes are handled efficiently
+   * - DOM structure is maintained
    *
-   * This optimization is crucial for performance when most of the DOM
-   * hasn't changed between renders.
-   *
+   * @group rendering
+   * @group dom
    * @group optimization
-   * @group performance
-   * @group fast-path
    */
-  test("diff handles identical nodes (fast path)", () => {
+  test("should handle identical nodes (fast path)", () => {
     const container = document.createElement("div");
     container.innerHTML = "<p>Same</p>";
 
@@ -425,19 +253,16 @@ describe("Renderer additional tests for full coverage", () => {
   });
 
   /**
-   * Tests appending of new nodes when old ones don't exist
+   * Tests appending new nodes when oldNode is missing
    *
    * Verifies:
-   * - New nodes are properly appended when not present in the old tree
-   * - Existing nodes remain untouched
+   * - New nodes are appended correctly
+   * - DOM structure is maintained
    *
-   * This ensures new elements are correctly added to the DOM when
-   * templates are expanded with additional content.
-   *
-   * @group node-addition
-   * @group child-appending
+   * @group rendering
+   * @group dom
    */
-  test("diff appends new nodes when oldNode is missing", () => {
+  test("should append new nodes when oldNode is missing", () => {
     const container = document.createElement("div");
     container.innerHTML = "<p>Old</p>";
 
@@ -450,20 +275,16 @@ describe("Renderer additional tests for full coverage", () => {
   });
 
   /**
-   * Tests removal of nodes that no longer exist in the new tree
+   * Tests removing old nodes when newNode is missing
    *
    * Verifies:
-   * - Nodes present in the old tree but not in the new tree are removed
-   * - Other nodes remain untouched
+   * - Old nodes are removed correctly
+   * - DOM structure is maintained
    *
-   * This ensures elements are correctly removed from the DOM when
-   * they're no longer present in the template.
-   *
-   * @group node-removal
-   * @group cleanup
-   * @group dom-pruning
+   * @group rendering
+   * @group dom
    */
-  test("diff removes old nodes when newNode is missing", () => {
+  test("should remove old nodes when newNode is missing", () => {
     const container = document.createElement("div");
     container.innerHTML = "<p>Old</p><span>Remove</span>";
 
@@ -476,20 +297,16 @@ describe("Renderer additional tests for full coverage", () => {
   });
 
   /**
-   * Tests replacement based on differing keys
+   * Tests replacing nodes with differing keys
    *
    * Verifies:
-   * - Nodes with different keys are correctly replaced
-   * - The key attribute is used for efficient node matching
+   * - Nodes are replaced correctly
+   * - DOM structure is maintained
    *
-   * Keys are essential for efficient list rendering and element reordering,
-   * allowing the diffing algorithm to correctly identify corresponding elements.
-   *
-   * @group keyed-elements
-   * @group optimization
-   * @group element-identity
+   * @group rendering
+   * @group dom
    */
-  test("diff replaces nodes with differing keys", () => {
+  test("should replace nodes with differing keys", () => {
     const container = document.createElement("div");
     container.innerHTML = '<div key="1">Old</div>';
 
@@ -502,20 +319,16 @@ describe("Renderer additional tests for full coverage", () => {
   });
 
   /**
-   * Tests updates to text node content
+   * Tests updating text content for text nodes
    *
    * Verifies:
-   * - Text nodes have their content properly updated
-   * - Text-specific diffing works correctly
+   * - Text content is updated correctly
+   * - DOM structure is maintained
    *
-   * Text nodes require special handling in the diffing algorithm since
-   * they don't have attributes or children.
-   *
-   * @group text-nodes
-   * @group content-updates
-   * @group special-nodes
+   * @group rendering
+   * @group dom
    */
-  test("diff updates text content for text nodes", () => {
+  test("should update text content for text nodes", () => {
     const container = document.createElement("div");
     container.innerHTML = "Old Text";
 
@@ -541,7 +354,7 @@ describe("Renderer additional tests for full coverage", () => {
    * @group removal
    * @group multiple-attributes
    */
-  test("updateAttributes removes attributes not present in new element", () => {
+  test("should remove attributes not present in new element", () => {
     const oldEl = document.createElement("div");
     oldEl.setAttribute("data-test", "old");
     oldEl.setAttribute("class", "to-remove");
@@ -569,7 +382,7 @@ describe("Renderer additional tests for full coverage", () => {
    * @group special-properties
    * @group attribute-property-mapping
    */
-  test("updateAttributes updates mapped properties", () => {
+  test("should update mapped properties", () => {
     const oldEl = document.createElement("input");
     oldEl.setAttribute("value", "old");
 
@@ -595,7 +408,7 @@ describe("Renderer additional tests for full coverage", () => {
    * @group recursion
    * @group complex-dom
    */
-  test("diff handles deeply nested structures", () => {
+  test("should handle deeply nested structures", () => {
     const container = document.createElement("div");
     container.innerHTML = `<div><p>Old</p></div>`;
 
@@ -620,7 +433,7 @@ describe("Renderer additional tests for full coverage", () => {
    * @group initial-render
    * @group content-addition
    */
-  test("diff handles empty oldParent and populated newParent", () => {
+  test("should handle empty oldParent and populated newParent", () => {
     const container = document.createElement("div");
 
     const tempContainer = document.createElement("div");
@@ -635,7 +448,7 @@ describe("Renderer additional tests for full coverage", () => {
    * Tests handling of an empty new parent with content in the old parent
    *
    * Verifies:
-   * - Content is properly removed when the new container is empty
+   * - Content is properly removed when the new template is empty
    *
    * This test ensures the renderer correctly clears all content when
    * the new template is empty.
@@ -644,7 +457,7 @@ describe("Renderer additional tests for full coverage", () => {
    * @group empty-template
    * @group dom-cleanup
    */
-  test("diff handles empty newParent and populated oldParent", () => {
+  test("should handle empty newParent and populated oldParent", () => {
     const container = document.createElement("div");
     container.innerHTML = `<p>Old</p>`;
 

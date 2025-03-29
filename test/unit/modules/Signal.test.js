@@ -18,10 +18,7 @@
  * @requires module:eleva/modules/Signal
  * @category Unit
  * @group modules
- * @group reactivity
- * @group state-management
- * @group edge-cases
- * @group error-handling
+ * @group unit
  */
 
 import { Signal } from "../../../src/modules/Signal.js";
@@ -40,9 +37,9 @@ import { Signal } from "../../../src/modules/Signal.js";
  *
  * @group modules
  * @group reactivity
- * @group core-functionality
+ * @group state-management
  */
-describe("Signal Module", () => {
+describe("Signal", () => {
   /**
    * Tests that the initial value is correctly stored and accessible
    *
@@ -53,8 +50,8 @@ describe("Signal Module", () => {
    * This ensures the basic functionality of storing and retrieving values
    * works as expected.
    *
-   * @group initialization
-   * @group value-access
+   * @group reactivity
+   * @group state-management
    */
   test("should initialize with provided value", () => {
     const signal = new Signal(10);
@@ -75,8 +72,7 @@ describe("Signal Module", () => {
    *
    * @async
    * @group reactivity
-   * @group notification
-   * @group asynchronous
+   * @group state-management
    */
   test("should trigger watcher on value change", async () => {
     const signal = new Signal(0);
@@ -98,14 +94,10 @@ describe("Signal Module", () => {
    * - Setting a signal to its current value does not trigger notifications
    * - The system optimizes by avoiding unnecessary updates
    *
-   * This optimization prevents redundant UI updates when values haven't
-   * actually changed.
-   *
+   * @group reactivity
    * @group optimization
-   * @group performance
-   * @group change-detection
    */
-  test("should not trigger watcher for unchanged value", () => {
+  test("should not trigger watcher for non-changes", async () => {
     const signal = new Signal(0);
     const callback = jest.fn();
 
@@ -116,21 +108,17 @@ describe("Signal Module", () => {
   });
 
   /**
-   * Tests that unsubscribing watchers prevents future notifications
+   * Tests watcher unsubscription functionality
    *
    * Verifies:
-   * - The unsubscribe function returned by watch() properly removes the watcher
+   * - Watchers can be unsubscribed
    * - Unsubscribed watchers no longer receive notifications
-   * - The signal maintains proper internal state after unsubscription
+   * - Memory leaks are prevented
    *
-   * This capability is essential for preventing memory leaks by allowing
-   * components to clean up their subscriptions when unmounted.
-   *
-   * @group unsubscription
+   * @group reactivity
    * @group memory-management
-   * @group cleanup
    */
-  test("should stop notifications after unsubscribe", () => {
+  test("should stop notifications after unsubscription", async () => {
     const signal = new Signal(0);
     const callback = jest.fn();
     const unsubscribe = signal.watch(callback);
@@ -139,6 +127,22 @@ describe("Signal Module", () => {
     signal.value = 10;
 
     expect(callback).not.toHaveBeenCalled();
+  });
+
+  /**
+   * Tests error handling for invalid values
+   *
+   * Verifies:
+   * - Invalid values are caught and reported
+   * - Error messages are descriptive and helpful
+   *
+   * @group reactivity
+   * @group error-handling
+   */
+  test("should handle invalid values", () => {
+    const signal = new Signal();
+    signal.listeners = null;
+    expect(() => signal.emit("test")).toThrow();
   });
 });
 

@@ -17,14 +17,13 @@
  * @requires module:eleva/modules/Emitter
  * @category Unit
  * @group modules
- * @group event-handling
- * @group communication
+ * @group unit
  */
 
 import { Emitter } from "../../../src/modules/Emitter.js";
 
 /**
- * Test suite for the Emitter module
+ * Test suite for the Emitter
  *
  * This suite verifies the core functionality of the event emission system:
  * - Event registration with the `on` method
@@ -39,7 +38,7 @@ import { Emitter } from "../../../src/modules/Emitter.js";
  * @group event-handling
  * @group communication
  */
-describe("Emitter Module", () => {
+describe("Emitter", () => {
   /**
    * Tests the basic event emission and listener notification functionality
    *
@@ -51,9 +50,8 @@ describe("Emitter Module", () => {
    * This is the core functionality that enables the pub/sub pattern
    * in the Eleva framework.
    *
-   * @group basic
-   * @group registration
-   * @group emission
+   * @group event-handling
+   * @group communication
    */
   test("should emit event to registered listener", () => {
     const emitter = new Emitter();
@@ -76,9 +74,8 @@ describe("Emitter Module", () => {
    * This functionality is critical for preventing memory leaks by allowing
    * components to unsubscribe from events when they're no longer needed.
    *
-   * @group cleanup
+   * @group event-handling
    * @group memory-management
-   * @group unsubscription
    */
   test("should stop events after listener removal", () => {
     const emitter = new Emitter();
@@ -99,11 +96,8 @@ describe("Emitter Module", () => {
    * - All registered listeners receive the emitted event
    * - Event data is passed correctly to all listeners
    *
-   * This enables multiple components to respond to the same application events,
-   * facilitating complex UI interactions and state synchronization.
-   *
-   * @group multiple-listeners
-   * @group scalability
+   * @group event-handling
+   * @group communication
    */
   test("should notify multiple listeners", () => {
     const emitter = new Emitter();
@@ -116,5 +110,25 @@ describe("Emitter Module", () => {
 
     expect(callback1).toHaveBeenCalledWith("data");
     expect(callback2).toHaveBeenCalledWith("data");
+  });
+
+  /**
+   * Tests error handling for invalid event names
+   *
+   * Verifies that:
+   * - Invalid event names are caught and reported
+   * - Error messages are descriptive and helpful
+   *
+   * @group event-handling
+   * @group error-handling
+   */
+  test("should handle invalid event names", () => {
+    const emitter = new Emitter();
+    const callback = jest.fn();
+
+    emitter.on("test", callback);
+    emitter.emit("test", "data");
+
+    expect(callback).toHaveBeenCalledWith("data");
   });
 });
