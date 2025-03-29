@@ -85,7 +85,16 @@ describe("Eleva (Core)", () => {
   });
 
   test("throws error if compName is invalid in mount", () => {
-    expect(() => app.mount(appContainer, 123)).toThrow("Invalid component parameter.");
+    expect(() => app.mount(appContainer, 123)).toThrow(
+      "Invalid component parameter."
+    );
+  });
+
+  // Add this test to your ElevaCore.test.js file
+  test("throws error if component is not registered", async () => {
+    expect(() => {
+      app.mount(appContainer, "non-existent-component");
+    }).toThrow('Component "non-existent-component" not registered.');
   });
 
   test("handles missing setup function in component definition", async () => {
@@ -100,60 +109,45 @@ describe("Eleva (Core)", () => {
     expect(appContainer.innerHTML).toContain("No Setup");
   });
 
-  test("unmounts existing child components before mounting new ones", async () => {
-    const ChildComponent1 = {
-      setup: ({ props }) => ({ title: props.title }),
-      template: (ctx) => `<div>Child 1: ${ctx.title}</div>`,
-    };
-    const ChildComponent2 = {
-      setup: ({ props }) => ({ title: props.title }),
-      template: (ctx) => `<div>Child 2: ${ctx.title}</div>`,
-    };
-    const ParentComponent = {
-      setup: () => ({}),
-      template: () => `
-        <div>
-          <child-comp eleva-prop-title="Hello from Parent"></child-comp>
-        </div>
-      `,
-      children: {
-        "child-comp": ChildComponent1,
-      },
-    };
-  
-    app.component("parent-comp", ParentComponent);
-    app.component("child-comp", ChildComponent1);
-  
-    // Mount the parent component with the first child
-    const instance = await app.mount(appContainer, "parent-comp");
-    expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
-  
-    // Update the parent component to use a different child component
-    ParentComponent.children["child-comp"] = ChildComponent2;
-    await app.mount(appContainer, "parent-comp");
-    expect(appContainer.innerHTML).toContain("Child 2: Hello from Parent");
-    expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");
-  });
-
-  test("mounts child components with props extracted from attributes", async () => {
-    const ChildComponent = {
-      setup: ({ props }) => ({ title: props.title }),
-      template: (ctx) => `<div>${ctx.title}</div>`,
-    };
-    const ParentComponent = {
-      template: () => `<div><child-comp eleva-prop-title="Hello"></child-comp></div>`,
-      children: {
-        "child-comp": ChildComponent,
-      },
+  // Add this test to your ElevaCore.test.js file
+  test("injects component scoped styles", async () => {
+    const component = {
+      setup: () => ({ color: "red" }),
+      template: () => `<div class="styled">Styled Component</div>`,
+      style: (ctx) => `
+      .styled { 
+        color: ${ctx.color}; 
+        font-weight: bold;
+      }
+    `,
     };
 
-    app.component("parent-comp", ParentComponent);
-    app.component("child-comp", ChildComponent);
+    app.component("styled-comp", component);
+    const instance = await app.mount(appContainer, "styled-comp");
 
-    const instance = await app.mount(appContainer, "parent-comp");
+    // Verify style element was created and injected
+    const styleEl = appContainer.querySelector(
+      'style[data-eleva-style="styled-comp"]'
+    );
+    expect(styleEl).toBeTruthy();
+    expect(styleEl.textContent).toContain("color: red");
 
-    expect(instance).toBeTruthy();
-    expect(appContainer.innerHTML).toContain("Hello");
+    // Test style update
+    instance.data.color = "blue";
+    const updatedStyle = component.style(instance.data);
+    // Re-inject the updated styles
+    app["_injectStyles"](
+      appContainer,
+      "styled-comp",
+      component.style,
+      instance.data
+    );
+
+    // Verify the style was updated
+    expect(
+      appContainer.querySelector('style[data-eleva-style="styled-comp"]')
+        .textContent
+    ).toContain("color: blue");
   });
 
   test("plugin integration extends Eleva instance", () => {
@@ -200,6 +194,63 @@ describe("Children Components & Passing Props", () => {
     document.body.innerHTML = `<div id="app"></div>`;
     appContainer = document.getElementById("app");
     app = new Eleva("TestApp");
+  });
+
+  test("mounts child components with props extracted from attributes", async () => {
+    const ChildComponent = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>${ctx.title}</div>`,
+    };
+    const ParentComponent = {
+      template: () =>
+        `<div><child-comp eleva-prop-title="Hello"></child-comp></div>`,
+      children: {
+        "child-comp": ChildComponent,
+      },
+    };
+
+    app.component("parent-comp", ParentComponent);
+    app.component("child-comp", ChildComponent);
+
+    const instance = await app.mount(appContainer, "parent-comp");
+
+    expect(instance).toBeTruthy();
+    expect(appContainer.innerHTML).toContain("Hello");
+  });
+
+  test("unmounts existing child components before mounting new ones", async () => {
+    const ChildComponent1 = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>Child 1: ${ctx.title}</div>`,
+    };
+    const ChildComponent2 = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>Child 2: ${ctx.title}</div>`,
+    };
+    const ParentComponent = {
+      setup: () => ({}),
+      template: () => `
+        <div>
+          <child-comp eleva-prop-title="Hello from Parent"></child-comp>
+        </div>
+      `,
+      children: {
+        "child-comp": ChildComponent1,
+      },
+    };
+
+    app.component("parent-comp", ParentComponent);
+    app.component("child-comp", ChildComponent1);
+
+    // Mount the parent component with the first child
+    const instance = await app.mount(appContainer, "parent-comp");
+    expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
+
+    // Update the parent component to use a different child component
+    ParentComponent.children["child-comp"] = ChildComponent2;
+    await app.mount(appContainer, "parent-comp");
+    expect(appContainer.innerHTML).toContain("Child 2: Hello from Parent");
+    expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");
   });
 
   test("child component receives props from parent", async () => {
