@@ -100,41 +100,39 @@ describe("Eleva (Core)", () => {
     expect(appContainer.innerHTML).toContain("No Setup");
   });
 
-  test("unmounts and remounts child components with updated props", async () => {
-    const ChildComponent = {
+  test("unmounts existing child components before mounting new ones", async () => {
+    const ChildComponent1 = {
       setup: ({ props }) => ({ title: props.title }),
-      template: (ctx) => `<div>Child: ${ctx.title}</div>`,
+      template: (ctx) => `<div>Child 1: ${ctx.title}</div>`,
     };
-  
+    const ChildComponent2 = {
+      setup: ({ props }) => ({ title: props.title }),
+      template: (ctx) => `<div>Child 2: ${ctx.title}</div>`,
+    };
     const ParentComponent = {
+      setup: () => ({}),
       template: () => `
         <div>
-          <child-comp eleva-prop-title="Initial Title"></child-comp>
+          <child-comp eleva-prop-title="Hello from Parent"></child-comp>
         </div>
       `,
       children: {
-        "child-comp": ChildComponent,
+        "child-comp": ChildComponent1,
       },
     };
   
     app.component("parent-comp", ParentComponent);
-    app.component("child-comp", ChildComponent);
+    app.component("child-comp", ChildComponent1);
   
-    // Mount the parent component with the initial child
+    // Mount the parent component with the first child
     const instance = await app.mount(appContainer, "parent-comp");
-    expect(appContainer.innerHTML).toContain("Child: Initial Title");
+    expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
   
-    // Update the child component's props
-    ParentComponent.template = () => `
-      <div>
-        <child-comp eleva-prop-title="Updated Title"></child-comp>
-      </div>
-    `;
+    // Update the parent component to use a different child component
+    ParentComponent.children["child-comp"] = ChildComponent2;
     await app.mount(appContainer, "parent-comp");
-  
-    // Verify the child component is unmounted and remounted with updated props
-    expect(appContainer.innerHTML).toContain("Child: Updated Title");
-    expect(appContainer.innerHTML).not.toContain("Child: Initial Title");
+    expect(appContainer.innerHTML).toContain("Child 2: Hello from Parent");
+    expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");
   });
 
   test("mounts child components with props extracted from attributes", async () => {
