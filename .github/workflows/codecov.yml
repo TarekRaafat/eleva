@@ -4,11 +4,38 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build:all
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
   test:
     name: Run Tests & Collect Coverage
-
+    needs: build
     runs-on: ubuntu-latest
 
     strategy:
@@ -26,6 +53,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
       - name: Install dependencies
         run: npm install
 
@@ -33,6 +66,7 @@ jobs:
         run: npx jest --coverage
 
       - name: Upload results to Codecov
+        if: matrix.node-version == '20.x'
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
