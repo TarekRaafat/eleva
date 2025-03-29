@@ -1,14 +1,73 @@
-import Eleva from "../src/index.js";
+/**
+ * @fileoverview Tests for the Eleva core framework functionality
+ *
+ * These tests verify the core behavior of the Eleva framework, including:
+ * - Component registration and mounting
+ * - Component lifecycle management (mount, unmount)
+ * - Event handling and cleanup
+ * - Style injection and reactivity
+ * - Error conditions and validation
+ * - Parent-child component relationships
+ * - Props passing between components
+ * - Plugin system integration
+ *
+ * The Eleva core provides the foundation for building reactive UI components
+ * with an intuitive API, efficient rendering, and lifecycle management.
+ *
+ * @author Tarek Raafat
+ * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
+ * @requires module:eleva
+ * @category Unit
+ * @group core
+ * @group components
+ * @group lifecycle
+ */
 
+import Eleva from "../../../src/index.js";
+
+/**
+ * Tests for the core functionality of the Eleva framework
+ *
+ * This suite verifies the basic component API and functionality:
+ * - Component registration
+ * - Component mounting and rendering
+ * - Lifecycle hooks
+ * - Event handling
+ * - Style management
+ * - Plugin system
+ *
+ * @group core
+ * @group components
+ * @group integration
+ */
 describe("Eleva (Core)", () => {
   let app;
   let appContainer;
+
+  /**
+   * Setup for each test - creates a fresh DOM container and Eleva instance
+   *
+   * This setup ensures each test starts with a clean environment to avoid
+   * test interdependencies and side effects.
+   */
   beforeEach(() => {
     document.body.innerHTML = `<div id="app"></div>`;
     appContainer = document.getElementById("app");
     app = new Eleva("TestApp");
   });
 
+  /**
+   * Tests component registration and mounting functionality
+   *
+   * Verifies that a component can be:
+   * - Registered with the Eleva instance
+   * - Successfully mounted to the DOM
+   * - Renders the expected content
+   *
+   * @async
+   * @group mounting
+   * @group rendering
+   */
   test("registers and mounts a component", async () => {
     const component = {
       setup: ({ signal }) => ({ msg: signal("Hello") }),
@@ -22,6 +81,18 @@ describe("Eleva (Core)", () => {
     expect(appContainer.innerHTML).toContain("Hello");
   });
 
+  /**
+   * Tests that component lifecycle hooks are called in the correct order
+   *
+   * Verifies:
+   * - onBeforeMount is called before rendering
+   * - onMount is called after rendering
+   * - onUnmount is called when the component is unmounted
+   *
+   * @async
+   * @group lifecycle
+   * @group hooks
+   */
   test("lifecycle hooks are called appropriately", async () => {
     const onBeforeMountFn = jest.fn();
     const onMountFn = jest.fn();
@@ -59,6 +130,19 @@ describe("Eleva (Core)", () => {
     expect(onUnmountFn).toHaveBeenCalled();
   });
 
+  /**
+   * Tests that event listeners are properly cleaned up on unmount
+   *
+   * Verifies:
+   * - Event handlers work correctly when component is mounted
+   * - Event handlers are removed when component is unmounted
+   * - No memory leaks from lingering event handlers
+   *
+   * @async
+   * @group events
+   * @group cleanup
+   * @group memory-management
+   */
   test("cleans up event listeners on unmount", async () => {
     const clickHandler = jest.fn();
 
@@ -84,19 +168,46 @@ describe("Eleva (Core)", () => {
     expect(clickHandler).toHaveBeenCalledTimes(1);
   });
 
+  /**
+   * Tests error handling for invalid component names
+   *
+   * Verifies that appropriate errors are thrown when mounting
+   * with an invalid component name
+   *
+   * @group error-handling
+   * @group validation
+   */
   test("throws error if compName is invalid in mount", () => {
     expect(() => app.mount(appContainer, 123)).toThrow(
       "Invalid component parameter."
     );
   });
 
-  // Add this test to your ElevaCore.test.js file
+  /**
+   * Tests error handling for non-registered components
+   *
+   * Verifies that appropriate errors are thrown when trying to mount
+   * a component that hasn't been registered
+   *
+   * @group error-handling
+   * @group validation
+   */
   test("throws error if component is not registered", async () => {
     expect(() => {
       app.mount(appContainer, "non-existent-component");
     }).toThrow('Component "non-existent-component" not registered.');
   });
 
+  /**
+   * Tests that components can work without a setup function
+   *
+   * Verifies that components with only a template function
+   * can still be registered and mounted successfully
+   *
+   * @async
+   * @group components
+   * @group flexibility
+   */
   test("handles missing setup function in component definition", async () => {
     const component = {
       template: () => `<div>No Setup</div>`,
@@ -109,7 +220,18 @@ describe("Eleva (Core)", () => {
     expect(appContainer.innerHTML).toContain("No Setup");
   });
 
-  // Add this test to your ElevaCore.test.js file
+  /**
+   * Tests component scoped style injection functionality
+   *
+   * Verifies:
+   * - Styles are properly scoped to the component
+   * - Styles are reactive to component state changes
+   * - Styles are injected into the DOM correctly
+   *
+   * @async
+   * @group styling
+   * @group reactivity
+   */
   test("injects component scoped styles", async () => {
     const component = {
       setup: () => ({ color: "red" }),
@@ -150,6 +272,17 @@ describe("Eleva (Core)", () => {
     ).toContain("color: blue");
   });
 
+  /**
+   * Tests the plugin system functionality
+   *
+   * Verifies:
+   * - Plugins can be registered with the Eleva instance
+   * - Plugins can extend the Eleva API
+   * - Plugin options are correctly passed
+   *
+   * @group plugins
+   * @group extensibility
+   */
   test("plugin integration extends Eleva instance", () => {
     const myPlugin = {
       install(eleva, options) {
@@ -161,25 +294,62 @@ describe("Eleva (Core)", () => {
   });
 });
 
+/**
+ * Tests for error handling within the Eleva framework
+ *
+ * This suite verifies that Eleva correctly handles various error conditions:
+ * - Invalid state transitions
+ * - Invalid templates
+ * - Navigation errors
+ * - Movement errors
+ *
+ * @group core
+ * @group error-handling
+ * @group robustness
+ */
 describe("Eleva error handling", () => {
+  /**
+   * Tests that invalid state transitions are properly caught
+   *
+   * @group state-management
+   * @group validation
+   */
   test("should handle invalid state transitions", () => {
     const eleva = new Eleva();
     eleva.state = "invalid";
     expect(() => eleva.validateState()).toThrow();
   });
 
+  /**
+   * Tests error handling for template errors
+   *
+   * @group templates
+   * @group validation
+   */
   test("should handle template errors", () => {
     const eleva = new Eleva();
     eleva.template = null;
     expect(() => eleva.render()).toThrow();
   });
 
+  /**
+   * Tests error handling for navigation errors
+   *
+   * @group navigation
+   * @group validation
+   */
   test("should handle navigation errors", () => {
     const eleva = new Eleva();
     eleva.floor = -1;
     expect(() => eleva.navigate()).toThrow();
   });
 
+  /**
+   * Tests error handling for movement errors
+   *
+   * @group state-management
+   * @group validation
+   */
   test("should handle movement errors", () => {
     const eleva = new Eleva();
     eleva.moving = true;
@@ -187,15 +357,46 @@ describe("Eleva error handling", () => {
   });
 });
 
+/**
+ * Tests for component relationships and prop passing
+ *
+ * This suite verifies the parent-child component relationship functionality:
+ * - Child component mounting within parent templates
+ * - Props passing from parent to children
+ * - Component unmounting and replacement
+ *
+ * @group core
+ * @group component-relationships
+ * @group props
+ */
 describe("Children Components & Passing Props", () => {
   let app;
   let appContainer;
+
+  /**
+   * Setup for each test - creates a fresh DOM container and Eleva instance
+   *
+   * This setup ensures each test starts with a clean environment to avoid
+   * test interdependencies and side effects.
+   */
   beforeEach(() => {
     document.body.innerHTML = `<div id="app"></div>`;
     appContainer = document.getElementById("app");
     app = new Eleva("TestApp");
   });
 
+  /**
+   * Tests that child components can extract props from parent attributes
+   *
+   * Verifies:
+   * - Child components receive props from parent templates
+   * - Props are accessible within the child setup function
+   * - Child components render correctly with passed props
+   *
+   * @async
+   * @group props
+   * @group component-composition
+   */
   test("mounts child components with props extracted from attributes", async () => {
     const ChildComponent = {
       setup: ({ props }) => ({ title: props.title }),
@@ -218,6 +419,20 @@ describe("Children Components & Passing Props", () => {
     expect(appContainer.innerHTML).toContain("Hello");
   });
 
+  /**
+   * Tests that existing child components are properly unmounted
+   * before new ones are mounted
+   *
+   * Verifies:
+   * - Child components can be replaced without leaks
+   * - New child components render correctly
+   * - Old child components are properly removed from DOM
+   *
+   * @async
+   * @group lifecycle
+   * @group component-replacement
+   * @group memory-management
+   */
   test("unmounts existing child components before mounting new ones", async () => {
     const ChildComponent1 = {
       setup: ({ props }) => ({ title: props.title }),
@@ -253,6 +468,18 @@ describe("Children Components & Passing Props", () => {
     expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");
   });
 
+  /**
+   * Tests the complete parent-child component relationship
+   *
+   * Verifies:
+   * - Parent components render correctly
+   * - Child components receive props from parent
+   * - Both parent and child content appears in the DOM
+   *
+   * @async
+   * @group component-composition
+   * @group rendering
+   */
   test("child component receives props from parent", async () => {
     const ChildComponent = {
       setup: ({ props }) => ({ title: props.title }),
