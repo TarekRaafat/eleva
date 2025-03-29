@@ -20,6 +20,8 @@
  * @group modules
  * @group reactivity
  * @group state-management
+ * @group edge-cases
+ * @group error-handling
  */
 
 import { Signal } from "../../../src/modules/Signal.js";
@@ -40,7 +42,7 @@ import { Signal } from "../../../src/modules/Signal.js";
  * @group reactivity
  * @group core-functionality
  */
-describe("Signal", () => {
+describe("Signal Core", () => {
   /**
    * Tests that the initial value is correctly stored and accessible
    *
@@ -54,7 +56,7 @@ describe("Signal", () => {
    * @group initialization
    * @group value-access
    */
-  test("initial value is set correctly", () => {
+  test("should initialize with provided value", () => {
     const signal = new Signal(10);
 
     expect(signal.value).toBe(10);
@@ -76,7 +78,7 @@ describe("Signal", () => {
    * @group notification
    * @group asynchronous
    */
-  test("watcher is triggered on value change", async () => {
+  test("should trigger watcher on value change", async () => {
     const signal = new Signal(0);
     const callback = jest.fn();
 
@@ -103,7 +105,7 @@ describe("Signal", () => {
    * @group performance
    * @group change-detection
    */
-  test("watcher is not triggered if value remains the same", () => {
+  test("should not trigger watcher for unchanged value", () => {
     const signal = new Signal(0);
     const callback = jest.fn();
 
@@ -128,7 +130,7 @@ describe("Signal", () => {
    * @group memory-management
    * @group cleanup
    */
-  test("unsubscribe stops watcher from being called", () => {
+  test("should stop notifications after unsubscribe", () => {
     const signal = new Signal(0);
     const callback = jest.fn();
     const unsubscribe = signal.watch(callback);
@@ -158,7 +160,7 @@ describe("Signal", () => {
  * @group error-handling
  * @group edge-cases
  */
-describe("Signal edge cases", () => {
+describe("Signal Edge Cases", () => {
   /**
    * Tests the signal's handling of null listener collections
    *
@@ -173,7 +175,7 @@ describe("Signal edge cases", () => {
    * @group defensive-programming
    * @group robustness
    */
-  test("should handle null listeners", () => {
+  test("should handle null listeners gracefully", () => {
     const signal = new Signal();
     signal.listeners = null;
     expect(() => signal.emit("test")).toThrow();
@@ -191,7 +193,7 @@ describe("Signal edge cases", () => {
    * @group initialization
    * @group undefined-handling
    */
-  test("handles undefined initial value", () => {
+  test("should handle undefined initial value", () => {
     const signal = new Signal();
     expect(signal.value).toBeUndefined();
   });
@@ -210,7 +212,7 @@ describe("Signal edge cases", () => {
    * @group object-references
    * @group data-types
    */
-  test("handles complex object values", () => {
+  test("should handle complex object values", () => {
     const initialObj = { name: "test", value: 42 };
     const signal = new Signal(initialObj);
 
@@ -237,7 +239,7 @@ describe("Signal edge cases", () => {
    * @group multiple-subscribers
    * @group selective-unsubscription
    */
-  test("supports multiple watchers", async () => {
+  test("should support multiple watchers", async () => {
     const signal = new Signal(0);
     const callback1 = jest.fn();
     const callback2 = jest.fn();
@@ -272,7 +274,7 @@ describe("Signal edge cases", () => {
    * @group batching
    * @group performance-optimization
    */
-  test("supports batched updates", async () => {
+  test("should support batched updates", async () => {
     const signal = new Signal(0);
     const callback = jest.fn();
 
@@ -317,7 +319,7 @@ describe("Signal edge cases", () => {
 
       // Create a Promise to track when the microtask completes
       let resolveTask;
-      const taskCompleted = new Promise(resolve => {
+      const taskCompleted = new Promise((resolve) => {
         resolveTask = resolve;
       });
 
@@ -357,7 +359,7 @@ describe("Signal edge cases", () => {
  * @group stress-testing
  * @group system-limits
  */
-describe("Signal error states", () => {
+describe("Signal Stress Tests", () => {
   /**
    * Tests handling of circular reference structures
    *
@@ -372,7 +374,7 @@ describe("Signal error states", () => {
    * @group complex-structures
    * @group stability
    */
-  test("handles circular references", () => {
+  test("should handle circular references", () => {
     const obj = {};
     obj.self = obj; // Circular reference
     const signal = new Signal(obj);
@@ -396,7 +398,7 @@ describe("Signal error states", () => {
    * @group performance
    * @group many-subscribers
    */
-  test("handles large number of watchers", () => {
+  test("should handle large number of watchers", () => {
     const signal = new Signal(0);
     const watchers = Array(1000)
       .fill()
@@ -428,7 +430,7 @@ describe("Signal error states", () => {
    * @group stability
    * @group performance
    */
-  test("handles rapid successive updates", async () => {
+  test("should handle rapid successive updates", async () => {
     const signal = new Signal(0);
     const callback = jest.fn();
 

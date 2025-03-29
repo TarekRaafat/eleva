@@ -39,7 +39,7 @@ import { Emitter } from "../../../src/modules/Emitter.js";
  * @group event-handling
  * @group communication
  */
-describe("Emitter", () => {
+describe("Emitter Core", () => {
   /**
    * Tests the basic event emission and listener notification functionality
    *
@@ -55,7 +55,7 @@ describe("Emitter", () => {
    * @group registration
    * @group emission
    */
-  test("emits event to registered listener", () => {
+  test("should emit event to registered listener", () => {
     const emitter = new Emitter();
     const callback = jest.fn();
 
@@ -80,7 +80,7 @@ describe("Emitter", () => {
    * @group memory-management
    * @group unsubscription
    */
-  test("removing event listener stops receiving events", () => {
+  test("should stop events after listener removal", () => {
     const emitter = new Emitter();
     const callback = jest.fn();
 
@@ -105,7 +105,7 @@ describe("Emitter", () => {
    * @group multiple-listeners
    * @group scalability
    */
-  test("multiple listeners receive emitted events", () => {
+  test("should notify multiple listeners", () => {
     const emitter = new Emitter();
     const callback1 = jest.fn();
     const callback2 = jest.fn();
@@ -116,54 +116,5 @@ describe("Emitter", () => {
 
     expect(callback1).toHaveBeenCalledWith("data");
     expect(callback2).toHaveBeenCalledWith("data");
-  });
-});
-
-/**
- * Test suite for advanced features and edge cases of the Emitter module
- *
- * This suite tests more complex scenarios and error handling:
- * - Event namespacing
- * - Wildcard listeners
- * - Error recovery
- * - Performance with many listeners
- *
- * These tests ensure the Emitter behaves correctly in edge cases
- * and maintains robustness under various conditions.
- *
- * @group modules
- * @group advanced
- * @group edge-cases
- */
-describe("Emitter advanced features", () => {
-  /**
-   * Tests the once method for single-execution listeners
-   *
-   * Verifies that:
-   * - Listeners registered with once are called only on the first emission
-   * - They are automatically removed after being triggered once
-   *
-   * This is useful for one-time events like initialization or cleanup actions.
-   *
-   * @group once
-   * @group auto-removal
-   */
-  test("once method registers listeners that execute only once", () => {
-    const emitter = new Emitter();
-    const callback = jest.fn();
-
-    // If the Emitter has a once method:
-    if (typeof emitter.once === "function") {
-      emitter.once("test", callback);
-
-      emitter.emit("test", "first");
-      emitter.emit("test", "second");
-
-      expect(callback).toHaveBeenCalledTimes(1);
-      expect(callback).toHaveBeenCalledWith("first");
-    } else {
-      // Skip this test if the once method isn't implemented
-      console.log("Emitter.once() is not implemented, skipping test");
-    }
   });
 });

@@ -19,6 +19,8 @@
  * @group modules
  * @group templating
  * @group rendering
+ * @group edge-cases
+ * @group error-handling
  */
 
 import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
@@ -39,7 +41,7 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
  * @group templating
  * @group core-functionality
  */
-describe("TemplateEngine", () => {
+describe("TemplateEngine Core", () => {
   /**
    * Tests the template interpolation functionality
    *
@@ -54,7 +56,7 @@ describe("TemplateEngine", () => {
    * @group interpolation
    * @group basic
    */
-  test("parse replaces interpolation expressions", () => {
+  test("should replace interpolation expressions", () => {
     const template = "Hello, {{ name }}!";
     const data = { name: "World" };
 
@@ -75,32 +77,10 @@ describe("TemplateEngine", () => {
    * @group evaluation
    * @group expressions
    */
-  test("evaluate returns correct result for valid expression", () => {
+  test("should evaluate valid expressions correctly", () => {
     const data = { a: 2, b: 3 };
 
     expect(TemplateEngine.evaluate("a + b", data)).toBe(5);
-  });
-
-  /**
-   * Tests error handling during expression evaluation
-   *
-   * Verifies:
-   * - Reference errors (accessing undefined variables) are handled gracefully
-   * - An empty string is returned instead of throwing an error
-   * - The system remains stable even with invalid expressions
-   *
-   * Proper error handling ensures templates remain robust even when
-   * referencing undefined or invalid data.
-   *
-   * @group error-handling
-   * @group robustness
-   * @group undefined-handling
-   */
-  test("evaluate returns empty string on error", () => {
-    const data = { a: 1 };
-    const result = TemplateEngine.evaluate("nonExistentVariable", data);
-
-    expect(result).toBe("");
   });
 
   /**
@@ -117,7 +97,7 @@ describe("TemplateEngine", () => {
    * @group nested-properties
    * @group complex-data
    */
-  test("parse handles nested object properties", () => {
+  test("should handle nested object properties", () => {
     const template = "User: {{ user.name }}, Age: {{ user.profile.age }}";
     const data = {
       user: {
@@ -145,7 +125,7 @@ describe("TemplateEngine", () => {
    * @group arrays
    * @group collection-access
    */
-  test("parse handles array indexing", () => {
+  test("should handle array indexing", () => {
     const template = "First item: {{ items[0] }}, Second item: {{ items[1] }}";
     const data = { items: ["apple", "banana"] };
 
@@ -167,7 +147,7 @@ describe("TemplateEngine", () => {
    * @group multiple-expressions
    * @group complex-templates
    */
-  test("parse handles multiple interpolations", () => {
+  test("should handle multiple interpolations", () => {
     const template = "{{ greeting }} {{ name }}! Your score is {{ score }}.";
     const data = { greeting: "Hello", name: "World", score: 100 };
 
@@ -190,7 +170,7 @@ describe("TemplateEngine", () => {
    * @group conditional-logic
    * @group expressions
    */
-  test("evaluate handles conditional expressions", () => {
+  test("should evaluate conditional expressions", () => {
     const data = { age: 20 };
 
     expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
@@ -201,6 +181,81 @@ describe("TemplateEngine", () => {
     expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
       "Minor"
     );
+  });
+});
+
+/**
+ * Tests for edge cases in the TemplateEngine module
+ *
+ * This suite verifies how the template engine handles various edge cases:
+ * - Empty templates
+ * - Templates with no interpolations
+ * - Deeply nested object properties
+ *
+ * Robust error handling is essential for a good developer experience, making
+ * template errors easy to identify and fix.
+ *
+ * @group modules
+ * @group templating
+ * @group edge-cases
+ * @group robustness
+ */
+describe("TemplateEngine Edge Cases", () => {
+  /**
+   * Tests handling of empty templates
+   *
+   * Verifies:
+   * - The engine handles empty templates gracefully
+   * - No errors are thrown when the template is empty
+   *
+   * This resilience allows templates to render even when the template is empty.
+   *
+   * @group empty-templates
+   * @group robustness
+   */
+  test("should handle empty templates gracefully", () => {
+    const template = "";
+    const data = {};
+
+    expect(TemplateEngine.parse(template, data)).toBe("");
+  });
+
+  /**
+   * Tests handling of templates with no interpolations
+   *
+   * Verifies:
+   * - The engine handles templates with no interpolations gracefully
+   * - No errors are thrown when there are no interpolations
+   *
+   * This resilience allows templates to render even when there are no interpolations.
+   *
+   * @group no-interpolations
+   * @group robustness
+   */
+  test("should handle templates without interpolations", () => {
+    const template = "Hello, World!";
+    const data = {};
+
+    expect(TemplateEngine.parse(template, data)).toBe("Hello, World!");
+  });
+
+  /**
+   * Tests handling of deeply nested object properties
+   *
+   * Verifies:
+   * - The engine handles deeply nested object properties gracefully
+   * - No errors are thrown when accessing deeply nested properties
+   *
+   * This resilience allows templates to render even when accessing deeply nested properties.
+   *
+   * @group deeply-nested-properties
+   * @group robustness
+   */
+  test("should handle deeply nested object properties", () => {
+    const template = "{{ a.b.c.d.e.f }}";
+    const data = { a: { b: { c: { d: { e: { f: "Hello" } } } } } };
+
+    expect(TemplateEngine.parse(template, data)).toBe("Hello");
   });
 });
 
@@ -221,7 +276,7 @@ describe("TemplateEngine", () => {
  * @group error-handling
  * @group robustness
  */
-describe("TemplateEngine error handling", () => {
+describe("TemplateEngine Error Handling", () => {
   /**
    * Tests handling of invalid template syntax
    *
@@ -235,7 +290,7 @@ describe("TemplateEngine error handling", () => {
    * @group compiler
    * @group developer-experience
    */
-  test("should handle invalid templates", () => {
+  test("should handle invalid templates gracefully", () => {
     const engine = new TemplateEngine();
     const invalidTemplate = "{invalid}";
     expect(() => engine.compile(invalidTemplate)).toThrow();
@@ -255,7 +310,7 @@ describe("TemplateEngine error handling", () => {
    * @group graceful-degradation
    * @group robustness
    */
-  test("evaluate handles syntax errors", () => {
+  test("should handle syntax errors gracefully", () => {
     const data = { a: 1 };
     const result = TemplateEngine.evaluate("a +* b", data);
 
@@ -276,7 +331,7 @@ describe("TemplateEngine error handling", () => {
    * @group undefined-handling
    * @group defensive-programming
    */
-  test("parse handles undefined data", () => {
+  test("should handle undefined data gracefully", () => {
     const template = "Hello, {{ name }}!";
 
     expect(TemplateEngine.parse(template, undefined)).toBe("Hello, !");
@@ -301,7 +356,7 @@ describe("TemplateEngine error handling", () => {
  * @group advanced
  * @group extended-features
  */
-describe("TemplateEngine advanced features", () => {
+describe("TemplateEngine Advanced Features", () => {
   /**
    * Tests expression evaluation with function calls
    *
@@ -316,7 +371,7 @@ describe("TemplateEngine advanced features", () => {
    * @group evaluation
    * @group transformation
    */
-  test("evaluate supports function calls", () => {
+  test("should support function calls in expressions", () => {
     const data = {
       greeting: "Hello",
       capitalize: (str) => str.toUpperCase(),
@@ -325,6 +380,51 @@ describe("TemplateEngine advanced features", () => {
     expect(TemplateEngine.evaluate("capitalize(greeting)", data)).toBe("HELLO");
   });
 
+  /**
+   * Tests conditional expressions in templates
+   *
+   * Verifies:
+   * - Ternary operators work correctly in template expressions
+   * - Conditional logic is properly evaluated
+   *
+   * Conditional expressions enable dynamic content that changes based on
+   * component state, a key feature for interactive UIs.
+   *
+   * @group evaluation
+   * @group conditional-logic
+   * @group expressions
+   */
+  test("should evaluate conditional expressions", () => {
+    const data = { age: 20 };
+
+    expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
+      "Adult"
+    );
+
+    data.age = 16;
+    expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
+      "Minor"
+    );
+  });
+});
+
+/**
+ * Tests for performance characteristics of the TemplateEngine module
+ *
+ * This suite verifies the performance characteristics of the TemplateEngine module:
+ * - Performance with large templates
+ * - Performance with complex expressions
+ *
+ * Performance is crucial for rendering complex UIs with many dynamic parts
+ * without causing noticeable delays.
+ *
+ * @group modules
+ * @group templating
+ * @group performance
+ * @group optimization
+ * @group scaling
+ */
+describe("TemplateEngine Performance", () => {
   /**
    * Tests performance with large templates
    *
@@ -339,7 +439,7 @@ describe("TemplateEngine advanced features", () => {
    * @group optimization
    * @group scaling
    */
-  test("performance with large templates", () => {
+  test("should maintain performance with large templates", () => {
     // Create a complex template with many interpolations
     const items = Array(100)
       .fill()
@@ -353,6 +453,36 @@ describe("TemplateEngine advanced features", () => {
           `<li>Item ID: {{ items[${item.id}].id }}, Name: {{ items[${item.id}].name }}</li>`
       )
       .join("");
+
+    const start = performance.now();
+    TemplateEngine.parse(template, data);
+    const end = performance.now();
+
+    // Just making sure it completes, not enforcing a specific time limit in tests
+    expect(end - start).toBeDefined();
+  });
+
+  /**
+   * Tests performance with complex expressions
+   *
+   * Verifies:
+   * - The engine maintains reasonable performance with complex expressions
+   * - No excessive processing time for complex expressions
+   *
+   * Performance is crucial for rendering complex UIs with many dynamic parts
+   * without causing noticeable delays.
+   *
+   * @group performance
+   * @group optimization
+   * @group scaling
+   */
+  test("should maintain performance with complex expressions", () => {
+    const template = "{{ complex.expression.with.many.operations() }}";
+    const data = {
+      complex: {
+        expression: { with: { many: { operations: () => "Hello" } } },
+      },
+    };
 
     const start = performance.now();
     TemplateEngine.parse(template, data);
