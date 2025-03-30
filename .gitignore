@@ -19,3 +19,5 @@ node_modules
 
 # Ignore coverage reports
 coverage
+test/reports
+test/coverage
