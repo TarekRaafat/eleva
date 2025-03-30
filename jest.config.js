@@ -5,7 +5,12 @@ export default {
 
   // Path configurations
   testPathIgnorePatterns: ["/node_modules/", "/dist/"],
-  coveragePathIgnorePatterns: ["/node_modules/", "/dist/", "/test/"],
+  coveragePathIgnorePatterns: [
+    "/node_modules/",
+    "/dist/",
+    "/test/",
+    "/test/performance/",
+  ],
   moduleDirectories: ["node_modules", "src"],
 
   // Coverage settings
