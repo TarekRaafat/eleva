@@ -18,7 +18,7 @@
  * @group templates
  */
 
-import { TemplateEngine } from "../../src/modules/TemplateEngine.js";
+import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
 
 /**
  * Test suite for measuring TemplateEngine performance characteristics

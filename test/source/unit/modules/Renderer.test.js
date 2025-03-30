@@ -33,7 +33,7 @@
  * @group unit
  */
 
-import { Renderer } from "../../../src/modules/Renderer.js";
+import { Renderer } from "../../../../src/modules/Renderer.js";
 
 /**
  * Tests for the core functionality of the Renderer

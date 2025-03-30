@@ -17,7 +17,7 @@
  * @group signals
  */
 
-import { Signal } from "../../src/modules/Signal.js";
+import { Signal } from "../../../src/modules/Signal.js";
 
 /**
  * Test suite for measuring Signal module performance characteristics

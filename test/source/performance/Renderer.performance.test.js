@@ -17,7 +17,7 @@
  * @group rendering
  */
 
-import { Renderer } from "../../src/modules/Renderer.js";
+import { Renderer } from "../../../src/modules/Renderer.js";
 
 /**
  * Test suite for measuring Renderer module performance characteristics

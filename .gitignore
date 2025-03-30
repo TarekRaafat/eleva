@@ -18,6 +18,7 @@ node_modules
 .env
 
 # Ignore coverage reports
-coverage
-test/reports
-test/coverage
+test/source/reports
+test/source/coverage
+test/build/reports
+test/build/coverage

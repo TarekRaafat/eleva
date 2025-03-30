@@ -17,7 +17,7 @@
  * @group events
  */
 
-import { Emitter } from "../../src/modules/Emitter.js";
+import { Emitter } from "../../../src/modules/Emitter.js";
 
 /**
  * Test suite for measuring Emitter module performance characteristics

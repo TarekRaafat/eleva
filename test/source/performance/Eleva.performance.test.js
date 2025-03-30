@@ -17,7 +17,7 @@
  * @group core
  */
 
-import { Eleva } from "../../src/core/Eleva.js";
+import { Eleva } from "../../../src/core/Eleva.js";
 
 /**
  * Test suite for measuring core Eleva framework performance characteristics

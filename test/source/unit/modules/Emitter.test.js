@@ -35,7 +35,7 @@
  * @group unit
  */
 
-import { Emitter } from "../../../src/modules/Emitter.js";
+import { Emitter } from "../../../../src/modules/Emitter.js";
 
 /**
  * Tests for the core functionality of the Emitter

@@ -41,7 +41,7 @@
  * @group unit
  */
 
-import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
+import { TemplateEngine } from "../../../../src/modules/TemplateEngine.js";
 
 /**
  * Tests for the core functionality of the TemplateEngine

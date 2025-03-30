@@ -31,7 +31,7 @@
  * @group unit
  */
 
-import Eleva from "../../../src/index.js";
+import Eleva from "../../../../src/index.js";
 
 /**
  * Tests for the core functionality of the Eleva framework

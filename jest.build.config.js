@@ -4,25 +4,27 @@ export default {
   verbose: true,
 
   // Path configurations
-  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  testPathIgnorePatterns: ["/node_modules/"],
   coveragePathIgnorePatterns: [
     "/node_modules/",
-    "/dist/",
+    "/src/",
     "/test/",
-    "/test/performance/",
+    "/test/source/",
+    "/test/build/performance/",
   ],
-  moduleDirectories: ["node_modules", "src"],
+  moduleDirectories: ["node_modules", "dist"],
 
   // Coverage settings
   collectCoverageFrom: [
-    "src/**/*.js",
-    "!src/**/index.js",
-    "!src/**/*.d.ts",
-    "!src/**/*.min.js",
+    "dist/*.esm.js",
+    "dist/*.umd.js",
+    "dist/*.min.js",
+    "!dist/*.d.ts",
+    "!dist/*.map",
   ],
   collectCoverage: true,
   coverageReporters: ["text", "lcov", "html"],
-  coverageDirectory: "test/coverage",
+  coverageDirectory: "test/build/coverage",
   coverageThreshold: {
     global: {
       statements: 90,
@@ -38,14 +40,17 @@ export default {
   },
 
   // Test patterns
-  testMatch: ["<rootDir>/test/**/*.test.js"],
+  testMatch: ["<rootDir>/test/build/**/*.test.js"],
 
   // Custom setup
-  setupFilesAfterEnv: ["<rootDir>/test/setup/jest.setup.js"],
+  setupFilesAfterEnv: ["<rootDir>/test/build/setup/jest.setup.js"],
+
+  // Source map support for better error reporting
+  setupFiles: ["source-map-support/register"],
 
   // Display settings
   displayName: {
-    name: "Eleva.js",
+    name: "Eleva.js (Build)",
     color: "cyan",
   },
 
@@ -55,9 +60,9 @@ export default {
     [
       "jest-html-reporters",
       {
-        publicPath: "./test/reports",
+        publicPath: "./test/build/reports",
         filename: "report.html",
-        pageTitle: "Eleva.js Test Report",
+        pageTitle: "Eleva.js Build Test Report",
         enableMergeData: true,
         enableSkipTestButton: true,
       },
@@ -67,7 +72,7 @@ export default {
   // Performance tuning
   maxWorkers: "80%",
 
-  // Add timeouts for tests that might hang
+  // Timeouts for tests that might hang
   testTimeout: 10000,
 
   // Enable watch plugins
@@ -81,20 +86,6 @@ export default {
 
   // Automatically restore mocks between tests
   restoreMocks: true,
-
-  // // Module name mapping for package imports
-  // // Uncomment this section unless any of the following applies:
-  // // 1. Test the built package instead of source files
-  // // 2. Use "import from 'eleva'" syntax in tests instead of relative paths
-  // // 3. Test code that imports eleva as a dependency
-  // moduleNameMapper: {
-  //   "^eleva$": "<rootDir>/dist/eleva.esm.js",
-  // },
-
-  // // Enable more verbose test output during debugging
-  // // Comment out when not needed
-  // bail: true, // Stop running tests after the first failure
-  // notify: true, // Show desktop notifications for test results
 
   // Configure how tests are run in sequence or parallel
   maxConcurrency: 5, // Maximum number of tests running concurrently

@@ -34,7 +34,7 @@
  * @group unit
  */
 
-import { Signal } from "../../../src/modules/Signal.js";
+import { Signal } from "../../../../src/modules/Signal.js";
 
 /**
  * Tests for the core functionality of the Signal
