@@ -1,6 +1,30 @@
 /**
- * Performance tests for framework loading time
- * These tests measure the time taken to load and initialize the framework
+ * @fileoverview Performance tests for the Eleva framework loading and initialization
+ *
+ * These tests measure and verify the performance characteristics of the built
+ * version of the Eleva framework, focusing on:
+ * - Initial framework load time
+ * - Component initialization performance
+ * - Multiple component handling efficiency
+ * - Load time consistency across runs
+ * - Cold vs warm load performance comparison
+ *
+ * Performance budgets are enforced to ensure the framework maintains
+ * optimal loading and initialization times in production.
+ *
+ * @example
+ * // Measuring framework load time
+ * const { duration } = measurePerformance(() => {
+ *   window.Eleva = require("../../../dist/eleva.min.js");
+ * });
+ * console.log(`Load time: ${duration.toFixed(2)}ms`);
+ *
+ * @author Tarek Raafat
+ * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
+ * @requires module:eleva
+ * @category Performance
+ * @group performance
+ * @group build
  */
 
 import {
@@ -9,12 +33,48 @@ import {
   logPerformanceMetrics,
 } from "./helpers";
 
+/**
+ * Performance test suite for Eleva.js load times
+ *
+ * This suite verifies that the framework maintains optimal performance
+ * characteristics in its built form, including:
+ * - Fast initial load time
+ * - Efficient component initialization
+ * - Consistent performance across multiple runs
+ * - Optimal caching behavior
+ *
+ * @example
+ * // Testing component initialization
+ * const { duration } = measurePerformance(() => {
+ *   const app = new window.Eleva("TestApp");
+ *   app.component("test", { template: () => "<div>Test</div>" });
+ * });
+ *
+ * @group performance
+ * @group load-times
+ * @group build
+ */
 describe("Eleva.js Load Time Performance", () => {
+  /**
+   * Setup for each test - ensures clean environment
+   *
+   * Removes any existing Eleva instances to ensure
+   * consistent testing conditions
+   */
   beforeEach(() => {
-    // Clear any existing instances
     window.Eleva = undefined;
   });
 
+  /**
+   * Tests that the framework loads within performance budget
+   *
+   * Verifies:
+   * - Framework loads in under 100ms
+   * - No performance regressions in production build
+   *
+   * @group load-times
+   * @group initialization
+   */
   test("should load framework within performance budget", () => {
     const { duration } = measurePerformance(() => {
       window.Eleva = require("../../../dist/eleva.min.js");
@@ -24,6 +84,17 @@ describe("Eleva.js Load Time Performance", () => {
     expect(duration).toBeLessThan(100);
   });
 
+  /**
+   * Tests basic component initialization performance
+   *
+   * Verifies:
+   * - Component creation and mounting under 50ms
+   * - Efficient DOM manipulation
+   * - Quick template rendering
+   *
+   * @group load-times
+   * @group components
+   */
   test("should initialize basic component within performance budget", () => {
     const { duration } = measurePerformance(() => {
       window.Eleva = require("../../../dist/eleva.min.js");
@@ -44,6 +115,17 @@ describe("Eleva.js Load Time Performance", () => {
     expect(duration).toBeLessThan(50);
   });
 
+  /**
+   * Tests performance with multiple component initializations
+   *
+   * Verifies:
+   * - Efficient handling of multiple components
+   * - Scalable component registration
+   * - Performance under load
+   *
+   * @group load-times
+   * @group scalability
+   */
   test("should handle multiple component initializations efficiently", () => {
     const { duration } = measurePerformance(() => {
       window.Eleva = require("../../../dist/eleva.min.js");
@@ -67,6 +149,17 @@ describe("Eleva.js Load Time Performance", () => {
     expect(duration).toBeLessThan(200);
   });
 
+  /**
+   * Tests load time consistency across multiple runs
+   *
+   * Verifies:
+   * - Consistent performance characteristics
+   * - Low standard deviation in load times
+   * - Reliable caching behavior
+   *
+   * @group load-times
+   * @group consistency
+   */
   test("should maintain consistent load time across multiple runs", () => {
     const metrics = measureMultipleRuns(() => {
       window.Eleva = undefined;
@@ -79,6 +172,17 @@ describe("Eleva.js Load Time Performance", () => {
     expect(metrics.stdDev).toBeLessThan(metrics.average * 0.8);
   });
 
+  /**
+   * Tests cold vs warm load performance characteristics
+   *
+   * Verifies:
+   * - Efficient caching behavior
+   * - Faster subsequent loads
+   * - Optimal resource utilization
+   *
+   * @group load-times
+   * @group caching
+   */
   test("should measure cold vs warm load times", () => {
     // Cold load (first time)
     const coldMetrics = measureMultipleRuns(() => {
