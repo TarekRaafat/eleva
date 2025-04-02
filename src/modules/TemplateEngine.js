@@ -15,11 +15,10 @@ export class TemplateEngine {
    * @returns {string} The resulting string with evaluated values.
    */
   static parse(template, data) {
-    if (!template.trim()) return "";
+    if (!template || typeof template !== "string") return template;
 
     return template.replace(/\{\{\s*(.*?)\s*\}\}/g, (_, expr) => {
-      const value = this.evaluate(expr, data);
-      return value === undefined ? "" : value;
+      return this.evaluate(expr, data);
     });
   }
 
@@ -31,13 +30,11 @@ export class TemplateEngine {
    * @returns {any} The result of the evaluated expression, or an empty string if undefined or on error.
    */
   static evaluate(expr, data) {
-    try {
-      if (!expr.trim()) return "";
+    if (!expr || typeof expr !== "string") return expr;
 
-      const keys = Object.keys(data);
-      const values = Object.values(data);
-      const result = new Function(...keys, `return ${expr}`)(...values);
-      return result === undefined ? "" : result;
+    try {
+      const compiledFn = new Function("data", `with(data) { return ${expr} }`);
+      return compiledFn(data);
     } catch (error) {
       console.error(`Template evaluation error:`, {
         expression: expr,
