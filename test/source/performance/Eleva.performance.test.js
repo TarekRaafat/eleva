@@ -134,8 +134,8 @@ describe("Eleva Core Performance", () => {
       }),
       template: (ctx) => `
         <div class="reactive-test">
-          <div>Counter 1: {{ctx.counter1.value}}</div>
-          <div>Counter 2: {{ctx.counter2.value}}</div>
+          <div>Counter 1: {{counter1.value}}</div>
+          <div>Counter 2: {{counter2.value}}</div>
           <ul>
             ${ctx.items.value
               .map(
