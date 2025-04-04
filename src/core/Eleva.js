@@ -293,7 +293,7 @@ export class Eleva {
         const props = {};
         [...childEl.attributes].forEach(({ name, value }) => {
           if (name.startsWith("eleva-prop-")) {
-            props[name.slice("eleva-prop-".length)] = value;
+            props[name.replace("eleva-prop-", "")] = value;
           }
         });
         const instance = this.mount(childEl, children[childSelector], props);
