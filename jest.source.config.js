@@ -4,12 +4,7 @@ export default {
   verbose: true,
 
   // Path configurations
-  testPathIgnorePatterns: [
-    "/node_modules/",
-    "/dist/",
-    "/test/source/performance/",
-    ".*/performance/.*",
-  ],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/dist/",
