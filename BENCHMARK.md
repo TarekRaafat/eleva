@@ -26,7 +26,7 @@ All tests were conducted in a **controlled environment** to minimize variability
 
 | **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
 | ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **2**              | **0.05**                     | **0.018**                | **0.25**                   | **0.58 (Best)**                                 |
+| **Eleva** (Direct DOM)        | **2**              | **0.05**                     | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
 | **React** (Virtual DOM)       | 42                   | 40                         | 0.020                    | 0.25                       | 20.57                                           |
 | **Vue** (Reactive State)      | 33                   | 35                         | 0.021                    | 3.10                       | 17.78                                           |
 | **Angular** (Two-way Binding) | 80                   | 100                        | 0.021                    | 0.25                       | 45.07 (Slowest)                                 |
