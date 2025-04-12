@@ -29,7 +29,7 @@
     "test:source": "jest -c jest.source.config.js",
     "test:source:unit": "jest -c jest.source.config.js --testPathPattern=source/unit",
     "test:source:performance": "jest -c jest.source.config.js --testPathPattern=source/performance",
-    "test:source:coverage": "jest -c jest.source.config.js --coverage",
+    "test:source:coverage": "jest -c jest.source.config.js --testPathPattern=source/unit --coverage",
     "test:source:watch": "jest -c jest.source.config.js --watch",
     "test:source:debug": "jest -c jest.source.config.js --runInBand --no-cache --watchAll",
     "test:build": "jest -c jest.build.config.js",
