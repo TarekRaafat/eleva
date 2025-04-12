@@ -10,6 +10,7 @@ export class Renderer {
      *
      * @param {HTMLElement} container - The container element to patch.
      * @param {string} newHtml - The new HTML content to apply.
+     * @throws {Error} If container is not an HTMLElement or newHtml is not a string
      */
     patchDOM(container: HTMLElement, newHtml: string): void;
     /**
@@ -17,6 +18,7 @@ export class Renderer {
      *
      * @param {HTMLElement} oldParent - The original DOM element.
      * @param {HTMLElement} newParent - The new DOM element.
+     * @throws {Error} If either parent is not an HTMLElement
      */
     diff(oldParent: HTMLElement, newParent: HTMLElement): void;
     /**
@@ -24,6 +26,7 @@ export class Renderer {
      *
      * @param {HTMLElement} oldEl - The element to update.
      * @param {HTMLElement} newEl - The element providing the updated attributes.
+     * @throws {Error} If either element is not an HTMLElement
      */
     updateAttributes(oldEl: HTMLElement, newEl: HTMLElement): void;
 }
