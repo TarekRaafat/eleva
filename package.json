@@ -44,7 +44,7 @@
     "format": "npx prettier \"src/**/*\" \"types/**/*\" --write",
     "size": "size-limit",
     "clean": "rimraf dist types",
-    "prepublishOnly": "npm run format && npm run lint && npm run test && npm run build:all",
+    "prepublishOnly": "npm run format && npm run lint && npm run test:source:coverage && npm run build:all",
     "prepare": "npm run build:all"
   },
   "engines": {
