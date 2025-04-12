@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.2.2-alpha",
+  "version": "1.2.3-alpha",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
   "main": "dist/eleva.js",
@@ -20,6 +20,11 @@
     "build:types": "tsc --emitDeclarationOnly",
     "build:types:bundle": "rollup -c rollup.dts.config.js",
     "build:all": "npm run clean && npm run build && npm run build:types && npm run build:types:bundle",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs",
+    "docs:api": "jsdoc -c jsdoc.json",
+    "docs:generate": "npm run docs:api && npm run docs:build",
     "test": "npm run test:all",
     "test:source": "jest -c jest.source.config.js",
     "test:source:unit": "jest -c jest.source.config.js --testPathPattern=source/unit",
@@ -62,13 +67,15 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-html-reporters": "^3.1.7",
     "jest-watch-typeahead": "^2.2.2",
+    "jsdoc": "^4.0.4",
     "lint-staged": "^15.5.0",
     "prettier": "^3.5.3",
     "rimraf": "^6.0.1",
     "rollup": "^4.34.8",
     "rollup-plugin-dts": "^6.1.1",
     "size-limit": "^11.2.0",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vitepress": "^1.6.3"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [

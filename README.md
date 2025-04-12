@@ -30,12 +30,12 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
 
-<!-- [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva) -->
+> **Stability Notice**: This is `v1.2.3-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
+> While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
 
-> **Stability Notice**: This is `v1.2.2-alpha` - APIs may change significantly until the stable release.  
-> Not recommended for production use yet. Follow the [versioning guide](#version-guide) for updates.
+**Version:** `1.2.3-alpha`
 
-**Version:** `1.2.2-alpha`
+
 
 Welcome to Eleva! This is my humble, experimental playground for a fresh approach to frontend development. Eleva was born out of my genuine passion for pure vanilla JavaScript—no frameworks, no bloat, just the power of native code. I hope you'll have fun exploring, testing, and contributing to make Eleva even better. 🚀
 
@@ -111,7 +111,7 @@ Eleva is built with meticulous attention to detail and a deep passion for pure v
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-Centric:** Its intuitive API and minimal core mean you spend less time wrestling with the framework and more time building your application.
 - **🌟 Innovative & Fresh:** Stick to pure vanilla JavaScript and avoid unnecessary abstractions.
-- **🏗️ Solid & Reliable:** Focused on performance and modularity, Eleva scales with your project’s needs.
+- **🏗️ Solid & Reliable:** Focused on performance and modularity, Eleva scales with your project's needs.
 
 This unique, developer-first approach makes Eleva a standout choice for building high-performance frontend applications without compromising on simplicity or control.
 
@@ -120,13 +120,13 @@ This unique, developer-first approach makes Eleva a standout choice for building
 ## Features
 
 - **🧩 Component-Based Architecture:** Create reusable UI components effortlessly.
-- **⚡ Signal-Based Reactivity:** Fine-grained reactivity that updates only what’s needed.
+- **⚡ Signal-Based Reactivity:** Fine-grained reactivity that updates only what's needed.
 - **🔔 Event Handling:** Built-in event emitter for robust inter-component communication.
 - **📝 Template Parsing:** Secure and dynamic interpolation with a custom TemplateEngine.
 - **🔄 DOM Diffing & Patching:** High-performance updates without a virtual DOM.
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments.
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers.
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~4 KB minified with built-in TypeScript declarations, to keep your bundle lean and your codebase strongly typed.
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations, to keep your bundle lean and your codebase strongly typed.
 
 ---
 
@@ -134,7 +134,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 
 Eleva is ideal for developers seeking a lightweight, flexible, and high-performance solution for building frontend applications. Here are some scenarios where Eleva shines:
 
-- **🚀 Small to Medium Projects:** Perfect for web apps or websites that don’t require the overhead of a full-fledged framework.
+- **🚀 Small to Medium Projects:** Perfect for web apps or websites that don't require the overhead of a full-fledged framework.
 - **⚡ Performance-Critical Applications:** Optimized reactivity and DOM diffing ensure smooth performance without bloat.
 - **🔄 Unopinionated & Flexible:** Architect your application your way with a straightforward API and plugin system.
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
@@ -148,7 +148,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 I believe in clear versioning that reflects the maturity of the project:
 
 - **Pre-release Versions (Alpha/Beta):** Early versions like `1.2.0-alpha` indicate the API is still evolving. Expect frequent updates and share your feedback!
-- **Semantic Versioning:** Once stable, I’ll follow semantic versioning strictly to clearly communicate any breaking changes.
+- **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 - **Fresh Start:** This release (`1.2.0-alpha`) marks a significant update with enhanced inline documentation, improved JSDoc annotations, and a refined mounting context that now includes an `emitter` property.
 
 ---
@@ -168,7 +168,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~4 KB minified and ~1.8 KB gzipped.
+- **Lightweight:** Approximately ~6 KB minified and ~2 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -177,11 +177,11 @@ Eleva is crafted for performance:
 
 ## Performance Benchmarks
 
-Preliminary benchmarks illustrate Eleva’s efficiency compared to popular frameworks:
+Preliminary benchmarks illustrate Eleva's efficiency compared to popular frameworks:
 
 | **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
 | ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **1.8**              | **10**                     | **0.018**                | **0.25**                   | **3.02 (Best)**                                 |
+| **Eleva** (Direct DOM)        | **2**              | **10**                     | **0.018**                | **0.25**                   | **3.02 (Best)**                                 |
 | **React** (Virtual DOM)       | 42                   | 40                         | 0.020                    | 0.25                       | 20.57                                           |
 | **Vue** (Reactive State)      | 33                   | 35                         | 0.021                    | 3.10                       | 17.78                                           |
 | **Angular** (Two-way Binding) | 80                   | 100                        | 0.021                    | 0.25                       | 45.07 (Slowest)                                 |
@@ -197,11 +197,11 @@ Detailed [Benchmark Metrics Report](BENCHMARK.md)
 Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular:
 
 - **Simplicity:** No virtual DOM, JSX, or complex state management—just plain JavaScript.
-- **Modularity:** Easily extend via plugins to suit your project’s needs.
+- **Modularity:** Easily extend via plugins to suit your project's needs.
 - **Size:** A fraction of the size of mainstream frameworks.
 - **Learning Curve:** Familiar syntax and a clear API make it accessible to all developers.
 
-_Note:_ Eleva isn’t trying to replace these giants but provides a lightweight option when you want simplicity and speed. 🌟
+_Note:_ Eleva isn't trying to replace these giants but provides a lightweight option when you want simplicity and speed. 🌟
 
 ---
 
@@ -355,7 +355,7 @@ For detailed API documentation, please check the [docs](docs/index.md) folder.
 
 ## Development
 
-I welcome developers to dive in and experiment with Eleva! Here’s how to get started locally:
+I welcome developers to dive in and experiment with Eleva! Here's how to get started locally:
 
 1. **Clone the Repository:**
 
@@ -411,7 +411,7 @@ Contributions to tests are very welcome! 🧪
 
 ## Contributing
 
-I’d love to have you onboard as a contributor! Whether you're adding new features, squashing bugs, or sharing ideas, your input is invaluable. Please check out [CONTRIBUTING](CONTRIBUTING.md) for guidelines on getting started.
+I'd love to have you onboard as a contributor! Whether you're adding new features, squashing bugs, or sharing ideas, your input is invaluable. Please check out [CONTRIBUTING](CONTRIBUTING.md) for guidelines on getting started.
 
 ---
 
@@ -429,7 +429,7 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-**Note:** This is an alpha release. I'm still polishing things up, so expect some bumps along the way. Your feedback and contributions will help shape Eleva into something truly amazing. Let’s build something great together! 💪✨
+**Note:** This is an alpha release. I'm still polishing things up, so expect some bumps along the way. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
 
 ---
 

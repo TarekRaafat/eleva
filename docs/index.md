@@ -25,7 +25,9 @@
 <br>
 <br>
 
-Welcome to the official documentation for **Eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you’re new to JavaScript or an experienced developer, this guide will help you understand Eleva’s core concepts, architecture, and how to integrate and extend it in your projects.
+Welcome to the official documentation for **Eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
+
+> **Alpha Release Notice**: This documentation is for Eleva.js v1.2.3-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -114,7 +116,7 @@ At the heart of Eleva are a few fundamental principles that guide its design and
   Each component is self-contained, making your application scalable and maintainable.
 
 - **Flexibility:**  
-  Eleva’s unopinionated nature allows you to choose your own architectural patterns and extend the framework with plugins as needed.
+  Eleva's unopinionated nature allows you to choose your own architectural patterns and extend the framework with plugins as needed.
 
 - **Performance:**  
   Designed to be lightweight and efficient, Eleva is ideal for performance-critical applications.
@@ -123,7 +125,7 @@ At the heart of Eleva are a few fundamental principles that guide its design and
 
 ## 4. Performance Benchmarks
 
-Preliminary benchmarks illustrate Eleva’s efficiency compared to popular frameworks:
+Preliminary benchmarks illustrate Eleva's efficiency compared to popular frameworks:
 
 | **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
 | ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
@@ -246,10 +248,10 @@ Understanding how data flows during component initialization and event handling 
 
 #### Setup Context
 
-- **When It’s Used:**
-  Passed to the component’s `setup` function during initialization.
+- **When It's Used:**
+  Passed to the component's `setup` function during initialization.
 - **What It Contains:**
-  Utilities (like the `signal` function), component props, emitter, and lifecycle hooks. The returned data forms the component’s reactive state.
+  Utilities (like the `signal` function), component props, emitter, and lifecycle hooks. The returned data forms the component's reactive state.
 
 _Example:_
 
@@ -269,7 +271,7 @@ const MyComponent = {
 
 #### Event Context
 
-- **When It’s Used:**
+- **When It's Used:**
   Provided when an event handler is triggered (e.g., a button click).
 - **What It Contains:**
   The reactive state from `setup` along with event-specific data (like `event.target`).
@@ -345,7 +347,7 @@ The **Eleva** class orchestrates component registration, mounting, plugin integr
 
 ### Lifecycle Hooks
 
-Execute code at various stages of a component’s lifecycle:
+Execute code at various stages of a component's lifecycle:
 
 - **onBeforeMount:** Called before mounting.
 - **onMount:** Called after mounting.
@@ -449,7 +451,7 @@ app.mount(document.getElementById("app"), "parent-comp");
 ### Style Injection & Scoped CSS
 
 Eleva supports component-scoped styling through an optional `style` function defined in a component.
-The styles are injected into the component’s container to avoid global leakage.
+The styles are injected into the component's container to avoid global leakage.
 
 _Example:_
 
@@ -500,7 +502,7 @@ app.mount(document.getElementById("app"), "ComponentB");
 
 ## 7. Architecture & Data Flow
 
-Eleva’s design emphasizes clarity, modularity, and performance. This section explains how data flows through the framework and how its key components interact, providing more clarity on the underlying mechanics.
+Eleva's design emphasizes clarity, modularity, and performance. This section explains how data flows through the framework and how its key components interact, providing more clarity on the underlying mechanics.
 
 ### Key Components
 
@@ -539,7 +541,7 @@ Eleva’s design emphasizes clarity, modularity, and performance. This section e
 
 3. **Reactivity:**
 
-   - When a signal’s value changes (e.g., through a user event), its watcher triggers a re-run of the template.
+   - When a signal's value changes (e.g., through a user event), its watcher triggers a re-run of the template.
    - The Renderer diffs the new HTML against the current DOM and applies only the necessary changes.
 
 4. **Events:**

@@ -6,7 +6,55 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.2-alpha ✨ (04-03-2025)
+## v1.2.3-alpha 🎉 (05-04-2025)
+
+> **Note:** This is the latest alpha release of Eleva. While the core functionality is stable, I'm seeking community feedback to ensure the best possible developer experience before the final v1.0.0 release.
+
+### Known Limitations
+- Some edge cases in complex component hierarchies may need optimization
+- Plugin system API might evolve based on community feedback
+- Performance benchmarks are being gathered for various use cases
+
+### Breaking Changes
+- None in this alpha release. I aim to maintain API stability going forward.
+
+### ➕ Added
+
+- **Improved Event Handling**
+  - Added automatic cleanup of event listeners during component unmount
+
+### 🎛️ Changed
+
+- _N/A_ – No changes in this release.
+
+### 🔧 Fixed
+
+- **Event Memory Management**
+  - Fixed potential memory leaks by ensuring all event listeners are properly removed
+- **DOM Diffing Engine**
+  - Fixed issues with DOM diffing in the `Renderer` class to ensure accurate updates for text nodes, attributes, and child elements.
+  - Improved handling of keyed elements to avoid unnecessary replacements.
+  - Enhanced attribute handling for special properties, ARIA attributes, and data attributes.
+  - Optimized DOM operations by implementing batched updates for better performance.
+  - Added robust error handling for invalid DOM operations and type checking.
+- **Template System**
+  - Improved type validation and error handling in expression evaluation
+- **Signal System**
+  - Fixed potential issues with synchronous updates by batching notifications into microtasks.
+
+### 📝 Documentation
+- Added comprehensive JSDoc annotations for all classes and methods
+- Enhanced inline documentation with implementation details
+- Added practical examples in documentation
+
+### 🔍 Testing
+- Added new test suites:
+  - Core functionality unit tests
+  - Performance benchmarking suite
+
+---
+
+## v1.2.2-alpha (04-03-2025)
 
 ### ➕ Added
 
@@ -69,7 +117,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ### ➕ Added
 
 - **Local Child Components Registration**
-  - Allow child components to be defined locally within a parent’s `children` map rather than requiring global registration via `app.component("name", { ... })`.
+  - Allow child components to be defined locally within a parent's `children` map rather than requiring global registration via `app.component("name", { ... })`.
   - Updated the `_mountChildren` method to directly mount child components using local definitions.
 - **Optional Setup Method Support**
   - Enhanced the `mount` method to allow components to be registered without a `setup()` method by defaulting to an empty object if none is provided.
@@ -140,4 +188,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-_This is a pre-release version of Eleva. Future releases will document further improvements, bug fixes, and new features as the framework evolves._
+_This is the first official production-ready release of Eleva.js. It introduces a robust, lightweight, and reactive framework for building modern web applications with fine-grained reactivity, scoped styles, and efficient DOM rendering._

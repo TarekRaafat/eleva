@@ -1,0 +1,24 @@
+{
+  "source": {
+    "include": ["src"],
+    "includePattern": ".+\\.js(doc|x)?$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "encoding": "utf8",
+    "destination": "./docs/api/",
+    "recurse": true,
+    "verbose": true
+  },
+  "templates": {
+    "cleverLinks": true,
+    "monospaceLinks": true,
+    "default": {
+      "outputSourceFiles": true,
+      "includeDate": false
+    }
+  },
+  "plugins": [
+    "plugins/markdown"
+  ]
+} 
