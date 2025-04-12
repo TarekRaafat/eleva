@@ -296,7 +296,7 @@ describe("Eleva.js Load Time Performance", () => {
     });
 
     console.log(`Peak memory usage: ${peakMemoryKB.toFixed(2)} KB`);
-    // Expect memory usage to stay under 2MB
-    expect(peakMemoryKB).toBeLessThan(2048);
+    // Expect memory usage to stay under 1MB
+    expect(peakMemoryKB).toBeLessThan(1024);
   });
 });
