@@ -53,3 +53,19 @@ export const logPerformanceMetrics = (metrics) => {
     console.log(`Run ${index + 1}: ${formatDuration(duration)}`);
   });
 };
+
+export const measureMemoryUsage = (fn) => {
+  // Force garbage collection if available
+  if (global.gc) {
+    global.gc();
+  }
+
+  const startMemory = process.memoryUsage().heapUsed;
+  const result = fn();
+  const endMemory = process.memoryUsage().heapUsed;
+
+  return {
+    peakMemoryKB: (endMemory - startMemory) / 1024,
+    result,
+  };
+};

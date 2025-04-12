@@ -31,6 +31,7 @@ import {
   measurePerformance,
   measureMultipleRuns,
   logPerformanceMetrics,
+  measureMemoryUsage,
 } from "./helpers";
 
 /**
@@ -202,5 +203,100 @@ describe("Eleva.js Load Time Performance", () => {
 
     // Warm load should be significantly faster than cold load
     expect(warmMetrics.average).toBeLessThan(coldMetrics.average * 0.8);
+  });
+
+  /**
+   * Tests DOM update speed performance
+   *
+   * Verifies:
+   * - Fast DOM updates when component state changes
+   * - Efficient virtual DOM diffing
+   * - Quick re-rendering of components
+   *
+   * @group load-times
+   * @group dom-updates
+   */
+  test("should update DOM efficiently when state changes", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+
+    const app = new window.Eleva("TestApp");
+
+    // Create a component with state that will trigger DOM updates
+    app.component("counter-component", {
+      setup({ signal }) {
+        const count = signal(0);
+        const increment = () => {
+          count.value++;
+        };
+
+        return { count, increment };
+      },
+      template: (ctx) => `
+        <div>
+          <h1>Count: ${ctx.count}</h1>
+          <button @click="increment">Increment</button>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "counter-component");
+
+    // Wait for the next tick to ensure the component is rendered
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+      if (!button) {
+        throw new Error("Button element not found in the DOM");
+      }
+
+      // Measure performance of multiple state updates
+      const { duration } = measurePerformance(() => {
+        for (let i = 0; i < 100; i++) {
+          button.click();
+        }
+      });
+
+      console.log(
+        `DOM update time for 100 state changes: ${duration.toFixed(2)}ms`
+      );
+      // Expect each update to take less than 1ms on average
+      expect(duration).toBeLessThan(100);
+    });
+  });
+
+  /**
+   * Tests peak memory usage during framework initialization
+   *
+   * Verifies:
+   * - Memory usage stays within acceptable limits
+   * - No memory leaks during initialization
+   * - Efficient memory management
+   *
+   * @group load-times
+   * @group memory
+   */
+  test("should maintain acceptable peak memory usage", () => {
+    const { peakMemoryKB } = measureMemoryUsage(() => {
+      window.Eleva = require("../../../dist/eleva.min.js");
+      document.body.innerHTML = `<div id="app"></div>`;
+      const appContainer = document.getElementById("app");
+      const app = new window.Eleva("TestApp");
+
+      // Create multiple components to stress test memory usage
+      Array(10)
+        .fill(null)
+        .map((_, i) =>
+          app.component(`test-component-${i}`, {
+            template: () => "<div>Test</div>",
+          })
+        );
+
+      app.mount(appContainer, "test-component-0");
+    });
+
+    console.log(`Peak memory usage: ${peakMemoryKB.toFixed(2)} KB`);
+    // Expect memory usage to stay under 2MB
+    expect(peakMemoryKB).toBeLessThan(2048);
   });
 });
