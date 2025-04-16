@@ -33,6 +33,61 @@ import {
   logPerformanceMetrics,
   measureMemoryUsage,
 } from "./helpers";
+import fs from "fs";
+import path from "path";
+
+// Function to export test results to markdown
+const exportTestResults = (results) => {
+  const timestamp = new Date().toISOString();
+  const date = timestamp.split("T")[0];
+  const time = timestamp.split("T")[1].split(".")[0];
+
+  const resultsDir = path.join(
+    `${process.cwd()}/test/build/performance/`,
+    "results"
+  );
+  if (!fs.existsSync(resultsDir)) {
+    fs.mkdirSync(resultsDir);
+  }
+
+  const filename = `performance-test-results-${date}.md`;
+  const filepath = path.join(resultsDir, filename);
+
+  const markdownContent = `# Performance Test Results - ${date} ${time}
+
+## Test Summary
+- Total Tests: ${results.length}
+- Average Duration: ${(results.reduce((acc, curr) => acc + curr.duration, 0) / results.length).toFixed(2)}ms
+- Peak Memory Usage: ${Math.max(...results.map((r) => r.memoryUsage || 0)).toFixed(2)} KB
+
+## Detailed Test Metrics
+
+${results
+  .map((result) => {
+    const metrics = [
+      `### ${result.title}`,
+      `- Duration: ${result.duration.toFixed(2)}ms`,
+      result.memoryUsage &&
+        `- Memory Usage: ${result.memoryUsage.toFixed(2)} KB`,
+      result.stdDev && `- Standard Deviation: ${result.stdDev.toFixed(2)}ms`,
+      result.average && `- Average: ${result.average.toFixed(2)}ms`,
+      result.min && `- Min Duration: ${result.min.toFixed(2)}ms`,
+      result.max && `- Max Duration: ${result.max.toFixed(2)}ms`,
+      result.iterations && `- Iterations: ${result.iterations}`,
+      `- Status: ${result.status}`,
+      `- Timestamp: ${result.timestamp}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    return metrics;
+  })
+  .join("\n\n")}
+
+---
+`;
+
+  fs.appendFileSync(filepath, markdownContent);
+};
 
 /**
  * Performance test suite for Eleva.js load times
@@ -56,6 +111,8 @@ import {
  * @group build
  */
 describe("Eleva.js Load Time Performance", () => {
+  const testResults = [];
+
   /**
    * Setup for each test - ensures clean environment
    *
@@ -82,6 +139,14 @@ describe("Eleva.js Load Time Performance", () => {
     });
 
     console.log(`Framework load time: ${duration.toFixed(2)}ms`);
+
+    testResults.push({
+      title: "Framework Load Time",
+      duration,
+      timestamp: new Date().toISOString(),
+      status: duration < 100 ? "Passed" : "Failed",
+      iterations: 1,
+    });
     expect(duration).toBeLessThan(100);
   });
 
@@ -113,6 +178,14 @@ describe("Eleva.js Load Time Performance", () => {
     });
 
     console.log(`Component initialization time: ${duration.toFixed(2)}ms`);
+
+    testResults.push({
+      title: "Basic Component Initialization",
+      duration,
+      timestamp: new Date().toISOString(),
+      status: duration < 50 ? "Passed" : "Failed",
+      iterations: 1,
+    });
     expect(duration).toBeLessThan(50);
   });
 
@@ -147,6 +220,14 @@ describe("Eleva.js Load Time Performance", () => {
     console.log(
       `Multiple component initialization time: ${duration.toFixed(2)}ms`
     );
+
+    testResults.push({
+      title: "Multiple Component Initialization",
+      duration,
+      timestamp: new Date().toISOString(),
+      status: duration < 200 ? "Passed" : "Failed",
+      iterations: 10,
+    });
     expect(duration).toBeLessThan(200);
   });
 
@@ -168,6 +249,17 @@ describe("Eleva.js Load Time Performance", () => {
     });
 
     logPerformanceMetrics(metrics);
+
+    testResults.push({
+      title: "Load Time Consistency",
+      duration: metrics.average,
+      stdDev: metrics.stdDev,
+      min: metrics.min,
+      max: metrics.max,
+      timestamp: new Date().toISOString(),
+      status: metrics.stdDev < metrics.average * 0.8 ? "Passed" : "Failed",
+      iterations: metrics.iterations,
+    });
 
     // Assert that standard deviation is less than 20% of average
     expect(metrics.stdDev).toBeLessThan(metrics.average * 0.8);
@@ -200,6 +292,28 @@ describe("Eleva.js Load Time Performance", () => {
     logPerformanceMetrics(coldMetrics);
     console.log("\nWarm Load Metrics:");
     logPerformanceMetrics(warmMetrics);
+
+    testResults.push({
+      title: "Cold Load Performance",
+      duration: coldMetrics.average,
+      stdDev: coldMetrics.stdDev,
+      min: coldMetrics.min,
+      max: coldMetrics.max,
+      timestamp: new Date().toISOString(),
+      status: "Passed",
+      iterations: coldMetrics.iterations,
+    });
+
+    testResults.push({
+      title: "Warm Load Performance",
+      duration: warmMetrics.average,
+      stdDev: warmMetrics.stdDev,
+      min: warmMetrics.min,
+      max: warmMetrics.max,
+      timestamp: new Date().toISOString(),
+      status: "Passed",
+      iterations: warmMetrics.iterations,
+    });
 
     // Warm load should be significantly faster than cold load
     expect(warmMetrics.average).toBeLessThan(coldMetrics.average * 0.8);
@@ -260,6 +374,15 @@ describe("Eleva.js Load Time Performance", () => {
       console.log(
         `DOM update time for 100 state changes: ${duration.toFixed(2)}ms`
       );
+
+      testResults.push({
+        title: "DOM Update Performance",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 100 ? "Passed" : "Failed",
+        iterations: 100,
+      });
+
       // Expect each update to take less than 1ms on average
       expect(duration).toBeLessThan(100);
     });
@@ -296,7 +419,22 @@ describe("Eleva.js Load Time Performance", () => {
     });
 
     console.log(`Peak memory usage: ${peakMemoryKB.toFixed(2)} KB`);
+
+    testResults.push({
+      title: "Memory Usage",
+      duration: peakMemoryKB,
+      memoryUsage: peakMemoryKB,
+      timestamp: new Date().toISOString(),
+      status: peakMemoryKB < 1024 ? "Passed" : "Failed",
+      iterations: 10,
+    });
+
     // Expect memory usage to stay under 1MB
     expect(peakMemoryKB).toBeLessThan(1024);
+  });
+
+  // After all tests complete, export results
+  afterAll(() => {
+    exportTestResults(testResults);
   });
 });
