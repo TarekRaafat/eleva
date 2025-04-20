@@ -347,26 +347,90 @@ The **Eleva** class orchestrates component registration, mounting, plugin integr
 
 ### Lifecycle Hooks
 
-Execute code at various stages of a component's lifecycle:
+Eleva provides a set of lifecycle hooks that allow you to execute code at specific stages of a component's lifecycle. These hooks are available through the setup method's return object.
 
-- **onBeforeMount:** Called before mounting.
-- **onMount:** Called after mounting.
-- **onBeforeUpdate:** Called before an update.
-- **onUpdate:** Called after an update.
-- **onUnmount:** Called before unmounting.
+**Available Hooks:**
+- `onBeforeMount`: Called before the component is mounted to the DOM
+- `onMount`: Called after the component is mounted to the DOM
+- `onBeforeUpdate`: Called before the component updates
+- `onUpdate`: Called after the component updates
+- `onUnmount`: Called before the component is unmounted from the DOM
 
 _Example:_
 
 ```js
-const MyComponent = {
-  setup: ({ signal, onMount, onUnmount }) => {
-    const counter = signal(0);
-    onMount(() => console.log("Component mounted"));
-    onUnmount(() => console.log("Component unmounted"));
-    return { counter };
+app.component("MyComponent", {
+  setup() {
+    // Define your lifecycle hooks
+    const hooks = {
+      beforeMount: () => {
+        console.log("Component will mount");
+      },
+      mounted: () => {
+        console.log("Component mounted");
+      },
+      beforeUpdate: () => {
+        console.log("Component will update");
+      },
+      updated: () => {
+        console.log("Component updated");
+      },
+      beforeUnmount: () => {
+        console.log("Component will unmount");
+      }
+    };
+
+    // Return both your component state and lifecycle hooks
+    return {
+      // Your component state
+      count: 0,
+      // Lifecycle hooks
+      onBeforeMount: hooks.beforeMount,
+      onMount: hooks.mounted,
+      onBeforeUpdate: hooks.beforeUpdate,
+      onUpdate: hooks.updated,
+      onUnmount: hooks.beforeUnmount
+    };
   },
-  template: (ctx) => `<div>Counter: ${ctx.counter}</div>`,
-};
+  template(ctx) {
+    return `<div>Count: ${ctx.count}</div>`;
+  }
+});
+```
+
+**Important Notes:**
+1. Lifecycle hooks must be returned from the setup method to be effective
+2. The hooks are available in the setup context but are empty functions by default
+3. You must override these default functions by returning your own implementations
+4. Hooks are called automatically by the framework at the appropriate lifecycle stages
+
+
+_Example (with Reactive State):_
+
+```js
+app.component("Counter", {
+  setup({ signal }) {
+    const count = signal(0);
+    
+    return {
+      count,
+      onMount: () => {
+        console.log("Counter mounted with initial value:", count.value);
+      },
+      onUpdate: () => {
+        console.log("Counter updated to:", count.value);
+      }
+    };
+  },
+  template(ctx) {
+    return `
+      <div>
+        <p>Count: ${ctx.count.value}</p>
+        <button @click="() => count.value++">Increment</button>
+      </div>
+    `;
+  }
+});
 ```
 
 ### Component Registration & Mounting
