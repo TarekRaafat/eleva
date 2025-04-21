@@ -1,4 +1,4 @@
-# Eleva.js - Pure JavaScript, Pure Performance
+# eleva.js - Pure JavaScript, Pure Performance
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -14,26 +14,26 @@
 <br>
 
 <p align="center">
-  <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/Eleva Logo.png" alt="Eleva Logo" width="50%"></a>
+  <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/eleva.js Full Logo.png" alt="eleva.js Full Logo" width="50%"></a>
 </p>
 
 <p align="center">
-  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="Eleva - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="eleva.js - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 <br>
 <br>
 <br>
 
-Welcome to the official documentation for **Eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
+Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for Eleva.js v1.2.3-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Alpha Release Notice**: This documentation is for eleva.js v1.2.3-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
 ## Table of Contents
 
-- [Eleva.js - Pure JavaScript, Pure Performance](#elevajs---pure-javascript-pure-performance)
+- [eleva.js - Pure JavaScript, Pure Performance](#elevajs---pure-javascript-pure-performance)
   - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-introduction)
   - [2. Design Philosophy](#2-design-philosophy)

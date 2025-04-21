@@ -1,4 +1,4 @@
-# Eleva.js 🚀
+# eleva.js 🚀
 
 Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -16,11 +16,11 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 
 <p align="center">
-  <a href="https://tarekraafat.github.io/eleva/"><img src="./docs/imgs/Eleva Logo.png" alt="Eleva Logo" width="50%"></a>
+  <a href="https://tarekraafat.github.io/eleva/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="eleva.js Full Logo" width="50%"></a>
 </p>
 
 <p align="center">
-  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="Eleva - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="eleva.js - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 <br>
@@ -43,7 +43,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Table of Contents
 
-- [Eleva.js 🚀](#elevajs-)
+- [eleva.js 🚀](#elevajs-)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
