@@ -6,7 +6,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.3-alpha 🎉 (05-04-2025)
+## v1.2.4-alpha 🎉 (21-04-2025)
+
+### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+### 🎛️ Changed
+
+- Updated the `eleva.js` framework logo
+
+### 🔧 Fixed
+
+- _N/A_ – No bug fixes in this release.
+
+---
+
+## v1.2.3-alpha (05-04-2025)
 
 > **Note:** This is the latest alpha release of Eleva. While the core functionality is stable, I'm seeking community feedback to ensure the best possible developer experience before the final v1.0.0 release.
 
