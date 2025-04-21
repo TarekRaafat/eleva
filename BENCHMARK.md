@@ -2,7 +2,7 @@
 
 ## **Introduction**
 
-This document provides a comprehensive benchmark analysis of **Eleva**, a lightweight frontend framework, compared to other popular frameworks like **React, Vue, and Angular**. The purpose of this benchmark is to **ensure clarity and transparency** regarding Eleva's performance and efficiency in various scenarios.
+This document provides a comprehensive benchmark analysis of **eleva.js**, a lightweight frontend framework, compared to other popular frameworks like **React, Vue, and Angular**. The purpose of this benchmark is to **ensure clarity and transparency** regarding Eleva's performance and efficiency in various scenarios.
 
 ---
 
