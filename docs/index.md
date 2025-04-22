@@ -11,7 +11,6 @@
 [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge)](https://www.jsdelivr.com/package/npm/eleva)
 
 <br>
-<br>
 
 <p align="center">
   <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/eleva.js Full Logo.png" alt="eleva.js Full Logo" width="50%"></a>
