@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.5-alpha 🎉 (22-04-2025)
+## v1.2.5-alpha 🎉 (25-04-2025)
 
 ### ➕ Added
 
