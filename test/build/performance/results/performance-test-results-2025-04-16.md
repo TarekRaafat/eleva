@@ -1,4 +1,6 @@
-# Performance Test Results - 2025-04-16 18:54:09
+# Performance Test Results [v1.2.4-alpha]
+  
+> Timestamp: 16/04/2025
 
 ## Test Summary
 - Total Tests: 8

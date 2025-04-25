@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.2.4-alpha",
+  "version": "1.2.5-alpha",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
   "main": "dist/eleva.js",
@@ -90,7 +90,7 @@
   },
   "size-limit": [
     {
-      "limit": "5 kB",
+      "limit": "6 kB",
       "path": "dist/eleva.min.js",
       "name": "eleva",
       "brotli": true

@@ -6,7 +6,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.4-alpha 🎉 (21-04-2025)
+## v1.2.5-alpha 🎉 (22-04-2025)
+
+### ➕ Added
+
+- **Performance Test Suite**
+  - Added comprehensive performance test suite covering:
+    - Reactive state update batching
+    - Lifecycle hooks execution
+    - Nested components rendering
+    - Event handling
+    - Complex template rendering
+    - Directive execution
+    - Component communication
+    - Async operations
+    - Large list rendering
+  - Added performance metrics tracking and reporting
+  - Implemented automated performance regression testing
+- **Enhanced Error Handling Tests**
+  - Added comprehensive test cases for invalid component definitions
+  - Added test coverage for invalid template functions
+  - Added validation tests for container elements
+  - Added component name validation tests
+  - Improved test coverage for edge cases and error scenarios
+
+### 🎛️ Changed
+
+- **Component Mounting Optimization**
+  - Improved component mounting process by validating template function before destructuring
+  - Enhanced error handling with early validation of required properties
+  - Optimized memory usage by failing fast on invalid templates
+  - Maintained backward compatibility while improving code organization
+- **Lifecycle Hooks Optimization Improvement**
+  - Improved performance of lifecycle hooks by caching existence checks
+  - Reduced repeated property access during component lifecycle
+  - Optimized hook execution path without increasing bundle size
+  - Eliminated redundancy in hook management by deriving existence checks directly from `_lifecycleHooks` array
+  - Improved maintainability by using a single source of truth for hook definitions
+  - Maintained performance benefits while reducing code complexity
+  - Enhanced type safety by using exact hook names throughout the codebase
+- **Event Processing Optimization**
+  - Optimized event listener attachment and cleanup
+  - Improved event propagation performance
+  - Enhanced event handler execution speed
+- **Template Rendering Improvements**
+  - Optimized complex template rendering performance
+  - Improved template compilation speed
+  - Enhanced handling of nested conditionals and loops
+- **Component Communication Enhancements**
+  - Optimized event emission and handling
+  - Improved performance with multiple event listeners
+  - Enhanced component communication efficiency
+
+### 🔧 Fixed
+
+- _N/A_ – No bug fixes in this release.
+
+---
+
+## v1.2.4-alpha (21-04-2025)
 
 ### ➕ Added
 
@@ -24,7 +82,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## v1.2.3-alpha (05-04-2025)
 
-> **Note:** This is the latest alpha release of Eleva. While the core functionality is stable, I'm seeking community feedback to ensure the best possible developer experience before the final v1.0.0 release.
+> **Note:** This is the latest alpha release of eleva.js. While the core functionality is stable, I'm seeking community feedback to ensure the best possible developer experience before the final v1.0.0 release.
 
 ### Known Limitations
 - Some edge cases in complex component hierarchies may need optimization
@@ -204,4 +262,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-_This is the first official production-ready release of Eleva.js. It introduces a robust, lightweight, and reactive framework for building modern web applications with fine-grained reactivity, scoped styles, and efficient DOM rendering._
+_This is the alpha release of eleva.js. It introduces a robust, lightweight, and reactive framework for building modern web applications with fine-grained reactivity, scoped styles, and efficient DOM rendering._

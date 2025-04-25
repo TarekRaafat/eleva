@@ -227,7 +227,7 @@ describe("Eleva", () => {
    */
   test("should throw error if compName is invalid in mount", () => {
     expect(() => app.mount(appContainer, 123)).toThrow(
-      "Invalid component parameter."
+      "Component template must be a function"
     );
   });
 
@@ -378,52 +378,93 @@ describe("Eleva", () => {
  * @group robustness
  */
 describe("Eleva error handling", () => {
-  /**
-   * Tests that invalid state transitions are properly caught
-   *
-   * @group state-management
-   * @group validation
-   */
-  test("should handle invalid state transitions", () => {
-    const eleva = new Eleva();
-    eleva.state = "invalid";
-    expect(() => eleva.validateState()).toThrow();
+  let app;
+  let appContainer;
+
+  beforeEach(() => {
+    document.body.innerHTML = `<div id="app"></div>`;
+    appContainer = document.getElementById("app");
+    app = new Eleva("TestApp");
   });
 
   /**
-   * Tests error handling for template errors
+   * Tests error handling for invalid component definitions
    *
-   * @group templates
    * @group validation
+   * @group error-handling
    */
-  test("should handle template errors", () => {
-    const eleva = new Eleva();
-    eleva.template = null;
-    expect(() => eleva.render()).toThrow();
+  test("should handle invalid component definitions", async () => {
+    const component = {
+      setup: () => ({}),
+      template: null,
+    };
+    app.component("invalid-comp", component);
+    try {
+      await app.mount(appContainer, "invalid-comp");
+      fail("Expected mount to throw an error");
+    } catch (error) {
+      expect(error.message).toBe("Component template must be a function");
+    }
   });
 
   /**
-   * Tests error handling for navigation errors
+   * Tests error handling for invalid template functions
    *
-   * @group navigation
    * @group validation
+   * @group error-handling
    */
-  test("should handle navigation errors", () => {
-    const eleva = new Eleva();
-    eleva.floor = -1;
-    expect(() => eleva.navigate()).toThrow();
+  test("should handle invalid template functions", async () => {
+    const component = {
+      setup: () => ({}),
+      template: null,
+    };
+    app.component("invalid-template", component);
+    try {
+      await app.mount(appContainer, "invalid-template");
+      fail("Expected mount to throw an error");
+    } catch (error) {
+      expect(error.message).toBe("Component template must be a function");
+    }
   });
 
   /**
-   * Tests error handling for movement errors
+   * Tests error handling for invalid container elements
    *
-   * @group state-management
    * @group validation
+   * @group error-handling
    */
-  test("should handle movement errors", () => {
-    const eleva = new Eleva();
-    eleva.moving = true;
-    expect(() => eleva.move()).toThrow();
+  test("should handle invalid container elements", async () => {
+    const component = {
+      setup: () => ({}),
+      template: () => "<div>Test</div>",
+    };
+    app.component("valid-comp", component);
+    try {
+      await app.mount(null, "valid-comp");
+      fail("Expected mount to throw an error");
+    } catch (error) {
+      expect(error.message).toBe("Container not found: null");
+    }
+  });
+
+  /**
+   * Tests error handling for invalid component names
+   *
+   * @group validation
+   * @group error-handling
+   */
+  test("should handle invalid component names", async () => {
+    const component = {
+      setup: () => ({}),
+      template: () => "<div>Test</div>",
+    };
+    app.component("valid-comp", component);
+    try {
+      await app.mount(appContainer, "invalid-comp");
+      fail("Expected mount to throw an error");
+    } catch (error) {
+      expect(error.message).toBe('Component "invalid-comp" not registered.');
+    }
   });
 });
 

@@ -38,9 +38,9 @@ import path from "path";
 
 // Function to export test results to markdown
 const exportTestResults = (results) => {
-  const timestamp = new Date().toISOString();
-  const date = timestamp.split("T")[0];
-  const time = timestamp.split("T")[1].split(".")[0];
+  const timestamp = new Date();
+  const isoDate = timestamp.toISOString();
+  const date = isoDate.split("T")[0];
 
   const resultsDir = path.join(
     `${process.cwd()}/test/build/performance/`,
@@ -50,10 +50,26 @@ const exportTestResults = (results) => {
     fs.mkdirSync(resultsDir);
   }
 
+  // Get version from package.json
+  const packageJson = JSON.parse(
+    fs.readFileSync(path.join(process.cwd(), "package.json"), "utf8")
+  );
+  const version = packageJson.version;
+
   const filename = `performance-test-results-${date}.md`;
   const filepath = path.join(resultsDir, filename);
 
-  const markdownContent = `# Performance Test Results - ${date} ${time}
+  const formattedDate = timestamp.toLocaleDateString("en-GB");
+  const formattedTime = timestamp.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZoneName: "short",
+  });
+
+  const markdownContent = `# Performance Test Results [v${version}]
+
+  > Timestamp: ${formattedDate} (${formattedTime})
 
 ## Test Summary
 - Total Tests: ${results.length}
@@ -431,6 +447,728 @@ describe("Eleva.js Load Time Performance", () => {
 
     // Expect memory usage to stay under 1MB
     expect(peakMemoryKB).toBeLessThan(1024);
+  });
+
+  /**
+   * Tests reactive state update batching performance
+   *
+   * Verifies:
+   * - Efficient batching of multiple state updates
+   * - Reactive system performance under load
+   * - Update propagation speed
+   *
+   * @group performance
+   * @group reactivity
+   */
+  test("should batch reactive updates efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("reactive-test", {
+      setup({ signal }) {
+        const items = signal(Array(1000).fill(0));
+        const total = () => items.value.reduce((a, b) => a + b, 0);
+
+        const updateAll = () => {
+          // Batch update all items
+          items.value = items.value.map(() => Math.random());
+        };
+
+        return { items, total, updateAll };
+      },
+      template: (ctx) => `
+        <div>
+          <div>Total: ${ctx.total}</div>
+          <button @click="updateAll">Update All</button>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "reactive-test");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+
+      const { duration } = measurePerformance(() => {
+        button.click();
+      });
+
+      console.log(`Batch update time for 1000 items: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Reactive Batch Updates",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 50 ? "Passed" : "Failed",
+        iterations: 1000,
+      });
+
+      expect(duration).toBeLessThan(50);
+    });
+  });
+
+  /**
+   * Tests lifecycle hooks performance
+   *
+   * Verifies:
+   * - Fast lifecycle hook execution
+   * - Efficient hook scheduling
+   * - Hook cleanup performance
+   *
+   * @group performance
+   * @group lifecycle
+   */
+  test("should execute lifecycle hooks efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    const { duration } = measurePerformance(async () => {
+      app.component("lifecycle-test", {
+        setup() {
+          return {
+            onMount: () => {
+              console.log("Mounted");
+            },
+            onUpdate: () => {
+              console.log("Updated");
+            },
+            onUnmount: () => {
+              console.log("Unmounted");
+            },
+          };
+        },
+        template: () => "<div>Lifecycle Test</div>",
+      });
+
+      // Mount and unmount component multiple times
+      for (let i = 0; i < 100; i++) {
+        const mounted = await app.mount(appContainer, "lifecycle-test");
+        mounted.unmount();
+      }
+    });
+
+    console.log(`Lifecycle hooks execution time: ${duration.toFixed(2)}ms`);
+
+    testResults.push({
+      title: "Lifecycle Hooks Performance",
+      duration,
+      timestamp: new Date().toISOString(),
+      status: duration < 200 ? "Passed" : "Failed",
+      iterations: 100,
+    });
+
+    expect(duration).toBeLessThan(200);
+  });
+
+  /**
+   * Tests nested components rendering performance
+   *
+   * Verifies:
+   * - Efficient component composition
+   * - Fast prop updates in deep trees
+   * - Optimal re-rendering of nested structures
+   *
+   * @group performance
+   * @group composition
+   */
+  test("should render nested components efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    // Create a deeply nested component structure
+    app.component("leaf-component", {
+      setup({ props }) {
+        return { value: props.value };
+      },
+      template: (ctx) => `<div>Value: ${ctx.value}</div>`,
+    });
+
+    app.component("branch-component", {
+      setup({ props }) {
+        return { value: props.value };
+      },
+      template: (ctx) => `
+        <div>
+          <leaf-component value="${ctx.value * 2}"></leaf-component>
+          <leaf-component value="${ctx.value * 3}"></leaf-component>
+        </div>
+      `,
+    });
+
+    app.component("tree-root", {
+      setup({ signal }) {
+        const rootValue = signal(1);
+        const updateValue = () => {
+          rootValue.value = Math.random() * 100;
+        };
+        return { rootValue, updateValue };
+      },
+      template: (ctx) => `
+        <div>
+          <button @click="updateValue">Update Tree</button>
+          <branch-component value="${ctx.rootValue}"></branch-component>
+          <branch-component value="${ctx.rootValue * 2}"></branch-component>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "tree-root");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+
+      const { duration } = measurePerformance(() => {
+        // Update tree 100 times
+        for (let i = 0; i < 100; i++) {
+          button.click();
+        }
+      });
+
+      console.log(`Nested components update time: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Nested Components Performance",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 200 ? "Passed" : "Failed",
+        iterations: 100,
+      });
+
+      expect(duration).toBeLessThan(200);
+    });
+  });
+
+  /**
+   * Tests event handling performance
+   *
+   * Verifies:
+   * - Fast event listener attachment
+   * - Efficient event propagation
+   * - Event handler execution speed
+   *
+   * @group performance
+   * @group events
+   */
+  test("should handle events efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("event-test", {
+      setup() {
+        let counter = 0;
+        const handleClick = () => {
+          counter++;
+        };
+        return { handleClick };
+      },
+      template: () => `
+        <div>
+          ${Array(100)
+            .fill(0)
+            .map(() => '<button @click="handleClick">Click</button>')
+            .join("")}
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "event-test");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const buttons = document.querySelectorAll("button");
+
+      const { duration } = measurePerformance(() => {
+        buttons.forEach((button) => button.click());
+      });
+
+      console.log(
+        `Event handling time for 100 events: ${duration.toFixed(2)}ms`
+      );
+
+      testResults.push({
+        title: "Event Handling Performance",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 100 ? "Passed" : "Failed",
+        iterations: 100,
+      });
+
+      expect(duration).toBeLessThan(100);
+    });
+  });
+
+  /**
+   * Tests complex template rendering performance
+   *
+   * Verifies:
+   * - Efficient rendering of complex templates
+   * - Fast template compilation
+   * - Performance with nested conditionals and loops
+   *
+   * @group performance
+   * @group templates
+   */
+  test("should render complex templates efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("complex-template", {
+      setup({ signal }) {
+        const data = signal({
+          items: Array(100)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              name: `Item ${i}`,
+              nested: {
+                value: Math.random(),
+                children: Array(5)
+                  .fill(0)
+                  .map((_, j) => ({
+                    id: j,
+                    value: Math.random(),
+                  })),
+              },
+            })),
+          showDetails: true,
+          filter: "",
+        });
+
+        const updateData = () => {
+          data.value = {
+            ...data.value,
+            items: data.value.items.map((item) => ({
+              ...item,
+              nested: {
+                ...item.nested,
+                value: Math.random(),
+                children: item.nested.children.map((child) => ({
+                  ...child,
+                  value: Math.random(),
+                })),
+              },
+            })),
+          };
+        };
+
+        return { data, updateData };
+      },
+      template: (ctx) => `
+        <div>
+          <button @click="updateData">Update</button>
+          <div class="items">
+            ${ctx.data.value.items
+              .map(
+                (item) => `
+              <div class="item">
+                <h3>${item.name}</h3>
+                ${
+                  ctx.data.showDetails
+                    ? `
+                  <div class="details">
+                    <p>Nested Value: ${item.nested.value}</p>
+                    <ul>
+                      ${item.nested.children
+                        .map(
+                          (child) => `
+                        <li>Child ${child.id}: ${child.value}</li>
+                      `
+                        )
+                        .join("")}
+                    </ul>
+                  </div>
+                `
+                    : ""
+                }
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "complex-template");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+
+      const { duration } = measurePerformance(() => {
+        button.click();
+      });
+
+      console.log(`Complex template update time: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Complex Template Rendering",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 100 ? "Passed" : "Failed",
+        iterations: 100,
+      });
+
+      expect(duration).toBeLessThan(100);
+    });
+  });
+
+  /**
+   * Tests directive performance
+   *
+   * Verifies:
+   * - Fast directive execution
+   * - Efficient directive binding
+   * - Performance with multiple directives
+   *
+   * @group performance
+   * @group directives
+   */
+  test("should execute directives efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("directive-test", {
+      setup({ signal }) {
+        const items = signal(
+          Array(100)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              value: Math.random(),
+              visible: true,
+              class: `item-${i % 5}`,
+            }))
+        );
+
+        const updateItems = () => {
+          items.value = items.value.map((item) => ({
+            ...item,
+            value: Math.random(),
+            visible: Math.random() > 0.5,
+            class: `item-${Math.floor(Math.random() * 5)}`,
+          }));
+        };
+
+        return { items, updateItems };
+      },
+      template: (ctx) => `
+        <div>
+          <button @click="updateItems">Update</button>
+          <div class="items">
+            ${ctx.items.value
+              .map(
+                (item) => `
+              <div 
+                class="${item.class}"
+                style="display: ${item.visible ? "block" : "none"}"
+                data-value="${item.value}"
+                @mouseover="console.log('hover')"
+                @click="console.log('click')"
+              >
+                Item ${item.id}: ${item.value}
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "directive-test");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+
+      const { duration } = measurePerformance(() => {
+        button.click();
+      });
+
+      console.log(`Directive execution time: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Directive Performance",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 50 ? "Passed" : "Failed",
+        iterations: 100,
+      });
+
+      expect(duration).toBeLessThan(50);
+    });
+  });
+
+  /**
+   * Tests component communication performance
+   *
+   * Verifies:
+   * - Fast event emission
+   * - Efficient event handling
+   * - Performance with multiple event listeners
+   *
+   * @group performance
+   * @group communication
+   */
+  test("should handle component communication efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("child-component", {
+      setup({ emitter }) {
+        const emitEvent = () => {
+          emitter.emit("update", Math.random());
+        };
+        return { emitEvent };
+      },
+      template: () => `
+        <button @click="emitEvent">Emit</button>
+      `,
+    });
+
+    app.component("parent-component", {
+      setup({ signal }) {
+        const value = signal(0);
+        const handleUpdate = (newValue) => {
+          value.value = newValue;
+        };
+        return { value, handleUpdate };
+      },
+      template: (ctx) => `
+        <div>
+          <div>Value: ${ctx.value}</div>
+          ${Array(10)
+            .fill(0)
+            .map(
+              () => `
+            <child-component @update="handleUpdate"></child-component>
+          `
+            )
+            .join("")}
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "parent-component");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const buttons = document.querySelectorAll("button");
+
+      const { duration } = measurePerformance(() => {
+        buttons.forEach((button) => button.click());
+      });
+
+      console.log(`Component communication time: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Component Communication",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 100 ? "Passed" : "Failed",
+        iterations: 10,
+      });
+
+      expect(duration).toBeLessThan(100);
+    });
+  });
+
+  /**
+   * Tests async operation performance
+   *
+   * Verifies:
+   * - Fast async operation handling
+   * - Efficient promise resolution
+   * - Performance with multiple async operations
+   *
+   * @group performance
+   * @group async
+   */
+  test("should handle async operations efficiently", async () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("async-test", {
+      setup({ signal }) {
+        const loading = signal(false);
+        const data = signal([]);
+
+        const fetchData = async () => {
+          loading.value = true;
+          // Simulate async operation
+          await new Promise((resolve) => setTimeout(resolve, 0));
+          data.value = Array(100)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              value: Math.random(),
+            }));
+          loading.value = false;
+        };
+
+        return { loading, data, fetchData };
+      },
+      template: (ctx) => `
+        <div>
+          <button @click="fetchData">Fetch</button>
+          ${
+            ctx.loading.value
+              ? "<div>Loading...</div>"
+              : `
+            <div class="data">
+              ${ctx.data.value
+                .map(
+                  (item) => `
+                <div>Item ${item.id}: ${item.value}</div>
+              `
+                )
+                .join("")}
+            </div>
+          `
+          }
+        </div>
+      `,
+    });
+
+    await app.mount(appContainer, "async-test");
+
+    const button = document.querySelector("button");
+
+    const { duration } = await measurePerformance(async () => {
+      await button.click();
+    });
+
+    console.log(`Async operation time: ${duration.toFixed(2)}ms`);
+
+    testResults.push({
+      title: "Async Operations",
+      duration,
+      timestamp: new Date().toISOString(),
+      status: duration < 200 ? "Passed" : "Failed",
+      iterations: 1,
+    });
+
+    expect(duration).toBeLessThan(200);
+  });
+
+  /**
+   * Tests large list rendering performance
+   *
+   * Verifies:
+   * - Efficient rendering of large lists
+   * - Fast list updates
+   * - Performance with list filtering and sorting
+   *
+   * @group performance
+   * @group lists
+   */
+  test("should render large lists efficiently", () => {
+    window.Eleva = require("../../../dist/eleva.min.js");
+    document.body.innerHTML = `<div id="app"></div>`;
+    const appContainer = document.getElementById("app");
+    const app = new window.Eleva("TestApp");
+
+    app.component("large-list", {
+      setup({ signal }) {
+        const items = signal(
+          Array(1000)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              name: `Item ${i}`,
+              value: Math.random(),
+              category: `Category ${i % 5}`,
+            }))
+        );
+
+        const filter = signal("");
+        const sortBy = signal("value");
+
+        const updateItems = () => {
+          items.value = items.value.map((item) => ({
+            ...item,
+            value: Math.random(),
+          }));
+        };
+
+        const filteredItems = () => {
+          const filtered = items.value.filter((item) =>
+            item.name.includes(filter.value)
+          );
+          return filtered.sort((a, b) =>
+            sortBy.value === "value" ? a.value - b.value : a.id - b.id
+          );
+        };
+
+        return { items, filter, sortBy, updateItems, filteredItems };
+      },
+      template: (ctx) => `
+        <div>
+          <div class="controls">
+            <input 
+              type="text" 
+              value="${ctx.filter}" 
+              @input="e => filter.value = e.target.value"
+              placeholder="Filter..."
+            />
+            <select value="${ctx.sortBy}" @change="e => sortBy.value = e.target.value">
+              <option value="value">Sort by Value</option>
+              <option value="id">Sort by ID</option>
+            </select>
+            <button @click="updateItems">Update</button>
+          </div>
+          <div class="list">
+            ${ctx
+              .filteredItems()
+              .map(
+                (item) => `
+              <div class="item">
+                <span>${item.name}</span>
+                <span>${item.value.toFixed(2)}</span>
+                <span>${item.category}</span>
+              </div>
+            `
+              )
+              .join("")}
+          </div>
+        </div>
+      `,
+    });
+
+    app.mount(appContainer, "large-list");
+
+    return new Promise((resolve) => setTimeout(resolve, 0)).then(() => {
+      const button = document.querySelector("button");
+
+      const { duration } = measurePerformance(() => {
+        button.click();
+      });
+
+      console.log(`Large list update time: ${duration.toFixed(2)}ms`);
+
+      testResults.push({
+        title: "Large List Rendering",
+        duration,
+        timestamp: new Date().toISOString(),
+        status: duration < 200 ? "Passed" : "Failed",
+        iterations: 1000,
+      });
+
+      expect(duration).toBeLessThan(200);
+    });
   });
 
   // After all tests complete, export results

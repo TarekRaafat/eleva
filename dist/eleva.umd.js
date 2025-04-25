@@ -436,15 +436,9 @@
      */
     mount(container, compName, props = {}) {
       if (!container) throw new Error(`Container not found: ${container}`);
-      let definition;
-      if (typeof compName === "string") {
-        definition = this._components[compName];
-        if (!definition) throw new Error(`Component "${compName}" not registered.`);
-      } else if (typeof compName === "object") {
-        definition = compName;
-      } else {
-        throw new Error("Invalid component parameter.");
-      }
+      const definition = typeof compName === "string" ? this._components[compName] : compName;
+      if (!definition) throw new Error(`Component "${compName}" not registered.`);
+      if (typeof definition.template !== "function") throw new Error("Component template must be a function");
 
       /**
        * Destructure the component definition to access core functionality.
@@ -490,6 +484,8 @@
         const watcherUnsubscribers = [];
         const childInstances = [];
         const cleanupListeners = [];
+
+        // Execute before hooks
         if (!this._isMounted) {
           mergedContext.onBeforeMount && mergedContext.onBeforeMount();
         } else {
@@ -542,7 +538,7 @@
       };
 
       // Handle asynchronous setup.
-      return Promise.resolve(typeof setup === "function" ? setup(context) : {}).then(data => processMount(data));
+      return Promise.resolve(typeof setup === "function" ? setup(context) : {}).then(processMount);
     }
 
     /**
@@ -568,22 +564,22 @@
      * @private
      */
     _processEvents(container, context, cleanupListeners) {
-      container.querySelectorAll("*").forEach(el => {
-        [...el.attributes].forEach(({
-          name,
-          value
-        }) => {
-          if (name.startsWith("@")) {
-            const event = name.slice(1);
-            const handler = TemplateEngine.evaluate(value, context);
+      const elements = container.querySelectorAll("*");
+      for (const el of elements) {
+        const attrs = el.attributes;
+        for (let i = 0; i < attrs.length; i++) {
+          const attr = attrs[i];
+          if (attr.name.startsWith("@")) {
+            const event = attr.name.slice(1);
+            const handler = TemplateEngine.evaluate(attr.value, context);
             if (typeof handler === "function") {
               el.addEventListener(event, handler);
-              el.removeAttribute(name);
+              el.removeAttribute(attr.name);
               cleanupListeners.push(() => el.removeEventListener(event, handler));
             }
           }
-        });
-      });
+        }
+      }
     }
 
     /**
@@ -596,15 +592,14 @@
      * @private
      */
     _injectStyles(container, compName, styleFn, context) {
-      if (styleFn) {
-        let styleEl = container.querySelector(`style[data-eleva-style="${compName}"]`);
-        if (!styleEl) {
-          styleEl = document.createElement("style");
-          styleEl.setAttribute("data-eleva-style", compName);
-          container.appendChild(styleEl);
-        }
-        styleEl.textContent = TemplateEngine.parse(styleFn(context), context);
+      if (!styleFn) return;
+      let styleEl = container.querySelector(`style[data-eleva-style="${compName}"]`);
+      if (!styleEl) {
+        styleEl = document.createElement("style");
+        styleEl.setAttribute("data-eleva-style", compName);
+        container.appendChild(styleEl);
       }
+      styleEl.textContent = TemplateEngine.parse(styleFn(context), context);
     }
 
     /**
