@@ -241,4 +241,98 @@ describe("Renderer Performance", () => {
       lastMemory = currentMemory;
     }
   });
+
+  /**
+   * Tests the performance of boolean attribute handling
+   *
+   * This test measures how efficiently the Renderer handles boolean attributes
+   * with different values (true, false, empty).
+   *
+   * Performance expectations:
+   * - Should handle 1000 boolean attribute updates under 50ms
+   * - Should maintain consistent performance across different boolean values
+   *
+   * @performance
+   * @benchmark
+   */
+  test("handles boolean attributes efficiently", () => {
+    const container = document.createElement("div");
+    const input = document.createElement("input");
+    container.appendChild(input);
+
+    // Measure boolean attribute updates
+    const start = performance.now();
+    const updates = 1000;
+
+    for (let i = 0; i < updates; i++) {
+      const tempContainer = document.createElement("div");
+      const tempInput = document.createElement("input");
+
+      // Test different boolean values
+      if (i % 3 === 0) {
+        tempInput.setAttribute("disabled", "");
+      } else if (i % 3 === 1) {
+        tempInput.setAttribute("disabled", "true");
+      } else {
+        tempInput.setAttribute("disabled", "false");
+      }
+
+      tempContainer.appendChild(tempInput);
+      renderer.updateAttributes(input, tempInput);
+    }
+
+    const end = performance.now();
+    console.log(
+      `Boolean attribute updates time: ${(end - start).toFixed(2)}ms`
+    );
+    expect(end - start).toBeLessThan(50); // Under 50ms
+  });
+
+  /**
+   * Tests the performance of mixed attribute updates
+   *
+   * This test measures how efficiently the Renderer handles a mix of
+   * boolean and non-boolean attributes.
+   *
+   * Performance expectations:
+   * - Should handle 1000 mixed attribute updates under 100ms
+   * - Should maintain consistent performance with different attribute types
+   *
+   * @performance
+   * @benchmark
+   */
+  test("handles mixed attributes efficiently", () => {
+    const container = document.createElement("div");
+    const input = document.createElement("input");
+    container.appendChild(input);
+
+    // Measure mixed attribute updates
+    const start = performance.now();
+    const updates = 1000;
+
+    for (let i = 0; i < updates; i++) {
+      const tempContainer = document.createElement("div");
+      const tempInput = document.createElement("input");
+
+      // Test different attribute combinations
+      tempInput.setAttribute("value", `value${i}`);
+      tempInput.setAttribute("class", `class${i}`);
+      tempInput.setAttribute("data-test", `test${i}`);
+
+      if (i % 3 === 0) {
+        tempInput.setAttribute("disabled", "");
+      } else if (i % 3 === 1) {
+        tempInput.setAttribute("checked", "true");
+      } else {
+        tempInput.setAttribute("readonly", "false");
+      }
+
+      tempContainer.appendChild(tempInput);
+      renderer.updateAttributes(input, tempInput);
+    }
+
+    const end = performance.now();
+    console.log(`Mixed attribute updates time: ${(end - start).toFixed(2)}ms`);
+    expect(end - start).toBeLessThan(100); // Under 100ms
+  });
 });

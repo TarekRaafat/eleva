@@ -31,12 +31,31 @@ export default {
       name: name,
       exports: "default",
       sourcemap: true,
-      plugins: [terser()],
+      plugins: [
+        terser({
+          compress: {
+            pure_getters: true,
+            unsafe: true,
+            unsafe_comps: true,
+            warnings: false,
+          },
+          mangle: {
+            properties: {
+              regex: /^_/,
+            },
+          },
+        }),
+      ],
     },
   ],
   plugins: [
-    nodeResolve(),
-    commonjs(),
+    nodeResolve({
+      mainFields: ["module", "main"],
+      preferBuiltins: false,
+    }),
+    commonjs({
+      include: "node_modules/**",
+    }),
     babel({
       babelHelpers: "bundled",
       presets: [
@@ -46,9 +65,11 @@ export default {
             targets: "> 0.25%, not dead, not op_mini all, not ie 11",
             bugfixes: true,
             loose: true,
+            modules: false,
           },
         ],
       ],
+      exclude: "node_modules/**",
     }),
     codecovRollupPlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,

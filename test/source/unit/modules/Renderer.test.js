@@ -652,17 +652,17 @@ describe("Renderer", () => {
     renderer.updateAttributes(oldEl, newEl);
     expect(oldEl.value).toBe("test");
 
-    // Test boolean properties
-    newEl.setAttribute("checked", "");
-    newEl.setAttribute("disabled", "");
-    newEl.setAttribute("readOnly", "");
-    newEl.setAttribute("multiple", "");
+    // Test boolean properties with different values
+    newEl.setAttribute("checked", ""); // empty string should be true
+    newEl.setAttribute("disabled", "true"); // explicit true
+    newEl.setAttribute("readOnly", "readOnly"); // property name match
+    newEl.setAttribute("multiple", "false"); // explicit false
     renderer.updateAttributes(oldEl, newEl);
 
     expect(oldEl.checked).toBe(true);
     expect(oldEl.disabled).toBe(true);
     expect(oldEl.readOnly).toBe(true);
-    expect(oldEl.multiple).toBe(true);
+    expect(oldEl.multiple).toBe(false);
   });
 
   /**

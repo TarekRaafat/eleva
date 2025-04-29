@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.2.6-alpha 🚀 (29-04-2025)
+
+### ➕ Added
+
+- **Enhanced Performance Tests**
+  - Added comprehensive tests for boolean attribute handling
+  - Added performance benchmarks for mixed attribute updates
+  - Improved test coverage for edge cases in attribute processing
+
+### 🎛️ Changed
+
+- **Renderer Optimization**
+  - Improved attribute handling with better boolean property detection
+  - Enhanced performance of DOM diffing operations
+  - Optimized attribute updates with batched operations
+  - Improved handling of special properties and ARIA attributes
+- **Build Configuration**
+  - Enhanced Rollup configuration with better tree-shaking
+  - Improved minification settings for smaller bundle size
+  - Added property mangling for better code optimization
+
+### 🔧 Fixed
+
+- **Attribute Handling**
+  - Fixed boolean attribute handling to properly respect different value formats
+  - Improved handling of empty string attributes
+  - Fixed property descriptor checking for boolean attributes
+- **Dependencies**
+  - Updated various dependencies to their latest versions
+
+---
+
 ## v1.2.5-alpha 🎉 (25-04-2025)
 
 ### ➕ Added
