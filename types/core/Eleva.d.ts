@@ -54,6 +54,8 @@ export class Eleva {
     private _isMounted;
     /** @private {Emitter} Instance of the event emitter for handling component events */
     private emitter;
+    /** @private {Signal} Instance of the signal for handling plugin and component signals */
+    private signal;
     /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
     private renderer;
     /**

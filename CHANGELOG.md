@@ -6,7 +6,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.6-alpha 🚀 (29-04-2025)
+## v1.2.7-alpha 🚀 (30-04-2025)
+
+### ➕ Added
+
+- **Plugin Signal Access**
+  - Added global Signal class access for plugins through `this.signal`
+  - Enabled plugins to create and manage their own reactive state
+  - Maintained component isolation while providing plugin flexibility
+
+### 🎛️ Changed
+
+- **Signal Architecture**
+  - Unified Signal class reference in Eleva instance
+  - Improved consistency between global and component contexts
+  - Enhanced maintainability with single source of truth for Signal class
+
+### 🔧 Fixed
+
+- _N/A_ – No bug fixes in this release.
+
+---
+
+## v1.2.6-alpha (29-04-2025)
 
 ### ➕ Added
 

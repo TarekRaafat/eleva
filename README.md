@@ -29,10 +29,10 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.2.6-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
+> **Stability Notice**: This is `v1.2.7-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
 > While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
 
-**Version:** `1.2.6-alpha`
+**Version:** `1.2.7-alpha`
 
 
 

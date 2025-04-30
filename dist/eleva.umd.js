@@ -355,6 +355,8 @@
       this._isMounted = false;
       /** @private {Emitter} Instance of the event emitter for handling component events */
       this.emitter = new Emitter();
+      /** @private {Signal} Instance of the signal for handling plugin and component signals */
+      this.signal = Signal;
       /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
       this.renderer = new Renderer();
     }
@@ -427,7 +429,7 @@
       const context = {
         props,
         emitter: this.emitter,
-        signal: v => new Signal(v),
+        signal: v => new this.signal(v),
         ...this._prepareLifecycleHooks()
       };
 

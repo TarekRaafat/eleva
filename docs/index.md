@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for eleva.js v1.2.6-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Alpha Release Notice**: This documentation is for eleva.js v1.2.7-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -791,6 +791,7 @@ Join our community for support, discussions, and collaboration:
 - **GitHub Discussions:** For general questions or new ideas please start a discussion on [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
 - **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
 - **Stack Overflow:** For technical questions and support, please post your question on Stack Overflow using any of these tags [eleva](https://stackoverflow.com/questions/tagged/eleva), [eleva.js](https://stackoverflow.com/questions/tagged/eleva.js)
+- **Discord:** Connect with us on [Discord](https://discord.gg/Dg7cMKpvyZ) to discuss eleva.js, ask questions, and contribute!
 - **Telegram:** For general questions, new ideas please, or even support join us on our [Telegram](https://t.me/+TcMXcHsRX9tkMmI0) group for realtime feedback.
 
 ---
@@ -798,10 +799,6 @@ Join our community for support, discussions, and collaboration:
 ## 17. Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).
-
-> **Latest Update (v1.2.2-alpha):**
->
-> - Documentation Updates
 
 ---
 
