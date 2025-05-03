@@ -1,34 +1,50 @@
 /**
- * @class 🎙️ Emitter
- * @classdesc Robust inter-component communication with event bubbling.
- * Implements a basic publish-subscribe pattern for event handling, allowing components
- * to communicate through custom events.
+ * @class 📡 Emitter
+ * @classdesc A robust event emitter that enables inter-component communication through a publish-subscribe pattern.
+ * Components can emit events and listen for events from other components, facilitating loose coupling
+ * and reactive updates across the application.
+ *
+ * @example
+ * const emitter = new Emitter();
+ * emitter.on('user:login', (user) => console.log(`User logged in: ${user.name}`));
+ * emitter.emit('user:login', { name: 'John' }); // Logs: "User logged in: John"
  */
 export class Emitter {
-    /** @type {Object.<string, Function[]>} Storage for event handlers mapped by event name */
-    events: {
-        [x: string]: Function[];
-    };
+    /** @private {Map<string, Set<function(any): void>>} Map of event names to their registered handler functions */
+    private _events;
     /**
-     * Registers an event handler for the specified event.
+     * Registers an event handler for the specified event name.
+     * The handler will be called with the event data when the event is emitted.
      *
+     * @public
+     * @param {string} event - The name of the event to listen for.
+     * @param {function(any): void} handler - The callback function to invoke when the event occurs.
+     * @returns {function(): boolean} A function to unsubscribe the event handler.
+     * @example
+     * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
+     * // Later...
+     * unsubscribe(); // Stops listening for the event
+     */
+    public on(event: string, handler: (arg0: any) => void): () => boolean;
+    /**
+     * Removes an event handler for the specified event name.
+     * If no handler is provided, all handlers for the event are removed.
+     *
+     * @public
      * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The function to call when the event is emitted.
+     * @param {function(any): void} [handler] - The specific handler function to remove.
+     * @returns {void}
      */
-    on(event: string, handler: (...args: any[]) => void): void;
+    public off(event: string, handler?: (arg0: any) => void): void;
     /**
-     * Removes a previously registered event handler.
+     * Emits an event with the specified data to all registered handlers.
+     * Handlers are called synchronously in the order they were registered.
      *
-     * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The handler function to remove.
+     * @public
+     * @param {string} event - The name of the event to emit.
+     * @param {...any} args - Optional arguments to pass to the event handlers.
+     * @returns {void}
      */
-    off(event: string, handler: (...args: any[]) => void): void;
-    /**
-     * Emits an event, invoking all handlers registered for that event.
-     *
-     * @param {string} event - The event name.
-     * @param {...any} args - Additional arguments to pass to the event handlers.
-     */
-    emit(event: string, ...args: any[]): void;
+    public emit(event: string, ...args: any[]): void;
 }
 //# sourceMappingURL=Emitter.d.ts.map

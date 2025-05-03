@@ -2,17 +2,27 @@
 
 /**
  * @class 🎨 Renderer
- * @classdesc Handles DOM patching, diffing, and attribute updates.
- * Provides methods for efficient DOM updates by diffing the new and old DOM structures
- * and applying only the necessary changes.
+ * @classdesc A DOM renderer that handles efficient DOM updates through patching and diffing.
+ * Provides methods for updating the DOM by comparing new and old structures and applying
+ * only the necessary changes, minimizing layout thrashing and improving performance.
+ *
+ * @example
+ * const renderer = new Renderer();
+ * const container = document.getElementById("app");
+ * const newHtml = "<div>Updated content</div>";
+ * renderer.patchDOM(container, newHtml);
  */
 export class Renderer {
   /**
    * Patches the DOM of a container element with new HTML content.
+   * This method efficiently updates the DOM by comparing the new content with the existing
+   * content and applying only the necessary changes.
    *
+   * @public
    * @param {HTMLElement} container - The container element to patch.
    * @param {string} newHtml - The new HTML content to apply.
-   * @throws {Error} If container is not an HTMLElement or newHtml is not a string
+   * @returns {void}
+   * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
    */
   patchDOM(container, newHtml) {
     if (!(container instanceof HTMLElement)) {
@@ -30,10 +40,14 @@ export class Renderer {
 
   /**
    * Diffs two DOM trees (old and new) and applies updates to the old DOM.
+   * This method recursively compares nodes and their attributes, applying only
+   * the necessary changes to minimize DOM operations.
    *
+   * @private
    * @param {HTMLElement} oldParent - The original DOM element.
    * @param {HTMLElement} newParent - The new DOM element.
-   * @throws {Error} If either parent is not an HTMLElement
+   * @returns {void}
+   * @throws {Error} If either parent is not an HTMLElement.
    */
   diff(oldParent, newParent) {
     if (
@@ -102,10 +116,13 @@ export class Renderer {
 
   /**
    * Updates the attributes of an element to match those of a new element.
+   * Handles special cases for ARIA attributes, data attributes, and boolean properties.
    *
+   * @private
    * @param {HTMLElement} oldEl - The element to update.
    * @param {HTMLElement} newEl - The element providing the updated attributes.
-   * @throws {Error} If either element is not an HTMLElement
+   * @returns {void}
+   * @throws {Error} If either element is not an HTMLElement.
    */
   updateAttributes(oldEl, newEl) {
     if (!(oldEl instanceof HTMLElement) || !(newEl instanceof HTMLElement)) {

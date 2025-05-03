@@ -6,7 +6,53 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.7-alpha 🚀 (30-04-2025)
+## v1.2.8-alpha 🚀 (04-05-2025)
+
+### ➕ Added
+
+- **Enhanced TypeScript Support**
+  - Improved type definitions for better IDE integration and type safety
+  - Added comprehensive JSDoc annotations with examples
+  - Enhanced type inference for Signals and event handlers
+  - Added new type definitions for plugins and mount results
+
+- **Performance Improvements**
+  - Optimized event handling with better cleanup and memory management
+  - Improved DOM diffing performance for complex templates
+  - Enhanced signal batching for better update efficiency
+  - Reduced memory footprint in component lifecycle management
+
+### 🎛️ Changed
+
+- **TypeScript Configuration**
+  - Updated tsconfig.json with improved module resolution
+  - Enhanced type checking and declaration file generation
+  - Added support for JSON module resolution
+  - Improved isolated modules handling
+
+- **Documentation**
+  - Enhanced API documentation with practical examples
+  - Improved type definitions clarity and organization
+  - Added comprehensive examples for core features
+  - Updated plugin system documentation
+
+### 🔧 Fixed
+
+- **Event System**
+  - Fixed potential memory leaks in event handler cleanup
+  - Improved event handler removal logic
+  - Enhanced event bubbling and propagation
+  - Fixed edge cases in event subscription management
+
+- **Type Definitions**
+  - Fixed incorrect type definitions in core modules
+  - Improved type safety for component definitions
+  - Enhanced error handling in type checking
+  - Fixed declaration file generation issues
+
+---
+
+## v1.2.7-alpha (30-04-2025)
 
 ### ➕ Added
 

@@ -5,7 +5,6 @@ docs/index.html
 docs/js
 docs/styles
 examples/index.html
-examples/index.md
 
 # Dependencies
 node_modules

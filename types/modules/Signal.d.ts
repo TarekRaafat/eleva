@@ -1,41 +1,57 @@
 /**
  * @class ⚡ Signal
- * @classdesc Fine-grained reactivity.
- * A reactive data holder that notifies registered watchers when its value changes,
- * enabling fine-grained DOM patching rather than full re-renders.
+ * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
+ * Signals notify registered watchers when their value changes, enabling efficient DOM updates
+ * through targeted patching rather than full re-renders.
+ *
+ * @example
+ * const count = new Signal(0);
+ * count.watch((value) => console.log(`Count changed to: ${value}`));
+ * count.value = 1; // Logs: "Count changed to: 1"
  */
 export class Signal {
     /**
-     * Creates a new Signal instance.
+     * Creates a new Signal instance with the specified initial value.
      *
+     * @public
      * @param {*} value - The initial value of the signal.
      */
     constructor(value: any);
-    /** @private {*} Internal storage for the signal's current value */
+    /** @private {T} Internal storage for the signal's current value, where T is the type of the initial value */
     private _value;
-    /** @private {Set<function>} Collection of callback functions to be notified when value changes */
+    /** @private {Set<function(T): void>} Collection of callback functions to be notified when value changes, where T is the value type */
     private _watchers;
     /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
     private _pending;
     /**
      * Sets a new value for the signal and notifies all registered watchers if the value has changed.
+     * The notification is batched using microtasks to prevent multiple synchronous updates.
      *
-     * @param {*} newVal - The new value to set.
+     * @public
+     * @param {T} newVal - The new value to set, where T is the type of the initial value.
+     * @returns {void}
      */
-    set value(newVal: any);
+    public set value(newVal: T);
     /**
      * Gets the current value of the signal.
      *
-     * @returns {*} The current value.
+     * @public
+     * @returns {T} The current value, where T is the type of the initial value.
      */
-    get value(): any;
+    public get value(): T;
     /**
      * Registers a watcher function that will be called whenever the signal's value changes.
+     * The watcher will receive the new value as its argument.
      *
-     * @param {function(any): void} fn - The callback function to invoke on value change.
+     * @public
+     * @param {function(T): void} fn - The callback function to invoke on value change, where T is the value type.
      * @returns {function(): boolean} A function to unsubscribe the watcher.
+     * @example
+     * const unsubscribe = signal.watch((value) => console.log(value));
+     * // Later...
+     * unsubscribe(); // Stops watching for changes
      */
-    watch(fn: (arg0: any) => void): () => boolean;
+    public watch(fn: (arg0: T) => void): () => boolean;
     /**
      * Notifies all registered watchers of a value change using microtask scheduling.
      * Uses a pending flag to batch multiple synchronous updates into a single notification.

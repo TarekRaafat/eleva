@@ -1,3 +1,4 @@
+/*! Eleva v1.2.8-alpha | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -6,43 +7,58 @@
 
   /**
    * @class 🔒 TemplateEngine
-   * @classdesc Secure interpolation & dynamic attribute parsing.
-   * Provides methods to parse template strings by replacing interpolation expressions
-   * with dynamic data values and to evaluate expressions within a given data context.
+   * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
+   * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+   * All methods are static and can be called directly on the class.
+   *
+   * @example
+   * const template = "Hello, {{name}}!";
+   * const data = { name: "World" };
+   * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
    */
   class TemplateEngine {
     /**
-     * Parses a template string and replaces interpolation expressions with corresponding values.
+     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+     */
+    static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
+
+    /**
+     * Parses a template string, replacing expressions with their evaluated values.
+     * Expressions are evaluated in the provided data context.
      *
-     * @param {string} template - The template string containing expressions in the format `{{ expression }}`.
-     * @param {Object<string, any>} data - The data object to use for evaluating expressions.
-     * @returns {string} The resulting string with evaluated values.
+     * @public
+     * @static
+     * @param {string} template - The template string to parse.
+     * @param {Object} data - The data context for evaluating expressions.
+     * @returns {string} The parsed template with expressions replaced by their values.
+     * @example
+     * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+     *   user: { name: "John", age: 30 }
+     * }); // Returns: "John is 30 years old"
      */
     static parse(template, data) {
-      if (!template || typeof template !== "string") return template;
-      return template.replace(/\{\{\s*(.*?)\s*\}\}/g, (_, expr) => {
-        return this.evaluate(expr, data);
-      });
+      if (typeof template !== "string") return template;
+      return template.replace(this.expressionPattern, (_, expression) => this.evaluate(expression, data));
     }
 
     /**
-     * Evaluates a JavaScript expression using the provided data context.
+     * Evaluates an expression in the context of the provided data object.
+     * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      *
-     * @param {string} expr - The JavaScript expression to evaluate.
-     * @param {Object<string, any>} data - The data context for evaluating the expression.
-     * @returns {any} The result of the evaluated expression, or an empty string if undefined or on error.
+     * @public
+     * @static
+     * @param {string} expression - The expression to evaluate.
+     * @param {Object} data - The data context for evaluation.
+     * @returns {*} The result of the evaluation, or an empty string if evaluation fails.
+     * @example
+     * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
+     * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
      */
-    static evaluate(expr, data) {
-      if (!expr || typeof expr !== "string") return expr;
+    static evaluate(expression, data) {
+      if (typeof expression !== "string") return expression;
       try {
-        const compiledFn = new Function("data", `with(data) { return ${expr} }`);
-        return compiledFn(data);
-      } catch (error) {
-        console.error(`Template evaluation error:`, {
-          expression: expr,
-          data,
-          error: error.message
-        });
+        return new Function("data", `with(data) { return ${expression}; }`)(data);
+      } catch {
         return "";
       }
     }
@@ -50,20 +66,26 @@
 
   /**
    * @class ⚡ Signal
-   * @classdesc Fine-grained reactivity.
-   * A reactive data holder that notifies registered watchers when its value changes,
-   * enabling fine-grained DOM patching rather than full re-renders.
+   * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
+   * Signals notify registered watchers when their value changes, enabling efficient DOM updates
+   * through targeted patching rather than full re-renders.
+   *
+   * @example
+   * const count = new Signal(0);
+   * count.watch((value) => console.log(`Count changed to: ${value}`));
+   * count.value = 1; // Logs: "Count changed to: 1"
    */
   class Signal {
     /**
-     * Creates a new Signal instance.
+     * Creates a new Signal instance with the specified initial value.
      *
+     * @public
      * @param {*} value - The initial value of the signal.
      */
     constructor(value) {
-      /** @private {*} Internal storage for the signal's current value */
+      /** @private {T} Internal storage for the signal's current value, where T is the type of the initial value */
       this._value = value;
-      /** @private {Set<function>} Collection of callback functions to be notified when value changes */
+      /** @private {Set<function(T): void>} Collection of callback functions to be notified when value changes, where T is the value type */
       this._watchers = new Set();
       /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
       this._pending = false;
@@ -72,7 +94,8 @@
     /**
      * Gets the current value of the signal.
      *
-     * @returns {*} The current value.
+     * @public
+     * @returns {T} The current value, where T is the type of the initial value.
      */
     get value() {
       return this._value;
@@ -80,8 +103,11 @@
 
     /**
      * Sets a new value for the signal and notifies all registered watchers if the value has changed.
+     * The notification is batched using microtasks to prevent multiple synchronous updates.
      *
-     * @param {*} newVal - The new value to set.
+     * @public
+     * @param {T} newVal - The new value to set, where T is the type of the initial value.
+     * @returns {void}
      */
     set value(newVal) {
       if (newVal !== this._value) {
@@ -92,9 +118,15 @@
 
     /**
      * Registers a watcher function that will be called whenever the signal's value changes.
+     * The watcher will receive the new value as its argument.
      *
-     * @param {function(any): void} fn - The callback function to invoke on value change.
+     * @public
+     * @param {function(T): void} fn - The callback function to invoke on value change, where T is the value type.
      * @returns {function(): boolean} A function to unsubscribe the watcher.
+     * @example
+     * const unsubscribe = signal.watch((value) => console.log(value));
+     * // Later...
+     * unsubscribe(); // Stops watching for changes
      */
     watch(fn) {
       this._watchers.add(fn);
@@ -121,66 +153,105 @@
   }
 
   /**
-   * @class 🎙️ Emitter
-   * @classdesc Robust inter-component communication with event bubbling.
-   * Implements a basic publish-subscribe pattern for event handling, allowing components
-   * to communicate through custom events.
+   * @class 📡 Emitter
+   * @classdesc A robust event emitter that enables inter-component communication through a publish-subscribe pattern.
+   * Components can emit events and listen for events from other components, facilitating loose coupling
+   * and reactive updates across the application.
+   *
+   * @example
+   * const emitter = new Emitter();
+   * emitter.on('user:login', (user) => console.log(`User logged in: ${user.name}`));
+   * emitter.emit('user:login', { name: 'John' }); // Logs: "User logged in: John"
    */
   class Emitter {
     /**
      * Creates a new Emitter instance.
+     *
+     * @public
      */
     constructor() {
-      /** @type {Object.<string, Function[]>} Storage for event handlers mapped by event name */
-      this.events = {};
+      /** @private {Map<string, Set<function(any): void>>} Map of event names to their registered handler functions */
+      this._events = new Map();
     }
 
     /**
-     * Registers an event handler for the specified event.
+     * Registers an event handler for the specified event name.
+     * The handler will be called with the event data when the event is emitted.
      *
-     * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The function to call when the event is emitted.
+     * @public
+     * @param {string} event - The name of the event to listen for.
+     * @param {function(any): void} handler - The callback function to invoke when the event occurs.
+     * @returns {function(): boolean} A function to unsubscribe the event handler.
+     * @example
+     * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
+     * // Later...
+     * unsubscribe(); // Stops listening for the event
      */
     on(event, handler) {
-      (this.events[event] || (this.events[event] = [])).push(handler);
+      if (!this._events.has(event)) this._events.set(event, new Set());
+      this._events.get(event).add(handler);
+      return () => this.off(event, handler);
     }
 
     /**
-     * Removes a previously registered event handler.
+     * Removes an event handler for the specified event name.
+     * If no handler is provided, all handlers for the event are removed.
      *
+     * @public
      * @param {string} event - The name of the event.
-     * @param {function(...any): void} handler - The handler function to remove.
+     * @param {function(any): void} [handler] - The specific handler function to remove.
+     * @returns {void}
      */
     off(event, handler) {
-      if (this.events[event]) {
-        this.events[event] = this.events[event].filter(h => h !== handler);
+      if (!this._events.has(event)) return;
+      if (handler) {
+        const handlers = this._events.get(event);
+        handlers.delete(handler);
+        // Remove the event if there are no handlers left
+        if (handlers.size === 0) this._events.delete(event);
+      } else {
+        this._events.delete(event);
       }
     }
 
     /**
-     * Emits an event, invoking all handlers registered for that event.
+     * Emits an event with the specified data to all registered handlers.
+     * Handlers are called synchronously in the order they were registered.
      *
-     * @param {string} event - The event name.
-     * @param {...any} args - Additional arguments to pass to the event handlers.
+     * @public
+     * @param {string} event - The name of the event to emit.
+     * @param {...any} args - Optional arguments to pass to the event handlers.
+     * @returns {void}
      */
     emit(event, ...args) {
-      (this.events[event] || []).forEach(handler => handler(...args));
+      if (!this._events.has(event)) return;
+      this._events.get(event).forEach(handler => handler(...args));
     }
   }
 
   /**
    * @class 🎨 Renderer
-   * @classdesc Handles DOM patching, diffing, and attribute updates.
-   * Provides methods for efficient DOM updates by diffing the new and old DOM structures
-   * and applying only the necessary changes.
+   * @classdesc A DOM renderer that handles efficient DOM updates through patching and diffing.
+   * Provides methods for updating the DOM by comparing new and old structures and applying
+   * only the necessary changes, minimizing layout thrashing and improving performance.
+   *
+   * @example
+   * const renderer = new Renderer();
+   * const container = document.getElementById("app");
+   * const newHtml = "<div>Updated content</div>";
+   * renderer.patchDOM(container, newHtml);
    */
   class Renderer {
     /**
      * Patches the DOM of a container element with new HTML content.
+     * This method efficiently updates the DOM by comparing the new content with the existing
+     * content and applying only the necessary changes.
      *
+     * @public
      * @param {HTMLElement} container - The container element to patch.
      * @param {string} newHtml - The new HTML content to apply.
-     * @throws {Error} If container is not an HTMLElement or newHtml is not a string
+     * @returns {void}
+     * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
      */
     patchDOM(container, newHtml) {
       if (!(container instanceof HTMLElement)) {
@@ -197,10 +268,14 @@
 
     /**
      * Diffs two DOM trees (old and new) and applies updates to the old DOM.
+     * This method recursively compares nodes and their attributes, applying only
+     * the necessary changes to minimize DOM operations.
      *
+     * @private
      * @param {HTMLElement} oldParent - The original DOM element.
      * @param {HTMLElement} newParent - The new DOM element.
-     * @throws {Error} If either parent is not an HTMLElement
+     * @returns {void}
+     * @throws {Error} If either parent is not an HTMLElement.
      */
     diff(oldParent, newParent) {
       if (!(oldParent instanceof HTMLElement) || !(newParent instanceof HTMLElement)) {
@@ -247,10 +322,13 @@
 
     /**
      * Updates the attributes of an element to match those of a new element.
+     * Handles special cases for ARIA attributes, data attributes, and boolean properties.
      *
+     * @private
      * @param {HTMLElement} oldEl - The element to update.
      * @param {HTMLElement} newEl - The element providing the updated attributes.
-     * @throws {Error} If either element is not an HTMLElement
+     * @returns {void}
+     * @throws {Error} If either element is not an HTMLElement.
      */
     updateAttributes(oldEl, newEl) {
       if (!(oldEl instanceof HTMLElement) || !(newEl instanceof HTMLElement)) {
@@ -305,101 +383,143 @@
   }
 
   /**
-   * Defines the structure and behavior of a component.
    * @typedef {Object} ComponentDefinition
    * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
-   *           Optional setup function that initializes the component's reactive state and lifecycle.
-   *           Receives props and context as an argument and should return an object containing the component's state.
-   *           Can return either a synchronous object or a Promise that resolves to an object for async initialization.
-   *
+   *           Optional setup function that initializes the component's state and returns reactive data
    * @property {function(Object<string, any>): string} template
-   *           Required function that defines the component's HTML structure.
-   *           Receives the merged context (props + setup data) and must return an HTML template string.
-   *           Supports dynamic expressions using {{ }} syntax for reactive data binding.
-   *
+   *           Required function that defines the component's HTML structure
    * @property {function(Object<string, any>): string} [style]
-   *           Optional function that defines component-scoped CSS styles.
-   *           Receives the merged context and returns a CSS string that will be automatically scoped to the component.
-   *           Styles are injected into the component's container and only affect elements within it.
-   *
+   *           Optional function that provides component-scoped CSS styles
    * @property {Object<string, ComponentDefinition>} [children]
-   *           Optional object that defines nested child components.
-   *           Keys are CSS selectors that match elements in the template where child components should be mounted.
-   *           Values are ComponentDefinition objects that define the structure and behavior of each child component.
+   *           Optional object defining nested child components
+   */
+
+  /**
+   * @typedef {Object} ElevaPlugin
+   * @property {function(Eleva, Object<string, any>): void} install
+   *           Function that installs the plugin into the Eleva instance
+   * @property {string} name
+   *           Unique identifier name for the plugin
+   */
+
+  /**
+   * @typedef {Object} MountResult
+   * @property {HTMLElement} container
+   *           The DOM element where the component is mounted
+   * @property {Object<string, any>} data
+   *           The component's reactive state and context data
+   * @property {function(): void} unmount
+   *           Function to clean up and unmount the component
    */
 
   /**
    * @class 🧩 Eleva
-   * @classdesc Signal-based component runtime framework with lifecycle hooks, scoped styles, and plugin support.
-   * Manages component registration, plugin integration, event handling, and DOM rendering.
+   * @classdesc A modern, signal-based component runtime framework that provides lifecycle hooks,
+   * scoped styles, and plugin support. Eleva manages component registration, plugin integration,
+   * event handling, and DOM rendering with a focus on performance and developer experience.
+   *
+   * @example
+   * const app = new Eleva("myApp");
+   * app.component("myComponent", {
+   *   template: (ctx) => `<div>Hello ${ctx.props.name}</div>`,
+   *   setup: (ctx) => ({ count: new Signal(0) })
+   * });
+   * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
    */
   class Eleva {
     /**
-     * Creates a new Eleva instance.
+     * Creates a new Eleva instance with the specified name and configuration.
      *
-     * @param {string} name - The name of the Eleva instance.
-     * @param {Object<string, any>} [config={}] - Optional configuration for the instance.
+     * @public
+     * @param {string} name - The unique identifier name for this Eleva instance.
+     * @param {Object<string, any>} [config={}] - Optional configuration object for the instance.
+     *        May include framework-wide settings and default behaviors.
      */
     constructor(name, config = {}) {
-      /** @type {string} The unique identifier name for this Eleva instance */
+      /** @public {string} The unique identifier name for this Eleva instance */
       this.name = name;
-      /** @type {Object<string, any>} Optional configuration object for the Eleva instance */
+      /** @public {Object<string, any>} Optional configuration object for the Eleva instance */
       this.config = config;
-      /** @type {Object<string, ComponentDefinition>} Object storing registered component definitions by name */
-      this._components = {};
-      /** @private {Array<Object>} Collection of installed plugin instances */
-      this._plugins = [];
-      /** @private {string[]} Array of lifecycle hook names supported by the component */
-      this._lifecycleHooks = ["onBeforeMount", "onMount", "onBeforeUpdate", "onUpdate", "onUnmount"];
-      /** @private {boolean} Flag indicating if component is currently mounted */
-      this._isMounted = false;
-      /** @private {Emitter} Instance of the event emitter for handling component events */
+      /** @public {Emitter} Instance of the event emitter for handling component events */
       this.emitter = new Emitter();
-      /** @private {Signal} Instance of the signal for handling plugin and component signals */
+      /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
       this.signal = Signal;
-      /** @private {Renderer} Instance of the renderer for handling DOM updates and patching */
+      /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */
       this.renderer = new Renderer();
+
+      /** @private {Map<string, ComponentDefinition>} Registry of all component definitions by name */
+      this._components = new Map();
+      /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
+      this._plugins = new Map();
+      /** @private {string[]} Array of lifecycle hook names supported by components */
+      this._lifecycleHooks = ["onBeforeMount", "onMount", "onBeforeUpdate", "onUpdate", "onUnmount"];
+      /** @private {boolean} Flag indicating if the root component is currently mounted */
+      this._isMounted = false;
     }
 
     /**
      * Integrates a plugin with the Eleva framework.
+     * The plugin's install function will be called with the Eleva instance and provided options.
+     * After installation, the plugin will be available for use by components.
      *
-     * @param {Object} plugin - The plugin object which should have an `install` function.
-     * @param {Object<string, any>} [options={}] - Optional options to pass to the plugin.
-     * @returns {Eleva} The Eleva instance (for chaining).
+     * @public
+     * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
+     * @param {Object<string, any>} [options={}] - Optional configuration options for the plugin.
+     * @returns {Eleva} The Eleva instance (for method chaining).
+     * @example
+     * app.use(myPlugin, { option1: "value1" });
      */
     use(plugin, options = {}) {
-      if (typeof plugin.install === "function") {
-        plugin.install(this, options);
-      }
-      this._plugins.push(plugin);
+      plugin.install(this, options);
+      this._plugins.set(plugin.name, plugin);
       return this;
     }
 
     /**
-     * Registers a component with the Eleva instance.
+     * Registers a new component with the Eleva instance.
+     * The component will be available for mounting using its registered name.
      *
-     * @param {string} name - The name of the component.
+     * @public
+     * @param {string} name - The unique name of the component to register.
      * @param {ComponentDefinition} definition - The component definition including setup, template, style, and children.
-     * @returns {Eleva} The Eleva instance (for chaining).
+     * @returns {Eleva} The Eleva instance (for method chaining).
+     * @throws {Error} If the component name is already registered.
+     * @example
+     * app.component("myButton", {
+     *   template: (ctx) => `<button>${ctx.props.text}</button>`,
+     *   style: () => "button { color: blue; }"
+     * });
      */
     component(name, definition) {
-      this._components[name] = definition;
+      /** @type {Map<string, ComponentDefinition>} */
+      this._components.set(name, definition);
       return this;
     }
 
     /**
      * Mounts a registered component to a DOM element.
+     * This will initialize the component, set up its reactive state, and render it to the DOM.
      *
-     * @param {HTMLElement} container - A DOM element where the component will be mounted.
-     * @param {string|ComponentDefinition} compName - The name of the component to mount or a component definition.
+     * @public
+     * @param {HTMLElement} container - The DOM element where the component will be mounted.
+     * @param {string|ComponentDefinition} compName - The name of the registered component or a direct component definition.
      * @param {Object<string, any>} [props={}] - Optional properties to pass to the component.
-     * @returns {object|Promise<object>} An object representing the mounted component instance, or a Promise that resolves to it for asynchronous setups.
-     * @throws {Error} If the container is not found or if the component is not registered.
+     * @returns {Promise<MountResult>}
+     *          A Promise that resolves to an object containing:
+     *          - container: The mounted component's container element
+     *          - data: The component's reactive state and context
+     *          - unmount: Function to clean up and unmount the component
+     * @throws {Error} If the container is not found, or component is not registered.
+     * @example
+     * const instance = await app.mount(document.getElementById("app"), "myComponent", { text: "Click me" });
+     * // Later...
+     * instance.unmount();
      */
-    mount(container, compName, props = {}) {
+    async mount(container, compName, props = {}) {
       if (!container) throw new Error(`Container not found: ${container}`);
-      const definition = typeof compName === "string" ? this._components[compName] : compName;
+
+      /** @type {ComponentDefinition} */
+      const definition = typeof compName === "string" ? this._components.get(compName) : compName;
       if (!definition) throw new Error(`Component "${compName}" not registered.`);
       if (typeof definition.template !== "function") throw new Error("Component template must be a function");
 
@@ -429,6 +549,7 @@
       const context = {
         props,
         emitter: this.emitter,
+        /** @type {(v: any) => Signal} */
         signal: v => new this.signal(v),
         ...this._prepareLifecycleHooks()
       };
@@ -437,15 +558,18 @@
        * Processes the mounting of the component.
        *
        * @param {Object<string, any>} data - Data returned from the component's setup function.
-       * @returns {object} An object with the container, merged context data, and an unmount function.
+       * @returns {MountResult} An object with the container, merged context data, and an unmount function.
        */
       const processMount = data => {
         const mergedContext = {
           ...context,
           ...data
         };
+        /** @type {Array<() => void>} */
         const watcherUnsubscribers = [];
+        /** @type {Array<MountResult>} */
         const childInstances = [];
+        /** @type {Array<() => void>} */
         const cleanupListeners = [];
 
         // Execute before hooks
@@ -478,9 +602,9 @@
          * When a Signal's value changes, the component will re-render to reflect the updates.
          * Stores unsubscribe functions to clean up watchers when component unmounts.
          */
-        Object.values(data).forEach(val => {
+        for (const val of Object.values(data)) {
           if (val instanceof Signal) watcherUnsubscribers.push(val.watch(render));
-        });
+        }
         render();
         return {
           container,
@@ -491,9 +615,9 @@
            * @returns {void}
            */
           unmount: () => {
-            watcherUnsubscribers.forEach(fn => fn());
-            cleanupListeners.forEach(fn => fn());
-            childInstances.forEach(child => child.unmount());
+            for (const fn of watcherUnsubscribers) fn();
+            for (const fn of cleanupListeners) fn();
+            for (const child of childInstances) child.unmount();
             mergedContext.onUnmount && mergedContext.onUnmount();
             container.innerHTML = "";
           }
@@ -505,26 +629,31 @@
     }
 
     /**
-     * Prepares default no-operation lifecycle hook functions.
+     * Prepares default no-operation lifecycle hook functions for a component.
+     * These hooks will be called at various stages of the component's lifecycle.
      *
-     * @returns {Object<string, function(): void>} An object with keys for lifecycle hooks mapped to empty functions.
      * @private
+     * @returns {Object<string, function(): void>} An object mapping lifecycle hook names to empty functions.
+     *         The returned object will be merged with the component's context.
      */
     _prepareLifecycleHooks() {
-      return this._lifecycleHooks.reduce((acc, hook) => {
-        acc[hook] = () => {};
-        return acc;
-      }, {});
+      /** @type {Object<string, () => void>} */
+      const hooks = {};
+      for (const hook of this._lifecycleHooks) {
+        hooks[hook] = () => {};
+      }
+      return hooks;
     }
 
     /**
      * Processes DOM elements for event binding based on attributes starting with "@".
-     * Tracks listeners for cleanup during unmount.
+     * This method handles the event delegation system and ensures proper cleanup of event listeners.
      *
-     * @param {HTMLElement} container - The container element in which to search for events.
-     * @param {Object<string, any>} context - The current context containing event handler definitions.
-     * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
      * @private
+     * @param {HTMLElement} container - The container element in which to search for event attributes.
+     * @param {Object<string, any>} context - The current component context containing event handler definitions.
+     * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
+     * @returns {void}
      */
     _processEvents(container, context, cleanupListeners) {
       const elements = container.querySelectorAll("*");
@@ -547,12 +676,14 @@
 
     /**
      * Injects scoped styles into the component's container.
+     * The styles are automatically prefixed to prevent style leakage to other components.
      *
-     * @param {HTMLElement} container - The container element.
-     * @param {string} compName - The component name used to identify the style element.
-     * @param {function(Object<string, any>): string} [styleFn] - A function that returns CSS styles as a string.
-     * @param {Object<string, any>} context - The current context for style interpolation.
      * @private
+     * @param {HTMLElement} container - The container element where styles should be injected.
+     * @param {string} compName - The component name used to identify the style element.
+     * @param {function(Object<string, any>): string} [styleFn] - Optional function that returns CSS styles as a string.
+     * @param {Object<string, any>} context - The current component context for style interpolation.
+     * @returns {void}
      */
     _injectStyles(container, compName, styleFn, context) {
       if (!styleFn) return;
@@ -567,30 +698,35 @@
 
     /**
      * Mounts child components within the parent component's container.
+     * This method handles the recursive mounting of nested components.
      *
-     * @param {HTMLElement} container - The parent container element.
-     * @param {Object<string, ComponentDefinition>} [children] - An object mapping child component selectors to their definitions.
-     * @param {Array<object>} childInstances - An array to store the mounted child component instances.
      * @private
+     * @param {HTMLElement} container - The parent container element.
+     * @param {Object<string, ComponentDefinition>} [children] - Object mapping of child component selectors to their definitions.
+     * @param {Array<MountResult>} childInstances - Array to store the mounted child component instances.
+     * @returns {void}
      */
-    _mountChildren(container, children, childInstances) {
-      childInstances.forEach(child => child.unmount());
+    async _mountChildren(container, children, childInstances) {
+      for (const child of childInstances) child.unmount();
       childInstances.length = 0;
-      Object.keys(children || {}).forEach(childSelector => {
-        container.querySelectorAll(childSelector).forEach(childEl => {
+      if (!children) return;
+      for (const childSelector of Object.keys(children)) {
+        if (!childSelector) continue;
+        for (const childEl of container.querySelectorAll(childSelector)) {
+          if (!(childEl instanceof HTMLElement)) continue;
           const props = {};
-          [...childEl.attributes].forEach(({
+          for (const {
             name,
             value
-          }) => {
+          } of [...childEl.attributes]) {
             if (name.startsWith("eleva-prop-")) {
               props[name.replace("eleva-prop-", "")] = value;
             }
-          });
-          const instance = this.mount(childEl, children[childSelector], props);
+          }
+          const instance = await this.mount(childEl, children[childSelector], props);
           childInstances.push(instance);
-        });
-      });
+        }
+      }
     }
   }
 

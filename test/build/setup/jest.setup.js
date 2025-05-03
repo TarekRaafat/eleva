@@ -1,4 +1,3 @@
-// window.Eleva = require("../../../dist/eleva.min.js");
 import Eleva from "../../../dist/eleva.min.js";
 window.Eleva = Eleva;
 

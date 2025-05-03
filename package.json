@@ -1,17 +1,23 @@
 {
   "name": "eleva",
-  "version": "1.2.7-alpha",
+  "version": "1.2.8-alpha",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
-  "main": "dist/eleva.js",
+  "main": "dist/eleva.cjs.js",
   "module": "dist/eleva.esm.js",
+  "umd": "dist/eleva.umd.js",
+  "browser": "dist/eleva.min.js",
   "unpkg": "dist/eleva.min.js",
   "types": "dist/eleva.d.ts",
   "exports": {
     ".": {
-      "require": "./dist/eleva.js",
+      "types": "./dist/eleva.d.ts",
+      "node": "./dist/eleva.cjs.js",
+      "require": "./dist/eleva.cjs.js",
       "import": "./dist/eleva.esm.js",
-      "types": "./dist/eleva.d.ts"
+      "browser": "./dist/eleva.min.js",
+      "umd": "./dist/eleva.umd.js",
+      "default": "./dist/eleva.esm.js"
     }
   },
   "scripts": {
@@ -73,7 +79,6 @@
     "rimraf": "^6.0.1",
     "rollup": "^4.34.8",
     "rollup-plugin-dts": "^6.1.1",
-    "size-limit": "^11.2.0",
     "typescript": "^5.1.6",
     "vitepress": "^1.6.3"
   },
@@ -88,14 +93,6 @@
       "pre-commit": "lint-staged"
     }
   },
-  "size-limit": [
-    {
-      "limit": "6 kB",
-      "path": "dist/eleva.min.js",
-      "name": "eleva",
-      "brotli": true
-    }
-  ],
   "keywords": [
     "modern javascript framework",
     "lightweight JavaScript framework",

@@ -3,8 +3,10 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
 import { codecovRollupPlugin } from "@codecov/rollup-plugin";
+import pkg from "./package.json" with { type: "json" };
 
 const name = "Eleva";
+const banner = `/*! ${name} v${pkg.version} | ${pkg.license} License | ${pkg.homepage} */`;
 
 // Rollup configuration for building the Eleva.js library
 export default {
@@ -12,52 +14,46 @@ export default {
   context: "window",
   output: [
     {
-      file: "dist/eleva.umd.js",
-      format: "umd",
-      name: name,
-      exports: "default",
+      file: pkg.main,
+      format: "cjs",
       sourcemap: true,
+      exports: "default",
+      banner,
     },
     {
-      file: "dist/eleva.esm.js",
+      file: pkg.module,
       format: "es",
-      name: name,
-      exports: "default",
       sourcemap: true,
+      exports: "default",
+      banner,
     },
     {
-      file: "dist/eleva.min.js",
+      file: pkg.umd,
       format: "umd",
       name: name,
-      exports: "default",
       sourcemap: true,
-      plugins: [
-        terser({
-          compress: {
-            pure_getters: true,
-            unsafe: true,
-            unsafe_comps: true,
-            warnings: false,
-          },
-          mangle: {
-            properties: {
-              regex: /^_/,
-            },
-          },
-        }),
-      ],
+      exports: "default",
+      banner,
+    },
+    {
+      file: pkg.browser,
+      format: "umd",
+      name: name,
+      sourcemap: true,
+      plugins: [terser()],
+      banner,
     },
   ],
+  treeshake: {
+    moduleSideEffects: false,
+    propertyReadSideEffects: false,
+  },
   plugins: [
-    nodeResolve({
-      mainFields: ["module", "main"],
-      preferBuiltins: false,
-    }),
-    commonjs({
-      include: "node_modules/**",
-    }),
+    nodeResolve(),
+    commonjs(),
     babel({
       babelHelpers: "bundled",
+      exclude: "node_modules/**",
       presets: [
         [
           "@babel/preset-env",
@@ -69,7 +65,6 @@ export default {
           },
         ],
       ],
-      exclude: "node_modules/**",
     }),
     codecovRollupPlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,

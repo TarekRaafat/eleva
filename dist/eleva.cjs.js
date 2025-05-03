@@ -1,4 +1,6 @@
 /*! Eleva v1.2.8-alpha | MIT License | https://elevajs.com */
+'use strict';
+
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -724,5 +726,5 @@ class Eleva {
   }
 }
 
-export { Eleva as default };
-//# sourceMappingURL=eleva.esm.js.map
+module.exports = Eleva;
+//# sourceMappingURL=eleva.cjs.js.map

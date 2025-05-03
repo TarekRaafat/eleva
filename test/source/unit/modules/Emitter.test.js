@@ -233,4 +233,66 @@ describe("Emitter", () => {
 
     expect(callback).toHaveBeenCalledWith("data");
   });
+
+  /**
+   * Tests all possible paths through the off method
+   *
+   * Verifies:
+   * 1. Early return when event doesn't exist
+   * 2. Removing specific handler that exists
+   * 3. Removing specific handler that doesn't exist
+   * 4. Auto-cleanup when last handler is removed
+   * 5. Removing all handlers at once
+   *
+   * This comprehensive test ensures complete coverage of the
+   * off method's functionality and edge cases.
+   *
+   * @group event-handling
+   * @group cleanup
+   */
+  test("should handle all off method scenarios", () => {
+    const emitter = new Emitter();
+    const handler1 = jest.fn();
+    const handler2 = jest.fn();
+    const nonExistentHandler = jest.fn();
+
+    // 1. Try to remove handler from non-existent event
+    emitter.off("nonexistent", handler1);
+    expect(emitter._events.has("nonexistent")).toBe(false);
+
+    // Setup for remaining tests
+    emitter.on("test", handler1);
+    emitter.on("test", handler2);
+    expect(emitter._events.get("test").size).toBe(2);
+
+    // 2. Remove existing handler
+    emitter.off("test", handler1);
+    expect(emitter._events.get("test").size).toBe(1);
+    expect(emitter._events.get("test").has(handler1)).toBe(false);
+    expect(emitter._events.get("test").has(handler2)).toBe(true);
+
+    // 3. Try to remove non-existent handler
+    emitter.off("test", nonExistentHandler);
+    expect(emitter._events.get("test").size).toBe(1);
+    expect(emitter._events.get("test").has(handler2)).toBe(true);
+
+    // 4. Remove last handler (should cleanup event)
+    emitter.off("test", handler2);
+    expect(emitter._events.has("test")).toBe(false);
+
+    // Setup for bulk removal test
+    emitter.on("bulk", handler1);
+    emitter.on("bulk", handler2);
+    expect(emitter._events.get("bulk").size).toBe(2);
+
+    // 5. Remove all handlers at once
+    emitter.off("bulk");
+    expect(emitter._events.has("bulk")).toBe(false);
+
+    // Verify no handlers are called after removal
+    emitter.emit("test", "data");
+    emitter.emit("bulk", "data");
+    expect(handler1).not.toHaveBeenCalled();
+    expect(handler2).not.toHaveBeenCalled();
+  });
 });

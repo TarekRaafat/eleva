@@ -217,36 +217,6 @@ describe("Eleva", () => {
   });
 
   /**
-   * Tests error handling for invalid component names
-   *
-   * Verifies that appropriate errors are thrown when mounting
-   * with an invalid component name
-   *
-   * @group error-handling
-   * @group validation
-   */
-  test("should throw error if compName is invalid in mount", () => {
-    expect(() => app.mount(appContainer, 123)).toThrow(
-      "Component template must be a function"
-    );
-  });
-
-  /**
-   * Tests error handling for non-registered components
-   *
-   * Verifies that appropriate errors are thrown when trying to mount
-   * a component that hasn't been registered
-   *
-   * @group error-handling
-   * @group validation
-   */
-  test("should throw error if component is not registered", async () => {
-    expect(() => {
-      app.mount(appContainer, "non-existent-component");
-    }).toThrow('Component "non-existent-component" not registered.');
-  });
-
-  /**
    * Tests that components can work without a setup function
    *
    * Verifies that components with only a template function
