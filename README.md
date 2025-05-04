@@ -345,8 +345,7 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 - **`.component(name, definition)`**  
   Register a component.
 - **`.mount(container, compName, props)`**  
-  Mount a component to the DOM.  
-  _Note:_ The mounting context now includes an `emitter` property (the full event emitter instance) for simplified event handling. Use `context.emitter.on(...)` and `context.emitter.emit(...)` for event management.
+  Mount a component to the DOM.
 
 For detailed API documentation, please check the [docs](docs/index.md) folder.
 
