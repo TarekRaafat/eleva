@@ -188,7 +188,7 @@ export class Eleva {
      * @param {Object<string, any>} data - Data returned from the component's setup function.
      * @returns {MountResult} An object with the container, merged context data, and an unmount function.
      */
-    const processMount = (data) => {
+    const processMount = async (data) => {
       const mergedContext = { ...context, ...data };
       /** @type {Array<() => void>} */
       const watcherUnsubscribers = [];
@@ -208,7 +208,7 @@ export class Eleva {
        * Renders the component by parsing the template, patching the DOM,
        * processing events, injecting styles, and mounting child components.
        */
-      const render = () => {
+      const render = async () => {
         const newHtml = TemplateEngine.parse(
           template(mergedContext),
           mergedContext
@@ -216,7 +216,7 @@ export class Eleva {
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, cleanupListeners);
         this._injectStyles(container, compName, style, mergedContext);
-        this._mountChildren(container, children, childInstances);
+        await this._mountChildren(container, children, childInstances);
 
         if (!this._isMounted) {
           mergedContext.onMount && mergedContext.onMount();
@@ -235,7 +235,7 @@ export class Eleva {
         if (val instanceof Signal) watcherUnsubscribers.push(val.watch(render));
       }
 
-      render();
+      await render();
 
       return {
         container,
