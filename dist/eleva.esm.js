@@ -1,4 +1,4 @@
-/*! Eleva v1.2.8-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.9-alpha | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -104,10 +104,9 @@ class Signal {
    * @returns {void}
    */
   set value(newVal) {
-    if (newVal !== this._value) {
-      this._value = newVal;
-      this._notifyWatchers();
-    }
+    if (this._value === newVal) return;
+    this._value = newVal;
+    this._notify();
   }
 
   /**
@@ -135,14 +134,13 @@ class Signal {
    * @private
    * @returns {void}
    */
-  _notifyWatchers() {
-    if (!this._pending) {
-      this._pending = true;
-      queueMicrotask(() => {
-        this._pending = false;
-        this._watchers.forEach(fn => fn(this._value));
-      });
-    }
+  _notify() {
+    if (this._pending) return;
+    this._pending = true;
+    queueMicrotask(() => {
+      this._watchers.forEach(fn => fn(this._value));
+      this._pending = false;
+    });
   }
 }
 
@@ -550,11 +548,19 @@ class Eleva {
 
     /**
      * Processes the mounting of the component.
+     * This function handles:
+     * 1. Merging setup data with the component context
+     * 2. Setting up reactive watchers
+     * 3. Rendering the component
+     * 4. Managing component lifecycle
      *
-     * @param {Object<string, any>} data - Data returned from the component's setup function.
-     * @returns {MountResult} An object with the container, merged context data, and an unmount function.
+     * @param {Object<string, any>} data - Data returned from the component's setup function
+     * @returns {MountResult} An object containing:
+     *   - container: The mounted component's container element
+     *   - data: The component's reactive state and context
+     *   - unmount: Function to clean up and unmount the component
      */
-    const processMount = data => {
+    const processMount = async data => {
       const mergedContext = {
         ...context,
         ...data
@@ -577,12 +583,12 @@ class Eleva {
        * Renders the component by parsing the template, patching the DOM,
        * processing events, injecting styles, and mounting child components.
        */
-      const render = () => {
+      const render = async () => {
         const newHtml = TemplateEngine.parse(template(mergedContext), mergedContext);
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, cleanupListeners);
         this._injectStyles(container, compName, style, mergedContext);
-        this._mountChildren(container, children, childInstances);
+        await this._mountComponents(container, children, childInstances);
         if (!this._isMounted) {
           mergedContext.onMount && mergedContext.onMount();
           this._isMounted = true;
@@ -599,7 +605,7 @@ class Eleva {
       for (const val of Object.values(data)) {
         if (val instanceof Signal) watcherUnsubscribers.push(val.watch(render));
       }
-      render();
+      await render();
       return {
         container,
         data: mergedContext,
@@ -691,35 +697,111 @@ class Eleva {
   }
 
   /**
-   * Mounts child components within the parent component's container.
-   * This method handles the recursive mounting of nested components.
+   * Extracts props from an element's attributes that start with 'eleva-prop-'.
+   * This method is used to collect component properties from DOM elements.
    *
    * @private
-   * @param {HTMLElement} container - The parent container element.
-   * @param {Object<string, ComponentDefinition>} [children] - Object mapping of child component selectors to their definitions.
-   * @param {Array<MountResult>} childInstances - Array to store the mounted child component instances.
-   * @returns {void}
+   * @param {HTMLElement} element - The DOM element to extract props from
+   * @returns {Object<string, any>} An object containing the extracted props
+   * @example
+   * // For an element with attributes:
+   * // <div eleva-prop-name="John" eleva-prop-age="25">
+   * // Returns: { name: "John", age: "25" }
    */
-  async _mountChildren(container, children, childInstances) {
+  _extractProps(element) {
+    const props = {};
+    for (const {
+      name,
+      value
+    } of [...element.attributes]) {
+      if (name.startsWith("eleva-prop-")) {
+        props[name.replace("eleva-prop-", "")] = value;
+      }
+    }
+    return props;
+  }
+
+  /**
+   * Mounts a single component instance to a container element.
+   * This method handles the actual mounting of a component with its props.
+   *
+   * @private
+   * @param {HTMLElement} container - The container element to mount the component to
+   * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
+   * @param {Object<string, any>} props - The props to pass to the component
+   * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
+   * @throws {Error} If the container is not a valid HTMLElement
+   */
+  async _mountComponentInstance(container, component, props) {
+    if (!(container instanceof HTMLElement)) return null;
+    return await this.mount(container, component, props);
+  }
+
+  /**
+   * Mounts components found by a selector in the container.
+   * This method handles mounting multiple instances of the same component type.
+   *
+   * @private
+   * @param {HTMLElement} container - The container to search for components
+   * @param {string} selector - The CSS selector to find components
+   * @param {string|ComponentDefinition} component - The component to mount
+   * @param {Array<MountResult>} instances - Array to store the mounted component instances
+   * @returns {Promise<void>}
+   */
+  async _mountComponentsBySelector(container, selector, component, instances) {
+    for (const el of container.querySelectorAll(selector)) {
+      const props = this._extractProps(el);
+      const instance = await this._mountComponentInstance(el, component, props);
+      if (instance) instances.push(instance);
+    }
+  }
+
+  /**
+   * Mounts all components within the parent component's container.
+   * This method implements a dual mounting system that handles both:
+   * 1. Explicitly defined children components (passed through the children parameter)
+   * 2. Template-referenced components (found in the template using component names)
+   *
+   * The mounting process follows these steps:
+   * 1. Cleans up any existing component instances
+   * 2. Mounts explicitly defined children components
+   * 3. Mounts template-referenced components
+   *
+   * @private
+   * @param {HTMLElement} container - The container element to mount components in
+   * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
+   * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+   * @returns {Promise<void>}
+   *
+   * @example
+   * // Explicit children mounting:
+   * const children = {
+   *   '.user-profile': UserProfileComponent,
+   *   '.settings-panel': SettingsComponent
+   * };
+   *
+   * // Template-referenced components:
+   * // <div>
+   * //   <user-profile eleva-prop-name="John"></user-profile>
+   * //   <settings-panel eleva-prop-theme="dark"></settings-panel>
+   * // </div>
+   */
+  async _mountComponents(container, children, childInstances) {
+    // Clean up existing instances
     for (const child of childInstances) child.unmount();
     childInstances.length = 0;
-    if (!children) return;
-    for (const childSelector of Object.keys(children)) {
-      if (!childSelector) continue;
-      for (const childEl of container.querySelectorAll(childSelector)) {
-        if (!(childEl instanceof HTMLElement)) continue;
-        const props = {};
-        for (const {
-          name,
-          value
-        } of [...childEl.attributes]) {
-          if (name.startsWith("eleva-prop-")) {
-            props[name.replace("eleva-prop-", "")] = value;
-          }
-        }
-        const instance = await this.mount(childEl, children[childSelector], props);
-        childInstances.push(instance);
+
+    // Mount explicitly defined children components
+    if (children) {
+      for (const [selector, component] of Object.entries(children)) {
+        if (!selector) continue;
+        await this._mountComponentsBySelector(container, selector, component, childInstances);
       }
+    }
+
+    // Mount components referenced in the template
+    for (const [compName] of this._components) {
+      await this._mountComponentsBySelector(container, compName, compName, childInstances);
     }
   }
 }

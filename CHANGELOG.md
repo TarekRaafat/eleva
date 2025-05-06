@@ -6,7 +6,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.8-alpha 🚀 (04-05-2025)
+## v1.2.9-alpha 🚀 (07-05-2025)
+
+### ➕ Added
+
+- **Enhanced Component Mounting System**
+  - Added dual mounting system supporting both explicit and template-referenced components
+  - Improved component prop extraction and handling
+  - Added support for dynamic component mounting and unmounting
+  - Enhanced component lifecycle management
+
+- **Documentation Improvements**
+  - Added comprehensive examples for component mounting strategies
+  - Enhanced documentation for children components and prop passing
+  - Added best practices for component composition
+  - Improved API documentation with practical examples
+
+### 🎛️ Changed
+
+- **Component Architecture**
+  - Refactored component mounting system for better maintainability
+  - Improved component instance management
+  - Enhanced prop passing mechanism
+  - Optimized component cleanup and unmounting
+
+- **Signal System**
+  - Optimized signal notification system
+  - Improved performance of reactive updates
+  - Enhanced memory management for watchers
+
+### 🔧 Fixed
+
+- **Component Mounting**
+  - Fixed issues with component cleanup during unmounting
+  - Improved handling of nested component updates
+  - Fixed prop passing for complex data types
+  - Enhanced error handling in component mounting process
+
+---
+
+## v1.2.8-alpha (04-05-2025)
 
 ### ➕ Added
 

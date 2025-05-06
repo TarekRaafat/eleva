@@ -110,7 +110,7 @@ declare class Signal {
      * @private
      * @returns {void}
      */
-    private _notifyWatchers;
+    private _notify;
 }
 
 /**
@@ -322,16 +322,73 @@ declare class Eleva {
      */
     private _injectStyles;
     /**
-     * Mounts child components within the parent component's container.
-     * This method handles the recursive mounting of nested components.
+     * Extracts props from an element's attributes that start with 'eleva-prop-'.
+     * This method is used to collect component properties from DOM elements.
      *
      * @private
-     * @param {HTMLElement} container - The parent container element.
-     * @param {Object<string, ComponentDefinition>} [children] - Object mapping of child component selectors to their definitions.
-     * @param {Array<MountResult>} childInstances - Array to store the mounted child component instances.
-     * @returns {void}
+     * @param {HTMLElement} element - The DOM element to extract props from
+     * @returns {Object<string, any>} An object containing the extracted props
+     * @example
+     * // For an element with attributes:
+     * // <div eleva-prop-name="John" eleva-prop-age="25">
+     * // Returns: { name: "John", age: "25" }
      */
-    private _mountChildren;
+    private _extractProps;
+    /**
+     * Mounts a single component instance to a container element.
+     * This method handles the actual mounting of a component with its props.
+     *
+     * @private
+     * @param {HTMLElement} container - The container element to mount the component to
+     * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
+     * @param {Object<string, any>} props - The props to pass to the component
+     * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
+     * @throws {Error} If the container is not a valid HTMLElement
+     */
+    private _mountComponentInstance;
+    /**
+     * Mounts components found by a selector in the container.
+     * This method handles mounting multiple instances of the same component type.
+     *
+     * @private
+     * @param {HTMLElement} container - The container to search for components
+     * @param {string} selector - The CSS selector to find components
+     * @param {string|ComponentDefinition} component - The component to mount
+     * @param {Array<MountResult>} instances - Array to store the mounted component instances
+     * @returns {Promise<void>}
+     */
+    private _mountComponentsBySelector;
+    /**
+     * Mounts all components within the parent component's container.
+     * This method implements a dual mounting system that handles both:
+     * 1. Explicitly defined children components (passed through the children parameter)
+     * 2. Template-referenced components (found in the template using component names)
+     *
+     * The mounting process follows these steps:
+     * 1. Cleans up any existing component instances
+     * 2. Mounts explicitly defined children components
+     * 3. Mounts template-referenced components
+     *
+     * @private
+     * @param {HTMLElement} container - The container element to mount components in
+     * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
+     * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+     * @returns {Promise<void>}
+     *
+     * @example
+     * // Explicit children mounting:
+     * const children = {
+     *   '.user-profile': UserProfileComponent,
+     *   '.settings-panel': SettingsComponent
+     * };
+     *
+     * // Template-referenced components:
+     * // <div>
+     * //   <user-profile eleva-prop-name="John"></user-profile>
+     * //   <settings-panel eleva-prop-theme="dark"></settings-panel>
+     * // </div>
+     */
+    private _mountComponents;
 }
 type ComponentDefinition = {
     /**

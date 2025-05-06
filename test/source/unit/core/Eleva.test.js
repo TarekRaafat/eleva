@@ -558,11 +558,11 @@ describe("Children Components & Passing Props", () => {
     app.component("child-comp", ChildComponent1);
 
     // Mount the parent component with the first child
-    const instance = await app.mount(appContainer, "parent-comp");
+    await app.mount(appContainer, "parent-comp");
     expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
 
-    // Update the parent component to use a different child component
-    ParentComponent.children["child-comp"] = ChildComponent2;
+    // Replace the first child component with the second one
+    app.component("child-comp", ChildComponent2);
     await app.mount(appContainer, "parent-comp");
     expect(appContainer.innerHTML).toContain("Child 2: Hello from Parent");
     expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");

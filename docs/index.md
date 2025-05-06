@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for eleva.js v1.2.8-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Alpha Release Notice**: This documentation is for eleva.js v1.2.9-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -160,7 +160,7 @@ or
 
 ```html
 <!-- unpkg -->
-<script src="https://unpkg.com/eleva/dist/eleva.min.js"></script>
+<script src="https://unpkg.com/eleva"></script>
 ```
 
 ### Quick Start Tutorial
@@ -473,43 +473,182 @@ app
 
 ### Children Components & Passing Props
 
-Eleva allows you to nest components. A parent can include child components in its template and pass data to them via props.
-Attributes prefixed with `eleva-prop-` are automatically parsed as props.
+Eleva provides two powerful ways to mount child components in your application:
 
-_Example:_
+1. **Explicit Component Mounting**
+   - Components are explicitly defined in the parent component's children configuration
+   - Provides clear parent-child relationships
+   - Allows for dynamic prop passing via attributes prefixed with `eleva-prop-`.
 
-```js
-// Define the Child Component
-const ChildComponent = {
-  setup: (context) => {
-    // Access props from the context
-    const { title } = context.props;
-    return { title };
-  },
-  template: (ctx) => `
-    <div>
-      <p>Child Component Title: ${ctx.title}</p>
-    </div>
-  `,
-};
+   _Example:_
 
-// Define the Parent Component with local child registration
-const ParentComponent = {
-  template: () => `
-    <div>
-      <h1>Parent Component</h1>
-      <child-comp eleva-prop-title="Hello from Parent"></child-comp>
-    </div>
-  `,
-  children: {
-    "child-comp": ChildComponent,
-  },
-};
 
-const app = new Eleva("TestApp");
-app.component("parent-comp", ParentComponent);
-app.mount(document.getElementById("app"), "parent-comp");
-```
+   ```js
+   // Child Component
+   app.component("TodoItem", {
+     setup: (context) => {
+       const { title, completed, onToggle } = context.props;
+       return { title, completed, onToggle };
+     },
+     template: (ctx) => `
+       <div class="todo-item ${ctx.completed ? 'completed' : ''}">
+         <input type="checkbox" 
+                ${ctx.completed ? 'checked' : ''} 
+                @click="onToggle" />
+         <span>${ctx.title}</span>
+       </div>
+     `
+   });
+
+   // Parent Component using explicit mounting
+   app.component("TodoList", {
+     setup: ({ signal }) => {
+       const todos = signal([
+         { id: 1, title: "Learn Eleva", completed: false },
+         { id: 2, title: "Build an app", completed: false }
+       ]);
+
+       const toggleTodo = (id) => {
+         todos.value = todos.value.map(todo => 
+           todo.id === id ? { ...todo, completed: !todo.completed } : todo
+         );
+       };
+
+       return { todos, toggleTodo };
+     },
+     template: (ctx) => `
+       <div class="todo-list">
+         <h2>My Todo List</h2>
+         ${ctx.todos.value.map(todo => `
+           <div class="todo-item" 
+                eleva-prop-title="${todo.title}"
+                eleva-prop-completed="${todo.completed}"
+                eleva-prop-onToggle="() => toggleTodo(${todo.id})">
+           </div>
+         `).join('')}
+       </div>
+     `,
+     children: {
+       ".todo-item": "TodoItem"  // Explicitly define child component
+     },
+   });
+   ```
+
+2. **Template-Referenced Mounting**
+   - Components can be referenced directly in templates using their registered names
+   - Automatically mounts components where their names are used as selectors
+   - Provides more flexible and declarative component usage
+   
+   _Example:_
+   
+   ```js
+   // Child Component
+   app.component("UserCard", {
+     setup: (context) => {
+       const { user, onSelect } = context.props;
+       return { user, onSelect };
+     },
+     template: (ctx) => `
+       <div class="user-card" @click="onSelect">
+         <img src="${ctx.user.avatar}" alt="${ctx.user.name}" />
+         <h3>${ctx.user.name}</h3>
+         <p>${ctx.user.role}</p>
+       </div>
+     `
+   });
+
+   // Parent Component using template-referenced mounting
+   app.component("UserList", {
+     setup: ({ signal }) => {
+       const users = signal([
+         { id: 1, name: "John Doe", role: "Developer", avatar: "john.jpg" },
+         { id: 2, name: "Jane Smith", role: "Designer", avatar: "jane.jpg" }
+       ]);
+
+       const selectUser = (user) => {
+         console.log("Selected user:", user);
+       };
+
+       return { users, selectUser };
+     },
+     template: (ctx) => `
+       <div class="user-list">
+         <h2>Team Members</h2>
+         ${ctx.users.value.map(user => `
+           <UserCard 
+             eleva-prop-user='${JSON.stringify(user)}'
+             eleva-prop-onSelect="() => selectUser(${JSON.stringify(user)})"
+           ></UserCard>
+         `).join('')}
+       </div>
+     `
+   });
+   ```
+
+3. **Mixed Approach Example**
+
+   ```js
+   // Child Components
+   const headerComponent = app.component("Header", {
+     setup: (context) => {
+       const { title } = context.props;
+       return { title };
+     },
+     template: (ctx) => `
+       <header>
+         <h1>${ctx.title}</h1>
+       </header>
+     `
+   });
+
+   const contentComponent = app.component("Content", {
+     setup: (context) => {
+       const { items } = context.props;
+       return { items };
+     },
+     template: (ctx) => `
+       <main>
+         ${ctx.items.map(item => `
+           <div class="content-item">${item}</div>
+         `).join('')}
+       </main>
+     `
+   });
+
+   // Parent Component using both approaches
+   const dashboardComponent = app.component("Dashboard", {
+     setup: ({ signal }) => {
+       const title = signal("My Dashboard");
+       const items = signal(["Item 1", "Item 2", "Item 3"]);
+       return { title, items };
+     },
+     template: (ctx) => `
+       <div class="dashboard">
+         <header eleva-prop-title="${ctx.title.value}"></header>
+         <Content eleva-prop-items='${JSON.stringify(ctx.items.value)}'></Content>
+       </div>
+     `,
+     children: {
+       "header": headerComponent  // Explicit mounting
+     }
+   });
+   ```
+
+**Key Benefits of Dual Mounting:**
+- **Flexibility**: Choose the mounting approach that best fits your use case
+- **Declarative**: Template-referenced mounting provides a more declarative approach
+- **Explicit Control**: Explicit mounting gives you more control over component relationships
+- **Dynamic Props**: Both approaches support dynamic prop passing
+- **Automatic Cleanup**: Components are automatically unmounted and cleaned up when their container is removed
+
+**Best Practices:**
+- Use explicit mounting when you need clear parent-child relationships
+- Use template-referenced mounting for more declarative component composition
+- Mix both approaches as needed for complex component hierarchies
+- Always provide meaningful prop names for better maintainability
+- Use JSON.stringify for complex prop values when needed
+- Consider component reusability when choosing the mounting approach
+- Keep component interfaces consistent regardless of mounting method
 
 ### Style Injection & Scoped CSS
 

@@ -60,6 +60,6 @@ export class Signal {
      * @private
      * @returns {void}
      */
-    private _notifyWatchers;
+    private _notify;
 }
 //# sourceMappingURL=Signal.d.ts.map

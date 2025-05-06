@@ -46,10 +46,10 @@ export class Signal {
    * @returns {void}
    */
   set value(newVal) {
-    if (newVal !== this._value) {
-      this._value = newVal;
-      this._notifyWatchers();
-    }
+    if (this._value === newVal) return;
+
+    this._value = newVal;
+    this._notify();
   }
 
   /**
@@ -77,13 +77,13 @@ export class Signal {
    * @private
    * @returns {void}
    */
-  _notifyWatchers() {
-    if (!this._pending) {
-      this._pending = true;
-      queueMicrotask(() => {
-        this._pending = false;
-        this._watchers.forEach((fn) => fn(this._value));
-      });
-    }
+  _notify() {
+    if (this._pending) return;
+
+    this._pending = true;
+    queueMicrotask(() => {
+      this._watchers.forEach((fn) => fn(this._value));
+      this._pending = false;
+    });
   }
 }
