@@ -1,6 +1,6 @@
 # Known Limitations
 
-This document outlines the current limitations and potential issues in eleva.js v1.2.9-alpha. I'm actively working on addressing these limitations and welcome community feedback to help prioritize improvements.
+This document outlines the current limitations and potential issues in eleva.js v1.2.10-alpha. I'm actively working on addressing these limitations and welcome community feedback to help prioritize improvements.
 
 ---
 
@@ -23,12 +23,6 @@ These limitations are considered core framework concerns that I plan to address 
 
 > **Rationale:** This is a core performance issue that directly impacts the framework's rendering engine.
 
-#### Memory Management
-- Memory usage may grow with long-running applications
-- No automatic garbage collection for unused components
-
-> **Rationale:** These are fundamental resource management issues that affect the framework's stability.
-
 ### Browser Support
 - Mobile browser optimizations needed
 - Touch event handling needs improvement
@@ -44,7 +38,6 @@ I'm actively working on addressing these limitations. Here's my prioritized road
 ### Core Framework Improvements
 1. **Performance Optimizations**
    - Optimize CSS selector performance
-   - Improve memory management
    - Enhance component lifecycle handling
 
 2. **Developer Experience**
@@ -80,4 +73,4 @@ For a detailed history of all versions, changes, and improvements, please refer 
 
 ---
 
-> **Note:** This document is actively maintained and will be updated as limitations are addressed or new ones are discovered. Last updated: April 25, 2025 
+> **Note:** This document is actively maintained and will be updated as limitations are addressed or new ones are discovered. Last updated: May 9, 2025 

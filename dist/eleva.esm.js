@@ -1,4 +1,4 @@
-/*! Eleva v1.2.9-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.10-alpha | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -625,7 +625,8 @@ class Eleva {
     };
 
     // Handle asynchronous setup.
-    return Promise.resolve(typeof setup === "function" ? setup(context) : {}).then(processMount);
+    const setupResult = typeof setup === "function" ? await setup(context) : {};
+    return await processMount(setupResult);
   }
 
   /**

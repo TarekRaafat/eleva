@@ -1,4 +1,4 @@
-/*! Eleva v1.2.9-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.10-alpha | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -631,7 +631,8 @@
       };
 
       // Handle asynchronous setup.
-      return Promise.resolve(typeof setup === "function" ? setup(context) : {}).then(processMount);
+      const setupResult = typeof setup === "function" ? await setup(context) : {};
+      return await processMount(setupResult);
     }
 
     /**

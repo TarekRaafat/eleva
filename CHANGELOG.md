@@ -6,7 +6,30 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.9-alpha 🚀 (07-05-2025)
+## v1.2.10-alpha 🚀 (09-05-2025)
+
+### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+### 🎛️ Changed
+
+- **Async Component Mounting**
+  - Enhanced async execution flow in component mounting process
+  - Improved handling of async operations during component initialization
+  - Ensured proper sequencing of async setup and mounting operations
+
+### 🔧 Fixed
+
+- **Async Setup Handling**
+  - Fixed issues with async setup function execution
+  - Fixed potential race conditions in component mounting process
+  - Improved handling of setup function return values
+  - Enhanced error propagation for async setup failures
+
+---
+
+## v1.2.9-alpha (07-05-2025)
 
 ### ➕ Added
 

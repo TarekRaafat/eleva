@@ -264,9 +264,8 @@ export class Eleva {
     };
 
     // Handle asynchronous setup.
-    return Promise.resolve(
-      typeof setup === "function" ? setup(context) : {}
-    ).then(processMount);
+    const setupResult = typeof setup === "function" ? await setup(context) : {};
+    return await processMount(setupResult);
   }
 
   /**
