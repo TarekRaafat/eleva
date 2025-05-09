@@ -135,7 +135,7 @@ export class Renderer {
 
     // Remove old attributes
     for (const { name } of oldAttrs) {
-      if (!name.startsWith("@") && !newEl.hasAttribute(name)) {
+      if (!newEl.hasAttribute(name)) {
         operations.push(() => oldEl.removeAttribute(name));
       }
     }

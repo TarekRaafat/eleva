@@ -353,7 +353,7 @@ export class Eleva {
    */
   _extractProps(element) {
     const props = {};
-    for (const { name, value } of [...element.attributes]) {
+    for (const { name, value } of element.attributes) {
       if (name.startsWith("eleva-prop-")) {
         props[name.replace("eleva-prop-", "")] = value;
       }

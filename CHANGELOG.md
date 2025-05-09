@@ -6,7 +6,27 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.10-alpha 🚀 (09-05-2025)
+## v1.2.11-alpha 🚀 (09-05-2025)
+
+### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+### 🎛️ Changed
+
+- **Renderer Optimization**
+  - Simplified attribute handling logic for better performance
+  - Enhanced attribute diffing efficiency
+
+### 🔧 Fixed
+
+- **Attribute Handling**
+  - Fixed potential memory leak in attribute iteration by using direct attribute iteration
+  - Resolved redundant attribute checks that could cause unnecessary DOM operations
+
+---
+
+## v1.2.10-alpha (09-05-2025)
 
 ### ➕ Added
 

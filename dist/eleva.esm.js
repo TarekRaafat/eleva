@@ -1,4 +1,4 @@
-/*! Eleva v1.2.10-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.11-alpha | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -334,7 +334,7 @@ class Renderer {
     for (const {
       name
     } of oldAttrs) {
-      if (!name.startsWith("@") && !newEl.hasAttribute(name)) {
+      if (!newEl.hasAttribute(name)) {
         operations.push(() => oldEl.removeAttribute(name));
       }
     }
@@ -714,7 +714,7 @@ class Eleva {
     for (const {
       name,
       value
-    } of [...element.attributes]) {
+    } of element.attributes) {
       if (name.startsWith("eleva-prop-")) {
         props[name.replace("eleva-prop-", "")] = value;
       }

@@ -1,4 +1,4 @@
-/*! Eleva v1.2.10-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.11-alpha | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -340,7 +340,7 @@
       for (const {
         name
       } of oldAttrs) {
-        if (!name.startsWith("@") && !newEl.hasAttribute(name)) {
+        if (!newEl.hasAttribute(name)) {
           operations.push(() => oldEl.removeAttribute(name));
         }
       }
@@ -720,7 +720,7 @@
       for (const {
         name,
         value
-      } of [...element.attributes]) {
+      } of element.attributes) {
         if (name.startsWith("eleva-prop-")) {
           props[name.replace("eleva-prop-", "")] = value;
         }
