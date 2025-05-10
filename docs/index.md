@@ -62,8 +62,13 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
     - [Visual Overview](#visual-overview)
     - [Benefits](#benefits)
   - [8. Plugin System](#8-plugin-system)
-    - [Creating a Plugin](#creating-a-plugin)
-    - [Plugin Architecture](#plugin-architecture)
+    - [Plugin Structure](#plugin-structure)
+    - [Installing Plugins](#installing-plugins)
+    - [Plugin Capabilities](#plugin-capabilities)
+    - [Best Practices](#best-practices)
+    - [Example Plugin](#example-plugin)
+    - [Plugin Lifecycle](#plugin-lifecycle)
+    - [TypeScript Support](#typescript-support)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
   - [10. Best Practices \& Use Cases](#10-best-practices--use-cases)
     - [Best Practices](#best-practices)
@@ -837,32 +842,164 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 
 ## 8. Plugin System
 
-### Creating a Plugin
+The Plugin System in Eleva provides a powerful way to extend the framework's functionality. Plugins can add new features, modify existing behavior, or integrate with external libraries.
 
-A plugin is an object with an `install` method:
+### Plugin Structure
+
+A plugin in Eleva is an object that must have two required properties:
 
 ```js
 const MyPlugin = {
+  name: 'myPlugin', // Unique identifier for the plugin
   install(eleva, options) {
-    // Extend Eleva functionality here
-    eleva.myPluginFeature = function () {
-      // Plugin logic
-    };
-  },
+    // Plugin installation logic
+  }
 };
-
-export default MyPlugin;
 ```
 
-### Plugin Architecture
+- `name`: A unique string identifier for the plugin
+- `install`: A function that receives the Eleva instance and optional configuration
+
+### Installing Plugins
+
+Plugins are installed using the `use` method on an Eleva instance:
+
+```js
+const app = new Eleva('myApp');
+app.use(MyPlugin, { /* optional configuration */ });
+```
+
+The `use` method:
+- Calls the plugin's `install` function with the Eleva instance and provided options
+- Stores the plugin in an internal registry
+- Returns the Eleva instance for method chaining
+
+### Plugin Capabilities
 
 Plugins can:
 
-- Modify or extend the Eleva instance.
-- Add new methods or properties.
-- Enhance component behavior.
+1. **Extend the Eleva Instance**
+   ```js
+   install(eleva) {
+     eleva.newMethod = () => { /* ... */ };
+   }
+   ```
 
-This modular approach makes Eleva highly customizable.
+2. **Add Component Features**
+   ```js
+   install(eleva) {
+     eleva.component('enhanced-component', {
+       template: (ctx) => `...`,
+       setup: (ctx) => ({ /* ... */ })
+     });
+   }
+   ```
+
+3. **Modify Component Behavior**
+   ```js
+   install(eleva) {
+     const originalMount = eleva.mount;
+     eleva.mount = function(container, compName, props) {
+       // Add pre-mount logic
+       const result = originalMount.call(this, container, compName, props);
+       // Add post-mount logic
+       return result;
+     };
+   }
+   ```
+
+4. **Add Global State or Services**
+   ```js
+   install(eleva) {
+     eleva.services = {
+       api: new ApiService(),
+       storage: new StorageService()
+     };
+   }
+   ```
+
+### Best Practices
+
+1. **Naming Conventions**
+   - Use unique, descriptive names for plugins
+   - Follow the pattern: `eleva-{plugin-name}` for published plugins
+
+2. **Error Handling**
+   - Implement proper error handling in plugin methods
+   - Provide meaningful error messages for debugging
+
+3. **Documentation**
+   - Document plugin options and methods
+   - Include usage examples
+   - Specify any dependencies or requirements
+
+4. **Performance**
+   - Keep plugin initialization lightweight
+   - Use lazy loading for heavy features
+   - Clean up resources when components unmount
+
+### Example Plugin
+
+Here's a complete example of a custom plugin:
+
+```js
+const LoggerPlugin = {
+  name: 'logger',
+  install(eleva, options = {}) {
+    const { level = 'info' } = options;
+    
+    // Add logging methods to Eleva instance
+    eleva.log = {
+      info: (msg) => console.log(`[INFO] ${msg}`),
+      warn: (msg) => console.warn(`[WARN] ${msg}`),
+      error: (msg) => console.error(`[ERROR] ${msg}`)
+    };
+
+    // Enhance component mounting with logging
+    const originalMount = eleva.mount;
+    eleva.mount = async function(container, compName, props) {
+      eleva.log.info(`Mounting component: ${compName}`);
+      const result = await originalMount.call(this, container, compName, props);
+      eleva.log.info(`Component mounted: ${compName}`);
+      return result;
+    };
+  }
+};
+
+// Usage
+const app = new Eleva('myApp');
+app.use(LoggerPlugin, { level: 'debug' });
+```
+
+### Plugin Lifecycle
+
+1. **Installation**
+   - Plugin is registered with the Eleva instance
+   - `install` function is called with the instance and options
+   - Plugin is stored in the internal registry
+
+2. **Runtime**
+   - Plugin methods are available throughout the application lifecycle
+   - Can interact with components and the Eleva instance
+   - Can respond to component lifecycle events
+
+3. **Cleanup**
+   - Plugins should clean up any resources they've created
+   - Remove event listeners and subscriptions
+   - Reset any modified behavior
+
+### TypeScript Support
+
+Eleva provides TypeScript declarations for plugin development:
+
+```typescript
+interface ElevaPlugin {
+  name: string;
+  install(eleva: Eleva, options?: Record<string, any>): void;
+}
+```
+
+This ensures type safety when developing plugins in TypeScript.
 
 ---
 

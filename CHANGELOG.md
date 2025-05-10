@@ -15,6 +15,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
   - Added comprehensive key features sections for core modules
   - Improved code examples with better formatting and clarity
   - Added detailed explanations for module capabilities
+  - Comprehensive plugin system documentation with:
+    - Step-by-step guide for creating plugins
+    - Real-world logger plugin example
+    - Advanced plugin development patterns
+    - Testing and publishing guidelines
+    - TypeScript support documentation
+    - Best practices and security considerations
+  - Added community integration guidelines
 
 ### 🎛️ Changed
 
@@ -471,3 +479,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ---
 
 _This is the alpha release of eleva.js. It introduces a robust, lightweight, and reactive framework for building modern web applications with fine-grained reactivity, scoped styles, and efficient DOM rendering._
+
+## [Unreleased]
+
+### Added
+- Comprehensive plugin system documentation with:
+  - Step-by-step guide for creating plugins
+  - Real-world logger plugin example
+  - Advanced plugin development patterns
+  - Testing and publishing guidelines
+  - TypeScript support documentation
+  - Best practices and security considerations
+- Updated Node.js and npm version requirements to v18 and v9 respectively
+- Improved plugin naming conventions and examples
+- Added community integration guidelines
+
+### Changed
+- Updated plugin system documentation structure for better readability
+- Enhanced TypeScript type definitions for plugins
+- Improved plugin development workflow documentation
