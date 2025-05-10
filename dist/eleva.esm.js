@@ -1,4 +1,4 @@
-/*! Eleva v1.2.11-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.12-alpha | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -254,7 +254,7 @@ class Renderer {
     }
     const temp = document.createElement("div");
     temp.innerHTML = newHtml;
-    this.diff(container, temp);
+    this._diff(container, temp);
     temp.innerHTML = "";
   }
 
@@ -269,46 +269,43 @@ class Renderer {
    * @returns {void}
    * @throws {Error} If either parent is not an HTMLElement.
    */
-  diff(oldParent, newParent) {
+  _diff(oldParent, newParent) {
     if (!(oldParent instanceof HTMLElement) || !(newParent instanceof HTMLElement)) {
       throw new Error("Both parents must be HTMLElements");
     }
     if (oldParent.isEqualNode(newParent)) return;
-    const oldC = oldParent.childNodes;
-    const newC = newParent.childNodes;
-    const len = Math.max(oldC.length, newC.length);
-    const operations = [];
-    for (let i = 0; i < len; i++) {
-      const oldNode = oldC[i];
-      const newNode = newC[i];
+    const oldChildren = oldParent.childNodes;
+    const newChildren = newParent.childNodes;
+    const maxLength = Math.max(oldChildren.length, newChildren.length);
+    for (let i = 0; i < maxLength; i++) {
+      const oldNode = oldChildren[i];
+      const newNode = newChildren[i];
+      if (!oldNode && !newNode) continue;
       if (!oldNode && newNode) {
-        operations.push(() => oldParent.appendChild(newNode.cloneNode(true)));
+        oldParent.appendChild(newNode.cloneNode(true));
         continue;
       }
       if (oldNode && !newNode) {
-        operations.push(() => oldParent.removeChild(oldNode));
+        oldParent.removeChild(oldNode);
         continue;
       }
       const isSameType = oldNode.nodeType === newNode.nodeType && oldNode.nodeName === newNode.nodeName;
       if (!isSameType) {
-        operations.push(() => oldParent.replaceChild(newNode.cloneNode(true), oldNode));
+        oldParent.replaceChild(newNode.cloneNode(true), oldNode);
         continue;
       }
       if (oldNode.nodeType === Node.ELEMENT_NODE) {
         const oldKey = oldNode.getAttribute("key");
         const newKey = newNode.getAttribute("key");
         if (oldKey !== newKey && (oldKey || newKey)) {
-          operations.push(() => oldParent.replaceChild(newNode.cloneNode(true), oldNode));
+          oldParent.replaceChild(newNode.cloneNode(true), oldNode);
           continue;
         }
-        this.updateAttributes(oldNode, newNode);
-        this.diff(oldNode, newNode);
+        this._updateAttributes(oldNode, newNode);
+        this._diff(oldNode, newNode);
       } else if (oldNode.nodeType === Node.TEXT_NODE && oldNode.nodeValue !== newNode.nodeValue) {
         oldNode.nodeValue = newNode.nodeValue;
       }
-    }
-    if (operations.length) {
-      operations.forEach(op => op());
     }
   }
 
@@ -322,20 +319,19 @@ class Renderer {
    * @returns {void}
    * @throws {Error} If either element is not an HTMLElement.
    */
-  updateAttributes(oldEl, newEl) {
+  _updateAttributes(oldEl, newEl) {
     if (!(oldEl instanceof HTMLElement) || !(newEl instanceof HTMLElement)) {
       throw new Error("Both elements must be HTMLElements");
     }
     const oldAttrs = oldEl.attributes;
     const newAttrs = newEl.attributes;
-    const operations = [];
 
     // Remove old attributes
     for (const {
       name
     } of oldAttrs) {
       if (!newEl.hasAttribute(name)) {
-        operations.push(() => oldEl.removeAttribute(name));
+        oldEl.removeAttribute(name);
       }
     }
 
@@ -347,29 +343,24 @@ class Renderer {
       } = attr;
       if (name.startsWith("@")) continue;
       if (oldEl.getAttribute(name) === value) continue;
-      operations.push(() => {
-        oldEl.setAttribute(name, value);
-        if (name.startsWith("aria-")) {
-          const prop = "aria" + name.slice(5).replace(/-([a-z])/g, (_, l) => l.toUpperCase());
-          oldEl[prop] = value;
-        } else if (name.startsWith("data-")) {
-          oldEl.dataset[name.slice(5)] = value;
-        } else {
-          const prop = name.replace(/-([a-z])/g, (_, l) => l.toUpperCase());
-          if (prop in oldEl) {
-            const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop);
-            const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
-            if (isBoolean) {
-              oldEl[prop] = value !== "false" && (value === "" || value === prop || value === "true");
-            } else {
-              oldEl[prop] = value;
-            }
+      oldEl.setAttribute(name, value);
+      if (name.startsWith("aria-")) {
+        const prop = "aria" + name.slice(5).replace(/-([a-z])/g, (_, l) => l.toUpperCase());
+        oldEl[prop] = value;
+      } else if (name.startsWith("data-")) {
+        oldEl.dataset[name.slice(5)] = value;
+      } else {
+        const prop = name.replace(/-([a-z])/g, (_, l) => l.toUpperCase());
+        if (prop in oldEl) {
+          const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop);
+          const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
+          if (isBoolean) {
+            oldEl[prop] = value !== "false" && (value === "" || value === prop || value === "true");
+          } else {
+            oldEl[prop] = value;
           }
         }
-      });
-    }
-    if (operations.length) {
-      operations.forEach(op => op());
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 # Known Limitations
 
-This document outlines the current limitations and potential issues in eleva.js v1.2.11-alpha. I'm actively working on addressing these limitations and welcome community feedback to help prioritize improvements.
+This document outlines the current limitations and potential issues in eleva.js v1.2.12-alpha. I'm actively working on addressing these limitations and welcome community feedback to help prioritize improvements.
 
 ---
 

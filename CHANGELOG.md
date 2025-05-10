@@ -6,7 +6,33 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.11-alpha 🚀 (09-05-2025)
+## v1.2.12-alpha 🚀 (10-05-2025)
+
+### ➕ Added
+
+- **Documentation Improvements**
+  - Enhanced API documentation with detailed examples
+  - Added comprehensive key features sections for core modules
+  - Improved code examples with better formatting and clarity
+  - Added detailed explanations for module capabilities
+
+### 🎛️ Changed
+
+- **Renderer Optimization**
+  - Renamed internal methods to follow private method naming convention (`_diff` and `_updateAttributes`)
+  - Removed unnecessary operation batching for direct DOM updates
+  - Improved attribute handling efficiency
+  - Enhanced DOM diffing performance with optimized node comparison
+
+### 🔧 Fixed
+
+- **Renderer Implementation**
+  - Fixed potential memory leaks in attribute handling
+  - Fixed edge cases in DOM node comparison
+
+---
+
+## v1.2.11-alpha (09-05-2025)
 
 ### ➕ Added
 

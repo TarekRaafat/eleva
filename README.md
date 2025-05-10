@@ -29,10 +29,10 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript—because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.2.11-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
+> **Stability Notice**: This is `v1.2.12-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
 > While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
 
-**Version:** `1.2.11-alpha`
+**Version:** `1.2.12-alpha`
 
 
 
@@ -304,37 +304,37 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 
 ### TemplateEngine
 
-- **`TemplateEngine.parse(template, data)`**  
+- **`TemplateEngine.parse(template, data)`**
   Replaces `{{ expression }}` patterns in the template with evaluated values.
-- **`TemplateEngine.evaluate(expr, data)`**  
+- **`TemplateEngine.evaluate(expr, data)`**
   Safely evaluates JavaScript expressions within a given context.
 
 ### Signal
 
-- **`new Signal(value)`**  
+- **`new Signal(initialValue)`**
   Creates a reactive data holder.
-- **`.value` (getter/setter)**  
+- **`.value` (getter/setter)**
   Get or update the current value and trigger watchers.
-- **`.watch(fn)`**  
+- **`.watch(callback)`**
   Registers a function to run when the value updates.
 
 ### Emitter
 
-- **`.on(event, handler)`**  
+- **`new Emitter()`**
+  Creates an Emitter instance.
+- **`.on(event, handler)`**
   Listen to events.
-- **`.off(event, handler)`**  
+- **`.off(event, handler)`**
   Remove event listeners.
-- **`.emit(event, ...args)`**  
+- **`.emit(event, ...args)`**
   Trigger events with additional arguments.
 
 ### Renderer
 
-- **`patchDOM(container, newHtml)`**  
-  Efficiently updates the DOM.
-- **`diff(oldParent, newParent)`**  
-  Compares and updates DOM trees.
-- **`updateAttributes(oldEl, newEl)`**  
-  Synchronizes element attributes.
+- **`new Renderer()`**
+  Creates a Renderer instance.
+- **`.patchDOM(container, newHtml)`**:
+  Updates container content with the new HTML.
 
 ### Eleva (Core)
 

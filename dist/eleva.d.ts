@@ -149,7 +149,7 @@ declare class Renderer {
      * @returns {void}
      * @throws {Error} If either parent is not an HTMLElement.
      */
-    private diff;
+    private _diff;
     /**
      * Updates the attributes of an element to match those of a new element.
      * Handles special cases for ARIA attributes, data attributes, and boolean properties.
@@ -160,7 +160,7 @@ declare class Renderer {
      * @returns {void}
      * @throws {Error} If either element is not an HTMLElement.
      */
-    private updateAttributes;
+    private _updateAttributes;
 }
 
 /**

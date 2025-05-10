@@ -23,7 +23,7 @@
  * const oldEl = document.createElement("div");
  * const newEl = document.createElement("div");
  * newEl.setAttribute("data-test", "new");
- * renderer.updateAttributes(oldEl, newEl);
+ * renderer._updateAttributes(oldEl, newEl);
  *
  * @author Tarek Raafat
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
@@ -62,7 +62,7 @@ import { Renderer } from "../../../../src/modules/Renderer.js";
  * const oldEl = container.firstChild;
  * const newEl = document.createElement("div");
  * newEl.setAttribute("data-test", "new");
- * renderer.updateAttributes(oldEl, newEl);
+ * renderer._updateAttributes(oldEl, newEl);
  *
  * @group modules
  * @group rendering
@@ -137,7 +137,7 @@ describe("Renderer", () => {
    * const newEl = document.createElement("div");
    * newEl.setAttribute("data-test", "new");
    *
-   * renderer.updateAttributes(oldEl, newEl);
+   * renderer._updateAttributes(oldEl, newEl);
    *
    * // Multiple attributes
    * const oldEl = document.createElement("div");
@@ -148,7 +148,7 @@ describe("Renderer", () => {
    * newEl.setAttribute("class", "new-class");
    * newEl.setAttribute("data-test", "new");
    *
-   * renderer.updateAttributes(oldEl, newEl);
+   * renderer._updateAttributes(oldEl, newEl);
    *
    * @group rendering
    * @group dom
@@ -160,7 +160,7 @@ describe("Renderer", () => {
     const newEl = document.createElement("div");
     newEl.setAttribute("data-test", "new");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.getAttribute("data-test")).toBe("new");
   });
@@ -182,7 +182,7 @@ describe("Renderer", () => {
     const newEl = document.createElement("div");
     newEl.setAttribute("id", "newValue"); // Add the attribute to the new element.
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     // Verify that the DOM property on the old element is updated.
     expect(oldEl.id).toBe("newValue");
@@ -204,7 +204,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = `<div key="1">New</div>`;
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toContain("New");
     expect(container.innerHTML).not.toContain("Old");
@@ -228,7 +228,7 @@ describe("Renderer", () => {
     const newParent = document.createElement("div");
     newParent.innerHTML = "<span>New</span>";
 
-    renderer.diff(oldParent, newParent);
+    renderer._diff(oldParent, newParent);
 
     expect(oldParent.innerHTML).toBe("<span>New</span>");
   });
@@ -249,7 +249,7 @@ describe("Renderer", () => {
 
     const newEl = document.createElement("div");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.hasAttribute("data-test")).toBe(false);
   });
@@ -271,7 +271,7 @@ describe("Renderer", () => {
     const newEl = document.createElement("input");
     newEl.setAttribute("value", "new");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.value).toBe("new");
   });
@@ -311,7 +311,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = "<p>Same</p>";
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe("<p>Same</p>");
   });
@@ -333,7 +333,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = "<p>Old</p><span>New</span>";
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe("<p>Old</p><span>New</span>");
   });
@@ -355,7 +355,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = "<p>Old</p>";
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe("<p>Old</p>");
   });
@@ -377,7 +377,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = '<div key="2">New</div>';
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe('<div key="2">New</div>');
   });
@@ -399,7 +399,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = "New Text";
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe("New Text");
   });
@@ -426,7 +426,7 @@ describe("Renderer", () => {
     const newEl = document.createElement("div");
     newEl.setAttribute("data-test", "new");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.getAttribute("data-test")).toBe("new");
     expect(oldEl.hasAttribute("class")).toBe(false);
@@ -453,7 +453,7 @@ describe("Renderer", () => {
     const newEl = document.createElement("input");
     newEl.setAttribute("value", "new");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.value).toBe("new");
   });
@@ -514,7 +514,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = `<div><p>New</p></div>`;
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe(`<div><p>New</p></div>`);
   });
@@ -538,7 +538,7 @@ describe("Renderer", () => {
     const tempContainer = document.createElement("div");
     tempContainer.innerHTML = `<p>New</p>`;
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe(`<p>New</p>`);
   });
@@ -562,7 +562,7 @@ describe("Renderer", () => {
 
     const tempContainer = document.createElement("div");
 
-    renderer.diff(container, tempContainer);
+    renderer._diff(container, tempContainer);
 
     expect(container.innerHTML).toBe("");
   });
@@ -604,10 +604,10 @@ describe("Renderer", () => {
     const renderer = new Renderer();
     const validElement = document.createElement("div");
 
-    expect(() => renderer.diff(null, validElement)).toThrow(
+    expect(() => renderer._diff(null, validElement)).toThrow(
       "Both parents must be HTMLElements"
     );
-    expect(() => renderer.diff(validElement, null)).toThrow(
+    expect(() => renderer._diff(validElement, null)).toThrow(
       "Both parents must be HTMLElements"
     );
   });
@@ -625,10 +625,10 @@ describe("Renderer", () => {
     const renderer = new Renderer();
     const validElement = document.createElement("div");
 
-    expect(() => renderer.updateAttributes(null, validElement)).toThrow(
+    expect(() => renderer._updateAttributes(null, validElement)).toThrow(
       "Both elements must be HTMLElements"
     );
-    expect(() => renderer.updateAttributes(validElement, null)).toThrow(
+    expect(() => renderer._updateAttributes(validElement, null)).toThrow(
       "Both elements must be HTMLElements"
     );
   });
@@ -649,7 +649,7 @@ describe("Renderer", () => {
 
     // Test value property
     newEl.setAttribute("value", "test");
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
     expect(oldEl.value).toBe("test");
 
     // Test boolean properties with different values
@@ -657,7 +657,7 @@ describe("Renderer", () => {
     newEl.setAttribute("disabled", "true"); // explicit true
     newEl.setAttribute("readOnly", "readOnly"); // property name match
     newEl.setAttribute("multiple", "false"); // explicit false
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.checked).toBe(true);
     expect(oldEl.disabled).toBe(true);
@@ -682,7 +682,7 @@ describe("Renderer", () => {
     newEl.setAttribute("aria-label", "test label");
     newEl.setAttribute("aria-hidden", "true");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     // Check the attributes directly since ARIA properties may not be available in JSDOM
     expect(oldEl.getAttribute("aria-label")).toBe("test label");
@@ -707,7 +707,7 @@ describe("Renderer", () => {
     newEl.setAttribute("data-test", "value");
     newEl.setAttribute("data-custom", "custom");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.dataset.test).toBe("value");
     expect(oldEl.dataset.custom).toBe("custom");
@@ -771,7 +771,7 @@ describe("Renderer", () => {
 
     // Test a standard DOM property
     newEl.setAttribute("id", "test-id");
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.id).toBe("test-id");
   });
@@ -797,7 +797,7 @@ describe("Renderer", () => {
     newEl.setAttribute("aria-label", "test label");
     newEl.setAttribute("aria-hidden", "true");
 
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     // Check attributes
     expect(oldEl.getAttribute("aria-label")).toBe("test label");
@@ -805,7 +805,7 @@ describe("Renderer", () => {
 
     // Test complex ARIA attributes with dashes
     newEl.setAttribute("aria-invalid-type", "spelling");
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
 
     // Verify the attribute is set
     expect(oldEl.getAttribute("aria-invalid-type")).toBe("spelling");
@@ -815,7 +815,7 @@ describe("Renderer", () => {
     const ariaAttr = "aria-test";
     const ariaValue = "test-value";
     newEl.setAttribute(ariaAttr, ariaValue);
-    renderer.updateAttributes(oldEl, newEl);
+    renderer._updateAttributes(oldEl, newEl);
     expect(oldEl.getAttribute(ariaAttr)).toBe(ariaValue);
   });
 });

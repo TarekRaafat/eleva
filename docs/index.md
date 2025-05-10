@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for eleva.js v1.2.11-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Alpha Release Notice**: This documentation is for eleva.js v1.2.12-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -204,8 +204,8 @@ For interactive demos, check out the [CodePen Example](https://codepen.io/tarekr
 
 The **TemplateEngine** is responsible for parsing templates and evaluating embedded expressions.
 
-- **`parse(template, data)`**: Replaces `{{ expression }}` with values from `data`.
-- **`evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context.
+- **`TemplateEngine.parse(template, data)`**: Replaces `{{ expression }}` with values from `data`.
+- **`TemplateEngine.evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context.
 
 _Example:_
 
@@ -215,6 +215,13 @@ const data = { name: "World" };
 const output = TemplateEngine.parse(template, data);
 console.log(output); // "Hello, World!"
 ```
+
+**Key Features:**
+- Static method-based API
+- Expression evaluation in data context
+- Whitespace-preserving interpolation
+- Error handling for invalid expressions
+- Support for complex object access
 
 ### Template Interpolation
 
@@ -300,40 +307,77 @@ const MyComponent = {
 
 The **Signal** provides fine-grained reactivity by updating only the affected DOM parts.
 
-- **Constructor:** `new Signal(initialValue)` creates a reactive data holder.
-- **Getter/Setter:** Access or update via `signal.value`.
-- **Watch:** `signal.watch(callback)` registers a function to execute on changes.
+- **`new Signal(initialValue)`**: Creates a Signal instance.
+- **`.value`**: Getter/setter for the current value.
+- **`.watch(callback)`**: Registers a function to execute on changes.
 
 _Example:_
 
 ```js
 const count = new Signal(0);
+
 count.watch((newVal) => console.log("Count updated:", newVal));
+
 count.value = 1; // Logs: "Count updated: 1"
 ```
+
+**Key Features:**
+- Microtask-based update batching
+- Automatic watcher cleanup
+- Type-safe value handling
+- Efficient update propagation
+- Memory leak prevention through unsubscribe
 
 ### Emitter (Event Handling)
 
 The **Emitter** enables inter-component communication through events and using a publish–subscribe pattern.
 
-- **`on(event, handler)`**: Registers an event handler.
-- **`off(event, handler)`**: Removes an event handler.
-- **`emit(event, ...args)`**: Emits an event with optional arguments.
+- **`new Emitter()`**: Creates an Emitter instance.
+- **`.on(event, handler)`**: Registers an event handler.
+- **`.off(event, handler)`**: Removes an event handler.
+- **`.emit(event, ...args)`**: Emits an event with optional arguments.
 
 _Example:_
 
 ```js
-on("greet", (name) => console.log(`Hello, ${name}!`)); // Logs: "Hello, Alice!"
-emit("greet", "Alice");
+const emitter = new Emitter();
+
+emitter.on("greet", (name) => console.log(`Hello, ${name}!`)); // Logs: "Hello, Alice!"
+
+emitter.emit("greet", "Alice");
 ```
+
+**Key Features:**
+- Synchronous event propagation
+- Multiple handlers per event
+- Automatic event cleanup
+- Memory-efficient handler management
+- Type-safe event data
 
 ### Renderer (DOM Diffing)
 
-The **Renderer** efficiently updates the DOM through diffing and patching.
+The **Renderer** efficiently updates the DOM through direct manipulation, avoiding the overhead of virtual DOM implementations. It uses a performant diffing algorithm to update only the necessary parts of the DOM tree.
 
-- **`patchDOM(container, newHtml)`**: Updates container content with the new HTML.
-- **`diff(oldParent, newParent)`**: Applies updates by comparing DOM trees.
-- **`updateAttributes(oldEl, newEl)`**: Synchronizes element attributes.
+- **`new Renderer()`**: Creates a Renderer instance.
+- **`.patchDOM(container, newHtml)`**: Updates container content with the new HTML.
+
+_Example:_
+
+```js
+const renderer = new Renderer();
+
+const container = document.getElementById('app');
+const newHtml = '<div>Updated content</div>';
+
+renderer.patchDOM(container, newHtml); // Update a container with new HTML
+```
+
+**Key Features:**
+- Direct DOM manipulation for optimal performance
+- Efficient attribute updates
+- Smart node comparison and replacement
+- Support for key-based reconciliation
+- Handles text nodes and element nodes appropriately
 
 ### Eleva (Core)
 
