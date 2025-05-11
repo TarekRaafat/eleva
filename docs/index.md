@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for eleva.js v1.2.12-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Alpha Release Notice**: This documentation is for eleva.js v1.2.13-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -71,7 +71,7 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
     - [TypeScript Support](#typescript-support)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
   - [10. Best Practices \& Use Cases](#10-best-practices--use-cases)
-    - [Best Practices](#best-practices)
+    - [Best Practices](#best-practices-1)
     - [Use Cases](#use-cases)
   - [11. Examples and Tutorials](#11-examples-and-tutorials)
   - [12. FAQ](#12-faq)
@@ -583,10 +583,10 @@ Eleva provides two powerful ways to mount child components in your application:
    });
    ```
 
-2. **Template-Referenced Mounting**
-   - Components can be referenced directly in templates using their registered names
-   - Automatically mounts components where their names are used as selectors
-   - Provides more flexible and declarative component usage
+2. **Component Mounting**
+   - Components are mounted explicitly using their registered names
+   - Provides clear and controlled component relationships
+   - Supports dynamic prop passing and automatic cleanup
    
    _Example:_
    
@@ -606,7 +606,7 @@ Eleva provides two powerful ways to mount child components in your application:
      `
    });
 
-   // Parent Component using template-referenced mounting
+   // Parent Component using explicit mounting
    app.component("UserList", {
      setup: ({ signal }) => {
        const users = signal([
@@ -624,80 +624,39 @@ Eleva provides two powerful ways to mount child components in your application:
        <div class="user-list">
          <h2>Team Members</h2>
          ${ctx.users.value.map(user => `
-           <UserCard 
-             eleva-prop-user='${JSON.stringify(user)}'
-             eleva-prop-onSelect="() => selectUser(${JSON.stringify(user)})"
-           ></UserCard>
+           <div class="user-card-container"></div>
          `).join('')}
-       </div>
-     `
-   });
-   ```
-
-3. **Mixed Approach Example**
-
-   ```js
-   // Child Components
-   const headerComponent = app.component("Header", {
-     setup: (context) => {
-       const { title } = context.props;
-       return { title };
-     },
-     template: (ctx) => `
-       <header>
-         <h1>${ctx.title}</h1>
-       </header>
-     `
-   });
-
-   const contentComponent = app.component("Content", {
-     setup: (context) => {
-       const { items } = context.props;
-       return { items };
-     },
-     template: (ctx) => `
-       <main>
-         ${ctx.items.map(item => `
-           <div class="content-item">${item}</div>
-         `).join('')}
-       </main>
-     `
-   });
-
-   // Parent Component using both approaches
-   const dashboardComponent = app.component("Dashboard", {
-     setup: ({ signal }) => {
-       const title = signal("My Dashboard");
-       const items = signal(["Item 1", "Item 2", "Item 3"]);
-       return { title, items };
-     },
-     template: (ctx) => `
-       <div class="dashboard">
-         <header eleva-prop-title="${ctx.title.value}"></header>
-         <Content eleva-prop-items='${JSON.stringify(ctx.items.value)}'></Content>
        </div>
      `,
      children: {
-       "header": headerComponent  // Explicit mounting
+       '.user-card-container': {
+         setup: (context) => {
+           const user = context.props.user;
+           return { user };
+         },
+         template: (ctx) => `
+           <UserCard 
+             eleva-prop-user='${JSON.stringify(ctx.user)}'
+             eleva-prop-onSelect="() => selectUser(${JSON.stringify(ctx.user)})"
+           ></UserCard>
+         `,
+         children: {
+          "UserCard": "UserCard"
+         }
+       }
      }
    });
    ```
 
-**Key Benefits of Dual Mounting:**
-- **Flexibility**: Choose the mounting approach that best fits your use case
-- **Declarative**: Template-referenced mounting provides a more declarative approach
-- **Explicit Control**: Explicit mounting gives you more control over component relationships
-- **Dynamic Props**: Both approaches support dynamic prop passing
+**Key Benefits of Component Mounting:**
+- **Explicit Control**: Clear parent-child relationships and component hierarchy
+- **Dynamic Props**: Support for dynamic prop passing
 - **Automatic Cleanup**: Components are automatically unmounted and cleaned up when their container is removed
 
 **Best Practices:**
-- Use explicit mounting when you need clear parent-child relationships
-- Use template-referenced mounting for more declarative component composition
-- Mix both approaches as needed for complex component hierarchies
+- Use explicit mounting for clear component relationships
 - Always provide meaningful prop names for better maintainability
-- Use JSON.stringify for complex prop values when needed
-- Consider component reusability when choosing the mounting approach
-- Keep component interfaces consistent regardless of mounting method
+- Keep component hierarchies manageable and well-organized
 
 ### Style Injection & Scoped CSS
 

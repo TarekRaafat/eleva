@@ -1,4 +1,4 @@
-/*! Eleva v1.2.12-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.13-alpha | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -756,14 +756,11 @@
 
     /**
      * Mounts all components within the parent component's container.
-     * This method implements a dual mounting system that handles both:
-     * 1. Explicitly defined children components (passed through the children parameter)
-     * 2. Template-referenced components (found in the template using component names)
+     * This method handles mounting of explicitly defined children components.
      *
      * The mounting process follows these steps:
      * 1. Cleans up any existing component instances
      * 2. Mounts explicitly defined children components
-     * 3. Mounts template-referenced components
      *
      * @private
      * @param {HTMLElement} container - The container element to mount components in
@@ -777,12 +774,6 @@
      *   '.user-profile': UserProfileComponent,
      *   '.settings-panel': SettingsComponent
      * };
-     *
-     * // Template-referenced components:
-     * // <div>
-     * //   <user-profile eleva-prop-name="John"></user-profile>
-     * //   <settings-panel eleva-prop-theme="dark"></settings-panel>
-     * // </div>
      */
     async _mountComponents(container, children, childInstances) {
       // Clean up existing instances
@@ -795,11 +786,6 @@
           if (!selector) continue;
           await this._mountComponentsBySelector(container, selector, component, childInstances);
         }
-      }
-
-      // Mount components referenced in the template
-      for (const [compName] of this._components) {
-        await this._mountComponentsBySelector(container, compName, compName, childInstances);
       }
     }
   }

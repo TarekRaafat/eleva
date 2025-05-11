@@ -561,8 +561,9 @@ describe("Children Components & Passing Props", () => {
     await app.mount(appContainer, "parent-comp");
     expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
 
-    // Replace the first child component with the second one
+    // Update both the child component registration and the parent's children definition
     app.component("child-comp", ChildComponent2);
+    ParentComponent.children["child-comp"] = ChildComponent2;
     await app.mount(appContainer, "parent-comp");
     expect(appContainer.innerHTML).toContain("Child 2: Hello from Parent");
     expect(appContainer.innerHTML).not.toContain("Child 1: Hello from Parent");

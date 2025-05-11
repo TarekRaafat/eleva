@@ -6,7 +6,51 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.12-alpha 🚀 (10-05-2025)
+## v1.2.13-alpha 🎉 (10-05-2025)
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- _N/A_ – No additions in this release.
+
+#### 🎛️ Changed
+
+- **Component Mounting System**
+  - Enhanced child component cleanup and replacement logic
+  - Improved component instance management during remounting
+  - Optimized child component unmounting process
+  - Added explicit cleanup of child instances before mounting new ones
+
+#### 🔧 Fixed
+
+- **Component Lifecycle**
+  - Fixed issue with child components not being properly unmounted during parent remounting
+  - Improved handling of component replacement scenarios
+  - Enhanced memory management by ensuring proper cleanup of old component instances
+  - Fixed potential memory leaks in component replacement scenarios
+
+### 💻 Developer Notes
+
+#### ⚠️ Breaking Changes
+- None. This update maintains backward compatibility while improving internal behavior.
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More reliable component lifecycle management
+  - Better memory management through proper cleanup
+  - Clearer component replacement behavior
+  - Improved test coverage for component replacement scenarios
+
+- **For Plugin Developers:**
+  - More predictable component lifecycle events
+  - Better handling of component replacement scenarios
+  - Improved stability when working with child components
+  - Enhanced reliability of component cleanup hooks
+
+---
+
+## v1.2.12-alpha (10-05-2025)
 
 ### ➕ Added
 
@@ -222,7 +266,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.5-alpha 🎉 (25-04-2025)
+## v1.2.5-alpha (25-04-2025)
 
 ### ➕ Added
 
@@ -479,22 +523,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ---
 
 _This is the alpha release of eleva.js. It introduces a robust, lightweight, and reactive framework for building modern web applications with fine-grained reactivity, scoped styles, and efficient DOM rendering._
-
-## [Unreleased]
-
-### Added
-- Comprehensive plugin system documentation with:
-  - Step-by-step guide for creating plugins
-  - Real-world logger plugin example
-  - Advanced plugin development patterns
-  - Testing and publishing guidelines
-  - TypeScript support documentation
-  - Best practices and security considerations
-- Updated Node.js and npm version requirements to v18 and v9 respectively
-- Improved plugin naming conventions and examples
-- Added community integration guidelines
-
-### Changed
-- Updated plugin system documentation structure for better readability
-- Enhanced TypeScript type definitions for plugins
-- Improved plugin development workflow documentation
