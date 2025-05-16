@@ -427,7 +427,7 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-**Note:** This is an alpha release. I'm still polishing things up, so expect some bumps along the way. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
+**Note:** This is a beta release. I'm still polishing things up, so expect some bumps along the way. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
 
 ---
 
