@@ -6,7 +6,64 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.13-alpha 🎉 (10-05-2025)
+## v1.2.14-beta 🎉 (16-05-2025)
+
+> **Beta Release Notice**: This is the first beta release of eleva.js, marking a significant milestone in the framework's development. The transition from alpha to beta indicates increased stability and readiness for production use. While I'm still gathering feedback and making improvements, the core API is now considered stable and suitable for production applications.
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- **Enhanced Component Mounting Documentation**
+  - Added comprehensive documentation for different types of component mounting
+  - Added detailed section on supported children selector types
+  - Added best practices for component mounting and selector usage
+  - Added performance considerations for different mounting approaches
+
+#### 🎛️ Changed
+
+- **Component Prop Syntax**
+  - Changed prop passing syntax from `eleva-prop-` prefix to `:` prefix for cleaner and more intuitive usage
+  - Updated prop extraction logic to support the new syntax
+  - Improved prop handling documentation with new examples
+
+#### 🔧 Fixed
+
+- **Documentation**
+  - Fixed formatting issues in README.md
+  - Improved code examples in documentation
+  - Enhanced clarity of component mounting examples
+
+### 💻 Developer Notes
+
+#### ⚠️ Breaking Changes
+- **Prop Syntax Change**: The prop passing syntax has been changed from `eleva-prop-` prefix to `:` prefix. This is a breaking change that requires updating existing component templates.
+  - Old syntax: `<div eleva-prop-name="value">`
+  - New syntax: `<div :name="value">`
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More intuitive and cleaner prop syntax
+  - Better documentation for component mounting strategies
+  - Improved code readability with shorter prop prefixes
+  - Enhanced maintainability with standardized mounting patterns
+
+- **For Plugin Developers:**
+  - Clearer guidelines for component mounting
+  - Better understanding of performance implications
+  - More flexible component composition options
+  - Improved documentation for selector types
+
+#### 📋 Beta Release Guidelines
+- **API Stability**: The core API is now considered stable and will maintain backward compatibility
+- **Production Readiness**: The framework is now suitable for production use
+- **Migration Path**: Clear upgrade paths will be provided for any future breaking changes
+- **Support**: Enhanced community support and documentation for production use cases
+- **Performance**: Production-ready performance optimizations and stability improvements
+
+---
+
+## v1.2.13-alpha (10-05-2025)
 
 ### 📝 Release Notes
 

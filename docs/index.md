@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Alpha Release Notice**: This documentation is for eleva.js v1.2.13-alpha. While the core functionality is stable and suitable for production use, I'm seeking community feedback before the final v1.0.0 release. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Beta Release Notice**: This documentation is for eleva.js v1.2.14-beta. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -54,6 +54,8 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
     - [Lifecycle Hooks](#lifecycle-hooks)
     - [Component Registration \& Mounting](#component-registration--mounting)
     - [Children Components \& Passing Props](#children-components--passing-props)
+      - [Types of Children Component Mounting](#types-of-children-component-mounting)
+      - [Supported Children Selector Types](#supported-children-selector-types)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
   - [7. Architecture \& Data Flow](#7-architecture--data-flow)
@@ -527,10 +529,9 @@ Eleva provides two powerful ways to mount child components in your application:
 1. **Explicit Component Mounting**
    - Components are explicitly defined in the parent component's children configuration
    - Provides clear parent-child relationships
-   - Allows for dynamic prop passing via attributes prefixed with `eleva-prop-`.
+   - Allows for dynamic prop passing via attributes prefixed with `:`.
 
    _Example:_
-
 
    ```js
    // Child Component
@@ -570,9 +571,9 @@ Eleva provides two powerful ways to mount child components in your application:
          <h2>My Todo List</h2>
          ${ctx.todos.value.map(todo => `
            <div class="todo-item" 
-                eleva-prop-title="${todo.title}"
-                eleva-prop-completed="${todo.completed}"
-                eleva-prop-onToggle="() => toggleTodo(${todo.id})">
+                :title="${todo.title}"
+                :completed="${todo.completed}"
+                :onToggle="() => toggleTodo(${todo.id})">
            </div>
          `).join('')}
        </div>
@@ -624,20 +625,20 @@ Eleva provides two powerful ways to mount child components in your application:
        <div class="user-list">
          <h2>Team Members</h2>
          ${ctx.users.value.map(user => `
-           <div class="user-card-container"></div>
+           <div id="user-card-container"></div>
          `).join('')}
        </div>
      `,
      children: {
-       '.user-card-container': {
+       '#user-card-container': {
          setup: (context) => {
            const user = context.props.user;
            return { user };
          },
          template: (ctx) => `
            <UserCard 
-             eleva-prop-user='${JSON.stringify(ctx.user)}'
-             eleva-prop-onSelect="() => selectUser(${JSON.stringify(ctx.user)})"
+             :user='${JSON.stringify(ctx.user)}'
+             :onSelect="() => selectUser(${JSON.stringify(ctx.user)})"
            ></UserCard>
          `,
          children: {
@@ -648,15 +649,175 @@ Eleva provides two powerful ways to mount child components in your application:
    });
    ```
 
+#### Types of Children Component Mounting
+
+Eleva supports four main approaches to mounting child components, each with its own use cases and benefits:
+
+1. **Direct Component Mounting**
+   ```js
+   children: {
+     "UserCard": "UserCard"  // Direct mounting without container
+   }
+   ```
+   - **Use when:** You want to mount a component directly in the parent's template
+   - **Benefits:** 
+     - Simplest and most performant approach
+     - No additional DOM elements
+     - Direct prop passing
+   - **Example use case:** Simple component composition
+
+2. **Container-Based Mounting**
+   ```js
+   children: {
+     "#container": "UserCard"  // Mounting in a container element
+   }
+   ```
+   - **Use when:** You need a container element for styling or layout
+   - **Benefits:**
+     - Better control over component positioning
+     - Ability to add wrapper elements
+     - Easier styling and layout management
+   - **Example use case:** Complex layouts or when container styling is needed
+
+3. **Dynamic Component Mounting**
+   ```js
+   children: {
+     ".dynamic-container": {
+       setup: (ctx) => ({ /* dynamic setup */ }),
+       template: (ctx) => `<UserCard :props="${ctx.props}" />`,
+       children: { "UserCard": "UserCard" }
+     }
+   }
+   ```
+   - **Use when:** You need dynamic component behavior or setup
+   - **Benefits:**
+     - Full control over component lifecycle
+     - Ability to add custom logic
+     - Dynamic prop computation
+   - **Example use case:** Complex component interactions or dynamic data handling
+
+4. **Variable-Based Component Mounting**
+   ```js
+   // Define component
+   const UserCard = {
+     setup: (ctx) => ({ /* setup logic */ }),
+     template: (ctx) => `<div>User Card</div>`
+   };
+
+   // Parent component using variable-based mounting
+   app.component("UserList", {
+     template: (ctx) => `
+       <div class="user-list">
+         <div class="user-card-container"></div>
+       </div>
+     `,
+     children: {
+       ".user-card-container": UserCard  // Mount component directly from variable
+     }
+   });
+   ```
+   - **Use when:** 
+     - You have component definitions stored in variables
+     - Components are created dynamically
+     - You want to reuse component definitions
+   - **Benefits:**
+     - No need to register components globally
+     - More flexible component composition
+     - Better code organization
+   - **Example use case:** 
+     - Dynamic component creation
+     - Component libraries
+     - Reusable component patterns
+
+**Best Practices for Component Mounting:**
+
+1. **Choose the Right Approach:**
+   - Use direct mounting for simple component relationships
+   - Use container-based mounting when layout control is needed
+   - Use dynamic mounting for complex component interactions
+
+2. **Performance Considerations:**
+   - Direct mounting is most performant
+   - Container-based mounting adds minimal overhead
+   - Dynamic mounting has the most flexibility but requires careful optimization
+
+3. **Maintainability:**
+   - Keep component hierarchies shallow when possible
+   - Use meaningful container names
+   - Document complex mounting patterns
+
+#### Supported Children Selector Types
+
+Eleva supports various selector types for defining child components in the `children` configuration:
+
+1. **Component Name Selectors**
+   ```js
+   children: {
+     "UserCard": "UserCard"  // Mounts UserCard component directly
+   }
+   ```
+   - **Best for:** Direct component mounting without additional container elements
+   - **Use when:** You want to mount a component directly without a wrapper element
+
+2. **ID Selectors**
+   ```js
+   children: {
+     "#user-card-container": "UserCard"  // Mounts in element with id="user-card-container"
+   }
+   ```
+   - **Best for:** Unique, specific mounting points
+   - **Use when:** You need to target a specific element in the template
+
+3. **Class Selectors**
+   ```js
+   children: {
+     ".todo-item": "TodoItem"  // Mounts in elements with class="todo-item"
+   }
+   ```
+   - **Best for:** Multiple instances of the same component
+   - **Use when:** You have a list or grid of similar components
+
+4. **Attribute Selectors**
+   ```js
+   children: {
+     "[data-component='user-card']": "UserCard"  // Mounts in elements with data-component="user-card"
+   }
+   ```
+   - **Best for:** Semantic component identification
+   - **Use when:** You want to use custom attributes for component mounting
+
+**Best Practices for Selector Types:**
+
+1. **Prefer Component Name Selectors** when:
+   - Mounting components directly without containers
+   - Working with simple, direct component relationships
+   - Performance is a priority (fewer DOM queries)
+
+2. **Use ID Selectors** when:
+   - You need to target specific, unique mounting points
+   - Working with complex layouts
+   - Components need to be mounted in specific locations
+
+3. **Choose Class Selectors** when:
+   - Working with lists or repeated components
+   - Components share the same mounting pattern
+   - You need to style or target multiple instances
+
+4. **Consider Attribute Selectors** when:
+   - You need semantic component identification
+   - Working with custom component attributes
+   - Building complex component hierarchies
+
+**Performance Considerations:**
+- Component name selectors are generally the most performant
+- Class selectors are efficient for multiple instances
+- ID selectors are fast but limited to single elements
+- Attribute selectors can be slower for complex queries
+
 **Key Benefits of Component Mounting:**
 - **Explicit Control**: Clear parent-child relationships and component hierarchy
 - **Dynamic Props**: Support for dynamic prop passing
 - **Automatic Cleanup**: Components are automatically unmounted and cleaned up when their container is removed
-
-**Best Practices:**
-- Use explicit mounting for clear component relationships
-- Always provide meaningful prop names for better maintainability
-- Keep component hierarchies manageable and well-organized
 
 ### Style Injection & Scoped CSS
 
@@ -1006,7 +1167,7 @@ Interactive demos are also available on Eleva's [CodePen Collection](https://cod
 ## 12. FAQ
 
 **Q: Is Eleva production-ready?**
-_A:_ Not yet—Eleva is currently in alpha. While it's a powerful tool, expect changes until a stable release is announced.
+_A:_ Eleva is currently in beta (v1.2.14-beta). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
@@ -1052,8 +1213,6 @@ Detailed API documentation with parameter descriptions, return values, and usage
 
 - **Eleva (Core):**  
   `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`
-
-> **Note:** In v1.2.0-alpha, the mounting context now includes an `emitter` property (instead of separate `emit` and `on` functions). Use `context.emitter.on(...)` and `context.emitter.emit(...)` for event handling.
 
 ---
 

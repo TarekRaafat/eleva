@@ -322,15 +322,16 @@ declare class Eleva {
      */
     private _injectStyles;
     /**
-     * Extracts props from an element's attributes that start with 'eleva-prop-'.
+     * Extracts props from an element's attributes that start with the specified prefix.
      * This method is used to collect component properties from DOM elements.
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
+     * @param {string} prefix - The prefix to look for in attributes
      * @returns {Object<string, any>} An object containing the extracted props
      * @example
      * // For an element with attributes:
-     * // <div eleva-prop-name="John" eleva-prop-age="25">
+     * // <div :name="John" :age="25">
      * // Returns: { name: "John", age: "25" }
      */
     private _extractProps;
@@ -375,8 +376,8 @@ declare class Eleva {
      * @example
      * // Explicit children mounting:
      * const children = {
-     *   '.user-profile': UserProfileComponent,
-     *   '.settings-panel': SettingsComponent
+     *   'UserProfile': UserProfileComponent,
+     *   '#settings-panel': "settings-panel"
      * };
      */
     private _mountComponents;

@@ -457,7 +457,7 @@ describe("Eleva error handling", () => {
  *   template: () => `
  *     <div>
  *       <h1>Parent Component</h1>
- *       <child-comp eleva-prop-title="Hello from Parent"></child-comp>
+ *       <child-comp :title="Hello from Parent"></child-comp>
  *     </div>
  *   `,
  *   children: {
@@ -503,8 +503,7 @@ describe("Children Components & Passing Props", () => {
       template: (ctx) => `<div>${ctx.title}</div>`,
     };
     const ParentComponent = {
-      template: () =>
-        `<div><child-comp eleva-prop-title="Hello"></child-comp></div>`,
+      template: () => `<div><child-comp :title="Hello"></child-comp></div>`,
       children: {
         "child-comp": ChildComponent,
       },
@@ -546,7 +545,7 @@ describe("Children Components & Passing Props", () => {
       setup: () => ({}),
       template: () => `
         <div>
-          <child-comp eleva-prop-title="Hello from Parent"></child-comp>
+          <child-comp :title="Hello from Parent"></child-comp>
         </div>
       `,
       children: {
@@ -591,7 +590,7 @@ describe("Children Components & Passing Props", () => {
       template: () => `
         <div>
           <h1>Parent Component</h1>
-          <child-comp eleva-prop-title="Hello from Parent"></child-comp>
+          <child-comp :title="Hello from Parent"></child-comp>
         </div>
       `,
       children: {

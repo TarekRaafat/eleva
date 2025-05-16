@@ -1,4 +1,4 @@
-/*! Eleva v1.2.13-alpha | MIT License | https://elevajs.com */
+/*! Eleva v1.2.14-beta | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -695,25 +695,26 @@
     }
 
     /**
-     * Extracts props from an element's attributes that start with 'eleva-prop-'.
+     * Extracts props from an element's attributes that start with the specified prefix.
      * This method is used to collect component properties from DOM elements.
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
+     * @param {string} prefix - The prefix to look for in attributes
      * @returns {Object<string, any>} An object containing the extracted props
      * @example
      * // For an element with attributes:
-     * // <div eleva-prop-name="John" eleva-prop-age="25">
+     * // <div :name="John" :age="25">
      * // Returns: { name: "John", age: "25" }
      */
-    _extractProps(element) {
+    _extractProps(element, prefix) {
       const props = {};
       for (const {
         name,
         value
       } of element.attributes) {
-        if (name.startsWith("eleva-prop-")) {
-          props[name.replace("eleva-prop-", "")] = value;
+        if (name.startsWith(prefix)) {
+          props[name.replace(prefix, "")] = value;
         }
       }
       return props;
@@ -748,7 +749,7 @@
      */
     async _mountComponentsBySelector(container, selector, component, instances) {
       for (const el of container.querySelectorAll(selector)) {
-        const props = this._extractProps(el);
+        const props = this._extractProps(el, ":");
         const instance = await this._mountComponentInstance(el, component, props);
         if (instance) instances.push(instance);
       }
@@ -771,8 +772,8 @@
      * @example
      * // Explicit children mounting:
      * const children = {
-     *   '.user-profile': UserProfileComponent,
-     *   '.settings-panel': SettingsComponent
+     *   'UserProfile': UserProfileComponent,
+     *   '#settings-panel': "settings-panel"
      * };
      */
     async _mountComponents(container, children, childInstances) {

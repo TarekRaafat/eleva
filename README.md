@@ -27,16 +27,16 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
-_Built with love for native JavaScript—because sometimes, less really is more!_ 😊
+_Built with love for native JavaScript-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.2.13-alpha` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
+> **Stability Notice**: This is `v1.2.14-beta` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
 > While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
 
-**Version:** `1.2.13-alpha`
+**Version:** `1.2.14-beta`
 
 
 
-Welcome to Eleva! This is my humble, experimental playground for a fresh approach to frontend development. Eleva was born out of my genuine passion for pure vanilla JavaScript—no frameworks, no bloat, just the power of native code. I hope you'll have fun exploring, testing, and contributing to make Eleva even better. 🚀
+Welcome to Eleva! This is my humble, experimental playground for a fresh approach to frontend development. Eleva was born out of my genuine passion for pure vanilla JavaScript-no frameworks, no bloat, just the power of native code. I hope you'll have fun exploring, testing, and contributing to make Eleva even better. 🚀
 
 ---
 
@@ -74,7 +74,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Introduction
 
-Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy frameworks or libraries to build amazing user interfaces—sometimes, the simplest approach is the most powerful.
+Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy frameworks or libraries to build amazing user interfaces-sometimes, the simplest approach is the most powerful.
 
 **My Inspiration:**  
 The idea behind Eleva comes from a deep appreciation for native JavaScript. I wanted to create a tool that stays true to the language without introducing new syntax or complexity, making it easy to integrate into your projects.
@@ -82,9 +82,9 @@ The idea behind Eleva comes from a deep appreciation for native JavaScript. I wa
 **Core Principles:**
 
 - **🌱 Minimalism:** Only the essentials, so you can build without clutter.
-- **🔌 Extensibility:** Plug in your own ideas—custom state management, routing, and more.
+- **🔌 Extensibility:** Plug in your own ideas-custom state management, routing, and more.
 - **🚀 Performance:** Fast, efficient, and designed with modern browsers in mind.
-- **🍦 Pure Vanilla:** No dependencies, no magic—just plain JavaScript.
+- **🍦 Pure Vanilla:** No dependencies, no magic-just plain JavaScript.
 
 ---
 
@@ -94,7 +94,7 @@ The idea behind Eleva comes from a deep appreciation for native JavaScript. I wa
 
 Unlike many frameworks that enforce a specific project structure or coding paradigm, Eleva provides a minimal core with a flexible plugin system. This means:
 
-- **🔄 Flexibility:** Architect your application your way—no rigid structure required.
+- **🔄 Flexibility:** Architect your application your way-no rigid structure required.
 - **🎯 Native JavaScript:** Built using pure vanilla JavaScript, Eleva integrates seamlessly with your existing code without unfamiliar syntax.
 - **⚙️ Configurability:** Extend Eleva's functionality with a simple API and optional plugins.
 - **🆓 Freedom:** Decide the best way to implement features without unnecessary constraints.
@@ -195,7 +195,7 @@ Detailed [Benchmark Metrics Report](BENCHMARK.md)
 
 Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular:
 
-- **Simplicity:** No virtual DOM, JSX, or complex state management—just plain JavaScript.
+- **Simplicity:** No virtual DOM, JSX, or complex state management-just plain JavaScript.
 - **Modularity:** Easily extend via plugins to suit your project's needs.
 - **Size:** A fraction of the size of mainstream frameworks.
 - **Learning Curve:** Familiar syntax and a clear API make it accessible to all developers.
