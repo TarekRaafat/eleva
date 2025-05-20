@@ -171,30 +171,6 @@ export class Eleva {
      */
     private _extractProps;
     /**
-     * Mounts a single component instance to a container element.
-     * This method handles the actual mounting of a component with its props.
-     *
-     * @private
-     * @param {HTMLElement} container - The container element to mount the component to
-     * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
-     * @param {Object<string, any>} props - The props to pass to the component
-     * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
-     * @throws {Error} If the container is not a valid HTMLElement
-     */
-    private _mountComponentInstance;
-    /**
-     * Mounts components found by a selector in the container.
-     * This method handles mounting multiple instances of the same component type.
-     *
-     * @private
-     * @param {HTMLElement} container - The container to search for components
-     * @param {string} selector - The CSS selector to find components
-     * @param {string|ComponentDefinition} component - The component to mount
-     * @param {Array<MountResult>} instances - Array to store the mounted component instances
-     * @returns {Promise<void>}
-     */
-    private _mountComponentsBySelector;
-    /**
      * Mounts all components within the parent component's container.
      * This method handles mounting of explicitly defined children components.
      *

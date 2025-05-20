@@ -10,6 +10,7 @@
  * const count = new Signal(0);
  * count.watch((value) => console.log(`Count changed to: ${value}`));
  * count.value = 1; // Logs: "Count changed to: 1"
+ * @template T
  */
 export class Signal {
   /**

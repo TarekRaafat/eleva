@@ -1,6 +1,5 @@
 import { babel } from "@rollup/plugin-babel";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
 import terser from "@rollup/plugin-terser";
 import { codecovRollupPlugin } from "@codecov/rollup-plugin";
 import pkg from "./package.json" with { type: "json" };
@@ -8,64 +7,70 @@ import pkg from "./package.json" with { type: "json" };
 const name = "Eleva";
 const banner = `/*! ${name} v${pkg.version} | ${pkg.license} License | ${pkg.homepage} */`;
 
+const commonOutputConfig = {
+  name,
+  sourcemap: true,
+  banner,
+};
+
+const commonPlugins = [
+  nodeResolve({
+    browser: true,
+  }),
+  babel({
+    babelHelpers: "bundled",
+    exclude: "node_modules/**",
+    presets: [
+      [
+        "@babel/preset-env",
+        {
+          targets: pkg.browserslist,
+          bugfixes: true,
+          loose: true,
+          modules: false,
+          useBuiltIns: false,
+          corejs: false,
+        },
+      ],
+    ],
+  }),
+];
+
 // Rollup configuration for building the Eleva.js library
 export default {
   input: "src/index.js",
-  context: "window",
   output: [
     {
-      file: pkg.main,
+      ...commonOutputConfig,
+      file: "./dist/eleva.cjs.js",
       format: "cjs",
-      sourcemap: true,
       exports: "default",
-      banner,
     },
     {
-      file: pkg.module,
+      ...commonOutputConfig,
+      file: "./dist/eleva.esm.js",
       format: "es",
-      sourcemap: true,
       exports: "default",
-      banner,
     },
     {
-      file: pkg.umd,
+      ...commonOutputConfig,
+      file: "./dist/eleva.umd.js",
       format: "umd",
-      name: name,
-      sourcemap: true,
-      exports: "default",
-      banner,
     },
     {
-      file: pkg.browser,
+      ...commonOutputConfig,
+      file: "./dist/eleva.umd.min.js",
       format: "umd",
-      name: name,
-      sourcemap: true,
       plugins: [terser()],
-      banner,
     },
   ],
   treeshake: {
     moduleSideEffects: false,
     propertyReadSideEffects: false,
+    tryCatchDeoptimization: false,
   },
   plugins: [
-    nodeResolve(),
-    commonjs(),
-    babel({
-      babelHelpers: "bundled",
-      exclude: "node_modules/**",
-      presets: [
-        [
-          "@babel/preset-env",
-          {
-            targets: "> 0.25%, not dead, not op_mini all, not ie 11",
-            bugfixes: true,
-            loose: true,
-            modules: false,
-          },
-        ],
-      ],
-    }),
+    ...commonPlugins,
     codecovRollupPlugin({
       enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
       bundleName: name,

@@ -19,13 +19,13 @@ declare class Emitter {
      * @public
      * @param {string} event - The name of the event to listen for.
      * @param {function(any): void} handler - The callback function to invoke when the event occurs.
-     * @returns {function(): boolean} A function to unsubscribe the event handler.
+     * @returns {function(): void} A function to unsubscribe the event handler.
      * @example
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
      * // Later...
      * unsubscribe(); // Stops listening for the event
      */
-    public on(event: string, handler: (arg0: any) => void): () => boolean;
+    public on(event: string, handler: (arg0: any) => void): () => void;
     /**
      * Removes an event handler for the specified event name.
      * If no handler is provided, all handlers for the event are removed.
@@ -58,8 +58,9 @@ declare class Emitter {
  * const count = new Signal(0);
  * count.watch((value) => console.log(`Count changed to: ${value}`));
  * count.value = 1; // Logs: "Count changed to: 1"
+ * @template T
  */
-declare class Signal {
+declare class Signal<T> {
     /**
      * Creates a new Signal instance with the specified initial value.
      *
@@ -126,16 +127,18 @@ declare class Signal {
  * renderer.patchDOM(container, newHtml);
  */
 declare class Renderer {
+    /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+    private _tempContainer;
     /**
      * Patches the DOM of a container element with new HTML content.
-     * This method efficiently updates the DOM by comparing the new content with the existing
-     * content and applying only the necessary changes.
+     * Efficiently updates the DOM by parsing new HTML into a reusable container
+     * and applying only the necessary changes.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
      * @param {string} newHtml - The new HTML content to apply.
      * @returns {void}
-     * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
+     * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
@@ -147,7 +150,6 @@ declare class Renderer {
      * @param {HTMLElement} oldParent - The original DOM element.
      * @param {HTMLElement} newParent - The new DOM element.
      * @returns {void}
-     * @throws {Error} If either parent is not an HTMLElement.
      */
     private _diff;
     /**
@@ -158,7 +160,6 @@ declare class Renderer {
      * @param {HTMLElement} oldEl - The element to update.
      * @param {HTMLElement} newEl - The element providing the updated attributes.
      * @returns {void}
-     * @throws {Error} If either element is not an HTMLElement.
      */
     private _updateAttributes;
 }
@@ -335,30 +336,6 @@ declare class Eleva {
      * // Returns: { name: "John", age: "25" }
      */
     private _extractProps;
-    /**
-     * Mounts a single component instance to a container element.
-     * This method handles the actual mounting of a component with its props.
-     *
-     * @private
-     * @param {HTMLElement} container - The container element to mount the component to
-     * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
-     * @param {Object<string, any>} props - The props to pass to the component
-     * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
-     * @throws {Error} If the container is not a valid HTMLElement
-     */
-    private _mountComponentInstance;
-    /**
-     * Mounts components found by a selector in the container.
-     * This method handles mounting multiple instances of the same component type.
-     *
-     * @private
-     * @param {HTMLElement} container - The container to search for components
-     * @param {string} selector - The CSS selector to find components
-     * @param {string|ComponentDefinition} component - The component to mount
-     * @param {Array<MountResult>} instances - Array to store the mounted component instances
-     * @returns {Promise<void>}
-     */
-    private _mountComponentsBySelector;
     /**
      * Mounts all components within the parent component's container.
      * This method handles mounting of explicitly defined children components.

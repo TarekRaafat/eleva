@@ -1,29 +1,104 @@
 {
   "name": "eleva",
-  "version": "1.2.14-beta",
+  "version": "1.2.15-beta",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
-  "main": "dist/eleva.cjs.js",
-  "module": "dist/eleva.esm.js",
-  "umd": "dist/eleva.umd.js",
-  "browser": "dist/eleva.min.js",
-  "unpkg": "dist/eleva.min.js",
-  "types": "dist/eleva.d.ts",
+  "private": false,
+  "license": "MIT",
+  "author": {
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raafat@gmail.com",
+    "url": "https://www.tarekraafat.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TarekRaafat/eleva.git"
+  },
+  "homepage": "https://elevajs.com",
+  "bugs": {
+    "url": "https://github.com/TarekRaafat/eleva/issues",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "readme": "https://github.com/TarekRaafat/eleva#readme",
+  "main": "./dist/eleva.cjs.js",
+  "module": "./dist/eleva.esm.js",
+  "browser": "./dist/eleva.umd.min.js",
+  "types": "./dist/eleva.d.ts",
+  "unpkg": "./dist/eleva.umd.min.js",
+  "jsdelivr": "./dist/eleva.umd.min.js",
   "exports": {
     ".": {
       "types": "./dist/eleva.d.ts",
-      "node": "./dist/eleva.cjs.js",
-      "require": "./dist/eleva.cjs.js",
       "import": "./dist/eleva.esm.js",
-      "browser": "./dist/eleva.min.js",
-      "umd": "./dist/eleva.umd.js",
-      "default": "./dist/eleva.esm.js"
-    }
+      "require": "./dist/eleva.cjs.js",
+      "node": "./dist/eleva.cjs.js",
+      "browser": "./dist/eleva.umd.min.js",
+      "default": "./dist/eleva.umd.min.js"
+    },
+    "./esm": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva.esm.js",
+      "require": "./dist/eleva.esm.js",
+      "browser": "./dist/eleva.umd.min.js"
+    },
+    "./cjs": {
+      "types": "./dist/eleva.d.ts",
+      "require": "./dist/eleva.cjs.js"
+    },
+    "./umd": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva.umd.js",
+      "browser": "./dist/eleva.umd.js"
+    },
+    "./browser": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva.umd.min.js",
+      "browser": "./dist/eleva.umd.min.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "types",
+    "src"
+  ],
+  "directories": {
+    "doc": "docs",
+    "example": "examples",
+    "test": "test",
+    "dist": "dist",
+    "src": "src",
+    "types": "types"
+  },
+  "sideEffects": false,
+  "devDependencies": {
+    "@babel/core": "^7.26.10",
+    "@babel/preset-env": "^7.26.9",
+    "@codecov/rollup-plugin": "^1.9.0",
+    "@rollup/plugin-babel": "^6.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-terser": "^0.4.4",
+    "babel-jest": "^29.7.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-prettier": "^5.2.5",
+    "husky": "^9.1.7",
+    "jest": "^29.6.1",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-html-reporters": "^3.1.7",
+    "jest-watch-typeahead": "^2.2.2",
+    "jsdoc": "^4.0.4",
+    "lint-staged": "^15.5.0",
+    "prettier": "^3.5.3",
+    "rimraf": "^6.0.1",
+    "rollup": "^4.34.8",
+    "rollup-plugin-dts": "^6.1.1",
+    "typescript": "^5.1.6",
+    "vitepress": "^1.6.3"
   },
   "scripts": {
     "dev": "rollup -c -w",
     "build": "rollup -c",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc",
     "build:types:bundle": "rollup -c rollup.dts.config.js",
     "build:all": "npm run clean && npm run build && npm run build:types && npm run build:types:bundle",
     "docs:dev": "vitepress dev docs",
@@ -48,7 +123,6 @@
     "codecov": "npx codecov",
     "lint": "eslint src/**/*.js",
     "format": "npx prettier \"src/**/*\" \"types/**/*\" --write",
-    "size": "size-limit",
     "clean": "rimraf dist types",
     "prepublishOnly": "npm run format && npm run lint && npm run test:source:coverage && npm run build:all",
     "prepare": "npm run build:all"
@@ -56,31 +130,16 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "devDependencies": {
-    "@babel/core": "^7.26.10",
-    "@babel/preset-env": "^7.26.9",
-    "@codecov/rollup-plugin": "^1.9.0",
-    "@rollup/plugin-babel": "^6.0.3",
-    "@rollup/plugin-commonjs": "^28.0.2",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@size-limit/preset-app": "^11.2.0",
-    "babel-jest": "^29.7.0",
-    "eslint": "^9.0.0",
-    "eslint-plugin-prettier": "^5.2.5",
-    "husky": "^9.1.7",
-    "jest": "^29.6.1",
-    "jest-environment-jsdom": "^29.7.0",
-    "jest-html-reporters": "^3.1.7",
-    "jest-watch-typeahead": "^2.2.2",
-    "jsdoc": "^4.0.4",
-    "lint-staged": "^15.5.0",
-    "prettier": "^3.5.3",
-    "rimraf": "^6.0.1",
-    "rollup": "^4.34.8",
-    "rollup-plugin-dts": "^6.1.1",
-    "typescript": "^5.1.6",
-    "vitepress": "^1.6.3"
+  "browserslist": [
+    "> 0.25%",
+    "last 2 versions",
+    "not dead",
+    "not op_mini all",
+    "not ie 11"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
@@ -140,35 +199,6 @@
     "web development tools",
     "micro frontends"
   ],
-  "author": {
-    "name": "Tarek Raafat",
-    "email": "tarek.m.raafat@gmail.com",
-    "url": "https://www.tarekraafat.com"
-  },
-  "license": "MIT",
-  "homepage": "https://elevajs.com",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/TarekRaafat/eleva.git"
-  },
-  "bugs": {
-    "url": "https://github.com/TarekRaafat/eleva/issues",
-    "email": "tarek.m.raafat@gmail.com"
-  },
-  "directories": {
-    "doc": "docs",
-    "example": "examples",
-    "test": "test",
-    "dist": "dist",
-    "src": "src",
-    "types": "types"
-  },
-  "files": [
-    "dist",
-    "types",
-    "src"
-  ],
-  "sideEffects": false,
   "funding": [
     {
       "type": "github",
@@ -178,12 +208,5 @@
       "type": "buymeacoffee",
       "url": "https://www.buymeacoffee.com/tarekraafat"
     }
-  ],
-  "browserslist": [
-    "> 0.25%",
-    "last 2 versions",
-    "not dead",
-    "not op_mini all",
-    "not ie 11"
   ]
 }

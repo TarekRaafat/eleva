@@ -29,10 +29,10 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.2.14-beta` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
+> **Stability Notice**: This is `v1.2.15-beta` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
 > While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
 
-**Version:** `1.2.14-beta`
+**Version:** `1.2.15-beta`
 
 
 
@@ -125,7 +125,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 - **🔄 DOM Diffing & Patching:** High-performance updates without a virtual DOM.
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments.
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers.
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations, to keep your bundle lean and your codebase strongly typed.
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations.
 
 ---
 
@@ -139,6 +139,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
 - **🧪 Rapid Prototyping:** Quickly prototype ideas with a minimal and extendable framework.
 - **🔌 Extensible:** Easily add features like routing or state management through plugins.
+- **📦 Module Format Flexibility:** Choose from ESM, CommonJS, or UMD formats based on your project's needs.
 
 ---
 
@@ -171,6 +172,8 @@ Eleva is crafted for performance:
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
+- **Tree-Shakable:** ESM format allows bundlers to eliminate unused code.
+- **Format-Specific Optimizations:** Each module format is optimized for its target environment.
 
 ---
 

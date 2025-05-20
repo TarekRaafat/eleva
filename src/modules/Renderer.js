@@ -14,15 +14,24 @@
  */
 export class Renderer {
   /**
+   * Creates a new Renderer instance with a reusable temporary container for parsing HTML.
+   * @public
+   */
+  constructor() {
+    /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+    this._tempContainer = document.createElement("div");
+  }
+
+  /**
    * Patches the DOM of a container element with new HTML content.
-   * This method efficiently updates the DOM by comparing the new content with the existing
-   * content and applying only the necessary changes.
+   * Efficiently updates the DOM by parsing new HTML into a reusable container
+   * and applying only the necessary changes.
    *
    * @public
    * @param {HTMLElement} container - The container element to patch.
    * @param {string} newHtml - The new HTML content to apply.
    * @returns {void}
-   * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
+   * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
    */
   patchDOM(container, newHtml) {
     if (!(container instanceof HTMLElement)) {
@@ -32,10 +41,14 @@ export class Renderer {
       throw new Error("newHtml must be a string");
     }
 
-    const temp = document.createElement("div");
-    temp.innerHTML = newHtml;
-    this._diff(container, temp);
-    temp.innerHTML = "";
+    try {
+      // Directly set new HTML, replacing any existing content
+      this._tempContainer.innerHTML = newHtml;
+
+      this._diff(container, this._tempContainer);
+    } catch {
+      throw new Error("Failed to patch DOM");
+    }
   }
 
   /**
@@ -47,16 +60,8 @@ export class Renderer {
    * @param {HTMLElement} oldParent - The original DOM element.
    * @param {HTMLElement} newParent - The new DOM element.
    * @returns {void}
-   * @throws {Error} If either parent is not an HTMLElement.
    */
   _diff(oldParent, newParent) {
-    if (
-      !(oldParent instanceof HTMLElement) ||
-      !(newParent instanceof HTMLElement)
-    ) {
-      throw new Error("Both parents must be HTMLElements");
-    }
-
     if (oldParent.isEqualNode(newParent)) return;
 
     const oldChildren = oldParent.childNodes;
@@ -66,8 +71,6 @@ export class Renderer {
     for (let i = 0; i < maxLength; i++) {
       const oldNode = oldChildren[i];
       const newNode = newChildren[i];
-
-      if (!oldNode && !newNode) continue;
 
       if (!oldNode && newNode) {
         oldParent.appendChild(newNode.cloneNode(true));
@@ -115,13 +118,8 @@ export class Renderer {
    * @param {HTMLElement} oldEl - The element to update.
    * @param {HTMLElement} newEl - The element providing the updated attributes.
    * @returns {void}
-   * @throws {Error} If either element is not an HTMLElement.
    */
   _updateAttributes(oldEl, newEl) {
-    if (!(oldEl instanceof HTMLElement) || !(newEl instanceof HTMLElement)) {
-      throw new Error("Both elements must be HTMLElements");
-    }
-
     const oldAttrs = oldEl.attributes;
     const newAttrs = newEl.attributes;
 

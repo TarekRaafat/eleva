@@ -177,7 +177,7 @@ export class Eleva {
     const context = {
       props,
       emitter: this.emitter,
-      /** @type {(v: any) => Signal} */
+      /** @type {(v: any) => Signal<any>} */
       signal: (v) => new this.signal(v),
       ...this._prepareLifecycleHooks(),
     };
@@ -191,7 +191,7 @@ export class Eleva {
      * 4. Managing component lifecycle
      *
      * @param {Object<string, any>} data - Data returned from the component's setup function
-     * @returns {MountResult} An object containing:
+     * @returns {Promise<MountResult>} An object containing:
      *   - container: The mounted component's container element
      *   - data: The component's reactive state and context
      *   - unmount: Function to clean up and unmount the component
@@ -301,14 +301,17 @@ export class Eleva {
       const attrs = el.attributes;
       for (let i = 0; i < attrs.length; i++) {
         const attr = attrs[i];
-        if (attr.name.startsWith("@")) {
-          const event = attr.name.slice(1);
-          const handler = TemplateEngine.evaluate(attr.value, context);
-          if (typeof handler === "function") {
-            el.addEventListener(event, handler);
-            el.removeAttribute(attr.name);
-            cleanupListeners.push(() => el.removeEventListener(event, handler));
-          }
+
+        if (!attr.name.startsWith("@")) continue;
+
+        const event = attr.name.slice(1);
+        const handlerName = attr.value;
+        const handler =
+          context[handlerName] || TemplateEngine.evaluate(handlerName, context);
+        if (typeof handler === "function") {
+          el.addEventListener(event, handler);
+          el.removeAttribute(attr.name);
+          cleanupListeners.push(() => el.removeEventListener(event, handler));
         }
       }
     }
@@ -353,6 +356,7 @@ export class Eleva {
    * // Returns: { name: "John", age: "25" }
    */
   _extractProps(element, prefix) {
+    /** @type {Record<string, string>} */
     const props = {};
     for (const { name, value } of element.attributes) {
       if (name.startsWith(prefix)) {
@@ -360,41 +364,6 @@ export class Eleva {
       }
     }
     return props;
-  }
-
-  /**
-   * Mounts a single component instance to a container element.
-   * This method handles the actual mounting of a component with its props.
-   *
-   * @private
-   * @param {HTMLElement} container - The container element to mount the component to
-   * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
-   * @param {Object<string, any>} props - The props to pass to the component
-   * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
-   * @throws {Error} If the container is not a valid HTMLElement
-   */
-  async _mountComponentInstance(container, component, props) {
-    if (!(container instanceof HTMLElement)) return null;
-    return await this.mount(container, component, props);
-  }
-
-  /**
-   * Mounts components found by a selector in the container.
-   * This method handles mounting multiple instances of the same component type.
-   *
-   * @private
-   * @param {HTMLElement} container - The container to search for components
-   * @param {string} selector - The CSS selector to find components
-   * @param {string|ComponentDefinition} component - The component to mount
-   * @param {Array<MountResult>} instances - Array to store the mounted component instances
-   * @returns {Promise<void>}
-   */
-  async _mountComponentsBySelector(container, selector, component, instances) {
-    for (const el of container.querySelectorAll(selector)) {
-      const props = this._extractProps(el, ":");
-      const instance = await this._mountComponentInstance(el, component, props);
-      if (instance) instances.push(instance);
-    }
   }
 
   /**
@@ -419,20 +388,20 @@ export class Eleva {
    * };
    */
   async _mountComponents(container, children, childInstances) {
+    if (!children) return;
+
     // Clean up existing instances
     for (const child of childInstances) child.unmount();
     childInstances.length = 0;
 
     // Mount explicitly defined children components
-    if (children) {
-      for (const [selector, component] of Object.entries(children)) {
-        if (!selector) continue;
-        await this._mountComponentsBySelector(
-          container,
-          selector,
-          component,
-          childInstances
-        );
+    for (const [selector, component] of Object.entries(children)) {
+      if (!selector) continue;
+      for (const el of container.querySelectorAll(selector)) {
+        if (!(el instanceof HTMLElement)) continue;
+        const props = this._extractProps(el, ":");
+        const instance = await this.mount(el, component, props);
+        if (instance) childInstances.push(instance);
       }
     }
   }

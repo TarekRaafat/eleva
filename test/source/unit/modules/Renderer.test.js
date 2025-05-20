@@ -592,48 +592,6 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests error handling for invalid parents in diff
-   *
-   * Verifies:
-   * - Error is thrown for non-HTMLElement parents
-   *
-   * @group rendering
-   * @group error-handling
-   */
-  test("should throw error for invalid parents in diff", () => {
-    const renderer = new Renderer();
-    const validElement = document.createElement("div");
-
-    expect(() => renderer._diff(null, validElement)).toThrow(
-      "Both parents must be HTMLElements"
-    );
-    expect(() => renderer._diff(validElement, null)).toThrow(
-      "Both parents must be HTMLElements"
-    );
-  });
-
-  /**
-   * Tests error handling for invalid elements in updateAttributes
-   *
-   * Verifies:
-   * - Error is thrown for non-HTMLElement elements
-   *
-   * @group rendering
-   * @group error-handling
-   */
-  test("should throw error for invalid elements in updateAttributes", () => {
-    const renderer = new Renderer();
-    const validElement = document.createElement("div");
-
-    expect(() => renderer._updateAttributes(null, validElement)).toThrow(
-      "Both elements must be HTMLElements"
-    );
-    expect(() => renderer._updateAttributes(validElement, null)).toThrow(
-      "Both elements must be HTMLElements"
-    );
-  });
-
-  /**
    * Tests handling of special properties in updateAttributes
    *
    * Verifies:
@@ -723,21 +681,14 @@ describe("Renderer", () => {
    * @group error-handling
    */
   test("should handle DOM operation failures in patchDOM", () => {
-    const renderer = new Renderer();
-    const container = document.createElement("div");
-
-    // Create a temporary div that will throw on diff
+    // Mock document.createElement to return our special div
     const tempDiv = document.createElement("div");
     Object.defineProperty(tempDiv, "innerHTML", {
       set: function (value) {
-        const error = new Error("Mock error");
-        error.message = "Failed to patch DOM: Mock error";
-        throw error;
+        throw new Error("Mock error");
       },
       configurable: true,
     });
-
-    // Mock document.createElement to return our special div
     const originalCreateElement = document.createElement;
     document.createElement = jest.fn((tagName) => {
       if (tagName === "div") {
@@ -747,8 +698,10 @@ describe("Renderer", () => {
     });
 
     try {
+      const renderer = new Renderer();
+      const container = document.createElement("div");
       expect(() => renderer.patchDOM(container, "<div>test</div>")).toThrow(
-        "Failed to patch DOM: Mock error"
+        "Failed to patch DOM"
       );
     } finally {
       // Restore original createElement

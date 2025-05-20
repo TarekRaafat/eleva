@@ -1,4 +1,4 @@
-/*! Eleva v1.2.14-beta | MIT License | https://elevajs.com */
+/*! Eleva v1.2.15-beta | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -74,6 +74,7 @@
    * const count = new Signal(0);
    * count.watch((value) => console.log(`Count changed to: ${value}`));
    * count.value = 1; // Logs: "Count changed to: 1"
+   * @template T
    */
   class Signal {
     /**
@@ -179,7 +180,7 @@
      * @public
      * @param {string} event - The name of the event to listen for.
      * @param {function(any): void} handler - The callback function to invoke when the event occurs.
-     * @returns {function(): boolean} A function to unsubscribe the event handler.
+     * @returns {function(): void} A function to unsubscribe the event handler.
      * @example
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
      * // Later...
@@ -241,15 +242,24 @@
    */
   class Renderer {
     /**
+     * Creates a new Renderer instance with a reusable temporary container for parsing HTML.
+     * @public
+     */
+    constructor() {
+      /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+      this._tempContainer = document.createElement("div");
+    }
+
+    /**
      * Patches the DOM of a container element with new HTML content.
-     * This method efficiently updates the DOM by comparing the new content with the existing
-     * content and applying only the necessary changes.
+     * Efficiently updates the DOM by parsing new HTML into a reusable container
+     * and applying only the necessary changes.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
      * @param {string} newHtml - The new HTML content to apply.
      * @returns {void}
-     * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
+     * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
      */
     patchDOM(container, newHtml) {
       if (!(container instanceof HTMLElement)) {
@@ -258,10 +268,13 @@
       if (typeof newHtml !== "string") {
         throw new Error("newHtml must be a string");
       }
-      const temp = document.createElement("div");
-      temp.innerHTML = newHtml;
-      this._diff(container, temp);
-      temp.innerHTML = "";
+      try {
+        // Directly set new HTML, replacing any existing content
+        this._tempContainer.innerHTML = newHtml;
+        this._diff(container, this._tempContainer);
+      } catch {
+        throw new Error("Failed to patch DOM");
+      }
     }
 
     /**
@@ -273,12 +286,8 @@
      * @param {HTMLElement} oldParent - The original DOM element.
      * @param {HTMLElement} newParent - The new DOM element.
      * @returns {void}
-     * @throws {Error} If either parent is not an HTMLElement.
      */
     _diff(oldParent, newParent) {
-      if (!(oldParent instanceof HTMLElement) || !(newParent instanceof HTMLElement)) {
-        throw new Error("Both parents must be HTMLElements");
-      }
       if (oldParent.isEqualNode(newParent)) return;
       const oldChildren = oldParent.childNodes;
       const newChildren = newParent.childNodes;
@@ -286,7 +295,6 @@
       for (let i = 0; i < maxLength; i++) {
         const oldNode = oldChildren[i];
         const newNode = newChildren[i];
-        if (!oldNode && !newNode) continue;
         if (!oldNode && newNode) {
           oldParent.appendChild(newNode.cloneNode(true));
           continue;
@@ -323,12 +331,8 @@
      * @param {HTMLElement} oldEl - The element to update.
      * @param {HTMLElement} newEl - The element providing the updated attributes.
      * @returns {void}
-     * @throws {Error} If either element is not an HTMLElement.
      */
     _updateAttributes(oldEl, newEl) {
-      if (!(oldEl instanceof HTMLElement) || !(newEl instanceof HTMLElement)) {
-        throw new Error("Both elements must be HTMLElements");
-      }
       const oldAttrs = oldEl.attributes;
       const newAttrs = newEl.attributes;
 
@@ -538,7 +542,7 @@
       const context = {
         props,
         emitter: this.emitter,
-        /** @type {(v: any) => Signal} */
+        /** @type {(v: any) => Signal<any>} */
         signal: v => new this.signal(v),
         ...this._prepareLifecycleHooks()
       };
@@ -552,7 +556,7 @@
        * 4. Managing component lifecycle
        *
        * @param {Object<string, any>} data - Data returned from the component's setup function
-       * @returns {MountResult} An object containing:
+       * @returns {Promise<MountResult>} An object containing:
        *   - container: The mounted component's container element
        *   - data: The component's reactive state and context
        *   - unmount: Function to clean up and unmount the component
@@ -659,14 +663,14 @@
         const attrs = el.attributes;
         for (let i = 0; i < attrs.length; i++) {
           const attr = attrs[i];
-          if (attr.name.startsWith("@")) {
-            const event = attr.name.slice(1);
-            const handler = TemplateEngine.evaluate(attr.value, context);
-            if (typeof handler === "function") {
-              el.addEventListener(event, handler);
-              el.removeAttribute(attr.name);
-              cleanupListeners.push(() => el.removeEventListener(event, handler));
-            }
+          if (!attr.name.startsWith("@")) continue;
+          const event = attr.name.slice(1);
+          const handlerName = attr.value;
+          const handler = context[handlerName] || TemplateEngine.evaluate(handlerName, context);
+          if (typeof handler === "function") {
+            el.addEventListener(event, handler);
+            el.removeAttribute(attr.name);
+            cleanupListeners.push(() => el.removeEventListener(event, handler));
           }
         }
       }
@@ -708,6 +712,7 @@
      * // Returns: { name: "John", age: "25" }
      */
     _extractProps(element, prefix) {
+      /** @type {Record<string, string>} */
       const props = {};
       for (const {
         name,
@@ -718,41 +723,6 @@
         }
       }
       return props;
-    }
-
-    /**
-     * Mounts a single component instance to a container element.
-     * This method handles the actual mounting of a component with its props.
-     *
-     * @private
-     * @param {HTMLElement} container - The container element to mount the component to
-     * @param {string|ComponentDefinition} component - The component to mount, either as a name or definition
-     * @param {Object<string, any>} props - The props to pass to the component
-     * @returns {Promise<MountResult>} A promise that resolves to the mounted component instance
-     * @throws {Error} If the container is not a valid HTMLElement
-     */
-    async _mountComponentInstance(container, component, props) {
-      if (!(container instanceof HTMLElement)) return null;
-      return await this.mount(container, component, props);
-    }
-
-    /**
-     * Mounts components found by a selector in the container.
-     * This method handles mounting multiple instances of the same component type.
-     *
-     * @private
-     * @param {HTMLElement} container - The container to search for components
-     * @param {string} selector - The CSS selector to find components
-     * @param {string|ComponentDefinition} component - The component to mount
-     * @param {Array<MountResult>} instances - Array to store the mounted component instances
-     * @returns {Promise<void>}
-     */
-    async _mountComponentsBySelector(container, selector, component, instances) {
-      for (const el of container.querySelectorAll(selector)) {
-        const props = this._extractProps(el, ":");
-        const instance = await this._mountComponentInstance(el, component, props);
-        if (instance) instances.push(instance);
-      }
     }
 
     /**
@@ -777,15 +747,20 @@
      * };
      */
     async _mountComponents(container, children, childInstances) {
+      if (!children) return;
+
       // Clean up existing instances
       for (const child of childInstances) child.unmount();
       childInstances.length = 0;
 
       // Mount explicitly defined children components
-      if (children) {
-        for (const [selector, component] of Object.entries(children)) {
-          if (!selector) continue;
-          await this._mountComponentsBySelector(container, selector, component, childInstances);
+      for (const [selector, component] of Object.entries(children)) {
+        if (!selector) continue;
+        for (const el of container.querySelectorAll(selector)) {
+          if (!(el instanceof HTMLElement)) continue;
+          const props = this._extractProps(el, ":");
+          const instance = await this.mount(el, component, props);
+          if (instance) childInstances.push(instance);
         }
       }
     }

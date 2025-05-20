@@ -11,16 +11,18 @@
  * renderer.patchDOM(container, newHtml);
  */
 export class Renderer {
+    /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+    private _tempContainer;
     /**
      * Patches the DOM of a container element with new HTML content.
-     * This method efficiently updates the DOM by comparing the new content with the existing
-     * content and applying only the necessary changes.
+     * Efficiently updates the DOM by parsing new HTML into a reusable container
+     * and applying only the necessary changes.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
      * @param {string} newHtml - The new HTML content to apply.
      * @returns {void}
-     * @throws {Error} If container is not an HTMLElement or newHtml is not a string.
+     * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
@@ -32,7 +34,6 @@ export class Renderer {
      * @param {HTMLElement} oldParent - The original DOM element.
      * @param {HTMLElement} newParent - The new DOM element.
      * @returns {void}
-     * @throws {Error} If either parent is not an HTMLElement.
      */
     private _diff;
     /**
@@ -43,7 +44,6 @@ export class Renderer {
      * @param {HTMLElement} oldEl - The element to update.
      * @param {HTMLElement} newEl - The element providing the updated attributes.
      * @returns {void}
-     * @throws {Error} If either element is not an HTMLElement.
      */
     private _updateAttributes;
 }

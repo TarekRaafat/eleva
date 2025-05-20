@@ -19,13 +19,13 @@ export class Emitter {
      * @public
      * @param {string} event - The name of the event to listen for.
      * @param {function(any): void} handler - The callback function to invoke when the event occurs.
-     * @returns {function(): boolean} A function to unsubscribe the event handler.
+     * @returns {function(): void} A function to unsubscribe the event handler.
      * @example
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
      * // Later...
      * unsubscribe(); // Stops listening for the event
      */
-    public on(event: string, handler: (arg0: any) => void): () => boolean;
+    public on(event: string, handler: (arg0: any) => void): () => void;
     /**
      * Removes an event handler for the specified event name.
      * If no handler is provided, all handlers for the event are removed.

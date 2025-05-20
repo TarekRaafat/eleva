@@ -1,26 +1,41 @@
 {
   "compilerOptions": {
+    // Basic Options
     "target": "ES2015", // Modern enough for browser compatibility
     "module": "ESNext", // Use native ES modules for output
+    "lib": ["ES2015", "DOM", "DOM.Iterable"], // Specify the library to include in the compilation
+    "moduleResolution": "node", // Resolve modules in a Node.js-style
+    "baseUrl": ".", // Set the base URL for resolving imports
+    "paths": {
+      "@/*": ["src/*"] // Map aliases to source files
+    },
+    "rootDir": "./src", // Root directory for source files
+    "outDir": "./types", // Output directory for declaration files
+    // Type Checking
+    "strict": true, // Enable all strict type-checking options
+    "noUnusedLocals": true, // Report errors on unused locals
+    "noUnusedParameters": true, // Report errors on unused parameters
+    "forceConsistentCasingInFileNames": true, // Ensure consistent casing in module imports
+    "skipLibCheck": true, // Skip type checking of declaration files from dependencies
+    "isolatedModules": true, // Enable isolated modules
+    // JavaScript Support
     "allowJs": true, // Allow compiling JavaScript files
     "checkJs": false, // Enable type checking on .js files using JSDoc
-    "declaration": true, // Generate declaration (.d.ts) files
-    "declarationMap": true, // Create sourcemaps for declarations for easier debugging
-    "emitDeclarationOnly": false, // Only emit declarations (since your build is handled by Rollup)
-    "outDir": "./types", // Output directory for declaration files
-    "rootDir": "./src", // Root directory for source files
-    "strict": true, // Enable all strict type-checking options
-    "skipLibCheck": true, // Skip type checking of declaration files from dependencies
-    "forceConsistentCasingInFileNames": true, // Ensure consistent casing in module imports
-    "moduleResolution": "node", // Resolve modules in a Node.js-style
+    // Module Resolution
     "esModuleInterop": true, // Enable compatibility with CommonJS modules
     "allowSyntheticDefaultImports": true, // Allow default imports from CommonJS modules
     "resolveJsonModule": true, // Enable JSON module resolution
-    "isolatedModules": true, // Enable isolated modules
-    "noEmit": false // Emit output files
+    // Emit Configuration
+    "declaration": true, // Generate declaration (.d.ts) files
+    "declarationMap": true, // Create sourcemaps for declarations for easier debugging
+    "sourceMap": true, // Generate source maps
+    "emitDeclarationOnly": true, // Only emit declarations (since the build is handled by Rollup)
+    "noEmit": false, // Emit output files
+    // Additional Checks
+    "verbatimModuleSyntax": true, // Allow the use of the module keyword in import paths
   },
   "include": [
-    "src/**/*.js" // Include all JavaScript source files in the src directory
+    "src/**/*" // Include all JavaScript source files in the src directory
   ],
-  "exclude": ["node_modules", "dist", "test"]
+  "exclude": ["node_modules", "dist", "test"] // Exclude node_modules, dist, and test directories
 }
