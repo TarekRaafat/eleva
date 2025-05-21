@@ -135,10 +135,10 @@ Preliminary benchmarks illustrate Eleva's efficiency compared to popular framewo
 
 | **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
 | ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **2**              | **0.05**                     | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
-| **React** (Virtual DOM)       | 4.1                   | 5.34                         | 0.020                    | 0.25                       | 9.71                                           |
-| **Vue** (Reactive State)      | 45                   | 4.72                         | 0.021                    | 3.10                       | 13.21                                           |
-| **Angular** (Two-way Binding) | 62                   | 5.26                        | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
+| **Eleva** (Direct DOM)        | **2**                | **0.05**                   | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
+| **React** (Virtual DOM)       | 4.1                  | 5.34                       | 0.020                    | 0.25                       | 9.71                                            |
+| **Vue** (Reactive State)      | 45                   | 4.72                       | 0.021                    | 3.10                       | 13.21                                           |
+| **Angular** (Two-way Binding) | 62                   | 5.26                       | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
 
 Detailed [Benchmark Metrics Report](https://github.com/TarekRaafat/eleva/blob/master/BENCHMARK.md)
 
@@ -1229,6 +1229,7 @@ Join our community for support, discussions, and collaboration:
 - **GitHub Discussions:** For general questions or new ideas please start a discussion on [Eleva Discussions](https://github.com/TarekRaafat/eleva/discussions)
 - **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
 - **Stack Overflow:** For technical questions and support, please post your question on Stack Overflow using any of these tags [eleva](https://stackoverflow.com/questions/tagged/eleva), [eleva.js](https://stackoverflow.com/questions/tagged/eleva.js)
+- **Reddit:** Join our subreddit community at [r/elevajs](https://www.reddit.com/r/elevajs/) to share projects, ask questions, and connect with other developers
 - **Discord:** Connect with us on [Discord](https://discord.gg/Dg7cMKpvyZ) to discuss eleva.js, ask questions, and contribute!
 - **Telegram:** For general questions, new ideas please, or even support join us on our [Telegram](https://t.me/+TcMXcHsRX9tkMmI0) group for realtime feedback.
 
