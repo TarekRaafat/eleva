@@ -72,6 +72,10 @@ export class Renderer {
       const oldNode = oldChildren[i];
       const newNode = newChildren[i];
 
+      if (oldNode?._eleva_instance) {
+        continue;
+      }
+
       if (!oldNode && newNode) {
         oldParent.appendChild(newNode.cloneNode(true));
         continue;

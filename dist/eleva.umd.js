@@ -1,4 +1,4 @@
-/*! Eleva v1.2.15-beta | MIT License | https://elevajs.com */
+/*! Eleva v1.2.16-beta | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -295,6 +295,9 @@
       for (let i = 0; i < maxLength; i++) {
         const oldNode = oldChildren[i];
         const newNode = newChildren[i];
+        if (oldNode?._eleva_instance) {
+          continue;
+        }
         if (!oldNode && newNode) {
           oldParent.appendChild(newNode.cloneNode(true));
           continue;
@@ -379,7 +382,7 @@
    * @typedef {Object} ComponentDefinition
    * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
    *           Optional setup function that initializes the component's state and returns reactive data
-   * @property {function(Object<string, any>): string} template
+   * @property {function(Object<string, any>): string|Promise<string>} template
    *           Required function that defines the component's HTML structure
    * @property {function(Object<string, any>): string} [style]
    *           Optional function that provides component-scoped CSS styles
@@ -510,6 +513,9 @@
      */
     async mount(container, compName, props = {}) {
       if (!container) throw new Error(`Container not found: ${container}`);
+      if (container._eleva_instance) {
+        return container._eleva_instance;
+      }
 
       /** @type {ComponentDefinition} */
       const definition = typeof compName === "string" ? this._components.get(compName) : compName;
@@ -562,6 +568,7 @@
        *   - unmount: Function to clean up and unmount the component
        */
       const processMount = async data => {
+        /** @type {Object<string, any>} */
         const mergedContext = {
           ...context,
           ...data
@@ -581,15 +588,18 @@
         }
 
         /**
-         * Renders the component by parsing the template, patching the DOM,
-         * processing events, injecting styles, and mounting child components.
+         * Renders the component by:
+         * 1. Processing the template
+         * 2. Updating the DOM
+         * 3. Processing events, injecting styles, and mounting child components.
          */
         const render = async () => {
-          const newHtml = TemplateEngine.parse(template(mergedContext), mergedContext);
+          const templateResult = await template(mergedContext);
+          const newHtml = TemplateEngine.parse(templateResult, mergedContext);
           this.renderer.patchDOM(container, newHtml);
           this._processEvents(container, mergedContext, cleanupListeners);
-          this._injectStyles(container, compName, style, mergedContext);
-          await this._mountComponents(container, children, childInstances);
+          if (style) this._injectStyles(container, compName, style, mergedContext);
+          if (children) await this._mountComponents(container, children, childInstances);
           if (!this._isMounted) {
             mergedContext.onMount && mergedContext.onMount();
             this._isMounted = true;
@@ -607,7 +617,7 @@
           if (val instanceof Signal) watcherUnsubscribers.push(val.watch(render));
         }
         await render();
-        return {
+        const instance = {
           container,
           data: mergedContext,
           /**
@@ -621,8 +631,11 @@
             for (const child of childInstances) child.unmount();
             mergedContext.onUnmount && mergedContext.onUnmount();
             container.innerHTML = "";
+            delete container._eleva_instance;
           }
         };
+        container._eleva_instance = instance;
+        return instance;
       };
 
       // Handle asynchronous setup.
@@ -688,7 +701,6 @@
      * @returns {void}
      */
     _injectStyles(container, compName, styleFn, context) {
-      if (!styleFn) return;
       let styleEl = container.querySelector(`style[data-eleva-style="${compName}"]`);
       if (!styleEl) {
         styleEl = document.createElement("style");
@@ -747,20 +759,15 @@
      * };
      */
     async _mountComponents(container, children, childInstances) {
-      if (!children) return;
-
-      // Clean up existing instances
-      for (const child of childInstances) child.unmount();
-      childInstances.length = 0;
-
-      // Mount explicitly defined children components
       for (const [selector, component] of Object.entries(children)) {
         if (!selector) continue;
         for (const el of container.querySelectorAll(selector)) {
           if (!(el instanceof HTMLElement)) continue;
           const props = this._extractProps(el, ":");
           const instance = await this.mount(el, component, props);
-          if (instance) childInstances.push(instance);
+          if (instance && !childInstances.includes(instance)) {
+            childInstances.push(instance);
+          }
         }
       }
     }

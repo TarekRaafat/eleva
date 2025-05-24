@@ -15,7 +15,7 @@
  * @example
  * // Measuring framework load time
  * const { duration } = measurePerformance(() => {
- *   window.Eleva = require("../../../dist/eleva.min.js");
+ *   window.Eleva = require("../../../dist/eleva.umd.min.js");
  * });
  * console.log(`Load time: ${duration.toFixed(2)}ms`);
  *
@@ -151,7 +151,7 @@ describe("Eleva.js Load Time Performance", () => {
    */
   test("should load framework within performance budget", () => {
     const { duration } = measurePerformance(() => {
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
     });
 
     console.log(`Framework load time: ${duration.toFixed(2)}ms`);
@@ -179,7 +179,7 @@ describe("Eleva.js Load Time Performance", () => {
    */
   test("should initialize basic component within performance budget", () => {
     const { duration } = measurePerformance(() => {
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
 
       document.body.innerHTML = `<div id="app"></div>`;
       const appContainer = document.getElementById("app");
@@ -218,7 +218,7 @@ describe("Eleva.js Load Time Performance", () => {
    */
   test("should handle multiple component initializations efficiently", () => {
     const { duration } = measurePerformance(() => {
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
 
       document.body.innerHTML = `<div id="app"></div>`;
 
@@ -261,7 +261,7 @@ describe("Eleva.js Load Time Performance", () => {
   test("should maintain consistent load time across multiple runs", () => {
     const metrics = measureMultipleRuns(() => {
       window.Eleva = undefined;
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
     });
 
     logPerformanceMetrics(metrics);
@@ -296,12 +296,12 @@ describe("Eleva.js Load Time Performance", () => {
     // Cold load (first time)
     const coldMetrics = measureMultipleRuns(() => {
       window.Eleva = undefined;
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
     }, 3);
 
     // Warm load (subsequent times)
     const warmMetrics = measureMultipleRuns(() => {
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
     }, 3);
 
     console.log("\nCold Load Metrics:");
@@ -347,7 +347,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group dom-updates
    */
   test("should update DOM efficiently when state changes", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
 
@@ -417,7 +417,7 @@ describe("Eleva.js Load Time Performance", () => {
    */
   test("should maintain acceptable peak memory usage", () => {
     const { peakMemoryKB } = measureMemoryUsage(() => {
-      window.Eleva = require("../../../dist/eleva.min.js");
+      window.Eleva = require("../../../dist/eleva.umd.min.js");
       document.body.innerHTML = `<div id="app"></div>`;
       const appContainer = document.getElementById("app");
       const app = new window.Eleva("TestApp");
@@ -461,7 +461,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group reactivity
    */
   test("should batch reactive updates efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -521,7 +521,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group lifecycle
    */
   test("should execute lifecycle hooks efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -576,7 +576,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group composition
    */
   test("should render nested components efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -656,7 +656,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group events
    */
   test("should handle events efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -716,7 +716,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group templates
    */
   test("should render complex templates efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -833,7 +833,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group directives
    */
   test("should execute directives efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -921,7 +921,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group communication
    */
   test("should handle component communication efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -996,7 +996,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group async
    */
   test("should handle async operations efficiently", async () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");
@@ -1076,7 +1076,7 @@ describe("Eleva.js Load Time Performance", () => {
    * @group lists
    */
   test("should render large lists efficiently", () => {
-    window.Eleva = require("../../../dist/eleva.min.js");
+    window.Eleva = require("../../../dist/eleva.umd.min.js");
     document.body.innerHTML = `<div id="app"></div>`;
     const appContainer = document.getElementById("app");
     const app = new window.Eleva("TestApp");

@@ -332,6 +332,16 @@ describe("Eleva", () => {
     app.use(myPlugin, { msg: "Plugin Works" });
     expect(app.testPlugin()).toBe("Plugin Works");
   });
+
+  test("should return existing instance if container already has _eleva_instance", async () => {
+    const component = {
+      template: () => `<div>Test</div>`,
+    };
+    app.component("test-comp", component);
+    const instance1 = await app.mount(appContainer, "test-comp");
+    const instance2 = await app.mount(appContainer, "test-comp");
+    expect(instance2).toBe(instance1);
+  });
 });
 
 /**
@@ -557,8 +567,11 @@ describe("Children Components & Passing Props", () => {
     app.component("child-comp", ChildComponent1);
 
     // Mount the parent component with the first child
-    await app.mount(appContainer, "parent-comp");
+    const parentInstance = await app.mount(appContainer, "parent-comp");
     expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
+
+    // Unmount the parent before remounting
+    parentInstance.unmount();
 
     // Update both the child component registration and the parent's children definition
     app.component("child-comp", ChildComponent2);

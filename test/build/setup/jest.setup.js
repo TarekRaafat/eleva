@@ -1,4 +1,4 @@
-import Eleva from "../../../dist/eleva.min.js";
+import Eleva from "../../../dist/eleva.umd.min.js";
 window.Eleva = Eleva;
 
 // Add any global mocks or configurations specific to build tests

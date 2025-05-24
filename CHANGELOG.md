@@ -6,7 +6,74 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.15-beta 🎉 (20-05-2025)
+## v1.2.16-beta 🎉 (24-05-2025)
+
+### 📝 Release Notes
+
+#### 🎛️ Changed
+
+- **Component Instance Management**
+  - Added instance caching to prevent duplicate mounting of components
+  - Improved component instance tracking with `_eleva_instance` property
+  - Enhanced component reuse logic for better performance
+  - Added support for returning existing instances when remounting
+
+- **Template Processing**
+  - Added support for async template functions
+  - Enhanced template result handling with Promise support
+  - Improved template processing flow with better error handling
+
+- **Renderer Optimization**
+  - Added protection for mounted component nodes during diffing
+  - Improved DOM diffing algorithm to respect component boundaries
+  - Enhanced node comparison logic to prevent unnecessary updates
+  - Added skip logic for nodes with existing component instances
+
+#### 🔧 Fixed
+
+- **Child Components Rendering**
+  - Fixed critical issue with child components being incorrectly re-rendered
+  - Improved child component lifecycle management
+  - Enhanced component instance tracking and cleanup
+  - Fixed potential memory leaks in component mounting/unmounting
+  - Added proper handling of component instance references
+
+- **Component Mounting**
+  - Fixed issue with duplicate component instances
+  - Improved component instance cleanup during unmounting
+  - Enhanced component mounting validation
+  - Fixed edge cases in component replacement scenarios
+
+### 💻 Developer Notes
+
+#### ⚠️ Breaking Changes
+- **Template Function Signature**: Template functions can now return either a string or a Promise<string>
+  ```javascript
+  // Old way
+  template: (ctx) => `<div>${ctx.data}</div>`
+  
+  // New way
+  template: async (ctx) => `<div>${await ctx.data}</div>`
+  ```
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More reliable child component rendering
+  - Better component instance management
+  - Improved performance through instance caching
+  - Enhanced async template support
+  - Better memory management
+  - More stable component lifecycle
+
+- **For Plugin Developers:**
+  - More reliable component mounting process
+  - Better handling of component instances
+  - Improved async template support
+  - Enhanced component lifecycle management
+
+---
+
+## v1.2.15-beta (20-05-2025)
 
 ### 📝 Release Notes
 

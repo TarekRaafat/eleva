@@ -168,7 +168,7 @@ declare class Renderer {
  * @typedef {Object} ComponentDefinition
  * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {function(Object<string, any>): string} template
+ * @property {function(Object<string, any>): string|Promise<string>} template
  *           Required function that defines the component's HTML structure
  * @property {function(Object<string, any>): string} [style]
  *           Optional function that provides component-scoped CSS styles
@@ -375,7 +375,7 @@ type ComponentDefinition = {
      */
     template: (arg0: {
         [x: string]: any;
-    }) => string;
+    }) => string | Promise<string>;
     /**
      * Optional function that provides component-scoped CSS styles
      */

@@ -771,4 +771,32 @@ describe("Renderer", () => {
     renderer._updateAttributes(oldEl, newEl);
     expect(oldEl.getAttribute(ariaAttr)).toBe(ariaValue);
   });
+
+  /**
+   * Tests handling of nodes with _eleva_instance property
+   *
+   * Verifies:
+   * - Nodes with _eleva_instance property are skipped during diffing
+   * - Old nodes remain unchanged
+   *
+   * @group rendering
+   * @group dom
+   */
+  test("should skip diffing nodes with _eleva_instance", () => {
+    const oldParent = document.createElement("div");
+    const oldNode = document.createElement("div");
+    oldNode._eleva_instance = { some: "data" };
+    oldParent.appendChild(oldNode);
+
+    const newParent = document.createElement("div");
+    const newNode = document.createElement("div");
+    newNode.textContent = "New Content";
+    newParent.appendChild(newNode);
+
+    renderer._diff(oldParent, newParent);
+
+    // The old node should remain unchanged because it has _eleva_instance
+    expect(oldParent.firstChild).toBe(oldNode);
+    expect(oldParent.firstChild.textContent).not.toBe("New Content");
+  });
 });
