@@ -81,6 +81,12 @@ export class Renderer {
         continue;
       }
       if (oldNode && !newNode) {
+        if (
+          oldNode.nodeName === "STYLE" &&
+          oldNode.hasAttribute("data-e-style")
+        ) {
+          continue;
+        }
         oldParent.removeChild(oldNode);
         continue;
       }
@@ -127,16 +133,8 @@ export class Renderer {
     const oldAttrs = oldEl.attributes;
     const newAttrs = newEl.attributes;
 
-    // Remove old attributes
-    for (const { name } of oldAttrs) {
-      if (!newEl.hasAttribute(name)) {
-        oldEl.removeAttribute(name);
-      }
-    }
-
     // Update/add new attributes
-    for (const attr of newAttrs) {
-      const { name, value } = attr;
+    for (const { name, value } of newAttrs) {
       if (name.startsWith("@")) continue;
 
       if (oldEl.getAttribute(name) === value) continue;
@@ -170,6 +168,13 @@ export class Renderer {
             oldEl[prop] = value;
           }
         }
+      }
+    }
+
+    // Remove old attributes
+    for (const { name } of oldAttrs) {
+      if (!newEl.hasAttribute(name)) {
+        oldEl.removeAttribute(name);
       }
     }
   }
