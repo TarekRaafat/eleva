@@ -799,4 +799,28 @@ describe("Renderer", () => {
     expect(oldParent.firstChild).toBe(oldNode);
     expect(oldParent.firstChild.textContent).not.toBe("New Content");
   });
+
+  /**
+   * Tests skipping removal of <style> elements with data-e-style attribute
+   *
+   * Verifies:
+   * - <style data-e-style> nodes are not removed during diffing
+   *
+   * @group rendering
+   * @group dom
+   * @group coverage
+   */
+  test("should skip removal of <style> elements with data-e-style attribute", () => {
+    const container = document.createElement("div");
+    const style = document.createElement("style");
+    style.setAttribute("data-e-style", "");
+    container.appendChild(style);
+
+    const tempContainer = document.createElement("div"); // No style in new DOM
+
+    renderer._diff(container, tempContainer);
+
+    // The style element should still be present
+    expect(container.querySelector("style[data-e-style]")).not.toBeNull();
+  });
 });

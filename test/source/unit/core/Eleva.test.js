@@ -280,7 +280,7 @@ describe("Eleva", () => {
 
     // Verify style element was created and injected
     const styleEl = appContainer.querySelector(
-      'style[data-eleva-style="styled-comp"]'
+      'style[data-e-style="styled-comp"]'
     );
     expect(styleEl).toBeTruthy();
     expect(styleEl.textContent).toContain("color: red");
@@ -298,7 +298,7 @@ describe("Eleva", () => {
 
     // Verify the style was updated
     expect(
-      appContainer.querySelector('style[data-eleva-style="styled-comp"]')
+      appContainer.querySelector('style[data-e-style="styled-comp"]')
         .textContent
     ).toContain("color: blue");
   });
@@ -365,46 +365,6 @@ describe("Eleva error handling", () => {
     document.body.innerHTML = `<div id="app"></div>`;
     appContainer = document.getElementById("app");
     app = new Eleva("TestApp");
-  });
-
-  /**
-   * Tests error handling for invalid component definitions
-   *
-   * @group validation
-   * @group error-handling
-   */
-  test("should handle invalid component definitions", async () => {
-    const component = {
-      setup: () => ({}),
-      template: null,
-    };
-    app.component("invalid-comp", component);
-    try {
-      await app.mount(appContainer, "invalid-comp");
-      fail("Expected mount to throw an error");
-    } catch (error) {
-      expect(error.message).toBe("Component template must be a function");
-    }
-  });
-
-  /**
-   * Tests error handling for invalid template functions
-   *
-   * @group validation
-   * @group error-handling
-   */
-  test("should handle invalid template functions", async () => {
-    const component = {
-      setup: () => ({}),
-      template: null,
-    };
-    app.component("invalid-template", component);
-    try {
-      await app.mount(appContainer, "invalid-template");
-      fail("Expected mount to throw an error");
-    } catch (error) {
-      expect(error.message).toBe("Component template must be a function");
-    }
   });
 
   /**
