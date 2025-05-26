@@ -168,10 +168,10 @@ declare class Renderer {
  * @typedef {Object} ComponentDefinition
  * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {function(Object<string, any>): string|Promise<string>} template
+ * @property {(function(Object<string, any>): string|Promise<string>|string)} template
  *           Required function that defines the component's HTML structure
- * @property {function(Object<string, any>): string} [style]
- *           Optional function that provides component-scoped CSS styles
+ * @property {(function(Object<string, any>): string)|string} [style]
+ *           Optional function or string that provides component-scoped CSS styles
  * @property {Object<string, ComponentDefinition>} [children]
  *           Optional object defining nested child components
  */
@@ -264,7 +264,7 @@ declare class Eleva {
      * @example
      * app.component("myButton", {
      *   template: (ctx) => `<button>${ctx.props.text}</button>`,
-     *   style: () => "button { color: blue; }"
+     *   style: `button { color: blue; }`
      * });
      */
     public component(name: string, definition: ComponentDefinition): Eleva;
@@ -317,7 +317,7 @@ declare class Eleva {
      * @private
      * @param {HTMLElement} container - The container element where styles should be injected.
      * @param {string} compName - The component name used to identify the style element.
-     * @param {function(Object<string, any>): string} [styleFn] - Optional function that returns CSS styles as a string.
+     * @param {(function(Object<string, any>): string)|string} styleDef - The component's style definition (function or string).
      * @param {Object<string, any>} context - The current component context for style interpolation.
      * @returns {void}
      */
@@ -373,13 +373,13 @@ type ComponentDefinition = {
     /**
      *           Required function that defines the component's HTML structure
      */
-    template: (arg0: {
+    template: ((arg0: {
         [x: string]: any;
-    }) => string | Promise<string>;
+    }) => string | Promise<string> | string);
     /**
-     * Optional function that provides component-scoped CSS styles
+     * Optional function or string that provides component-scoped CSS styles
      */
-    style?: ((arg0: {
+    style?: string | ((arg0: {
         [x: string]: any;
     }) => string) | undefined;
     /**

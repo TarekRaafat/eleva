@@ -6,7 +6,65 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.16-beta 🎉 (24-05-2025)
+## v1.2.17-beta 🎉 (24-05-2025)
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- **Template and Style System**
+  - Added support for static template strings in addition to template functions
+  - Added style content comparison to prevent unnecessary updates
+  - Added protection for style elements during DOM diffing
+  - Added better type support for static and dynamic templates/styles
+
+#### 🎛️ Changed
+
+- **Template and Style Handling**
+  - Enhanced style handling to support both static strings and dynamic functions
+  - Improved style element attribute naming for better consistency
+  - Enhanced style element preservation during DOM updates
+
+- **Renderer Optimization**
+  - Improved attribute update order for better performance
+  - Enhanced DOM diffing algorithm to handle style elements more efficiently
+  - Optimized attribute comparison and update logic
+
+- **Type System**
+  - Updated type definitions for template and style properties
+  - Enhanced JSDoc annotations for better type inference
+  - Improved type safety in core modules
+
+#### 🔧 Fixed
+
+- **Style Element Handling**
+  - Fixed issue with style elements being incorrectly removed during updates
+  - Improved style element attribute consistency
+  - Enhanced style content update logic
+  - Fixed potential style leakage between components
+
+### 💻 Developer Notes
+
+#### ⚠️ Breaking Changes
+- None. This update maintains backward compatibility while improving internal behavior.
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More flexible template and style definitions
+  - Better style element management
+  - Improved DOM update performance
+  - Enhanced type safety
+  - Better developer experience with static templates/styles
+
+- **For Plugin Developers:**
+  - More reliable style handling
+  - Better type definitions for plugin development
+  - Enhanced component styling capabilities
+  - Improved style isolation between components
+
+---
+
+## v1.2.16-beta (24-05-2025)
 
 ### 📝 Release Notes
 

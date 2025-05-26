@@ -1,4 +1,4 @@
-/*! Eleva v1.2.16-beta | MIT License | https://elevajs.com */
+/*! Eleva v1.2.17-beta | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -303,6 +303,9 @@
           continue;
         }
         if (oldNode && !newNode) {
+          if (oldNode.nodeName === "STYLE" && oldNode.hasAttribute("data-e-style")) {
+            continue;
+          }
           oldParent.removeChild(oldNode);
           continue;
         }
@@ -339,21 +342,11 @@
       const oldAttrs = oldEl.attributes;
       const newAttrs = newEl.attributes;
 
-      // Remove old attributes
-      for (const {
-        name
-      } of oldAttrs) {
-        if (!newEl.hasAttribute(name)) {
-          oldEl.removeAttribute(name);
-        }
-      }
-
       // Update/add new attributes
-      for (const attr of newAttrs) {
-        const {
-          name,
-          value
-        } = attr;
+      for (const {
+        name,
+        value
+      } of newAttrs) {
         if (name.startsWith("@")) continue;
         if (oldEl.getAttribute(name) === value) continue;
         oldEl.setAttribute(name, value);
@@ -375,6 +368,15 @@
           }
         }
       }
+
+      // Remove old attributes
+      for (const {
+        name
+      } of oldAttrs) {
+        if (!newEl.hasAttribute(name)) {
+          oldEl.removeAttribute(name);
+        }
+      }
     }
   }
 
@@ -382,10 +384,10 @@
    * @typedef {Object} ComponentDefinition
    * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
    *           Optional setup function that initializes the component's state and returns reactive data
-   * @property {function(Object<string, any>): string|Promise<string>} template
+   * @property {(function(Object<string, any>): string|Promise<string>|string)} template
    *           Required function that defines the component's HTML structure
-   * @property {function(Object<string, any>): string} [style]
-   *           Optional function that provides component-scoped CSS styles
+   * @property {(function(Object<string, any>): string)|string} [style]
+   *           Optional function or string that provides component-scoped CSS styles
    * @property {Object<string, ComponentDefinition>} [children]
    *           Optional object defining nested child components
    */
@@ -483,7 +485,7 @@
      * @example
      * app.component("myButton", {
      *   template: (ctx) => `<button>${ctx.props.text}</button>`,
-     *   style: () => "button { color: blue; }"
+     *   style: `button { color: blue; }`
      * });
      */
     component(name, definition) {
@@ -513,20 +515,17 @@
      */
     async mount(container, compName, props = {}) {
       if (!container) throw new Error(`Container not found: ${container}`);
-      if (container._eleva_instance) {
-        return container._eleva_instance;
-      }
+      if (container._eleva_instance) return container._eleva_instance;
 
       /** @type {ComponentDefinition} */
       const definition = typeof compName === "string" ? this._components.get(compName) : compName;
       if (!definition) throw new Error(`Component "${compName}" not registered.`);
-      if (typeof definition.template !== "function") throw new Error("Component template must be a function");
 
       /**
        * Destructure the component definition to access core functionality.
        * - setup: Optional function for component initialization and state management
-       * - template: Required function that returns the component's HTML structure
-       * - style: Optional function for component-scoped CSS styles
+       * - template: Required function or string that returns the component's HTML structure
+       * - style: Optional function or string for component-scoped CSS styles
        * - children: Optional object defining nested child components
        */
       const {
@@ -594,7 +593,7 @@
          * 3. Processing events, injecting styles, and mounting child components.
          */
         const render = async () => {
-          const templateResult = await template(mergedContext);
+          const templateResult = typeof template === "function" ? await template(mergedContext) : template;
           const newHtml = TemplateEngine.parse(templateResult, mergedContext);
           this.renderer.patchDOM(container, newHtml);
           this._processEvents(container, mergedContext, cleanupListeners);
@@ -696,18 +695,20 @@
      * @private
      * @param {HTMLElement} container - The container element where styles should be injected.
      * @param {string} compName - The component name used to identify the style element.
-     * @param {function(Object<string, any>): string} [styleFn] - Optional function that returns CSS styles as a string.
+     * @param {(function(Object<string, any>): string)|string} styleDef - The component's style definition (function or string).
      * @param {Object<string, any>} context - The current component context for style interpolation.
      * @returns {void}
      */
-    _injectStyles(container, compName, styleFn, context) {
-      let styleEl = container.querySelector(`style[data-eleva-style="${compName}"]`);
+    _injectStyles(container, compName, styleDef, context) {
+      const newStyle = typeof styleDef === "function" ? TemplateEngine.parse(styleDef(context), context) : styleDef;
+      let styleEl = container.querySelector(`style[data-e-style="${compName}"]`);
+      if (styleEl && styleEl.textContent === newStyle) return;
       if (!styleEl) {
         styleEl = document.createElement("style");
-        styleEl.setAttribute("data-eleva-style", compName);
+        styleEl.setAttribute("data-e-style", compName);
         container.appendChild(styleEl);
       }
-      styleEl.textContent = TemplateEngine.parse(styleFn(context), context);
+      styleEl.textContent = newStyle;
     }
 
     /**
