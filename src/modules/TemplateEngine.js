@@ -14,6 +14,7 @@
 export class TemplateEngine {
   /**
    * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+   * @type {RegExp}
    */
   static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
@@ -24,7 +25,7 @@ export class TemplateEngine {
    * @public
    * @static
    * @param {string} template - The template string to parse.
-   * @param {Object} data - The data context for evaluating expressions.
+   * @param {Record<string, unknown>} data - The data context for evaluating expressions.
    * @returns {string} The parsed template with expressions replaced by their values.
    * @example
    * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
@@ -41,12 +42,14 @@ export class TemplateEngine {
   /**
    * Evaluates an expression in the context of the provided data object.
    * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
+   * The use of the `with` statement is necessary for expression evaluation but has security implications.
+   * Expressions should be carefully validated before evaluation.
    *
    * @public
    * @static
    * @param {string} expression - The expression to evaluate.
-   * @param {Object} data - The data context for evaluation.
-   * @returns {*} The result of the evaluation, or an empty string if evaluation fails.
+   * @param {Record<string, unknown>} data - The data context for evaluation.
+   * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
    * @example
    * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
    * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30

@@ -7,14 +7,66 @@ import { Renderer } from "../modules/Renderer.js";
 
 /**
  * @typedef {Object} ComponentDefinition
- * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
+ * @property {function(ComponentContext): (Object<string, unknown>|Promise<Object<string, unknown>>)} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {(function(Object<string, any>): string|Promise<string>|string)} template
+ * @property {(function(ComponentContext): string|Promise<string>|string)} template
  *           Required function that defines the component's HTML structure
- * @property {(function(Object<string, any>): string)|string} [style]
+ * @property {(function(ComponentContext): string)|string} [style]
  *           Optional function or string that provides component-scoped CSS styles
  * @property {Object<string, ComponentDefinition>} [children]
  *           Optional object defining nested child components
+ */
+
+/**
+ * @typedef {Object} ComponentContext
+ * @property {Object<string, unknown>} props
+ *           Component properties passed during mounting
+ * @property {Emitter} emitter
+ *           Event emitter instance for component event handling
+ * @property {function(unknown): Signal} signal
+ *           Factory function to create reactive Signal instances
+ * @property {function(LifecycleHookContext): void} [onBeforeMount]
+ *           Hook called before component mounting
+ * @property {function(LifecycleHookContext): void} [onMount]
+ *           Hook called after component mounting
+ * @property {function(LifecycleHookContext): void} [onBeforeUpdate]
+ *           Hook called before component update
+ * @property {function(LifecycleHookContext): void} [onUpdate]
+ *           Hook called after component update
+ * @property {function(UnmountHookContext): void} [onUnmount]
+ *           Hook called during component unmounting
+ */
+
+/**
+ * @typedef {Object} LifecycleHookContext
+ * @property {HTMLElement} container
+ *           The DOM element where the component is mounted
+ * @property {ComponentContext} context
+ *           The component's reactive state and context data
+ */
+
+/**
+ * @typedef {Object} UnmountHookContext
+ * @property {HTMLElement} container
+ *           The DOM element where the component is mounted
+ * @property {ComponentContext} context
+ *           The component's reactive state and context data
+ * @property {{
+ *   watchers: Array<() => void>,
+ *   listeners: Array<() => void>,
+ *   children: Array<MountResult>
+ * }} cleanup
+ *           Object containing cleanup functions and instances
+ */
+
+/**
+ * @typedef {Object} MountResult
+ * @property {HTMLElement} container
+ *           The DOM element where the component is mounted
+ * @property {ComponentContext} data
+ *           The component's reactive state and context data
+ * @property {function(): void} unmount
+ *           Function to clean up and unmount the component
  */
 
 /**
@@ -23,16 +75,6 @@ import { Renderer } from "../modules/Renderer.js";
  *           Function that installs the plugin into the Eleva instance
  * @property {string} name
  *           Unique identifier name for the plugin
- */
-
-/**
- * @typedef {Object} MountResult
- * @property {HTMLElement} container
- *           The DOM element where the component is mounted
- * @property {Object<string, any>} data
- *           The component's reactive state and context data
- * @property {function(): void} unmount
- *           Function to clean up and unmount the component
  */
 
 /**
@@ -55,13 +97,13 @@ export class Eleva {
    *
    * @public
    * @param {string} name - The unique identifier name for this Eleva instance.
-   * @param {Object<string, any>} [config={}] - Optional configuration object for the instance.
+   * @param {Object<string, unknown>} [config={}] - Optional configuration object for the instance.
    *        May include framework-wide settings and default behaviors.
    */
   constructor(name, config = {}) {
     /** @public {string} The unique identifier name for this Eleva instance */
     this.name = name;
-    /** @public {Object<string, any>} Optional configuration object for the Eleva instance */
+    /** @public {Object<string, unknown>} Optional configuration object for the Eleva instance */
     this.config = config;
     /** @public {Emitter} Instance of the event emitter for handling component events */
     this.emitter = new Emitter();
@@ -74,14 +116,6 @@ export class Eleva {
     this._components = new Map();
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     this._plugins = new Map();
-    /** @private {string[]} Array of lifecycle hook names supported by components */
-    this._lifecycleHooks = [
-      "onBeforeMount",
-      "onMount",
-      "onBeforeUpdate",
-      "onUpdate",
-      "onUnmount",
-    ];
     /** @private {boolean} Flag indicating if the root component is currently mounted */
     this._isMounted = false;
   }
@@ -93,7 +127,7 @@ export class Eleva {
    *
    * @public
    * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
-   * @param {Object<string, any>} [options={}] - Optional configuration options for the plugin.
+   * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
    * @returns {Eleva} The Eleva instance (for method chaining).
    * @example
    * app.use(myPlugin, { option1: "value1" });
@@ -133,7 +167,7 @@ export class Eleva {
    * @public
    * @param {HTMLElement} container - The DOM element where the component will be mounted.
    * @param {string|ComponentDefinition} compName - The name of the registered component or a direct component definition.
-   * @param {Object<string, any>} [props={}] - Optional properties to pass to the component.
+   * @param {Object<string, unknown>} [props={}] - Optional properties to pass to the component.
    * @returns {Promise<MountResult>}
    *          A Promise that resolves to an object containing:
    *          - container: The mounted component's container element
@@ -164,21 +198,12 @@ export class Eleva {
      */
     const { setup, template, style, children } = definition;
 
-    /**
-     * Creates the initial context object for the component instance.
-     * This context provides core functionality and will be merged with setup data.
-     * @type {Object<string, any>}
-     * @property {Object<string, any>} props - Component properties passed during mounting
-     * @property {Emitter} emitter - Event emitter instance for component event handling
-     * @property {function(any): Signal} signal - Factory function to create reactive Signal instances
-     * @property {Object<string, function(): void>} ...lifecycleHooks - Prepared lifecycle hook functions
-     */
+    /** @type {ComponentContext} */
     const context = {
       props,
       emitter: this.emitter,
-      /** @type {(v: any) => Signal<any>} */
+      /** @type {(v: unknown) => Signal<unknown>} */
       signal: (v) => new this.signal(v),
-      ...this._prepareLifecycleHooks(),
     };
 
     /**
@@ -189,14 +214,14 @@ export class Eleva {
      * 3. Rendering the component
      * 4. Managing component lifecycle
      *
-     * @param {Object<string, any>} data - Data returned from the component's setup function
+     * @param {Object<string, unknown>} data - Data returned from the component's setup function
      * @returns {Promise<MountResult>} An object containing:
      *   - container: The mounted component's container element
      *   - data: The component's reactive state and context
      *   - unmount: Function to clean up and unmount the component
      */
     const processMount = async (data) => {
-      /** @type {Object<string, any>} */
+      /** @type {ComponentContext} */
       const mergedContext = { ...context, ...data };
       /** @type {Array<() => void>} */
       const watcherUnsubscribers = [];
@@ -207,9 +232,19 @@ export class Eleva {
 
       // Execute before hooks
       if (!this._isMounted) {
-        mergedContext.onBeforeMount && mergedContext.onBeforeMount();
+        /** @type {LifecycleHookContext} */
+        mergedContext.onBeforeMount &&
+          mergedContext.onBeforeMount({
+            container,
+            context: mergedContext,
+          });
       } else {
-        mergedContext.onBeforeUpdate && mergedContext.onBeforeUpdate();
+        /** @type {LifecycleHookContext} */
+        mergedContext.onBeforeUpdate &&
+          mergedContext.onBeforeUpdate({
+            container,
+            context: mergedContext,
+          });
       }
 
       /**
@@ -232,10 +267,20 @@ export class Eleva {
           await this._mountComponents(container, children, childInstances);
 
         if (!this._isMounted) {
-          mergedContext.onMount && mergedContext.onMount();
+          /** @type {LifecycleHookContext} */
+          mergedContext.onMount &&
+            mergedContext.onMount({
+              container,
+              context: mergedContext,
+            });
           this._isMounted = true;
         } else {
-          mergedContext.onUpdate && mergedContext.onUpdate();
+          /** @type {LifecycleHookContext} */
+          mergedContext.onUpdate &&
+            mergedContext.onUpdate({
+              container,
+              context: mergedContext,
+            });
         }
       };
 
@@ -259,10 +304,20 @@ export class Eleva {
          * @returns {void}
          */
         unmount: () => {
+          /** @type {UnmountHookContext} */
+          mergedContext.onUnmount &&
+            mergedContext.onUnmount({
+              container,
+              context: mergedContext,
+              cleanup: {
+                watchers: watcherUnsubscribers,
+                listeners: cleanupListeners,
+                children: childInstances,
+              },
+            });
           for (const fn of watcherUnsubscribers) fn();
           for (const fn of cleanupListeners) fn();
           for (const child of childInstances) child.unmount();
-          mergedContext.onUnmount && mergedContext.onUnmount();
           container.innerHTML = "";
           delete container._eleva_instance;
         },
@@ -278,43 +333,32 @@ export class Eleva {
   }
 
   /**
-   * Prepares default no-operation lifecycle hook functions for a component.
-   * These hooks will be called at various stages of the component's lifecycle.
-   *
-   * @private
-   * @returns {Object<string, function(): void>} An object mapping lifecycle hook names to empty functions.
-   *         The returned object will be merged with the component's context.
-   */
-  _prepareLifecycleHooks() {
-    /** @type {Object<string, () => void>} */
-    const hooks = {};
-    for (const hook of this._lifecycleHooks) {
-      hooks[hook] = () => {};
-    }
-    return hooks;
-  }
-
-  /**
    * Processes DOM elements for event binding based on attributes starting with "@".
    * This method handles the event delegation system and ensures proper cleanup of event listeners.
    *
    * @private
    * @param {HTMLElement} container - The container element in which to search for event attributes.
-   * @param {Object<string, any>} context - The current component context containing event handler definitions.
-   * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
+   * @param {ComponentContext} context - The current component context containing event handler definitions.
+   * @param {Array<() => void>} cleanupListeners - Array to collect cleanup functions for each event listener.
    * @returns {void}
    */
   _processEvents(container, context, cleanupListeners) {
+    /** @type {NodeListOf<Element>} */
     const elements = container.querySelectorAll("*");
     for (const el of elements) {
+      /** @type {NamedNodeMap} */
       const attrs = el.attributes;
       for (let i = 0; i < attrs.length; i++) {
+        /** @type {Attr} */
         const attr = attrs[i];
 
         if (!attr.name.startsWith("@")) continue;
 
+        /** @type {keyof HTMLElementEventMap} */
         const event = attr.name.slice(1);
+        /** @type {string} */
         const handlerName = attr.value;
+        /** @type {(event: Event) => void} */
         const handler =
           context[handlerName] || TemplateEngine.evaluate(handlerName, context);
         if (typeof handler === "function") {
@@ -333,15 +377,17 @@ export class Eleva {
    * @private
    * @param {HTMLElement} container - The container element where styles should be injected.
    * @param {string} compName - The component name used to identify the style element.
-   * @param {(function(Object<string, any>): string)|string} styleDef - The component's style definition (function or string).
-   * @param {Object<string, any>} context - The current component context for style interpolation.
+   * @param {(function(ComponentContext): string)|string} styleDef - The component's style definition (function or string).
+   * @param {ComponentContext} context - The current component context for style interpolation.
    * @returns {void}
    */
   _injectStyles(container, compName, styleDef, context) {
+    /** @type {string} */
     const newStyle =
       typeof styleDef === "function"
         ? TemplateEngine.parse(styleDef(context), context)
         : styleDef;
+    /** @type {HTMLStyleElement|null} */
     let styleEl = container.querySelector(`style[data-e-style="${compName}"]`);
 
     if (styleEl && styleEl.textContent === newStyle) return;
@@ -361,7 +407,7 @@ export class Eleva {
    * @private
    * @param {HTMLElement} element - The DOM element to extract props from
    * @param {string} prefix - The prefix to look for in attributes
-   * @returns {Object<string, any>} An object containing the extracted props
+   * @returns {Record<string, string>} An object containing the extracted props
    * @example
    * // For an element with attributes:
    * // <div :name="John" :age="25">
@@ -404,7 +450,9 @@ export class Eleva {
       if (!selector) continue;
       for (const el of container.querySelectorAll(selector)) {
         if (!(el instanceof HTMLElement)) continue;
+        /** @type {Record<string, string>} */
         const props = this._extractProps(el, ":");
+        /** @type {MountResult} */
         const instance = await this.mount(el, component, props);
         if (instance && !childInstances.includes(instance)) {
           childInstances.push(instance);
