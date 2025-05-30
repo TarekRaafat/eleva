@@ -94,20 +94,6 @@ describe("Renderer", () => {
    * updates to a DOM container, serving as the bridge between template rendering
    * and DOM updates.
    *
-   * @example
-   * // Basic DOM patching
-   * const container = document.createElement("div");
-   * container.innerHTML = "<p>Old</p>";
-   * renderer.patchDOM(container, "<p>New</p>");
-   *
-   * // Complex DOM patching with multiple elements
-   * renderer.patchDOM(container, `
-   *   <div class="wrapper">
-   *     <p>First</p>
-   *     <p>Second</p>
-   *   </div>
-   * `);
-   *
    * @group rendering
    * @group dom
    */
@@ -129,33 +115,13 @@ describe("Renderer", () => {
    * Attribute synchronization ensures that element properties like class, style,
    * and data attributes are updated efficiently when component state changes.
    *
-   * @example
-   * // Basic attribute synchronization
-   * const oldEl = document.createElement("div");
-   * oldEl.setAttribute("data-test", "old");
-   *
-   * const newEl = document.createElement("div");
-   * newEl.setAttribute("data-test", "new");
-   *
-   * renderer._updateAttributes(oldEl, newEl);
-   *
-   * // Multiple attributes
-   * const oldEl = document.createElement("div");
-   * oldEl.setAttribute("class", "old-class");
-   * oldEl.setAttribute("data-test", "old");
-   *
-   * const newEl = document.createElement("div");
-   * newEl.setAttribute("class", "new-class");
-   * newEl.setAttribute("data-test", "new");
-   *
-   * renderer._updateAttributes(oldEl, newEl);
-   *
    * @group rendering
    * @group dom
    */
   test("should sync element attributes correctly", () => {
     const oldEl = document.createElement("div");
     oldEl.setAttribute("data-test", "old");
+    oldEl.setAttribute("class", "to-remove");
 
     const newEl = document.createElement("div");
     newEl.setAttribute("data-test", "new");
@@ -163,6 +129,7 @@ describe("Renderer", () => {
     renderer._updateAttributes(oldEl, newEl);
 
     expect(oldEl.getAttribute("data-test")).toBe("new");
+    expect(oldEl.hasAttribute("class")).toBe(false);
   });
 
   /**
@@ -234,63 +201,36 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests attribute removal functionality
-   *
-   * Verifies:
-   * - Attributes are removed correctly
-   * - DOM structure is maintained
-   *
-   * @group rendering
-   * @group dom
-   */
-  test("should remove attributes not present in new element", () => {
-    const oldEl = document.createElement("div");
-    oldEl.setAttribute("data-test", "old");
-
-    const newEl = document.createElement("div");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.hasAttribute("data-test")).toBe(false);
-  });
-
-  /**
-   * Tests properties mapped from attributes
-   *
-   * Verifies:
-   * - Properties are updated correctly
-   * - Changes are reflected in the DOM
-   *
-   * @group rendering
-   * @group dom
-   */
-  test("should update properties mapped from attributes", () => {
-    const oldEl = document.createElement("input");
-    oldEl.setAttribute("value", "old");
-
-    const newEl = document.createElement("input");
-    newEl.setAttribute("value", "new");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.value).toBe("new");
-  });
-
-  /**
-   * Tests handling of empty container and newHtml
+   * Tests handling of empty containers and newHtml
    *
    * Verifies:
    * - Empty containers are handled correctly
    * - New HTML is inserted correctly
+   * - Content is properly removed when the new template is empty
    *
    * @group rendering
    * @group dom
    * @group edge-cases
    */
-  test("should handle empty container and newHtml", () => {
-    const container = document.createElement("div");
-    renderer.patchDOM(container, "");
-    expect(container.innerHTML).toBe("");
+  test("should handle empty containers and newHtml", () => {
+    // Test empty container
+    const emptyContainer = document.createElement("div");
+    renderer.patchDOM(emptyContainer, "");
+    expect(emptyContainer.innerHTML).toBe("");
+
+    // Test empty oldParent and populated newParent
+    const container1 = document.createElement("div");
+    const tempContainer1 = document.createElement("div");
+    tempContainer1.innerHTML = `<p>New</p>`;
+    renderer._diff(container1, tempContainer1);
+    expect(container1.innerHTML).toBe(`<p>New</p>`);
+
+    // Test empty newParent and populated oldParent
+    const container2 = document.createElement("div");
+    container2.innerHTML = `<p>Old</p>`;
+    const tempContainer2 = document.createElement("div");
+    renderer._diff(container2, tempContainer2);
+    expect(container2.innerHTML).toBe("");
   });
 
   /**
@@ -317,47 +257,38 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests appending new nodes when oldNode is missing
+   * Tests appending and removing nodes
    *
    * Verifies:
    * - New nodes are appended correctly
-   * - DOM structure is maintained
-   *
-   * @group rendering
-   * @group dom
-   */
-  test("should append new nodes when oldNode is missing", () => {
-    const container = document.createElement("div");
-    container.innerHTML = "<p>Old</p>";
-
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = "<p>Old</p><span>New</span>";
-
-    renderer._diff(container, tempContainer);
-
-    expect(container.innerHTML).toBe("<p>Old</p><span>New</span>");
-  });
-
-  /**
-   * Tests removing old nodes when newNode is missing
-   *
-   * Verifies:
    * - Old nodes are removed correctly
    * - DOM structure is maintained
    *
    * @group rendering
    * @group dom
    */
-  test("should remove old nodes when newNode is missing", () => {
-    const container = document.createElement("div");
-    container.innerHTML = "<p>Old</p><span>Remove</span>";
+  test("should handle appending and removing nodes", () => {
+    // Test appending new nodes
+    const container1 = document.createElement("div");
+    container1.innerHTML = "<p>Old</p>";
 
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = "<p>Old</p>";
+    const tempContainer1 = document.createElement("div");
+    tempContainer1.innerHTML = "<p>Old</p><span>New</span>";
 
-    renderer._diff(container, tempContainer);
+    renderer._diff(container1, tempContainer1);
 
-    expect(container.innerHTML).toBe("<p>Old</p>");
+    expect(container1.innerHTML).toBe("<p>Old</p><span>New</span>");
+
+    // Test removing old nodes
+    const container2 = document.createElement("div");
+    container2.innerHTML = "<p>Old</p><span>Remove</span>";
+
+    const tempContainer2 = document.createElement("div");
+    tempContainer2.innerHTML = "<p>Old</p>";
+
+    renderer._diff(container2, tempContainer2);
+
+    expect(container2.innerHTML).toBe("<p>Old</p>");
   });
 
   /**
@@ -405,166 +336,61 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests removal of attributes no longer present
+   * Tests handling of special properties and attributes
    *
    * Verifies:
-   * - Attributes in the old element are removed if not in the new element
-   * - Multiple attributes are handled correctly
-   *
-   * This ensures complete synchronization of all attributes, not just
-   * changed or added ones.
-   *
-   * @group attributes
-   * @group removal
-   * @group multiple-attributes
-   */
-  test("should remove attributes not present in new element", () => {
-    const oldEl = document.createElement("div");
-    oldEl.setAttribute("data-test", "old");
-    oldEl.setAttribute("class", "to-remove");
-
-    const newEl = document.createElement("div");
-    newEl.setAttribute("data-test", "new");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.getAttribute("data-test")).toBe("new");
-    expect(oldEl.hasAttribute("class")).toBe(false);
-  });
-
-  /**
-   * Tests updating of mapped properties
-   *
-   * Verifies:
-   * - Special properties like value on input elements are properly updated
-   * - The attribute-to-property mapping works correctly
-   *
-   * This is critical for form elements where attributes and properties
-   * have different behaviors and synchronization requirements.
-   *
-   * @group form-elements
-   * @group special-properties
-   * @group attribute-property-mapping
-   */
-  test("should update mapped properties", () => {
-    const oldEl = document.createElement("input");
-    oldEl.setAttribute("value", "old");
-
-    const newEl = document.createElement("input");
-    newEl.setAttribute("value", "new");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.value).toBe("new");
-  });
-
-  /**
-   * Tests handling of deeply nested DOM structures
-   *
-   * Verifies:
-   * - The diff algorithm correctly traverses and updates nested structures
-   * - Changes at any level are properly applied
-   *
-   * This ensures the diffing algorithm works correctly with complex
-   * component hierarchies and deeply nested DOM trees.
-   *
-   * @example
-   * // Deeply nested structure update
-   * const container = document.createElement("div");
-   * container.innerHTML = `
-   *   <div class="wrapper">
-   *     <div class="header">
-   *       <h1>Title</h1>
-   *       <nav>
-   *         <a href="#">Link 1</a>
-   *         <a href="#">Link 2</a>
-   *       </nav>
-   *     </div>
-   *     <div class="content">
-   *       <p>Content</p>
-   *     </div>
-   *   </div>
-   * `;
-   *
-   * const newHtml = `
-   *   <div class="wrapper">
-   *     <div class="header">
-   *       <h1>New Title</h1>
-   *       <nav>
-   *         <a href="#">New Link 1</a>
-   *         <a href="#">New Link 2</a>
-   *       </nav>
-   *     </div>
-   *     <div class="content">
-   *       <p>New Content</p>
-   *     </div>
-   *   </div>
-   * `;
-   *
-   * renderer.patchDOM(container, newHtml);
+   * - Special properties are handled correctly
+   * - Boolean attributes are set properly
+   * - ARIA attributes are handled correctly
+   * - Data attributes are handled correctly
    *
    * @group rendering
    * @group dom
-   * @group edge-cases
+   * @group accessibility
    */
-  test("should handle deeply nested structures", () => {
-    const container = document.createElement("div");
-    container.innerHTML = `<div><p>Old</p></div>`;
+  test("should handle special properties and attributes", () => {
+    const oldEl = document.createElement("input");
+    const newEl = document.createElement("input");
 
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = `<div><p>New</p></div>`;
+    // Test value property
+    newEl.setAttribute("value", "test");
+    renderer._updateAttributes(oldEl, newEl);
+    expect(oldEl.value).toBe("test");
 
-    renderer._diff(container, tempContainer);
+    // Test boolean properties
+    newEl.setAttribute("checked", "");
+    newEl.setAttribute("disabled", "true");
+    newEl.setAttribute("readOnly", "readOnly");
+    newEl.setAttribute("multiple", "false");
+    renderer._updateAttributes(oldEl, newEl);
 
-    expect(container.innerHTML).toBe(`<div><p>New</p></div>`);
-  });
+    expect(oldEl.checked).toBe(true);
+    expect(oldEl.disabled).toBe(true);
+    expect(oldEl.readOnly).toBe(true);
+    expect(oldEl.multiple).toBe(false);
 
-  /**
-   * Tests handling of an empty old parent with content in the new parent
-   *
-   * Verifies:
-   * - Content is properly added when the old container is empty
-   *
-   * This test ensures the renderer correctly handles the initial population
-   * of previously empty containers.
-   *
-   * @group empty-container
-   * @group initial-render
-   * @group content-addition
-   */
-  test("should handle empty oldParent and populated newParent", () => {
-    const container = document.createElement("div");
+    // Test ARIA attributes
+    const oldDiv = document.createElement("div");
+    const newDiv = document.createElement("div");
 
-    const tempContainer = document.createElement("div");
-    tempContainer.innerHTML = `<p>New</p>`;
+    newDiv.setAttribute("aria-label", "test label");
+    newDiv.setAttribute("aria-hidden", "true");
+    newDiv.setAttribute("aria-invalid-type", "spelling");
 
-    renderer._diff(container, tempContainer);
+    renderer._updateAttributes(oldDiv, newDiv);
 
-    expect(container.innerHTML).toBe(`<p>New</p>`);
-  });
+    expect(oldDiv.getAttribute("aria-label")).toBe("test label");
+    expect(oldDiv.getAttribute("aria-hidden")).toBe("true");
+    expect(oldDiv.getAttribute("aria-invalid-type")).toBe("spelling");
 
-  /**
-   * Tests handling of an empty new parent with content in the old parent
-   *
-   * Verifies:
-   * - Content is properly removed when the new template is empty
-   *
-   * This test ensures the renderer correctly clears all content when
-   * the new template is empty.
-   *
-   * @group content-clearing
-   * @group empty-template
-   * @group dom-cleanup
-   */
-  test("should handle empty newParent and populated oldParent", () => {
-    const container = document.createElement("div");
-    container.innerHTML = `<p>Old</p>`;
+    // Test data attributes
+    newDiv.setAttribute("data-test", "value");
+    newDiv.setAttribute("data-custom", "custom");
 
-    const tempContainer = document.createElement("div");
+    renderer._updateAttributes(oldDiv, newDiv);
 
-    renderer._diff(container, tempContainer);
-
-    expect(container.innerHTML).toBe("");
+    expect(oldDiv.dataset.test).toBe("value");
+    expect(oldDiv.dataset.custom).toBe("custom");
   });
 
   /**
@@ -573,6 +399,7 @@ describe("Renderer", () => {
    * Verifies:
    * - Error is thrown for non-HTMLElement container
    * - Error is thrown for non-string newHtml
+   * - Error is caught and rethrown with appropriate message
    *
    * @group rendering
    * @group error-handling
@@ -589,187 +416,66 @@ describe("Renderer", () => {
     expect(() => renderer.patchDOM(container, null)).toThrow(
       "newHtml must be a string"
     );
-  });
 
-  /**
-   * Tests handling of special properties in updateAttributes
-   *
-   * Verifies:
-   * - Special properties are handled correctly
-   * - Boolean attributes are set properly
-   *
-   * @group rendering
-   * @group dom
-   */
-  test("should handle special properties correctly", () => {
-    const oldEl = document.createElement("input");
-    const newEl = document.createElement("input");
-
-    // Test value property
-    newEl.setAttribute("value", "test");
-    renderer._updateAttributes(oldEl, newEl);
-    expect(oldEl.value).toBe("test");
-
-    // Test boolean properties with different values
-    newEl.setAttribute("checked", ""); // empty string should be true
-    newEl.setAttribute("disabled", "true"); // explicit true
-    newEl.setAttribute("readOnly", "readOnly"); // property name match
-    newEl.setAttribute("multiple", "false"); // explicit false
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.checked).toBe(true);
-    expect(oldEl.disabled).toBe(true);
-    expect(oldEl.readOnly).toBe(true);
-    expect(oldEl.multiple).toBe(false);
-  });
-
-  /**
-   * Tests handling of ARIA attributes
-   *
-   * Verifies:
-   * - ARIA attributes are handled correctly
-   * - Attributes are properly converted to properties
-   *
-   * @group rendering
-   * @group accessibility
-   */
-  test("should handle ARIA attributes correctly", () => {
-    const oldEl = document.createElement("div");
-    const newEl = document.createElement("div");
-
-    newEl.setAttribute("aria-label", "test label");
-    newEl.setAttribute("aria-hidden", "true");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    // Check the attributes directly since ARIA properties may not be available in JSDOM
-    expect(oldEl.getAttribute("aria-label")).toBe("test label");
-    expect(oldEl.getAttribute("aria-hidden")).toBe("true");
-  });
-
-  /**
-   * Tests handling of data attributes
-   *
-   * Verifies:
-   * - Data attributes are handled correctly
-   * - Attributes are properly converted to dataset properties
-   *
-   * @group rendering
-   * @group dom
-   */
-  test("should handle data attributes correctly", () => {
-    const oldEl = document.createElement("div");
-    const newEl = document.createElement("div");
-
-    // Use camelCase in dataset to avoid invalid property names
-    newEl.setAttribute("data-test", "value");
-    newEl.setAttribute("data-custom", "custom");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.dataset.test).toBe("value");
-    expect(oldEl.dataset.custom).toBe("custom");
-  });
-
-  /**
-   * Tests error handling in patchDOM for failed DOM operations
-   *
-   * Verifies:
-   * - Error is caught and rethrown with appropriate message
-   *
-   * @group rendering
-   * @group error-handling
-   */
-  test("should handle DOM operation failures in patchDOM", () => {
-    // Mock document.createElement to return our special div
-    const tempDiv = document.createElement("div");
-    Object.defineProperty(tempDiv, "innerHTML", {
+    // Test DOM operation failure
+    Object.defineProperty(renderer._tempContainer, "innerHTML", {
       set: function (value) {
         throw new Error("Mock error");
       },
       configurable: true,
     });
-    const originalCreateElement = document.createElement;
-    document.createElement = jest.fn((tagName) => {
-      if (tagName === "div") {
-        return tempDiv;
-      }
-      return originalCreateElement.call(document, tagName);
-    });
-
-    try {
-      const renderer = new Renderer();
-      const container = document.createElement("div");
-      expect(() => renderer.patchDOM(container, "<div>test</div>")).toThrow(
-        "Failed to patch DOM"
-      );
-    } finally {
-      // Restore original createElement
-      document.createElement = originalCreateElement;
-    }
+    expect(() => renderer.patchDOM(container, "<div>test</div>")).toThrow(
+      "Failed to patch DOM: Mock error"
+    );
   });
 
   /**
-   * Tests handling of standard DOM properties in updateAttributes
+   * Tests handling of deeply nested DOM structures
    *
    * Verifies:
-   * - Standard DOM properties are updated correctly
+   * - The diff algorithm correctly traverses and updates nested structures
+   * - Changes at any level are properly applied
    *
    * @group rendering
    * @group dom
+   * @group edge-cases
    */
-  test("should handle standard DOM properties correctly", () => {
-    const oldEl = document.createElement("div");
-    const newEl = document.createElement("div");
+  test("should handle deeply nested structures", () => {
+    const container = document.createElement("div");
+    container.innerHTML = `
+      <div class="wrapper">
+        <div class="header">
+          <h1>Title</h1>
+          <nav>
+            <a href="#">Link 1</a>
+            <a href="#">Link 2</a>
+          </nav>
+        </div>
+        <div class="content">
+          <p>Content</p>
+        </div>
+      </div>
+    `;
 
-    // Test a standard DOM property
-    newEl.setAttribute("id", "test-id");
-    renderer._updateAttributes(oldEl, newEl);
+    const tempContainer = document.createElement("div");
+    tempContainer.innerHTML = `
+      <div class="wrapper">
+        <div class="header">
+          <h1>New Title</h1>
+          <nav>
+            <a href="#">New Link 1</a>
+            <a href="#">New Link 2</a>
+          </nav>
+        </div>
+        <div class="content">
+          <p>New Content</p>
+        </div>
+      </div>
+    `;
 
-    expect(oldEl.id).toBe("test-id");
-  });
+    renderer._diff(container, tempContainer);
 
-  /**
-   * Tests handling of ARIA attributes and properties
-   *
-   * Verifies:
-   * - Simple ARIA attributes are set correctly
-   * - Complex ARIA attributes with dashes are handled properly
-   * - ARIA attribute-to-property conversion works
-   * - Both attribute and property access methods function
-   *
-   * @group rendering
-   * @group dom
-   * @group accessibility
-   */
-  test("should handle ARIA attributes correctly", () => {
-    const oldEl = document.createElement("div");
-    const newEl = document.createElement("div");
-
-    // Test simple ARIA attributes
-    newEl.setAttribute("aria-label", "test label");
-    newEl.setAttribute("aria-hidden", "true");
-
-    renderer._updateAttributes(oldEl, newEl);
-
-    // Check attributes
-    expect(oldEl.getAttribute("aria-label")).toBe("test label");
-    expect(oldEl.getAttribute("aria-hidden")).toBe("true");
-
-    // Test complex ARIA attributes with dashes
-    newEl.setAttribute("aria-invalid-type", "spelling");
-    renderer._updateAttributes(oldEl, newEl);
-
-    // Verify the attribute is set
-    expect(oldEl.getAttribute("aria-invalid-type")).toBe("spelling");
-
-    // Verify property setting indirectly by checking if the operation completed without error
-    // This is sufficient for coverage since we're executing line 178
-    const ariaAttr = "aria-test";
-    const ariaValue = "test-value";
-    newEl.setAttribute(ariaAttr, ariaValue);
-    renderer._updateAttributes(oldEl, newEl);
-    expect(oldEl.getAttribute(ariaAttr)).toBe(ariaValue);
+    expect(container.innerHTML).toBe(tempContainer.innerHTML);
   });
 
   /**
@@ -801,16 +507,17 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests skipping removal of <style> elements with data-e-style attribute
+   * Tests handling of special style elements
    *
    * Verifies:
    * - <style data-e-style> nodes are not removed during diffing
+   * - Special style elements are preserved during removal
    *
    * @group rendering
    * @group dom
    * @group coverage
    */
-  test("should skip removal of <style> elements with data-e-style attribute", () => {
+  test("should handle special style elements", () => {
     const container = document.createElement("div");
     const style = document.createElement("style");
     style.setAttribute("data-e-style", "");
@@ -822,5 +529,80 @@ describe("Renderer", () => {
 
     // The style element should still be present
     expect(container.querySelector("style[data-e-style]")).not.toBeNull();
+
+    // Test direct removal
+    renderer._removeNode(container, style);
+    expect(container.querySelector("style[data-e-style]")).not.toBeNull();
+  });
+
+  /**
+   * Tests handling of undefined nodes in diff
+   *
+   * Verifies:
+   * - Undefined nodes are skipped in the diff process
+   * - DOM structure is maintained
+   *
+   * @group rendering
+   * @group dom
+   * @group coverage
+   */
+  test("should handle undefined nodes in diff", () => {
+    // Setup: oldParent has 3 children, newParent has 3 children with keys such that a move will mark one as undefined
+    const oldParent = document.createElement("div");
+    const a = document.createElement("div");
+    a.setAttribute("key", "a");
+    const b = document.createElement("div");
+    b.setAttribute("key", "b");
+    const c = document.createElement("div");
+    c.setAttribute("key", "c");
+    oldParent.appendChild(a);
+    oldParent.appendChild(b);
+    oldParent.appendChild(c);
+
+    // New order: b, a, c (swap a and b)
+    const newParent = document.createElement("div");
+    const b2 = document.createElement("div");
+    b2.setAttribute("key", "b");
+    const a2 = document.createElement("div");
+    a2.setAttribute("key", "a");
+    const c2 = document.createElement("div");
+    c2.setAttribute("key", "c");
+    newParent.appendChild(b2);
+    newParent.appendChild(a2);
+    newParent.appendChild(c2);
+
+    // This triggers the key map logic and will mark a node as undefined in the oldChildren array
+    // The next iteration of the main loop will hit the skip undefined node branch
+    expect(() => renderer._diff(oldParent, newParent)).not.toThrow();
+    // The DOM should now match the new order (b, a, c)
+    expect(oldParent.children[0].getAttribute("key")).toBe("b");
+    expect(oldParent.children[1].getAttribute("key")).toBe("a");
+    expect(oldParent.children[2].getAttribute("key")).toBe("c");
+    expect(oldParent.children.length).toBe(3);
+  });
+
+  /**
+   * Tests handling of different node types in patchNode
+   *
+   * Verifies:
+   * - Nodes with different types are replaced correctly
+   * - DOM structure is maintained
+   *
+   * @group rendering
+   * @group dom
+   * @group coverage
+   */
+  test("should handle different node types in patchNode", () => {
+    const parent = document.createElement("div");
+    const oldNode = document.createElement("p");
+    oldNode.textContent = "Old";
+    parent.appendChild(oldNode);
+    const newNode = document.createElement("span");
+    newNode.textContent = "New";
+    // Call _patchNode directly
+    renderer._patchNode(oldNode, newNode);
+    // The parent should now have a span, not a p
+    expect(parent.firstChild.nodeName).toBe("SPAN");
+    expect(parent.firstChild.textContent).toBe("New");
   });
 });
