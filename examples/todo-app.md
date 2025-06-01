@@ -147,8 +147,7 @@ const todoAppComponent = {
    * @param {object} ctx - The component context with reactive data.
    * @returns {string} The HTML template string.
    */
-  template: () => {
-    return `
+  template: `
       <div class="todo-app">
         <h1>To‑Do List</h1>
         <div class="input-section">
@@ -159,8 +158,7 @@ const todoAppComponent = {
           {{ renderTodos() }}
         </ul>
       </div>
-    `;
-  },
+    `,
 
   /**
    * Component style function: Returns scoped CSS for the to‑do app.
@@ -168,8 +166,7 @@ const todoAppComponent = {
    * @param {object} ctx - The component context.
    * @returns {string} The CSS styles.
    */
-  style: (ctx) => {
-    return `
+  style: `
       .todo-app {
         max-width: 500px;
         margin: 2rem auto;
@@ -257,8 +254,7 @@ const todoAppComponent = {
           font-size: 0.9rem;
         }
       }
-    `;
-  },
+    `,
 };
 
 // Initialize Eleva and register the component.

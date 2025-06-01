@@ -26,7 +26,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Beta Release Notice**: This documentation is for eleva.js v1.2.17-beta. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Please be aware of the [known limitations](known-limitations.md) and help us improve Eleva by sharing your feedback and experiences.
+> **Beta Release Notice**: This documentation is for eleva.js v1.2.18-beta. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -58,6 +58,8 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
       - [Supported Children Selector Types](#supported-children-selector-types)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
+    - [Component Context](#component-context)
+    - [Mounting Process](#mounting-process)
   - [7. Architecture \& Data Flow](#7-architecture--data-flow)
     - [Key Components](#key-components)
     - [Data Flow Process](#data-flow-process)
@@ -397,7 +399,7 @@ The **Eleva** class orchestrates component registration, mounting, plugin integr
 
 ### Lifecycle Hooks
 
-Eleva provides a set of lifecycle hooks that allow you to execute code at specific stages of a component's lifecycle. These hooks are available through the setup method's return object.
+Eleva provides a set of optional lifecycle hooks that allow you to execute code at specific stages of a component's lifecycle. These hooks are available through the setup method's return object.
 
 **Available Hooks:**
 - `onBeforeMount`: Called before the component is mounted to the DOM
@@ -434,7 +436,7 @@ app.component("MyComponent", {
     return {
       // Your component state
       count: 0,
-      // Lifecycle hooks
+      // Lifecycle hooks (all optional)
       onBeforeMount: hooks.beforeMount,
       onMount: hooks.mounted,
       onBeforeUpdate: hooks.beforeUpdate,
@@ -449,11 +451,9 @@ app.component("MyComponent", {
 ```
 
 **Important Notes:**
-1. Lifecycle hooks must be returned from the setup method to be effective
-2. The hooks are available in the setup context but are empty functions by default
-3. You must override these default functions by returning your own implementations
-4. Hooks are called automatically by the framework at the appropriate lifecycle stages
-
+1. Lifecycle hooks are optional and only need to be defined if you want to use them
+2. Hooks must be returned from the setup method to be effective
+3. Each hook receives a context object with the component's container and state
 
 _Example (with Reactive State):_
 
@@ -573,7 +573,7 @@ Eleva provides two powerful ways to mount child components in your application:
            <div class="todo-item" 
                 :title="${todo.title}"
                 :completed="${todo.completed}"
-                :onToggle="() => toggleTodo(${todo.id})">
+                @click="() => toggleTodo(todo.id)">
            </div>
          `).join('')}
        </div>
@@ -751,6 +751,11 @@ Eleva supports four main approaches to mounting child components, each with its 
 Eleva supports various selector types for defining child components in the `children` configuration:
 
 1. **Component Name Selectors**
+
+   ```html
+    <UserCard></UserCard>
+   ```
+
    ```js
    children: {
      "UserCard": "UserCard"  // Mounts UserCard component directly
@@ -760,6 +765,11 @@ Eleva supports various selector types for defining child components in the `chil
    - **Use when:** You want to mount a component directly without a wrapper element
 
 2. **ID Selectors**
+
+   ```html
+    <div id="user-card-container"></div>
+   ```
+
    ```js
    children: {
      "#user-card-container": "UserCard"  // Mounts in element with id="user-card-container"
@@ -769,6 +779,11 @@ Eleva supports various selector types for defining child components in the `chil
    - **Use when:** You need to target a specific element in the template
 
 3. **Class Selectors**
+
+   ```html
+    <div class="todo-item"></div>
+   ```
+
    ```js
    children: {
      ".todo-item": "TodoItem"  // Mounts in elements with class="todo-item"
@@ -778,6 +793,11 @@ Eleva supports various selector types for defining child components in the `chil
    - **Use when:** You have a list or grid of similar components
 
 4. **Attribute Selectors**
+
+   ```html
+    <div data-component="user-card"></div>
+   ```
+
    ```js
    children: {
      "[data-component='user-card']": "UserCard"  // Mounts in elements with data-component="user-card"
@@ -867,6 +887,57 @@ app.component("ComponentB", {
 
 app.mount(document.getElementById("app"), "ComponentA");
 app.mount(document.getElementById("app"), "ComponentB");
+```
+
+### Component Context
+
+The component context provides access to essential tools and data for component development:
+
+- **`props`**: Component properties passed during mounting
+- **`emitter`**: Event emitter instance for component event handling
+- **`signal`**: Factory function to create reactive Signal instances
+- **Lifecycle Hooks**:
+  - `onBeforeMount`: Called before component mounting
+  - `onMount`: Called after component mounting
+  - `onBeforeUpdate`: Called before component update
+  - `onUpdate`: Called after component update
+  - `onUnmount`: Called during component unmounting
+
+_Example:_
+
+```js
+app.component("MyComponent", {
+  setup({ signal, emitter }) {
+    const count = signal(0);
+    return { 
+      count,
+      onMount: async ({ container, context }) => {
+        console.log('Component mounted!');
+      },
+      onUpdate: ({ container, context }) => {
+        console.log('Component updated!');
+      },
+    };
+  }
+});
+```
+
+### Mounting Process
+
+The `mount` method returns a Promise that resolves to a `MountResult` object containing:
+
+- **`container`**: The mounted component's container element
+- **`data`**: The component's reactive state and context
+- **`unmount`**: Function to clean up and unmount the component
+
+The container element receives a `_eleva_instance` property that references the mounted instance.
+
+_Example:_
+
+```js
+const instance = await app.mount(document.getElementById("app"), "MyComponent");
+// Later...
+await instance.unmount();
 ```
 
 ---
@@ -1167,7 +1238,7 @@ Interactive demos are also available on Eleva's [CodePen Collection](https://cod
 ## 12. FAQ
 
 **Q: Is Eleva production-ready?**
-_A:_ Eleva is currently in beta (v1.2.17-beta). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
+_A:_ Eleva is currently in beta (v1.2.18-beta). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.

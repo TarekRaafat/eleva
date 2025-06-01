@@ -489,21 +489,13 @@ describe("Renderer", () => {
    * @group dom
    */
   test("should skip diffing nodes with _eleva_instance", () => {
-    const oldParent = document.createElement("div");
     const oldNode = document.createElement("div");
-    oldNode._eleva_instance = { some: "data" };
-    oldParent.appendChild(oldNode);
-
-    const newParent = document.createElement("div");
     const newNode = document.createElement("div");
-    newNode.textContent = "New Content";
-    newParent.appendChild(newNode);
+    oldNode._eleva_instance = { unmount: jest.fn() };
+    newNode._eleva_instance = { unmount: jest.fn() };
 
-    renderer._diff(oldParent, newParent);
-
-    // The old node should remain unchanged because it has _eleva_instance
-    expect(oldParent.firstChild).toBe(oldNode);
-    expect(oldParent.firstChild.textContent).not.toBe("New Content");
+    renderer._patchNode(oldNode, newNode);
+    expect(oldNode._eleva_instance.unmount).not.toHaveBeenCalled();
   });
 
   /**
@@ -531,7 +523,8 @@ describe("Renderer", () => {
     expect(container.querySelector("style[data-e-style]")).not.toBeNull();
 
     // Test direct removal
-    renderer._removeNode(container, style);
+    const emptyContainer = document.createElement("div");
+    renderer._diff(container, emptyContainer);
     expect(container.querySelector("style[data-e-style]")).not.toBeNull();
   });
 

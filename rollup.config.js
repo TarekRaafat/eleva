@@ -13,6 +13,29 @@ const commonOutputConfig = {
   banner,
 };
 
+const terserConfig = {
+  compress: {
+    passes: 2,
+    drop_console: true,
+    drop_debugger: true,
+    pure_funcs: ["console.log", "console.warn"],
+    unsafe_arrows: true,
+    unsafe_methods: true,
+    unsafe_proto: true,
+    keep_fargs: false,
+    toplevel: true,
+    pure_getters: true,
+    reduce_vars: true,
+    collapse_vars: true,
+  },
+  mangle: {
+    toplevel: true,
+  },
+  format: {
+    comments: /^!/,
+  },
+};
+
 const commonPlugins = [
   nodeResolve({
     browser: true,
@@ -30,6 +53,8 @@ const commonPlugins = [
           modules: false,
           useBuiltIns: false,
           corejs: false,
+          spec: false,
+          forceAllTransforms: false,
         },
       ],
     ],
@@ -61,13 +86,15 @@ export default {
       ...commonOutputConfig,
       file: "./dist/eleva.umd.min.js",
       format: "umd",
-      plugins: [terser()],
+      plugins: [terser(terserConfig)],
     },
   ],
   treeshake: {
     moduleSideEffects: false,
     propertyReadSideEffects: false,
     tryCatchDeoptimization: false,
+    annotations: false,
+    unknownGlobalSideEffects: false,
   },
   plugins: [
     ...commonPlugins,

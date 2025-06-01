@@ -3,6 +3,9 @@
  * @classdesc A robust event emitter that enables inter-component communication through a publish-subscribe pattern.
  * Components can emit events and listen for events from other components, facilitating loose coupling
  * and reactive updates across the application.
+ * Events are handled synchronously in the order they were registered, with proper cleanup
+ * of unsubscribed handlers.
+ * Event names should follow the format 'namespace:action' (e.g., 'user:login', 'cart:update').
  *
  * @example
  * const emitter = new Emitter();
@@ -10,42 +13,55 @@
  * emitter.emit('user:login', { name: 'John' }); // Logs: "User logged in: John"
  */
 declare class Emitter {
-    /** @private {Map<string, Set<function(any): void>>} Map of event names to their registered handler functions */
+    /** @private {Map<string, Set<(data: unknown) => void>>} Map of event names to their registered handler functions */
     private _events;
     /**
      * Registers an event handler for the specified event name.
      * The handler will be called with the event data when the event is emitted.
+     * Event names should follow the format 'namespace:action' for consistency.
      *
      * @public
-     * @param {string} event - The name of the event to listen for.
-     * @param {function(any): void} handler - The callback function to invoke when the event occurs.
-     * @returns {function(): void} A function to unsubscribe the event handler.
+     * @param {string} event - The name of the event to listen for (e.g., 'user:login').
+     * @param {(data: unknown) => void} handler - The callback function to invoke when the event occurs.
+     * @returns {() => void} A function to unsubscribe the event handler.
      * @example
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
      * // Later...
      * unsubscribe(); // Stops listening for the event
      */
-    public on(event: string, handler: (arg0: any) => void): () => void;
+    public on(event: string, handler: (data: unknown) => void): () => void;
     /**
      * Removes an event handler for the specified event name.
      * If no handler is provided, all handlers for the event are removed.
+     * Automatically cleans up empty event sets to prevent memory leaks.
      *
      * @public
-     * @param {string} event - The name of the event.
-     * @param {function(any): void} [handler] - The specific handler function to remove.
+     * @param {string} event - The name of the event to remove handlers from.
+     * @param {(data: unknown) => void} [handler] - The specific handler function to remove.
      * @returns {void}
+     * @example
+     * // Remove a specific handler
+     * emitter.off('user:login', loginHandler);
+     * // Remove all handlers for an event
+     * emitter.off('user:login');
      */
-    public off(event: string, handler?: (arg0: any) => void): void;
+    public off(event: string, handler?: (data: unknown) => void): void;
     /**
      * Emits an event with the specified data to all registered handlers.
      * Handlers are called synchronously in the order they were registered.
+     * If no handlers are registered for the event, the emission is silently ignored.
      *
      * @public
      * @param {string} event - The name of the event to emit.
-     * @param {...any} args - Optional arguments to pass to the event handlers.
+     * @param {...unknown} args - Optional arguments to pass to the event handlers.
      * @returns {void}
+     * @example
+     * // Emit an event with data
+     * emitter.emit('user:login', { name: 'John', role: 'admin' });
+     * // Emit an event with multiple arguments
+     * emitter.emit('cart:update', { items: [] }, { total: 0 });
      */
-    public emit(event: string, ...args: any[]): void;
+    public emit(event: string, ...args: unknown[]): void;
 }
 
 /**
@@ -53,6 +69,8 @@ declare class Emitter {
  * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
  * Signals notify registered watchers when their value changes, enabling efficient DOM updates
  * through targeted patching rather than full re-renders.
+ * Updates are batched using microtasks to prevent multiple synchronous notifications.
+ * The class is generic, allowing type-safe handling of any value type T.
  *
  * @example
  * const count = new Signal(0);
@@ -65,12 +83,12 @@ declare class Signal<T> {
      * Creates a new Signal instance with the specified initial value.
      *
      * @public
-     * @param {*} value - The initial value of the signal.
+     * @param {T} value - The initial value of the signal.
      */
-    constructor(value: any);
-    /** @private {T} Internal storage for the signal's current value, where T is the type of the initial value */
+    constructor(value: T);
+    /** @private {T} Internal storage for the signal's current value */
     private _value;
-    /** @private {Set<function(T): void>} Collection of callback functions to be notified when value changes, where T is the value type */
+    /** @private {Set<(value: T) => void>} Collection of callback functions to be notified when value changes */
     private _watchers;
     /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
     private _pending;
@@ -79,7 +97,7 @@ declare class Signal<T> {
      * The notification is batched using microtasks to prevent multiple synchronous updates.
      *
      * @public
-     * @param {T} newVal - The new value to set, where T is the type of the initial value.
+     * @param {T} newVal - The new value to set.
      * @returns {void}
      */
     public set value(newVal: T);
@@ -87,7 +105,7 @@ declare class Signal<T> {
      * Gets the current value of the signal.
      *
      * @public
-     * @returns {T} The current value, where T is the type of the initial value.
+     * @returns {T} The current value.
      */
     public get value(): T;
     /**
@@ -95,14 +113,14 @@ declare class Signal<T> {
      * The watcher will receive the new value as its argument.
      *
      * @public
-     * @param {function(T): void} fn - The callback function to invoke on value change, where T is the value type.
-     * @returns {function(): boolean} A function to unsubscribe the watcher.
+     * @param {(value: T) => void} fn - The callback function to invoke on value change.
+     * @returns {() => boolean} A function to unsubscribe the watcher.
      * @example
      * const unsubscribe = signal.watch((value) => console.log(value));
      * // Later...
      * unsubscribe(); // Stops watching for changes
      */
-    public watch(fn: (arg0: T) => void): () => boolean;
+    public watch(fn: (value: T) => void): () => boolean;
     /**
      * Notifies all registered watchers of a value change using microtask scheduling.
      * Uses a pending flag to batch multiple synchronous updates into a single notification.
@@ -116,9 +134,18 @@ declare class Signal<T> {
 
 /**
  * @class 🎨 Renderer
- * @classdesc A DOM renderer that handles efficient DOM updates through patching and diffing.
- * Provides methods for updating the DOM by comparing new and old structures and applying
- * only the necessary changes, minimizing layout thrashing and improving performance.
+ * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
+ *
+ * Key features:
+ * - Single-pass diffing algorithm for efficient DOM updates
+ * - Key-based node reconciliation for optimal performance
+ * - Intelligent attribute handling for ARIA, data attributes, and boolean properties
+ * - Preservation of special Eleva-managed instances and style elements
+ * - Memory-efficient with reusable temporary containers
+ *
+ * The renderer is designed to minimize DOM operations while maintaining
+ * exact attribute synchronization and proper node identity preservation.
+ * It's particularly optimized for frequent updates and complex DOM structures.
  *
  * @example
  * const renderer = new Renderer();
@@ -127,69 +154,136 @@ declare class Signal<T> {
  * renderer.patchDOM(container, newHtml);
  */
 declare class Renderer {
-    /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+    /**
+     * A temporary container to hold the new HTML content while diffing.
+     * @private
+     * @type {HTMLElement}
+     */
     private _tempContainer;
     /**
-     * Patches the DOM of a container element with new HTML content.
-     * Efficiently updates the DOM by parsing new HTML into a reusable container
-     * and applying only the necessary changes.
+     * Patches the DOM of the given container with the provided HTML string.
      *
      * @public
-     * @param {HTMLElement} container - The container element to patch.
-     * @param {string} newHtml - The new HTML content to apply.
+     * @param {HTMLElement} container - The container whose DOM will be patched.
+     * @param {string} newHtml - The new HTML string.
+     * @throws {TypeError} If the container is not an HTMLElement or newHtml is not a string.
+     * @throws {Error} If the DOM patching fails.
      * @returns {void}
-     * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
-     * Diffs two DOM trees (old and new) and applies updates to the old DOM.
-     * This method recursively compares nodes and their attributes, applying only
-     * the necessary changes to minimize DOM operations.
+     * Performs a diff between two DOM nodes and patches the old node to match the new node.
      *
      * @private
-     * @param {HTMLElement} oldParent - The original DOM element.
-     * @param {HTMLElement} newParent - The new DOM element.
+     * @param {Node} oldParent - The old parent node to be patched.
+     * @param {Node} newParent - The new parent node to compare.
      * @returns {void}
      */
     private _diff;
     /**
-     * Updates the attributes of an element to match those of a new element.
-     * Handles special cases for ARIA attributes, data attributes, and boolean properties.
+     * Checks if the node types match.
      *
      * @private
-     * @param {HTMLElement} oldEl - The element to update.
-     * @param {HTMLElement} newEl - The element providing the updated attributes.
+     * @param {Node} oldNode - The old node.
+     * @param {Node} newNode - The new node.
+     * @returns {boolean} True if the nodes match, false otherwise.
+     */
+    private _keysMatch;
+    /**
+     * Patches a node.
+     *
+     * @private
+     * @param {Node} oldNode - The old node to patch.
+     * @param {Node} newNode - The new node to patch.
+     * @returns {void}
+     */
+    private _patchNode;
+    /**
+     * Updates the attributes of an element.
+     *
+     * @private
+     * @param {HTMLElement} oldEl - The old element to update.
+     * @param {HTMLElement} newEl - The new element to update.
      * @returns {void}
      */
     private _updateAttributes;
+    /**
+     * Creates a key map for the children of a parent node.
+     *
+     * @private
+     * @param {Array<Node>} children - The children of the parent node.
+     * @param {number} start - The start index of the children.
+     * @param {number} end - The end index of the children.
+     * @returns {Map<string, number>} A map of key to child index.
+     */
+    private _createKeyMap;
 }
 
 /**
  * @typedef {Object} ComponentDefinition
- * @property {function(Object<string, any>): (Object<string, any>|Promise<Object<string, any>>)} [setup]
+ * @property {function(ComponentContext): (Record<string, unknown>|Promise<Record<string, unknown>>)} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {(function(Object<string, any>): string|Promise<string>|string)} template
+ * @property {(function(ComponentContext): string|Promise<string>)} template
  *           Required function that defines the component's HTML structure
- * @property {(function(Object<string, any>): string)|string} [style]
+ * @property {(function(ComponentContext): string)|string} [style]
  *           Optional function or string that provides component-scoped CSS styles
- * @property {Object<string, ComponentDefinition>} [children]
+ * @property {Record<string, ComponentDefinition>} [children]
  *           Optional object defining nested child components
  */
 /**
- * @typedef {Object} ElevaPlugin
- * @property {function(Eleva, Object<string, any>): void} install
- *           Function that installs the plugin into the Eleva instance
- * @property {string} name
- *           Unique identifier name for the plugin
+ * @typedef {Object} ComponentContext
+ * @property {Record<string, unknown>} props
+ *           Component properties passed during mounting
+ * @property {Emitter} emitter
+ *           Event emitter instance for component event handling
+ * @property {function<T>(value: T): Signal<T>} signal
+ *           Factory function to create reactive Signal instances
+ * @property {function(LifecycleHookContext): Promise<void>} [onBeforeMount]
+ *           Hook called before component mounting
+ * @property {function(LifecycleHookContext): Promise<void>} [onMount]
+ *           Hook called after component mounting
+ * @property {function(LifecycleHookContext): Promise<void>} [onBeforeUpdate]
+ *           Hook called before component update
+ * @property {function(LifecycleHookContext): Promise<void>} [onUpdate]
+ *           Hook called after component update
+ * @property {function(UnmountHookContext): Promise<void>} [onUnmount]
+ *           Hook called during component unmounting
+ */
+/**
+ * @typedef {Object} LifecycleHookContext
+ * @property {HTMLElement} container
+ *           The DOM element where the component is mounted
+ * @property {ComponentContext} context
+ *           The component's reactive state and context data
+ */
+/**
+ * @typedef {Object} UnmountHookContext
+ * @property {HTMLElement} container
+ *           The DOM element where the component is mounted
+ * @property {ComponentContext} context
+ *           The component's reactive state and context data
+ * @property {{
+ *   watchers: Array<() => void>,    // Signal watcher cleanup functions
+ *   listeners: Array<() => void>,   // Event listener cleanup functions
+ *   children: Array<MountResult>    // Child component instances
+ * }} cleanup
+ *           Object containing cleanup functions and instances
  */
 /**
  * @typedef {Object} MountResult
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {Object<string, any>} data
+ * @property {ComponentContext} data
  *           The component's reactive state and context data
- * @property {function(): void} unmount
+ * @property {function(): Promise<void>} unmount
  *           Function to clean up and unmount the component
+ */
+/**
+ * @typedef {Object} ElevaPlugin
+ * @property {function(Eleva, Record<string, unknown>): void} install
+ *           Function that installs the plugin into the Eleva instance
+ * @property {string} name
+ *           Unique identifier name for the plugin
  */
 /**
  * @class 🧩 Eleva
@@ -198,12 +292,26 @@ declare class Renderer {
  * event handling, and DOM rendering with a focus on performance and developer experience.
  *
  * @example
+ * // Basic component creation and mounting
  * const app = new Eleva("myApp");
  * app.component("myComponent", {
- *   template: (ctx) => `<div>Hello ${ctx.props.name}</div>`,
- *   setup: (ctx) => ({ count: new Signal(0) })
+ *   setup: (ctx) => ({ count: ctx.signal(0) }),
+ *   template: (ctx) => `<div>Hello ${ctx.props.name}</div>`
  * });
  * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
+ *
+ * @example
+ * // Using lifecycle hooks
+ * app.component("lifecycleDemo", {
+ *   setup: () => {
+ *     return {
+ *       onMount: ({ container, context }) => {
+ *         console.log('Component mounted!');
+ *       }
+ *     };
+ *   },
+ *   template: `<div>Lifecycle Demo</div>`
+ * });
  */
 declare class Eleva {
     /**
@@ -211,18 +319,25 @@ declare class Eleva {
      *
      * @public
      * @param {string} name - The unique identifier name for this Eleva instance.
-     * @param {Object<string, any>} [config={}] - Optional configuration object for the instance.
+     * @param {Record<string, unknown>} [config={}] - Optional configuration object for the instance.
      *        May include framework-wide settings and default behaviors.
+     * @throws {Error} If the name is not provided or is not a string.
+     * @returns {Eleva} A new Eleva instance.
+     *
+     * @example
+     * const app = new Eleva("myApp");
+     * app.component("myComponent", {
+     *   setup: (ctx) => ({ count: ctx.signal(0) }),
+     *   template: (ctx) => `<div>Hello ${ctx.props.name}!</div>`
+     * });
+     * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
+     *
      */
-    constructor(name: string, config?: {
-        [x: string]: any;
-    });
+    constructor(name: string, config?: Record<string, unknown>);
     /** @public {string} The unique identifier name for this Eleva instance */
     public name: string;
-    /** @public {Object<string, any>} Optional configuration object for the Eleva instance */
-    public config: {
-        [x: string]: any;
-    };
+    /** @public {Object<string, unknown>} Optional configuration object for the Eleva instance */
+    public config: Record<string, unknown>;
     /** @public {Emitter} Instance of the event emitter for handling component events */
     public emitter: Emitter;
     /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
@@ -233,8 +348,6 @@ declare class Eleva {
     private _components;
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     private _plugins;
-    /** @private {string[]} Array of lifecycle hook names supported by components */
-    private _lifecycleHooks;
     /** @private {boolean} Flag indicating if the root component is currently mounted */
     private _isMounted;
     /**
@@ -244,13 +357,13 @@ declare class Eleva {
      *
      * @public
      * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
-     * @param {Object<string, any>} [options={}] - Optional configuration options for the plugin.
+     * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
      * @returns {Eleva} The Eleva instance (for method chaining).
      * @example
      * app.use(myPlugin, { option1: "value1" });
      */
     public use(plugin: ElevaPlugin, options?: {
-        [x: string]: any;
+        [x: string]: unknown;
     }): Eleva;
     /**
      * Registers a new component with the Eleva instance.
@@ -275,7 +388,7 @@ declare class Eleva {
      * @public
      * @param {HTMLElement} container - The DOM element where the component will be mounted.
      * @param {string|ComponentDefinition} compName - The name of the registered component or a direct component definition.
-     * @param {Object<string, any>} [props={}] - Optional properties to pass to the component.
+     * @param {Object<string, unknown>} [props={}] - Optional properties to pass to the component.
      * @returns {Promise<MountResult>}
      *          A Promise that resolves to an object containing:
      *          - container: The mounted component's container element
@@ -288,25 +401,16 @@ declare class Eleva {
      * instance.unmount();
      */
     public mount(container: HTMLElement, compName: string | ComponentDefinition, props?: {
-        [x: string]: any;
+        [x: string]: unknown;
     }): Promise<MountResult>;
-    /**
-     * Prepares default no-operation lifecycle hook functions for a component.
-     * These hooks will be called at various stages of the component's lifecycle.
-     *
-     * @private
-     * @returns {Object<string, function(): void>} An object mapping lifecycle hook names to empty functions.
-     *         The returned object will be merged with the component's context.
-     */
-    private _prepareLifecycleHooks;
     /**
      * Processes DOM elements for event binding based on attributes starting with "@".
      * This method handles the event delegation system and ensures proper cleanup of event listeners.
      *
      * @private
      * @param {HTMLElement} container - The container element in which to search for event attributes.
-     * @param {Object<string, any>} context - The current component context containing event handler definitions.
-     * @param {Array<Function>} cleanupListeners - Array to collect cleanup functions for each event listener.
+     * @param {ComponentContext} context - The current component context containing event handler definitions.
+     * @param {Array<() => void>} listeners - Array to collect cleanup functions for each event listener.
      * @returns {void}
      */
     private _processEvents;
@@ -317,8 +421,8 @@ declare class Eleva {
      * @private
      * @param {HTMLElement} container - The container element where styles should be injected.
      * @param {string} compName - The component name used to identify the style element.
-     * @param {(function(Object<string, any>): string)|string} styleDef - The component's style definition (function or string).
-     * @param {Object<string, any>} context - The current component context for style interpolation.
+     * @param {(function(ComponentContext): string)|string} styleDef - The component's style definition (function or string).
+     * @param {ComponentContext} context - The current component context for style interpolation.
      * @returns {void}
      */
     private _injectStyles;
@@ -329,7 +433,7 @@ declare class Eleva {
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
      * @param {string} prefix - The prefix to look for in attributes
-     * @returns {Object<string, any>} An object containing the extracted props
+     * @returns {Record<string, string>} An object containing the extracted props
      * @example
      * // For an element with attributes:
      * // <div :name="John" :age="25">
@@ -363,43 +467,82 @@ type ComponentDefinition = {
     /**
      * Optional setup function that initializes the component's state and returns reactive data
      */
-    setup?: ((arg0: {
-        [x: string]: any;
-    }) => ({
-        [x: string]: any;
-    } | Promise<{
-        [x: string]: any;
-    }>)) | undefined;
+    setup?: ((arg0: ComponentContext) => (Record<string, unknown> | Promise<Record<string, unknown>>)) | undefined;
     /**
      *           Required function that defines the component's HTML structure
      */
-    template: ((arg0: {
-        [x: string]: any;
-    }) => string | Promise<string> | string);
+    template: ((arg0: ComponentContext) => string | Promise<string>);
     /**
      * Optional function or string that provides component-scoped CSS styles
      */
-    style?: string | ((arg0: {
-        [x: string]: any;
-    }) => string) | undefined;
+    style?: string | ((arg0: ComponentContext) => string) | undefined;
     /**
      * Optional object defining nested child components
      */
-    children?: {
-        [x: string]: ComponentDefinition;
-    } | undefined;
+    children?: Record<string, ComponentDefinition> | undefined;
 };
-type ElevaPlugin = {
+type ComponentContext = {
     /**
-     *           Function that installs the plugin into the Eleva instance
+     *           Component properties passed during mounting
      */
-    install: (arg0: Eleva, arg1: {
-        [x: string]: any;
-    }) => void;
+    props: Record<string, unknown>;
     /**
-     *           Unique identifier name for the plugin
+     *           Event emitter instance for component event handling
      */
-    name: string;
+    emitter: Emitter;
+    /**
+     * <T>(value: T): Signal<T>} signal
+     * Factory function to create reactive Signal instances
+     */
+    "": Function;
+    /**
+     * Hook called before component mounting
+     */
+    onBeforeMount?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    /**
+     * Hook called after component mounting
+     */
+    onMount?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    /**
+     * Hook called before component update
+     */
+    onBeforeUpdate?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    /**
+     * Hook called after component update
+     */
+    onUpdate?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    /**
+     * Hook called during component unmounting
+     */
+    onUnmount?: ((arg0: UnmountHookContext) => Promise<void>) | undefined;
+};
+type LifecycleHookContext = {
+    /**
+     *           The DOM element where the component is mounted
+     */
+    container: HTMLElement;
+    /**
+     *           The component's reactive state and context data
+     */
+    context: ComponentContext;
+};
+type UnmountHookContext = {
+    /**
+     *           The DOM element where the component is mounted
+     */
+    container: HTMLElement;
+    /**
+     *           The component's reactive state and context data
+     */
+    context: ComponentContext;
+    /**
+     *           Object containing cleanup functions and instances
+     */
+    cleanup: {
+        watchers: Array<() => void>;
+        listeners: Array<() => void>;
+        children: Array<MountResult>;
+    };
 };
 type MountResult = {
     /**
@@ -409,13 +552,21 @@ type MountResult = {
     /**
      *           The component's reactive state and context data
      */
-    data: {
-        [x: string]: any;
-    };
+    data: ComponentContext;
     /**
      *           Function to clean up and unmount the component
      */
-    unmount: () => void;
+    unmount: () => Promise<void>;
+};
+type ElevaPlugin = {
+    /**
+     *           Function that installs the plugin into the Eleva instance
+     */
+    install: (arg0: Eleva, arg1: Record<string, unknown>) => void;
+    /**
+     *           Unique identifier name for the plugin
+     */
+    name: string;
 };
 
 //# sourceMappingURL=index.d.ts.map

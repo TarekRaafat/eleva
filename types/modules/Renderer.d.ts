@@ -1,8 +1,17 @@
 /**
  * @class 🎨 Renderer
- * @classdesc A DOM renderer that handles efficient DOM updates through patching and diffing.
- * Provides methods for updating the DOM by comparing new and old structures and applying
- * only the necessary changes, minimizing layout thrashing and improving performance.
+ * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
+ *
+ * Key features:
+ * - Single-pass diffing algorithm for efficient DOM updates
+ * - Key-based node reconciliation for optimal performance
+ * - Intelligent attribute handling for ARIA, data attributes, and boolean properties
+ * - Preservation of special Eleva-managed instances and style elements
+ * - Memory-efficient with reusable temporary containers
+ *
+ * The renderer is designed to minimize DOM operations while maintaining
+ * exact attribute synchronization and proper node identity preservation.
+ * It's particularly optimized for frequent updates and complex DOM structures.
  *
  * @example
  * const renderer = new Renderer();
@@ -11,40 +20,68 @@
  * renderer.patchDOM(container, newHtml);
  */
 export class Renderer {
-    /** @private {HTMLElement} Reusable temporary container for parsing new HTML */
+    /**
+     * A temporary container to hold the new HTML content while diffing.
+     * @private
+     * @type {HTMLElement}
+     */
     private _tempContainer;
     /**
-     * Patches the DOM of a container element with new HTML content.
-     * Efficiently updates the DOM by parsing new HTML into a reusable container
-     * and applying only the necessary changes.
+     * Patches the DOM of the given container with the provided HTML string.
      *
      * @public
-     * @param {HTMLElement} container - The container element to patch.
-     * @param {string} newHtml - The new HTML content to apply.
+     * @param {HTMLElement} container - The container whose DOM will be patched.
+     * @param {string} newHtml - The new HTML string.
+     * @throws {TypeError} If the container is not an HTMLElement or newHtml is not a string.
+     * @throws {Error} If the DOM patching fails.
      * @returns {void}
-     * @throws {Error} If container is not an HTMLElement, newHtml is not a string, or patching fails.
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
-     * Diffs two DOM trees (old and new) and applies updates to the old DOM.
-     * This method recursively compares nodes and their attributes, applying only
-     * the necessary changes to minimize DOM operations.
+     * Performs a diff between two DOM nodes and patches the old node to match the new node.
      *
      * @private
-     * @param {HTMLElement} oldParent - The original DOM element.
-     * @param {HTMLElement} newParent - The new DOM element.
+     * @param {Node} oldParent - The old parent node to be patched.
+     * @param {Node} newParent - The new parent node to compare.
      * @returns {void}
      */
     private _diff;
     /**
-     * Updates the attributes of an element to match those of a new element.
-     * Handles special cases for ARIA attributes, data attributes, and boolean properties.
+     * Checks if the node types match.
      *
      * @private
-     * @param {HTMLElement} oldEl - The element to update.
-     * @param {HTMLElement} newEl - The element providing the updated attributes.
+     * @param {Node} oldNode - The old node.
+     * @param {Node} newNode - The new node.
+     * @returns {boolean} True if the nodes match, false otherwise.
+     */
+    private _keysMatch;
+    /**
+     * Patches a node.
+     *
+     * @private
+     * @param {Node} oldNode - The old node to patch.
+     * @param {Node} newNode - The new node to patch.
+     * @returns {void}
+     */
+    private _patchNode;
+    /**
+     * Updates the attributes of an element.
+     *
+     * @private
+     * @param {HTMLElement} oldEl - The old element to update.
+     * @param {HTMLElement} newEl - The new element to update.
      * @returns {void}
      */
     private _updateAttributes;
+    /**
+     * Creates a key map for the children of a parent node.
+     *
+     * @private
+     * @param {Array<Node>} children - The children of the parent node.
+     * @param {number} start - The start index of the children.
+     * @param {number} end - The end index of the children.
+     * @returns {Map<string, number>} A map of key to child index.
+     */
+    private _createKeyMap;
 }
 //# sourceMappingURL=Renderer.d.ts.map

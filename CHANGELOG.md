@@ -6,7 +6,91 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.17-beta 🎉 (24-05-2025)
+## v1.2.18-beta 🎉 (01-06-2025)
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- **Type System Enhancements**
+  - Added comprehensive type definitions for all core modules:
+    - `ComponentContext` with detailed lifecycle hooks
+    - `LifecycleHookContext` and `UnmountHookContext`
+    - Event handlers and signal values
+    - Component props and context data
+    - Signal factory function with generic type support
+  - Added Promise return types for all lifecycle hooks and unmount function
+  - Added detailed JSDoc comments for all public APIs and internal operations
+
+- **Renderer Optimization**
+  - Added key-based node reconciliation for optimal performance
+  - Implemented single-pass diffing algorithm for efficient DOM updates
+  - Added intelligent attribute handling for ARIA, data attributes, and boolean properties
+  - Enhanced preservation of special Eleva-managed instances
+  - Added key map creation for child nodes
+
+- **Documentation Improvements**
+  - Added comprehensive examples for all core features
+  - Enhanced documentation with practical examples
+  - Added detailed JSDoc comments for all public APIs
+  - Improved type definitions with better Record types
+
+#### 🎛️ Changed
+
+- **Component Lifecycle**
+  - Enhanced lifecycle hooks with proper context objects and async support
+  - Improved cleanup handling with better variable naming
+    - watcherUnsubscribers → watchers
+    - cleanupListeners → listeners
+  - Enhanced component context management and error handling
+  - Updated test cases to handle async unmounting
+
+#### 🔧 Fixed
+
+- **Type Safety and DOM Updates**
+  - Fixed type definitions and JSDoc annotations across all modules
+  - Fixed Promise handling in lifecycle hooks and async operations
+  - Fixed attribute update order and node reconciliation
+  - Fixed potential memory leaks in DOM operations
+  - Fixed node type matching and key-based node matching
+
+### 💻 Developer Notes
+
+#### ⚠️ Breaking Changes
+- **Lifecycle Hooks**: Lifecycle hooks now receive a context object and return Promises
+  ```javascript
+  // Old way
+  onMount: () => { ... }
+  
+  // New way
+  onMount: async ({ container, context }) => { ... }
+  ```
+
+- **Unmount Function**: The unmount function is now async and returns a Promise
+  ```javascript
+  // Old way
+  instance.unmount();
+  
+  // New way
+  await instance.unmount();
+  ```
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - Better type safety and developer experience
+  - More efficient DOM updates and component lifecycle management
+  - Improved event system reliability and error handling
+  - Enhanced documentation and IDE support
+
+- **For Plugin Developers:**
+  - More reliable event handling and type definitions
+  - Enhanced component lifecycle hooks and DOM update performance
+  - Better understanding of cleanup process and async operations
+  - Improved error handling and documentation
+
+---
+
+## v1.2.17-beta (24-05-2025)
 
 ### 📝 Release Notes
 
@@ -345,10 +429,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 ## v1.2.13-alpha (10-05-2025)
 
 ### 📝 Release Notes
-
-#### ➕ Added
-
-- _N/A_ – No additions in this release.
 
 #### 🎛️ Changed
 

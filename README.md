@@ -29,10 +29,9 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.2.17-beta` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.  
-> While suitable for production use, please be aware of the [known limitations](docs/known-limitations.md).
+> **Stability Notice**: This is `v1.2.18-beta` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.2.17-beta`
+**Version:** `1.2.18-beta`
 
 
 
@@ -118,14 +117,17 @@ This unique, developer-first approach makes Eleva a standout choice for building
 
 ## Features
 
-- **🧩 Component-Based Architecture:** Create reusable UI components effortlessly.
-- **⚡ Signal-Based Reactivity:** Fine-grained reactivity that updates only what's needed.
-- **🔔 Event Handling:** Built-in event emitter for robust inter-component communication.
-- **📝 Template Parsing:** Secure and dynamic interpolation with a custom TemplateEngine.
-- **🔄 DOM Diffing & Patching:** High-performance updates without a virtual DOM.
-- **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments.
-- **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers.
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations.
+- **🧩 Component-Based Architecture:** Create reusable UI components with a rich context API
+- **⚡ Signal-Based Reactivity:** Fine-grained reactivity that updates only what's needed
+- **🔔 Event Handling:** Built-in event emitter for robust inter-component communication
+- **📝 Template Parsing:** Secure and dynamic interpolation with a custom TemplateEngine
+- **🔄 DOM Diffing & Patching:** High-performance updates without a virtual DOM
+- **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
+- **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
+- **🔌 Plugin System:** Extensible architecture with a simple plugin API
+- **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
+- **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
 
 ---
 
@@ -247,7 +249,12 @@ app.component("HelloWorld", {
   // The setup method is optional; if omitted, an empty state is used.
   setup({ signal }) {
     const count = signal(0);
-    return { count };
+    return { 
+      count,
+      onMount: ({ container, context }) => {
+        console.log('Component mounted!');
+      }
+    };
   },
   template: ({ count }) => `
     <div>
@@ -255,11 +262,16 @@ app.component("HelloWorld", {
       <p>Count: ${count.value}</p>
       <button @click="() => count.value++">Increment</button>
     </div>
-  `,
+  `
 });
 
-// Mount the component to a DOM element (not a selector).
-app.mount(document.getElementById("app"), "HelloWorld");
+// Mount the component and handle the Promise
+app.mount(document.getElementById("app"), "HelloWorld")
+  .then(instance => {
+    console.log("Component mounted:", instance);
+    // Later...
+    // instance.unmount();
+  });
 ```
 
 Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010)

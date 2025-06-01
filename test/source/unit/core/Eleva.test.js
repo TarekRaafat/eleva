@@ -164,7 +164,7 @@ describe("Eleva", () => {
     expect(onMountFn).toHaveBeenCalled();
     expect(appContainer.innerHTML).toContain("Lifecycle");
 
-    instance.unmount();
+    await instance.unmount();
 
     expect(appContainer.innerHTML).not.toContain("Lifecycle");
     expect(onUnmountFn).toHaveBeenCalled();
@@ -209,7 +209,7 @@ describe("Eleva", () => {
     expect(clickHandler).toHaveBeenCalledTimes(1);
 
     // Unmount component
-    instance.unmount();
+    await instance.unmount();
 
     // Click should no longer trigger handler
     button.click();
@@ -531,7 +531,7 @@ describe("Children Components & Passing Props", () => {
     expect(appContainer.innerHTML).toContain("Child 1: Hello from Parent");
 
     // Unmount the parent before remounting
-    parentInstance.unmount();
+    await parentInstance.unmount();
 
     // Update both the child component registration and the parent's children definition
     app.component("child-comp", ChildComponent2);
