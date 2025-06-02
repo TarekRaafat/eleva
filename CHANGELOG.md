@@ -6,7 +6,58 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.18-beta 🎉 (01-06-2025)
+## v1.2.19-beta 🎉 (02-06-2025)
+
+### 📝 Release Notes
+
+#### 🎛️ Changed
+
+- **Renderer Module Optimization**
+  - Rolled back complex node comparison logic to a simpler, more reliable implementation
+  - Reverted to a more straightforward key-based node reconciliation approach
+  - Simplified DOM diffing algorithm while maintaining performance
+  - Streamlined attribute update logic with more efficient string checks
+  - Enhanced node removal process with dedicated `_removeNode` method
+  - Refactored key map creation for better maintainability
+  - Added dedicated `_getNodeKey` method for consistent key extraction
+
+#### 🔧 Fixed
+
+- **DOM Rendering Issues**
+  - Fixed node comparison logic to properly handle null nodes
+  - Improved handling of style elements during DOM updates
+  - Fixed attribute update order for better consistency
+  - Enhanced node replacement logic for better stability
+  - Fixed potential memory leaks in node removal process
+  - Improved handling of special Eleva-managed instances
+
+### 💻 Developer Notes
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More reliable DOM updates with simplified logic
+  - Maintained performance while improving code clarity
+  - Better handling of special elements
+  - Enhanced memory management
+  - More stable rendering process
+
+- **For Plugin Developers:**
+  - More reliable DOM manipulation
+  - Better handling of custom elements
+  - Improved attribute management
+  - Enhanced node lifecycle handling
+
+#### 📋 Performance Note
+Despite rolling back some complex optimizations, the Renderer maintains the same high performance levels through:
+- More efficient node comparison logic
+- Optimized attribute handling
+- Streamlined DOM operations
+- Better memory management
+- Improved key-based reconciliation
+
+---
+
+## v1.2.18-beta (01-06-2025)
 
 ### 📝 Release Notes
 
