@@ -158,7 +158,7 @@ Install via npm:
 npm install eleva
 ```
 
-Or include via CDN:
+Or include it directly via CDN:
 
 ```html
 <!-- jsDelivr (Recommended) -->
