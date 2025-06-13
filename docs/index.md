@@ -408,6 +408,12 @@ Eleva provides a set of optional lifecycle hooks that allow you to execute code 
 - `onUpdate`: Called after the component updates
 - `onUnmount`: Called before the component is unmounted from the DOM
 
+Each hook receives a context object with the following properties:
+- `container`: The component's container element
+- `context`: The component's context object containing props, state, and utilities
+
+All hooks are asynchronous and return Promises, allowing you to perform async operations.
+
 _Example:_
 
 ```js
@@ -415,20 +421,30 @@ app.component("MyComponent", {
   setup() {
     // Define your lifecycle hooks
     const hooks = {
-      beforeMount: () => {
+      beforeMount: async ({ container, context }) => {
         console.log("Component will mount");
+        // Can perform async operations
+        await someAsyncOperation();
       },
-      mounted: () => {
+      mounted: async ({ container, context }) => {
         console.log("Component mounted");
+        // Can perform async operations
+        await initializeComponent();
       },
-      beforeUpdate: () => {
+      beforeUpdate: async ({ container, context }) => {
         console.log("Component will update");
+        // Can perform async operations
+        await prepareForUpdate();
       },
-      updated: () => {
+      updated: async ({ container, context }) => {
         console.log("Component updated");
+        // Can perform async operations
+        await afterUpdate();
       },
-      beforeUnmount: () => {
+      beforeUnmount: async ({ container, context }) => {
         console.log("Component will unmount");
+        // Can perform async operations
+        await cleanup();
       }
     };
 
@@ -453,9 +469,11 @@ app.component("MyComponent", {
 **Important Notes:**
 1. Lifecycle hooks are optional and only need to be defined if you want to use them
 2. Hooks must be returned from the setup method to be effective
-3. Each hook receives a context object with the component's container and state
+3. Each hook receives a context object with the component's container and context
+4. All hooks are asynchronous and return Promises
+5. Hooks can perform async operations like data fetching, initialization, or cleanup
 
-_Example (with Reactive State):_
+_Example (with Reactive State and Async Operations):_
 
 ```js
 app.component("Counter", {
@@ -464,11 +482,19 @@ app.component("Counter", {
     
     return {
       count,
-      onMount: () => {
+      onMount: async ({ container, context }) => {
         console.log("Counter mounted with initial value:", count.value);
+        // Can perform async operations
+        await initializeCounter();
       },
-      onUpdate: () => {
+      onUpdate: async ({ container, context }) => {
         console.log("Counter updated to:", count.value);
+        // Can perform async operations
+        await saveCounterState();
+      },
+      onUnmount: async ({ container, context }) => {
+        // Cleanup async operations
+        await cleanupCounter();
       }
     };
   },
