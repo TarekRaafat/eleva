@@ -21,6 +21,10 @@
   <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="eleva.js - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
+<p align="center">
+  <a href="https://chatgpt.com/g/g-684b2a1bf9548191a0b0e25f44eebefc-eleva-website-builder"><img src="./imgs/Eleva Website Builder Button.png" alt="eleva.js Full Logo" width="30%"></a>
+</p>
+
 <br>
 <br>
 <br>
