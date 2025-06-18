@@ -434,11 +434,17 @@ export class Eleva {
    * // Returns: { name: "John", age: "25" }
    */
   _extractProps(element, prefix) {
-    /** @type {Record<string, string>} */
+    if (!element.attributes) return {};
+
     const props = {};
-    for (const { name, value } of element.attributes) {
-      if (name.startsWith(prefix)) {
-        props[name.replace(prefix, "")] = value;
+    const attrs = element.attributes;
+
+    for (let i = attrs.length - 1; i >= 0; i--) {
+      const attr = attrs[i];
+      if (attr.name.startsWith(prefix)) {
+        const propName = attr.name.slice(prefix.length);
+        props[propName] = attr.value;
+        element.removeAttribute(attr.name);
       }
     }
     return props;

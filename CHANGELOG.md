@@ -6,7 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.2.19-beta 🎉 (02-06-2025)
+## v1.0.0-rc.1 🎉 (18-06-2025)
+
+### 🚀 Major Version Jump
+- Transitioned from beta (`1.2.19-beta`) to release candidate (`1.0.0-rc.1`).
+- The API is now considered stable and ready for production use.
+- All core features are finalized; only critical bug fixes and documentation updates are expected before the final `1.0.0` release.
+
+### 📝 Release Notes
+
+#### 🎛️ Changed
+
+- **Component Props Extraction Refactor**
+  - Refactored the `_extractProps` method in `Eleva.js` core for improved attribute extraction and cleanup:
+    - Now safely checks for the presence of `element.attributes` before processing
+    - Uses a reverse loop over attributes for safer removal during iteration.
+    - Removes extracted attributes from the element after copying their values
+    - Improves robustness and prevents potential errors with non-standard elements
+
+### 💻 Developer Notes
+
+- This change improves the reliability of prop extraction for component mounting, especially when dealing with custom elements or edge cases where attributes may be missing or dynamically modified.
+- No breaking changes or API modifications. All public APIs remain fully backward compatible.
+- Internal refactor only; no impact on user-facing features or plugin APIs.
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More robust and reliable prop extraction for all component types
+  - Safer handling of custom and non-standard elements
+  - Improved maintainability and code clarity in the core
+  - Reduced risk of errors when attributes are missing or dynamically changed
+- **For Plugin Developers:**
+  - More predictable and stable prop extraction behavior
+  - Better compatibility with custom elements and advanced use cases
+  - No changes required for existing plugins or integrations
+
+---
+
+## v1.2.19-beta (02-06-2025)
 
 ### 📝 Release Notes
 

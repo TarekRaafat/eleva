@@ -31,7 +31,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **Beta Release Notice**: This documentation is for eleva.js v1.2.19-beta. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **Beta Release Notice**: This documentation is for eleva.js v1.0.0-rc.1. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -1270,7 +1270,7 @@ Interactive demos are also available on Eleva's [CodePen Collection](https://cod
 ## 12. FAQ
 
 **Q: Is Eleva production-ready?**
-_A:_ Eleva is currently in beta (v1.2.19-beta). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
+_A:_ Eleva is currently in release candidate (RC) (v1.0.0-rc.1). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
