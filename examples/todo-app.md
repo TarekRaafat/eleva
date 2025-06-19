@@ -303,7 +303,7 @@ Check the browser console if you encounter any issues.
 
 ## Conclusion
 
-This Todo App example demonstrates how to use Eleva to build dynamic, interactive applications with minimal code. It leverages Eleva's component-based architecture, reactive signals, and template parsing to create a fully functional Todo App that remains extremely lightweight (~4 KB minified) while supporting robust features, including built-in TypeScript declarations.
+This Todo App example demonstrates how to use Eleva to build dynamic, interactive applications with minimal code. It leverages Eleva's component-based architecture, reactive signals, and template parsing to create a fully functional Todo App that remains extremely lightweight (~6 KB minified) while supporting robust features, including built-in TypeScript declarations.
 
 Feel free to modify and extend this example as you explore more of what Eleva can do!
 
