@@ -2,7 +2,7 @@
 name: 🐛 Bug Report
 about: Create a detailed report to help us improve Eleva.js
 title: "[BUG] "
-labels: bug, needs-triage
+labels: bug
 assignees: ''
 
 ---

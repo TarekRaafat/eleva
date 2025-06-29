@@ -2,7 +2,7 @@
 name: 📚 Documentation Issue
 about: Report problems with documentation or request documentation improvements
 title: "[DOCS] "
-labels: documentation, needs-triage
+labels: documentation
 assignees: ''
 
 ---

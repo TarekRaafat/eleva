@@ -2,7 +2,7 @@
 name: 🔒 Security Issue
 about: Report a security vulnerability in Eleva.js (use responsibly)
 title: "[SECURITY] "
-labels: security, needs-triage
+labels: security
 assignees: ''
 
 ---

@@ -2,7 +2,7 @@
 name: 🔌 Plugin Request
 about: Request a new plugin for Eleva.js or propose plugin enhancements
 title: "[PLUGIN] "
-labels: plugin, enhancement, needs-triage
+labels: plugin
 assignees: ''
 
 ---

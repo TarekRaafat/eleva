@@ -2,7 +2,7 @@
 name: ✨ Feature Request
 about: Suggest an idea for Eleva.js
 title: "[FEAT] "
-labels: enhancement, needs-triage
+labels: enhancement
 assignees: ''
 
 ---

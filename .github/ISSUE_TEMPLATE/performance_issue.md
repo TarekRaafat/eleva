@@ -2,7 +2,7 @@
 name: ⚡ Performance Issue
 about: Report a performance problem or degradation in Eleva.js
 title: "[PERF] "
-labels: performance, needs-triage
+labels: performance
 assignees: ''
 
 ---

@@ -2,7 +2,7 @@
 name: ❓ Question & Support
 about: Ask a question about using Eleva.js or get support
 title: "[QUESTION] "
-labels: question, needs-triage
+labels: question
 assignees: ''
 
 ---
