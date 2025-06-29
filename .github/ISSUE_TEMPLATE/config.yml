@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: https://elevajs.com
+    about: Check out the official documentation for guides, API reference, and examples
+  - name: 💬 Discussions
+    url: https://github.com/TarekRaafat/eleva/discussions
+    about: Ask questions, share ideas, and discuss Eleva.js with the community
+  - name: 📧 Email Support
+    url: mailto:support@elevajs.com
+    about: Contact the maintainer directly for private support or security issues
+  - name: 🐦 Twitter
+    url: https://twitter.com/ElevaJS
+    about: Follow @ElevaJS for updates and announcements
+  - name: 👽 Reddit
+    url: https://reddit.com/r/elevajs
+    about: Join the Eleva.js community on Reddit for discussions, tips, and community support
