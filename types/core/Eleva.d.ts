@@ -129,6 +129,8 @@ export class Eleva {
     private _plugins;
     /** @private {boolean} Flag indicating if the root component is currently mounted */
     private _isMounted;
+    /** @private {number} Counter for generating unique component IDs */
+    private _componentCounter;
     /**
      * Integrates a plugin with the Eleva framework.
      * The plugin's install function will be called with the Eleva instance and provided options.
@@ -199,7 +201,7 @@ export class Eleva {
      *
      * @private
      * @param {HTMLElement} container - The container element where styles should be injected.
-     * @param {string} compName - The component name used to identify the style element.
+     * @param {string} compId - The component ID used to identify the style element.
      * @param {(function(ComponentContext): string)|string} styleDef - The component's style definition (function or string).
      * @param {ComponentContext} context - The current component context for style interpolation.
      * @returns {void}

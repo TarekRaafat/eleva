@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.1 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.2 | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -634,6 +634,8 @@ class Eleva {
     this._plugins = new Map();
     /** @private {boolean} Flag indicating if the root component is currently mounted */
     this._isMounted = false;
+    /** @private {number} Counter for generating unique component IDs */
+    this._componentCounter = 0;
   }
 
   /**
@@ -701,6 +703,9 @@ class Eleva {
     /** @type {ComponentDefinition} */
     const definition = typeof compName === "string" ? this._components.get(compName) : compName;
     if (!definition) throw new Error(`Component "${compName}" not registered.`);
+
+    /** @type {string} */
+    const compId = `c${++this._componentCounter}`;
 
     /**
      * Destructure the component definition to access core functionality.
@@ -777,7 +782,7 @@ class Eleva {
         const newHtml = TemplateEngine.parse(templateResult, mergedContext);
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, listeners);
-        if (style) this._injectStyles(container, compName, style, mergedContext);
+        if (style) this._injectStyles(container, compId, style, mergedContext);
         if (children) await this._mountComponents(container, children, childInstances);
         if (!this._isMounted) {
           /** @type {LifecycleHookContext} */
@@ -881,20 +886,21 @@ class Eleva {
    *
    * @private
    * @param {HTMLElement} container - The container element where styles should be injected.
-   * @param {string} compName - The component name used to identify the style element.
+   * @param {string} compId - The component ID used to identify the style element.
    * @param {(function(ComponentContext): string)|string} styleDef - The component's style definition (function or string).
    * @param {ComponentContext} context - The current component context for style interpolation.
    * @returns {void}
    */
-  _injectStyles(container, compName, styleDef, context) {
+  _injectStyles(container, compId, styleDef, context) {
     /** @type {string} */
     const newStyle = typeof styleDef === "function" ? TemplateEngine.parse(styleDef(context), context) : styleDef;
+
     /** @type {HTMLStyleElement|null} */
-    let styleEl = container.querySelector(`style[data-e-style="${compName}"]`);
+    let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);
     if (styleEl && styleEl.textContent === newStyle) return;
     if (!styleEl) {
       styleEl = document.createElement("style");
-      styleEl.setAttribute("data-e-style", compName);
+      styleEl.setAttribute("data-e-style", compId);
       container.appendChild(styleEl);
     }
     styleEl.textContent = newStyle;
