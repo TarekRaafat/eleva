@@ -381,8 +381,8 @@ _Example:_
 ```js
 const renderer = new Renderer();
 
-const container = document.getElementById('app');
-const newHtml = '<div>Updated content</div>';
+const container = document.getElementById("app");
+const newHtml = "<div>Updated content</div>";
 
 renderer.patchDOM(container, newHtml); // Update a container with new HTML
 ```
@@ -451,7 +451,7 @@ app.component("MyComponent", {
         console.log("Component will unmount");
         // Can perform async operations
         await cleanup();
-      }
+      },
     };
 
     // Return both your component state and lifecycle hooks
@@ -463,12 +463,12 @@ app.component("MyComponent", {
       onMount: hooks.mounted,
       onBeforeUpdate: hooks.beforeUpdate,
       onUpdate: hooks.updated,
-      onUnmount: hooks.beforeUnmount
+      onUnmount: hooks.beforeUnmount,
     };
   },
   template(ctx) {
     return `<div>Count: ${ctx.count}</div>`;
-  }
+  },
 });
 ```
 
@@ -485,7 +485,7 @@ _Example (with Reactive State and Async Operations):_
 app.component("Counter", {
   setup({ signal }) {
     const count = signal(0);
-    
+
     return {
       count,
       onMount: async ({ container, context }) => {
@@ -501,7 +501,7 @@ app.component("Counter", {
       onUnmount: async ({ container, context }) => {
         // Cleanup async operations
         await cleanupCounter();
-      }
+      },
     };
   },
   template(ctx) {
@@ -511,7 +511,7 @@ app.component("Counter", {
         <button @click="() => count.value++">Increment</button>
       </div>
     `;
-  }
+  },
 });
 ```
 
@@ -579,7 +579,7 @@ Eleva provides two powerful ways to mount child components in your application:
                 @click="onToggle" />
          <span>${ctx.title}</span>
        </div>
-     `
+     `,
    });
 
    // Parent Component using explicit mounting
@@ -587,11 +587,11 @@ Eleva provides two powerful ways to mount child components in your application:
      setup: ({ signal }) => {
        const todos = signal([
          { id: 1, title: "Learn Eleva", completed: false },
-         { id: 2, title: "Build an app", completed: false }
+         { id: 2, title: "Build an app", completed: false },
        ]);
 
        const toggleTodo = (id) => {
-         todos.value = todos.value.map(todo => 
+         todos.value = todos.value.map((todo) =>
            todo.id === id ? { ...todo, completed: !todo.completed } : todo
          );
        };
@@ -601,17 +601,17 @@ Eleva provides two powerful ways to mount child components in your application:
      template: (ctx) => `
        <div class="todo-list">
          <h2>My Todo List</h2>
-         ${ctx.todos.value.map(todo => `
+         ${ctx.todos.value.map((todo) => `
            <div class="todo-item" 
                 :title="${todo.title}"
                 :completed="${todo.completed}"
                 @click="() => toggleTodo(todo.id)">
            </div>
-         `).join('')}
+         `).join("")}
        </div>
      `,
      children: {
-       ".todo-item": "TodoItem"  // Explicitly define child component
+       ".todo-item": "TodoItem", // Explicitly define child component
      },
    });
    ```
@@ -620,9 +620,9 @@ Eleva provides two powerful ways to mount child components in your application:
    - Components are mounted explicitly using their registered names
    - Provides clear and controlled component relationships
    - Supports dynamic prop passing and automatic cleanup
-   
+
    _Example:_
-   
+
    ```js
    // Child Component
    app.component("UserCard", {
@@ -636,7 +636,7 @@ Eleva provides two powerful ways to mount child components in your application:
          <h3>${ctx.user.name}</h3>
          <p>${ctx.user.role}</p>
        </div>
-     `
+     `,
    });
 
    // Parent Component using explicit mounting
@@ -644,7 +644,7 @@ Eleva provides two powerful ways to mount child components in your application:
      setup: ({ signal }) => {
        const users = signal([
          { id: 1, name: "John Doe", role: "Developer", avatar: "john.jpg" },
-         { id: 2, name: "Jane Smith", role: "Designer", avatar: "jane.jpg" }
+         { id: 2, name: "Jane Smith", role: "Designer", avatar: "jane.jpg" },
        ]);
 
        const selectUser = (user) => {
@@ -656,28 +656,28 @@ Eleva provides two powerful ways to mount child components in your application:
      template: (ctx) => `
        <div class="user-list">
          <h2>Team Members</h2>
-         ${ctx.users.value.map(user => `
+         ${ctx.users.value.map((user) => `
            <div id="user-card-container"></div>
-         `).join('')}
+         `).join("")}
        </div>
      `,
      children: {
-       '#user-card-container': {
+       "#user-card-container": {
          setup: (context) => {
            const user = context.props.user;
            return { user };
          },
          template: (ctx) => `
            <UserCard 
-             :user='${JSON.stringify(ctx.user)}'
+             :user="${JSON.stringify(ctx.user)}"
              :onSelect="() => selectUser(${JSON.stringify(ctx.user)})"
            ></UserCard>
          `,
          children: {
-          "UserCard": "UserCard"
-         }
-       }
-     }
+          "UserCard": "UserCard",
+         },
+       },
+     },
    });
    ```
 
@@ -692,7 +692,7 @@ Eleva supports four main approaches to mounting child components, each with its 
    }
    ```
    - **Use when:** You want to mount a component directly in the parent's template
-   - **Benefits:** 
+   - **Benefits:**
      - Simplest and most performant approach
      - No additional DOM elements
      - Direct prop passing
@@ -733,7 +733,7 @@ Eleva supports four main approaches to mounting child components, each with its 
    // Define component
    const UserCard = {
      setup: (ctx) => ({ /* setup logic */ }),
-     template: (ctx) => `<div>User Card</div>`
+     template: (ctx) => `<div>User Card</div>`,
    };
 
    // Parent component using variable-based mounting
@@ -744,11 +744,11 @@ Eleva supports four main approaches to mounting child components, each with its 
        </div>
      `,
      children: {
-       ".user-card-container": UserCard  // Mount component directly from variable
-     }
+       ".user-card-container": UserCard, // Mount component directly from variable
+     },
    });
    ```
-   - **Use when:** 
+   - **Use when:**
      - You have component definitions stored in variables
      - Components are created dynamically
      - You want to reuse component definitions
@@ -756,7 +756,7 @@ Eleva supports four main approaches to mounting child components, each with its 
      - No need to register components globally
      - More flexible component composition
      - Better code organization
-   - **Example use case:** 
+   - **Example use case:**
      - Dynamic component creation
      - Component libraries
      - Reusable component patterns
@@ -941,16 +941,16 @@ _Example:_
 app.component("MyComponent", {
   setup({ signal, emitter }) {
     const count = signal(0);
-    return { 
+    return {
       count,
       onMount: async ({ container, context }) => {
-        console.log('Component mounted!');
+        console.log("Component mounted!");
       },
       onUpdate: ({ container, context }) => {
-        console.log('Component updated!');
+        console.log("Component updated!");
       },
     };
-  }
+  },
 });
 ```
 
@@ -1073,10 +1073,10 @@ A plugin in Eleva is an object that must have two required properties:
 
 ```js
 const MyPlugin = {
-  name: 'myPlugin', // Unique identifier for the plugin
+  name: "myPlugin", // Unique identifier for the plugin
   install(eleva, options) {
     // Plugin installation logic
-  }
+  },
 };
 ```
 
@@ -1088,7 +1088,7 @@ const MyPlugin = {
 Plugins are installed using the `use` method on an Eleva instance:
 
 ```js
-const app = new Eleva('myApp');
+const app = new Eleva("myApp");
 app.use(MyPlugin, { /* optional configuration */ });
 ```
 
@@ -1111,7 +1111,7 @@ Plugins can:
 2. **Add Component Features**
    ```js
    install(eleva) {
-     eleva.component('enhanced-component', {
+     eleva.component("enhanced-component", {
        template: (ctx) => `...`,
        setup: (ctx) => ({ /* ... */ })
      });
@@ -1167,15 +1167,15 @@ Here's a complete example of a custom plugin:
 
 ```js
 const LoggerPlugin = {
-  name: 'logger',
+  name: "logger",
   install(eleva, options = {}) {
-    const { level = 'info' } = options;
-    
+    const { level = "info" } = options;
+
     // Add logging methods to Eleva instance
     eleva.log = {
       info: (msg) => console.log(`[INFO] ${msg}`),
       warn: (msg) => console.warn(`[WARN] ${msg}`),
-      error: (msg) => console.error(`[ERROR] ${msg}`)
+      error: (msg) => console.error(`[ERROR] ${msg}`),
     };
 
     // Enhance component mounting with logging
@@ -1186,12 +1186,12 @@ const LoggerPlugin = {
       eleva.log.info(`Component mounted: ${compName}`);
       return result;
     };
-  }
+  },
 };
 
 // Usage
-const app = new Eleva('myApp');
-app.use(LoggerPlugin, { level: 'debug' });
+const app = new Eleva("myApp");
+app.use(LoggerPlugin, { level: "debug" });
 ```
 
 ### Plugin Lifecycle
