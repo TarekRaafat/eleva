@@ -1270,7 +1270,7 @@ Interactive demos are also available on Eleva's [CodePen Collection](https://cod
 ## 12. FAQ
 
 **Q: Is Eleva production-ready?**
-_A:_ Eleva is currently in release candidate (RC) (v1.0.0-rc.1). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
+_A:_ Eleva is currently in release candidate (RC) (v1.0.0-rc.2). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
