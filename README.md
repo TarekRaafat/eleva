@@ -38,11 +38,11 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
-_Built with love for native JavaScript-because sometimes, less really is more!_ 😊
+_Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.1` - The core functionality is stable, but I'm seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.2` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.1`
+**Version:** `1.0.0-rc.2`
 
 
 
@@ -84,15 +84,15 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## Introduction
 
-Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy frameworks or libraries to build amazing user interfaces-sometimes, the simplest approach is the most powerful.
+Eleva is a lightweight, no-nonsense runtime framework for frontend applications. Built with love for **pure vanilla JavaScript**, Eleva features a minimal core with essential functionality that can be extended through a powerful plugin system. This approach lets you create highly modular and scalable applications without the overhead of large frameworks. I built Eleva to prove that you don't need heavy frameworks or libraries to build amazing user interfaces-sometimes, the simplest approach is the most powerful.
 
 **My Inspiration:**  
 The idea behind Eleva comes from a deep appreciation for native JavaScript. I wanted to create a tool that stays true to the language without introducing new syntax or complexity, making it easy to integrate into your projects.
 
 **Core Principles:**
 
-- **🌱 Minimalism:** Only the essentials, so you can build without clutter.
-- **🔌 Extensibility:** Plug in your own ideas-custom state management, routing, and more.
+- **🌱 Minimalism:** Only essential features in the core, keeping the framework lean and focused.
+- **🔌 Extensibility:** Extend functionality by plugging in your own ideas, such as custom state management, routing, and more.
 - **🚀 Performance:** Fast, efficient, and designed with modern browsers in mind.
 - **🍦 Pure Vanilla:** No dependencies, no magic-just plain JavaScript.
 
@@ -100,9 +100,9 @@ The idea behind Eleva comes from a deep appreciation for native JavaScript. I wa
 
 ## Design Philosophy
 
-**Eleva is an unopinionated framework.**
+**Eleva is an unopinionated framework with a minimal core philosophy.**
 
-Unlike many frameworks that enforce a specific project structure or coding paradigm, Eleva provides a minimal core with a flexible plugin system. This means:
+Unlike monolithic frameworks that include everything out-of-the-box, Eleva intentionally provides only essential features in its core, relying on a powerful plugin system for extensibility. This architectural choice means:
 
 - **🔄 Flexibility:** Architect your application your way-no rigid structure required.
 - **🎯 Native JavaScript:** Built using pure vanilla JavaScript, Eleva integrates seamlessly with your existing code without unfamiliar syntax.

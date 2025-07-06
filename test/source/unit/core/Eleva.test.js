@@ -279,9 +279,7 @@ describe("Eleva", () => {
     const instance = await app.mount(appContainer, "styled-comp");
 
     // Verify style element was created and injected
-    const styleEl = appContainer.querySelector(
-      'style[data-e-style="styled-comp"]'
-    );
+    const styleEl = appContainer.querySelector('style[data-e-style="c1"]');
     expect(styleEl).toBeTruthy();
     expect(styleEl.textContent).toContain("color: red");
 
@@ -289,17 +287,11 @@ describe("Eleva", () => {
     instance.data.color = "blue";
     const updatedStyle = component.style(instance.data);
     // Re-inject the updated styles
-    app["_injectStyles"](
-      appContainer,
-      "styled-comp",
-      component.style,
-      instance.data
-    );
+    app["_injectStyles"](appContainer, "c1", component.style, instance.data);
 
     // Verify the style was updated
     expect(
-      appContainer.querySelector('style[data-e-style="styled-comp"]')
-        .textContent
+      appContainer.querySelector('style[data-e-style="c1"]').textContent
     ).toContain("color: blue");
   });
 

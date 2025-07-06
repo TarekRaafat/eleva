@@ -6,7 +6,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.1 🎉 (18-06-2025)
+## v1.0.0-rc.2 🐛 (06-07-2025)
+
+### 📝 Release Notes
+
+#### 🔧 Fixed
+
+- **Scoped Style Attribute Bug** ([#1](https://github.com/TarekRaafat/eleva/issues/1))
+  - Fixed a critical bug in the core `Eleva.js` where mounting a component using a definition object (instead of a string name) caused the injected `<style>` element to have an invalid `data-e-style="[object Object]"` attribute.
+  - The framework now always generates a unique, valid identifier for each component's style element, ensuring proper style scoping and valid HTML attributes regardless of how the component is mounted.
+  - This resolves issues with style deduplication, DOM inspection, and future compatibility with stricter style management logic.
+
+### 💻 Developer Notes
+- This change is fully backward compatible and does not affect the public API or plugin system.
+- Styles are now reliably scoped and deduplicated, improving both developer experience and future extensibility.
+- No action is required for existing code, but direct mounting of component objects is now fully supported and safe.
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - Valid and predictable style element attributes for all component types
+  - Improved maintainability and future-proofing of the style injection system
+  - No more invalid HTML attributes in the DOM
+- **For Plugin Developers:**
+  - Reliable style scoping and deduplication for advanced plugin use cases
+  - Consistent behavior regardless of component registration method
+
+#### 🛠️ Technical Details
+- The `mount` method now assigns a unique component ID (`cN`) for every mounted component, which is used as the `data-e-style` attribute for injected styles.
+- This approach guarantees that style elements are always correctly identified and scoped, even for anonymous or directly-passed component objects.
+- No more reliance on stringifying the component definition or using potentially invalid attribute values.
+
+---
+
+## v1.0.0-rc.1 (18-06-2025)
 
 ### 🚀 Major Version Jump
 - Transitioned from beta (`1.2.19-beta`) to release candidate (`1.0.0-rc.1`).
