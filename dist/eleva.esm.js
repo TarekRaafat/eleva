@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.2 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.3 | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -651,8 +651,8 @@ class Eleva {
    * app.use(myPlugin, { option1: "value1" });
    */
   use(plugin, options = {}) {
-    plugin.install(this, options);
     this._plugins.set(plugin.name, plugin);
+    plugin.install(this, options);
     return this;
   }
 

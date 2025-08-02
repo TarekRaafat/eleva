@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.2 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.3 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -657,8 +657,8 @@
      * app.use(myPlugin, { option1: "value1" });
      */
     use(plugin, options = {}) {
-      plugin.install(this, options);
       this._plugins.set(plugin.name, plugin);
+      plugin.install(this, options);
       return this;
     }
 

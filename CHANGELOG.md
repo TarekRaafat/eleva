@@ -6,7 +6,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.2 🐛 (06-07-2025)
+## v1.0.0-rc.3 🔧 (01-08-2025)
+
+### 📝 Release Notes
+
+#### 🔧 Fixed
+
+- **Plugin Installation Order Bug**
+  - Fixed a critical bug in the core `Eleva.js` where plugin installation order could lead to inconsistent plugin state.
+  - The `use()` method now registers the plugin in the internal registry before calling `plugin.install()`, ensuring proper plugin state management.
+  - This prevents issues where failed plugin installations would leave the framework in an inconsistent state and improves error handling for plugin developers.
+
+### 💻 Developer Notes
+- This change is fully backward compatible and does not affect the public API or existing plugin functionality.
+- Plugin installation is now more robust and reliable, improving the overall stability of the plugin system.
+- No action is required for existing plugins, but the framework now handles plugin installation errors more gracefully.
+
+#### 🎁 Benefits
+- **For Framework Developers:**
+  - More reliable plugin state management
+  - Better error handling during plugin installation
+  - Improved debugging capabilities for plugin-related issues
+  - Consistent plugin registry state regardless of installation success
+- **For Plugin Developers:**
+  - More predictable plugin installation behavior
+  - Better error handling and debugging support
+  - Improved reliability when developing complex plugins
+
+#### 🛠️ Technical Details
+- The `use()` method now follows the pattern: register plugin → install plugin → return instance
+- This ensures that if `plugin.install()` throws an error, the plugin is already registered and can be properly tracked
+- The change maintains the same public API while improving internal reliability
+
+---
+
+## v1.0.0-rc.2 (06-07-2025)
 
 ### 📝 Release Notes
 
