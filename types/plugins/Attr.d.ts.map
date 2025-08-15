@@ -1,1 +1,1 @@
-{"version":3,"file":"Attr.d.ts","sourceRoot":"","sources":["../../src/plugins/Attr.js"],"names":[],"mappings":";cAyCc,MAAM;iBAMN,MAAM;qBAMN,MAAM;IAIhB;;;;;;;;;OASG;IACH,wBAPW,MAAM,YAEd;QAA0B,UAAU;QACV,UAAU;QACV,aAAa;QACb,aAAa;KACzC,QA0JA;IAED;;;;OAIG;IACH,0BAFW,MAAM,QAgBhB"}
+{"version":3,"file":"Attr.d.ts","sourceRoot":"","sources":["../../src/plugins/Attr.js"],"names":[],"mappings":";cAyCY,MAAM;iBAMN,MAAM;qBAMN,MAAM;IAIhB;;;;;;;;;OASG;IACH,wBAPW,MAAM,YAEd;QAA0B,UAAU;QACV,UAAU;QACV,aAAa;QACb,aAAa;KACzC,QAmKA;IAED;;;;OAIG;IACH,0BAFW,MAAM,QAgBhB"}

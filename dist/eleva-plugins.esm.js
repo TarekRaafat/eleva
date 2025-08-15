@@ -24,7 +24,7 @@ const CAMEL_RE = /-([a-z])/g;
  * // Use advanced attributes in components
  * app.component("myComponent", {
  *   template: (ctx) => `
- *     <button 
+ *     <button
  *       aria-expanded="${ctx.isExpanded.value}"
  *       data-user-id="${ctx.userId.value}"
  *       disabled="${ctx.isLoading.value}"
@@ -53,7 +53,7 @@ const AttrPlugin = {
   description: "Advanced attribute handling for Eleva components",
   /**
    * Installs the plugin into the Eleva instance
-   * 
+   *
    * @param {Object} eleva - The Eleva instance
    * @param {Object} options - Plugin configuration options
    * @param {boolean} [options.enableAria=true] - Enable ARIA attribute handling
@@ -199,7 +199,7 @@ const AttrPlugin = {
   },
   /**
    * Uninstalls the plugin from the Eleva instance
-   * 
+   *
    * @param {Object} eleva - The Eleva instance
    */
   uninstall(eleva) {
@@ -511,7 +511,7 @@ class Router {
 
     // Clean up plugins
     for (const plugin of this.plugins.values()) {
-      if (typeof plugin.destroy === 'function') {
+      if (typeof plugin.destroy === "function") {
         try {
           await plugin.destroy(this);
         } catch (error) {
@@ -924,19 +924,19 @@ class Router {
           previous: self.previousRoute,
           // Route property getters
           get params() {
-            return self._createRouteGetter('params', {})();
+            return self._createRouteGetter("params", {})();
           },
           get query() {
-            return self._createRouteGetter('query', {})();
+            return self._createRouteGetter("query", {})();
           },
           get path() {
-            return self._createRouteGetter('path', '/')();
+            return self._createRouteGetter("path", "/")();
           },
           get fullUrl() {
-            return self._createRouteGetter('fullUrl', window.location.href)();
+            return self._createRouteGetter("fullUrl", window.location.href)();
           },
           get meta() {
-            return self._createRouteGetter('meta', {})();
+            return self._createRouteGetter("meta", {})();
           }
         };
         return originalSetup ? await originalSetup(ctx) : {};
@@ -1078,8 +1078,8 @@ class Router {
    * @param {RouterPlugin} plugin - The plugin to register.
    */
   use(plugin, options = {}) {
-    if (typeof plugin.install !== 'function') {
-      this.errorHandler.handle(new Error('Plugin must have an install method'), 'Plugin registration failed', {
+    if (typeof plugin.install !== "function") {
+      this.errorHandler.handle(new Error("Plugin must have an install method"), "Plugin registration failed", {
         plugin
       });
     }
@@ -1122,7 +1122,7 @@ class Router {
     if (!plugin) return false;
 
     // Call destroy if available
-    if (typeof plugin.destroy === 'function') {
+    if (typeof plugin.destroy === "function") {
       try {
         plugin.destroy(this);
       } catch (error) {
@@ -1137,10 +1137,10 @@ class Router {
    * @param {Object} errorHandler - The error handler object with handle, warn, and log methods.
    */
   setErrorHandler(errorHandler) {
-    if (errorHandler && typeof errorHandler.handle === 'function' && typeof errorHandler.warn === 'function' && typeof errorHandler.log === 'function') {
+    if (errorHandler && typeof errorHandler.handle === "function" && typeof errorHandler.warn === "function" && typeof errorHandler.log === "function") {
       this.errorHandler = errorHandler;
     } else {
-      console.warn('[ElevaRouter] Invalid error handler provided. Must have handle, warn, and log methods.');
+      console.warn("[ElevaRouter] Invalid error handler provided. Must have handle, warn, and log methods.");
     }
   }
 }
@@ -1172,13 +1172,13 @@ class Router {
  * @example
  * // Install the plugin
  * const app = new Eleva("myApp");
- * 
+ *
  * const HomePage = { template: () => `<h1>Home</h1>` };
  * const AboutPage = { template: () => `<h1>About Us</h1>` };
- * const UserPage = { 
- *   template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>` 
+ * const UserPage = {
+ *   template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>`
  * };
- * 
+ *
  * app.use(RouterPlugin, {
  *   mount: '#app',
  *   mode: 'hash',
@@ -1207,7 +1207,7 @@ const RouterPlugin = {
   description: "Client-side routing for Eleva applications",
   /**
    * Installs the RouterPlugin into an Eleva instance.
-   * 
+   *
    * @param {Eleva} eleva - The Eleva instance
    * @param {RouterOptions} options - Router configuration options
    * @param {string} options.mount - A CSS selector for the main element where the app is mounted
@@ -1218,7 +1218,7 @@ const RouterPlugin = {
    * @param {boolean} [options.autoStart=true] - Whether to start the router automatically
    * @param {NavigationGuard} [options.onBeforeEach] - A global guard executed before every navigation
    * @param {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} [options.globalLayout] - A global layout for all routes
-   * 
+   *
    * @example
    * // main.js
    * import Eleva from './eleva.js';
@@ -1248,7 +1248,7 @@ const RouterPlugin = {
     /**
      * Registers a component definition with the Eleva instance.
      * This method handles both inline component objects and pre-registered component names.
-     * 
+     *
      * @param {any} def - The component definition to register
      * @param {string} type - The type of component for naming (e.g., "Route", "Layout")
      * @returns {string | null} The registered component name or null if no definition provided
@@ -1301,7 +1301,7 @@ const RouterPlugin = {
   },
   /**
    * Uninstalls the plugin from the Eleva instance
-   * 
+   *
    * @param {Eleva} eleva - The Eleva instance
    */
   async uninstall(eleva) {
