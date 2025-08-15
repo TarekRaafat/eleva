@@ -213,7 +213,6 @@ export class Eleva {
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
-     * @param {string} prefix - The prefix to look for in attributes
      * @returns {Record<string, string>} An object containing the extracted props
      * @example
      * // For an element with attributes:

@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.0-rc.3",
+  "version": "1.0.0-rc.4",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
   "private": false,
@@ -54,6 +54,45 @@
       "types": "./dist/eleva.d.ts",
       "import": "./dist/eleva.umd.min.js",
       "browser": "./dist/eleva.umd.min.js"
+    },
+    "./plugins": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva-plugins.esm.js",
+      "require": "./dist/eleva-plugins.cjs.js",
+      "browser": "./dist/eleva-plugins.umd.min.js",
+      "default": "./dist/eleva-plugins.umd.min.js"
+    },
+    "./plugins/esm": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva-plugins.esm.js",
+      "require": "./dist/eleva-plugins.esm.js",
+      "browser": "./dist/eleva-plugins.umd.min.js"
+    },
+    "./plugins/cjs": {
+      "types": "./dist/eleva.d.ts",
+      "require": "./dist/eleva-plugins.cjs.js"
+    },
+    "./plugins/umd": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva-plugins.umd.js",
+      "browser": "./dist/eleva-plugins.umd.js"
+    },
+    "./plugins/browser": {
+      "types": "./dist/eleva.d.ts",
+      "import": "./dist/eleva-plugins.umd.min.js",
+      "browser": "./dist/eleva-plugins.umd.min.js"
+    },
+    "./plugins/attr": {
+      "types": "./types/plugins/Attr.d.ts",
+      "import": "./dist/plugins/attr.umd.min.js",
+      "browser": "./dist/plugins/attr.umd.min.js",
+      "default": "./dist/plugins/attr.umd.min.js"
+    },
+    "./plugins/router": {
+      "types": "./types/plugins/Router.d.ts",
+      "import": "./dist/plugins/router.umd.min.js",
+      "browser": "./dist/plugins/router.umd.min.js",
+      "default": "./dist/plugins/router.umd.min.js"
     },
     "./package.json": "./package.json"
   },

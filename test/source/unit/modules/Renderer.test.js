@@ -336,64 +336,6 @@ describe("Renderer", () => {
   });
 
   /**
-   * Tests handling of special properties and attributes
-   *
-   * Verifies:
-   * - Special properties are handled correctly
-   * - Boolean attributes are set properly
-   * - ARIA attributes are handled correctly
-   * - Data attributes are handled correctly
-   *
-   * @group rendering
-   * @group dom
-   * @group accessibility
-   */
-  test("should handle special properties and attributes", () => {
-    const oldEl = document.createElement("input");
-    const newEl = document.createElement("input");
-
-    // Test value property
-    newEl.setAttribute("value", "test");
-    renderer._updateAttributes(oldEl, newEl);
-    expect(oldEl.value).toBe("test");
-
-    // Test boolean properties
-    newEl.setAttribute("checked", "");
-    newEl.setAttribute("disabled", "true");
-    newEl.setAttribute("readOnly", "readOnly");
-    newEl.setAttribute("multiple", "false");
-    renderer._updateAttributes(oldEl, newEl);
-
-    expect(oldEl.checked).toBe(true);
-    expect(oldEl.disabled).toBe(true);
-    expect(oldEl.readOnly).toBe(true);
-    expect(oldEl.multiple).toBe(false);
-
-    // Test ARIA attributes
-    const oldDiv = document.createElement("div");
-    const newDiv = document.createElement("div");
-
-    newDiv.setAttribute("aria-label", "test label");
-    newDiv.setAttribute("aria-hidden", "true");
-    newDiv.setAttribute("aria-invalid-type", "spelling");
-
-    renderer._updateAttributes(oldDiv, newDiv);
-
-    expect(oldDiv.getAttribute("aria-label")).toBe("test label");
-    expect(oldDiv.getAttribute("aria-hidden")).toBe("true");
-    expect(oldDiv.getAttribute("aria-invalid-type")).toBe("spelling");
-
-    // Test data attributes
-    newDiv.setAttribute("data-test", "value");
-    newDiv.setAttribute("data-custom", "custom");
-
-    renderer._updateAttributes(oldDiv, newDiv);
-
-    expect(oldDiv.dataset.test).toBe("value");
-    expect(oldDiv.dataset.custom).toBe("custom");
-  });
-
-  /**
    * Tests error handling for invalid container in patchDOM
    *
    * Verifies:

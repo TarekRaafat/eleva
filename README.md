@@ -40,9 +40,9 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.3` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.4` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.3`
+**Version:** `1.0.0-rc.4`
 
 
 
@@ -74,6 +74,10 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
     - [Emitter](#emitter)
     - [Renderer](#renderer)
     - [Eleva (Core)](#eleva-core)
+    - [Plugins](#plugins)
+      - [Core Framework Only (Lightweight)](#core-framework-only-lightweight)
+      - [AttrPlugin](#attrplugin)
+      - [RouterPlugin](#routerplugin)
   - [Development](#development)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -136,6 +140,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
+- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes and RouterPlugin for client-side routing
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
 - **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
@@ -152,6 +157,8 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
 - **🧪 Rapid Prototyping:** Quickly prototype ideas with a minimal and extendable framework.
 - **🔌 Extensible:** Easily add features like routing or state management through plugins.
+- **🚀 Built-in Routing:** Advanced client-side routing with navigation guards and reactive state via RouterPlugin.
+- **🎯 Advanced Attributes:** Sophisticated attribute handling with ARIA support via AttrPlugin.
 - **📦 Module Format Flexibility:** Choose from ESM, CommonJS, or UMD formats based on your project's needs.
 
 ---
@@ -372,6 +379,132 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
   Register a component.
 - **`.mount(container, compName, props)`**  
   Mount a component to the DOM.
+
+### Plugins
+
+Eleva's plugin system allows you to extend functionality as needed. Plugins are **separately bundled** from the core framework, ensuring optimal tree-shaking and minimal bundle sizes.
+
+#### Core Framework Only (Lightweight)
+
+```javascript
+import Eleva from 'eleva';
+
+const app = new Eleva("myApp");
+// Core framework only - ~6KB minified
+```
+
+#### AttrPlugin
+
+Advanced attribute handling for ARIA, data attributes, boolean properties, and dynamic property detection:
+
+```javascript
+import Eleva from 'eleva';
+import { Attr } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+app.use(Attr, {
+    enableAria: true,      // ARIA attribute handling
+    enableData: true,       // Data attribute management
+    enableBoolean: true,    // Boolean attribute processing
+    enableDynamic: true     // Dynamic property detection
+});
+
+// Use advanced attributes in components
+app.component("myComponent", {
+    template: (ctx) => `
+        <button 
+            aria-expanded="${ctx.isExpanded.value}"
+            data-user-id="${ctx.userId.value}"
+            disabled="${ctx.isLoading.value}"
+            class="btn ${ctx.variant.value}"
+        >
+            ${ctx.text.value}
+        </button>
+    `
+});
+```
+
+#### RouterPlugin
+
+🚀 **Advanced client-side routing** with multiple modes, navigation guards, reactive state, and component resolution:
+
+```javascript
+import Eleva from 'eleva';
+import { Router } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+
+// Define components
+const HomePage = { template: () => `<h1>Home</h1>` };
+const AboutPage = { template: () => `<h1>About</h1>` };
+const UserPage = { 
+    template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>` 
+};
+
+// Install router with advanced configuration
+const router = app.use(Router, {
+    mount: '#app',                    // Mount element selector
+    mode: 'hash',                     // 'hash', 'history', or 'query'
+    routes: [
+        { 
+            path: '/', 
+            component: HomePage,
+            meta: { title: 'Home' }
+        },
+        { 
+            path: '/about', 
+            component: AboutPage,
+            beforeEnter: (to, from) => {
+                // Navigation guard
+                return true;
+            }
+        },
+        { 
+            path: '/users/:id', 
+            component: UserPage,
+            afterEnter: (to, from) => {
+                // Lifecycle hook
+                console.log('User page entered');
+            }
+        }
+    ],
+    onBeforeEach: (to, from) => {
+        // Global navigation guard
+        return true;
+    }
+});
+
+// Access reactive router state
+router.currentRoute.subscribe(route => {
+    console.log('Route changed:', route);
+});
+
+// Programmatic navigation
+router.navigate('/users/123', { replace: true });
+```
+
+**Bundle Sizes:**
+- Core framework only: ~6KB (minified)
+- Core + AttrPlugin: ~8.5KB (minified)
+- Core + RouterPlugin: ~9KB (minified)
+- Core + Both plugins: ~11KB (minified)
+
+**Available Plugin Formats:**
+
+**For Bundlers (Tree-Shaking Supported):**
+- ESM: `import { Attr, Router } from 'eleva/plugins'`
+- CJS: `const { Attr, Router } = require('eleva/plugins')`
+
+**For CDN (Individual Plugins - Smaller Bundle Size):**
+- UMD: `<script src="https://unpkg.com/eleva@latest/dist/eleva.umd.min.js"></script>`
+- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
+- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/router.umd.min.js"></script>`
+
+**Individual Plugin Imports (Best for Tree-Shaking):**
+- ESM: `import { Attr } from 'eleva/plugins/attr'`
+- ESM: `import { Router } from 'eleva/plugins/router'`
+- CJS: `const { Attr } = require('eleva/plugins/attr')`
+- CJS: `const { Router } = require('eleva/plugins/router')`
 
 For detailed API documentation, please check the [docs](docs/index.md) folder.
 

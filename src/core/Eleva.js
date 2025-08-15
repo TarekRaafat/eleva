@@ -161,9 +161,9 @@ export class Eleva {
    */
   use(plugin, options = {}) {
     this._plugins.set(plugin.name, plugin);
-    plugin.install(this, options);
+    const result = plugin.install(this, options);
 
-    return this;
+    return result !== undefined ? result : this;
   }
 
   /**
@@ -431,14 +431,13 @@ export class Eleva {
    *
    * @private
    * @param {HTMLElement} element - The DOM element to extract props from
-   * @param {string} prefix - The prefix to look for in attributes
    * @returns {Record<string, string>} An object containing the extracted props
    * @example
    * // For an element with attributes:
    * // <div :name="John" :age="25">
    * // Returns: { name: "John", age: "25" }
    */
-  _extractProps(element, prefix) {
+  _extractProps(element) {
     if (!element.attributes) return {};
 
     const props = {};
@@ -446,8 +445,8 @@ export class Eleva {
 
     for (let i = attrs.length - 1; i >= 0; i--) {
       const attr = attrs[i];
-      if (attr.name.startsWith(prefix)) {
-        const propName = attr.name.slice(prefix.length);
+      if (attr.name.startsWith(":")) {
+        const propName = attr.name.slice(1);
         props[propName] = attr.value;
         element.removeAttribute(attr.name);
       }
@@ -482,7 +481,7 @@ export class Eleva {
       for (const el of container.querySelectorAll(selector)) {
         if (!(el instanceof HTMLElement)) continue;
         /** @type {Record<string, string>} */
-        const props = this._extractProps(el, ":");
+        const props = this._extractProps(el);
         /** @type {MountResult} */
         const instance = await this.mount(el, component, props);
         if (instance && !childInstances.includes(instance)) {

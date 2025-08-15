@@ -1,13 +1,6 @@
 "use strict";
 
 /**
- * A regular expression to match hyphenated lowercase letters.
- * @private
- * @type {RegExp}
- */
-const CAMEL_RE = /-([a-z])/g;
-
-/**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
  *
@@ -183,42 +176,21 @@ export class Renderer {
     const oldAttrs = oldEl.attributes;
     const newAttrs = newEl.attributes;
 
-    // Single pass for new/updated attributes
+    // Process new attributes
     for (let i = 0; i < newAttrs.length; i++) {
       const { name, value } = newAttrs[i];
-      if (name.startsWith("@")) continue;
-      if (oldEl.getAttribute(name) === value) continue;
-      oldEl.setAttribute(name, value);
 
-      if (name.startsWith("aria-")) {
-        const prop =
-          "aria" + name.slice(5).replace(CAMEL_RE, (_, l) => l.toUpperCase());
-        oldEl[prop] = value;
-      } else if (name.startsWith("data-")) {
-        oldEl.dataset[name.slice(5)] = value;
-      } else {
-        const prop = name.replace(CAMEL_RE, (_, l) => l.toUpperCase());
-        if (prop in oldEl) {
-          const descriptor = Object.getOwnPropertyDescriptor(
-            Object.getPrototypeOf(oldEl),
-            prop
-          );
-          const isBoolean =
-            typeof oldEl[prop] === "boolean" ||
-            (descriptor?.get &&
-              typeof descriptor.get.call(oldEl) === "boolean");
-          if (isBoolean) {
-            oldEl[prop] =
-              value !== "false" &&
-              (value === "" || value === prop || value === "true");
-          } else {
-            oldEl[prop] = value;
-          }
-        }
-      }
+      // Skip event attributes (handled by event system)
+      if (name.startsWith("@")) continue;
+
+      // Skip if attribute hasn't changed
+      if (oldEl.getAttribute(name) === value) continue;
+
+      // Basic attribute setting
+      oldEl.setAttribute(name, value);
     }
 
-    // Remove any attributes no longer present
+    // Remove old attributes that are no longer present
     for (let i = oldAttrs.length - 1; i >= 0; i--) {
       const name = oldAttrs[i].name;
       if (!newEl.hasAttribute(name)) {

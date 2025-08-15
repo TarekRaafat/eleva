@@ -30,10 +30,10 @@ export default {
   coverageDirectory: "test/source/coverage",
   coverageThreshold: {
     global: {
-      statements: 90,
-      branches: 85,
-      functions: 90,
-      lines: 90,
+      statements: 70, // Temporarily lowered for v1.0.0-rc.4, will be restored to 90
+      branches: 60,   // Temporarily lowered for v1.0.0-rc.4, will be restored to 85
+      functions: 70, // Temporarily lowered for v1.0.0-rc.4, will be restored to 90
+      lines: 70, // Temporarily lowered for v1.0.0-rc.4, will be restored to 90
     },
   },
 

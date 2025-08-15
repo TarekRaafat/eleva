@@ -31,7 +31,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.3. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.4. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -78,6 +78,11 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
     - [Example Plugin](#example-plugin)
     - [Plugin Lifecycle](#plugin-lifecycle)
     - [TypeScript Support](#typescript-support)
+    - [Built-in Plugins](#built-in-plugins)
+      - [🎯 AttrPlugin](#-attrplugin)
+      - [🚀 RouterPlugin](#-routerplugin)
+      - [Plugin Installation](#plugin-installation)
+      - [Bundle Sizes](#bundle-sizes)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
   - [10. Best Practices \& Use Cases](#10-best-practices--use-cases)
     - [Best Practices](#best-practices-1)
@@ -164,11 +169,31 @@ Install via npm:
 npm install eleva
 ```
 
+**Core Framework Only (Recommended):**
+```javascript
+import Eleva from 'eleva';  // ~6KB - Core framework only
+const app = new Eleva("MyApp");
+```
+
+**With Individual Plugins (Optional):**
+```javascript
+import Eleva from 'eleva';
+import { Attr } from 'eleva/plugins/attr';      // ~2.3KB
+import { Router } from 'eleva/plugins/router';  // ~13KB
+
+const app = new Eleva("MyApp");
+app.use(Attr);    // Only if needed
+app.use(Router);  // Only if needed
+```
+
 Or include it directly via CDN:
 
 ```html
-<!-- jsDelivr (Recommended) -->
+<!-- Core framework only (Recommended) -->
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
+
+<!-- With all plugins (Optional) -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/plugins"></script>
 ```
 
 or
@@ -1224,6 +1249,143 @@ interface ElevaPlugin {
 
 This ensures type safety when developing plugins in TypeScript.
 
+### Built-in Plugins
+
+Eleva comes with several powerful built-in plugins that extend the framework's capabilities:
+
+#### 🎯 AttrPlugin
+
+Advanced attribute handling for Eleva components with ARIA support, data attributes, boolean attributes, and dynamic property detection.
+
+```javascript
+import { Attr } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+app.use(Attr, {
+    enableAria: true,      // Enable ARIA attribute handling
+    enableData: true,      // Enable data attribute handling
+    enableBoolean: true,   // Enable boolean attribute handling
+    enableDynamic: true    // Enable dynamic property detection
+});
+
+// Use advanced attributes in components
+app.component("myComponent", {
+    template: (ctx) => `
+        <button 
+            aria-expanded="${ctx.isExpanded.value}"
+            data-user-id="${ctx.userId.value}"
+            disabled="${ctx.isLoading.value}"
+            class="btn ${ctx.variant.value}"
+        >
+            ${ctx.text.value}
+        </button>
+    `
+});
+```
+
+**Features:**
+- 🎯 **ARIA Support**: Automatic ARIA attribute handling with proper property mapping
+- 📊 **Data Attributes**: Seamless data attribute management
+- ✅ **Boolean Attributes**: Intelligent boolean attribute processing
+- 🔍 **Dynamic Properties**: Automatic property detection and mapping
+- 🧹 **Attribute Cleanup**: Automatic removal of unused attributes
+
+#### 🚀 RouterPlugin
+
+Advanced client-side routing with reactive state, navigation guards, and component resolution.
+
+```javascript
+import { Router } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+
+// Define components
+const HomePage = { template: () => `<h1>Home</h1>` };
+const AboutPage = { template: () => `<h1>About</h1>` };
+const UserPage = { 
+    template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>` 
+};
+
+// Install router with advanced configuration
+const router = app.use(Router, {
+    mount: '#app',                    // Mount element selector
+    mode: 'hash',                     // 'hash', 'history', or 'query'
+    routes: [
+        { 
+            path: '/', 
+            component: HomePage,
+            meta: { title: 'Home' }
+        },
+        { 
+            path: '/about', 
+            component: AboutPage,
+            beforeEnter: (to, from) => {
+                // Navigation guard
+                return true;
+            }
+        },
+        { 
+            path: '/users/:id', 
+            component: UserPage,
+            afterEnter: (to, from) => {
+                // Lifecycle hook
+                console.log('User page entered');
+            }
+        }
+    ],
+    onBeforeEach: (to, from) => {
+        // Global navigation guard
+        return true;
+    }
+});
+
+// Access reactive router state
+router.currentRoute.subscribe(route => {
+    console.log('Route changed:', route);
+});
+
+// Programmatic navigation
+router.navigate('/users/123', { replace: true });
+```
+
+**Features:**
+- 🚀 **Multiple Routing Modes**: Hash, History API, and Query parameter routing
+- 🛡️ **Navigation Guards**: Global and route-specific guards
+- 🔄 **Reactive State**: Real-time route state updates
+- 🧩 **Component Resolution**: Support for inline components and async imports
+- 🎯 **Layout System**: Global and route-specific layouts
+- 🔌 **Plugin System**: Router-level plugin extensibility
+- 🛠️ **Error Handling**: Comprehensive error management
+
+#### Plugin Installation
+
+```javascript
+// Import plugins
+import { Attr, Router } from 'eleva/plugins';
+
+// Install multiple plugins
+const app = new Eleva("myApp");
+app.use(Attr);
+app.use(Router, routerOptions);
+
+// Or install with options
+app.use(Attr, {
+    enableAria: true,
+    enableData: true
+});
+```
+
+#### Bundle Sizes
+
+- **Core framework only**: ~6KB (minified)
+- **Core + Attr plugin**: ~8.3KB (minified)
+- **Core + Router plugin**: ~19KB (minified)
+- **Core + Both plugins**: ~21KB (minified)
+
+**Individual Plugin Sizes:**
+- **Attr plugin only**: ~2.3KB (minified)
+- **Router plugin only**: ~13KB (minified)
+
 ---
 
 ## 9. Debugging & Developer Tools
@@ -1262,6 +1424,8 @@ Explore these guides for real-world examples:
 - [Basic Counter Example](https://github.com/TarekRaafat/eleva/blob/master/examples/counter.md)
 - [Todo App Example](https://github.com/TarekRaafat/eleva/blob/master/examples/todo-app.md)
 - [Creating a Custom Plugin](https://github.com/TarekRaafat/eleva/blob/master/examples/custom-plugin.md)
+- [Router Plugin Example](https://github.com/TarekRaafat/eleva/blob/master/examples/router-plugin.html)
+- [Attribute Handler Plugin Example](https://github.com/TarekRaafat/eleva/blob/master/examples/attribute-handler-plugin.html)
 
 Interactive demos are also available on Eleva's [CodePen Collection](https://codepen.io/collection/dGGqWr) for you to experiment live.
 
@@ -1277,6 +1441,12 @@ _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
 
 **Q: Can I use Eleva with TypeScript?**
 _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep your codebase strongly typed.
+
+**Q: Does Eleva include routing capabilities?**
+_A:_ Yes! Eleva includes a powerful built-in RouterPlugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
+
+**Q: What plugins are available with Eleva?**
+_A:_ Eleva comes with two powerful built-in plugins: Attr for advanced attribute handling and Router for client-side routing. Both are designed to work seamlessly with the core framework.
 
 ---
 
@@ -1313,6 +1483,10 @@ Detailed API documentation with parameter descriptions, return values, and usage
 
 - **Renderer:**  
   Methods: `patchDOM(container, newHtml)`, `diff(oldParent, newParent)`, and `updateAttributes(oldEl, newEl)`
+
+- **Built-in Plugins:**
+  - **Attr:** Advanced attribute handling with ARIA support
+  - **Router:** Client-side routing with navigation guards and reactive state
 
 - **Eleva (Core):**  
   `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`

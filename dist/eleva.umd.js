@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.3 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.4 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -251,13 +251,6 @@
   }
 
   /**
-   * A regular expression to match hyphenated lowercase letters.
-   * @private
-   * @type {RegExp}
-   */
-  const CAMEL_RE = /-([a-z])/g;
-
-  /**
    * @class 🎨 Renderer
    * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
    *
@@ -418,35 +411,24 @@
       const oldAttrs = oldEl.attributes;
       const newAttrs = newEl.attributes;
 
-      // Single pass for new/updated attributes
+      // Process new attributes
       for (let i = 0; i < newAttrs.length; i++) {
         const {
           name,
           value
         } = newAttrs[i];
+
+        // Skip event attributes (handled by event system)
         if (name.startsWith("@")) continue;
+
+        // Skip if attribute hasn't changed
         if (oldEl.getAttribute(name) === value) continue;
+
+        // Basic attribute setting
         oldEl.setAttribute(name, value);
-        if (name.startsWith("aria-")) {
-          const prop = "aria" + name.slice(5).replace(CAMEL_RE, (_, l) => l.toUpperCase());
-          oldEl[prop] = value;
-        } else if (name.startsWith("data-")) {
-          oldEl.dataset[name.slice(5)] = value;
-        } else {
-          const prop = name.replace(CAMEL_RE, (_, l) => l.toUpperCase());
-          if (prop in oldEl) {
-            const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop);
-            const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
-            if (isBoolean) {
-              oldEl[prop] = value !== "false" && (value === "" || value === prop || value === "true");
-            } else {
-              oldEl[prop] = value;
-            }
-          }
-        }
       }
 
-      // Remove any attributes no longer present
+      // Remove old attributes that are no longer present
       for (let i = oldAttrs.length - 1; i >= 0; i--) {
         const name = oldAttrs[i].name;
         if (!newEl.hasAttribute(name)) {
@@ -658,8 +640,8 @@
      */
     use(plugin, options = {}) {
       this._plugins.set(plugin.name, plugin);
-      plugin.install(this, options);
-      return this;
+      const result = plugin.install(this, options);
+      return result !== undefined ? result : this;
     }
 
     /**
@@ -918,21 +900,20 @@
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
-     * @param {string} prefix - The prefix to look for in attributes
      * @returns {Record<string, string>} An object containing the extracted props
      * @example
      * // For an element with attributes:
      * // <div :name="John" :age="25">
      * // Returns: { name: "John", age: "25" }
      */
-    _extractProps(element, prefix) {
+    _extractProps(element) {
       if (!element.attributes) return {};
       const props = {};
       const attrs = element.attributes;
       for (let i = attrs.length - 1; i >= 0; i--) {
         const attr = attrs[i];
-        if (attr.name.startsWith(prefix)) {
-          const propName = attr.name.slice(prefix.length);
+        if (attr.name.startsWith(":")) {
+          const propName = attr.name.slice(1);
           props[propName] = attr.value;
           element.removeAttribute(attr.name);
         }
@@ -967,7 +948,7 @@
         for (const el of container.querySelectorAll(selector)) {
           if (!(el instanceof HTMLElement)) continue;
           /** @type {Record<string, string>} */
-          const props = this._extractProps(el, ":");
+          const props = this._extractProps(el);
           /** @type {MountResult} */
           const instance = await this.mount(el, component, props);
           if (instance && !childInstances.includes(instance)) {
