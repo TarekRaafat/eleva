@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.4 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.5 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :

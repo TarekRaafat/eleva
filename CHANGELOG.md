@@ -6,6 +6,54 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.0-rc.5 🎯 (08-09-2025)
+
+### 🚀 Major Release: Props Plugin Introduction
+- **Introducing Props Plugin**: Eleva now features a dedicated Props plugin for handling complex data structures with automatic type detection and reactive prop updates.
+- **Enhanced Data Handling**: Support for passing any type of data structure (String, Number, Array, Object, JSON, etc.) from parent to child components.
+- **Automatic Type Detection**: Intelligent parsing of string attributes to their native JavaScript types.
+- **Reactive Props**: Props that automatically update when parent data changes using Eleva's signal system.
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- **🎯 Props Plugin (Core Plugin)**
+  - **Automatic Type Detection**: Automatically converts string attributes to their native JavaScript types (strings, numbers, booleans, objects, arrays, dates, etc.).
+  - **Complex Data Structures**: Support for nested objects and arrays without requiring manual parsing.
+  - **Reactive Props**: Props automatically update when parent data changes, integrating with Eleva's signal system.
+  - **Error Handling**: Comprehensive error handling with custom error callbacks for parsing failures.
+  - **Simple Configuration**: Minimal setup required with sensible defaults.
+  - **Bundle Size**: ~2.1KB (minified) - lightweight and focused.
+  - **Comprehensive Documentation**: Full JSDoc coverage following Eleva plugin development best practices.
+
+- **Enhanced Plugin System**
+  - **Props Plugin Integration**: Seamless integration with existing plugin architecture.
+  - **Individual Plugin Access**: Direct access via `import { Props } from 'eleva/plugins'`.
+  - **CDN Support**: Separate CDN links for Props plugin distribution.
+
+#### 🎛️ Changed
+
+- **Plugin System Architecture**
+  - **Extended Plugin Ecosystem**: Props plugin joins Attr and Router plugins as core Eleva plugins.
+  - **Consistent Plugin Structure**: Props plugin follows same development patterns as other Eleva plugins.
+
+#### 📚 Documentation
+
+- **Comprehensive API Reference**: Complete documentation with examples and best practices.
+- **TypeScript Support**: Full TypeScript definitions for Props plugin.
+- **Working Examples**: Functional examples demonstrating all plugin features.
+- **Limitations Guide**: Clear documentation of Map/Set limitations and manual JSON.stringify requirements.
+
+#### 🔧 Technical Details
+
+- **Supported Data Types**: Strings, numbers, booleans, objects, arrays, dates, null, undefined.
+- **Parsing Order**: Optimized parsing order to handle edge cases correctly.
+- **Error Recovery**: Graceful fallback to original values when parsing fails.
+- **Performance**: Efficient parsing with minimal overhead.
+
+---
+
 ## v1.0.0-rc.4 🎯 (15-08-2025)
 
 ### 🚀 Major Release: Plugin System Introduction

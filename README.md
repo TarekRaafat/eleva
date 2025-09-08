@@ -40,9 +40,9 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.4` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.5` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.4`
+**Version:** `1.0.0-rc.5`
 
 
 

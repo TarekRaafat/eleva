@@ -31,7 +31,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.4. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.5. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -81,6 +81,7 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
     - [Built-in Plugins](#built-in-plugins)
       - [🎯 AttrPlugin](#-attrplugin)
       - [🚀 RouterPlugin](#-routerplugin)
+      - [🎯 PropsPlugin](#-propsplugin)
       - [Plugin Installation](#plugin-installation)
       - [Bundle Sizes](#bundle-sizes)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
@@ -1357,21 +1358,86 @@ router.navigate('/users/123', { replace: true });
 - 🔌 **Plugin System**: Router-level plugin extensibility
 - 🛠️ **Error Handling**: Comprehensive error management
 
+#### 🎯 PropsPlugin
+
+Advanced props data handling for complex data structures with automatic type detection and reactivity.
+
+```javascript
+import { Props } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+app.use(Props, {
+    enableAutoParsing: true,      // Enable automatic type detection and parsing
+    enableReactivity: true,       // Enable reactive prop updates using Eleva's signal system
+    onError: (error, value) => {
+        console.error('Props parsing error:', error, value);
+    }
+});
+
+// Use complex props in components
+app.component("UserCard", {
+    template: (ctx) => `
+        <div class="user-info-container"
+             :user='${JSON.stringify(ctx.user.value)}'
+             :permissions='${JSON.stringify(ctx.permissions.value)}'
+             :settings='${JSON.stringify(ctx.settings.value)}'>
+        </div>
+    `,
+    children: {
+        '.user-info-container': 'UserInfo'
+    }
+});
+
+app.component("UserInfo", {
+    setup({ props }) {
+        return {
+            user: props.user,        // Automatically parsed object
+            permissions: props.permissions,  // Automatically parsed array
+            settings: props.settings  // Automatically parsed object
+        };
+    },
+    template: (ctx) => `
+        <div class="user-info">
+            <h3>${ctx.user.value.name}</h3>
+            <p>Age: ${ctx.user.value.age}</p>
+            <p>Active: ${ctx.user.value.active}</p>
+            <ul>
+                ${ctx.permissions.value.map(perm => `<li>${perm}</li>`).join('')}
+            </ul>
+        </div>
+    `
+});
+```
+
+**Features:**
+- 🎯 **Automatic Type Detection**: Intelligently detects and parses strings, numbers, booleans, objects, arrays, dates, and more
+- 📊 **Complex Data Structures**: Seamless handling of nested objects and arrays
+- 🔄 **Reactive Props**: Automatic reactive updates when parent data changes using Eleva's signal system
+- 🛠️ **Error Handling**: Comprehensive error handling with custom error callbacks
+- 🧹 **Attribute Cleanup**: Automatic removal of prop attributes after extraction
+- ⚡ **Performance Optimized**: Efficient parsing with minimal overhead
+
 #### Plugin Installation
 
 ```javascript
 // Import plugins
-import { Attr, Router } from 'eleva/plugins';
+import { Attr, Router, Props } from 'eleva/plugins';
 
 // Install multiple plugins
 const app = new Eleva("myApp");
 app.use(Attr);
 app.use(Router, routerOptions);
+app.use(Props, propsOptions);
 
 // Or install with options
 app.use(Attr, {
     enableAria: true,
     enableData: true
+});
+
+app.use(Props, {
+    enableAutoParsing: true,
+    enableReactivity: true
 });
 ```
 
@@ -1380,11 +1446,13 @@ app.use(Attr, {
 - **Core framework only**: ~6KB (minified)
 - **Core + Attr plugin**: ~8.3KB (minified)
 - **Core + Router plugin**: ~19KB (minified)
-- **Core + Both plugins**: ~21KB (minified)
+- **Core + Props plugin**: ~8.5KB (minified)
+- **Core + All plugins**: ~23KB (minified)
 
 **Individual Plugin Sizes:**
 - **Attr plugin only**: ~2.3KB (minified)
 - **Router plugin only**: ~13KB (minified)
+- **Props plugin only**: ~2.5KB (minified)
 
 ---
 
@@ -1446,7 +1514,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 _A:_ Yes! Eleva includes a powerful built-in RouterPlugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
 
 **Q: What plugins are available with Eleva?**
-_A:_ Eleva comes with two powerful built-in plugins: Attr for advanced attribute handling and Router for client-side routing. Both are designed to work seamlessly with the core framework.
+_A:_ Eleva comes with three powerful built-in plugins: Attr for advanced attribute handling, Router for client-side routing, and Props for advanced props data handling with automatic type detection and reactivity. All plugins are designed to work seamlessly with the core framework.
 
 ---
 
@@ -1487,6 +1555,7 @@ Detailed API documentation with parameter descriptions, return values, and usage
 - **Built-in Plugins:**
   - **Attr:** Advanced attribute handling with ARIA support
   - **Router:** Client-side routing with navigation guards and reactive state
+  - **Props:** Advanced props data handling with automatic type detection and reactivity
 
 - **Eleva (Core):**  
   `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`
