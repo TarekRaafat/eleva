@@ -6,7 +6,56 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.5 🎯 (08-09-2025)
+## v1.0.0-rc.6 🔄 (10-09-2025)
+
+### 🚀 Major Enhancement: Reactive Props Signal Reference Passing
+- **Fixed Reactive Props Issue**: Resolved critical issue where child components with Props plugin installed were not updating when parent signal data changed.
+- **Signal Reference Passing**: Implemented advanced signal reference passing mechanism that ensures child components receive actual parent signal references instead of static values.
+- **Automatic Re-rendering**: Child components now automatically re-render when parent signals change, providing true reactivity.
+
+### 📝 Release Notes
+
+#### 🐛 Fixed
+
+- **Critical Reactive Props Bug**: Fixed issue where child components were not reacting to parent signal changes when using the Props plugin.
+- **Signal Reference Detection**: Resolved timing issues where parent context wasn't available during initial child component mounting.
+- **Post-Mount Signal Linking**: Implemented robust post-mount signal linking mechanism to handle component mounting order.
+
+#### ➕ Added
+
+- **Advanced Signal Reference Passing**
+  - **Post-Mount Signal Linking**: Child components are initially mounted with static props, then linked to parent signals after mounting is complete.
+  - **Parent Context Caching**: Uses WeakMap to cache parent contexts for performance optimization and to handle timing issues.
+  - **Automatic Signal Watchers**: Sets up signal watchers on linked signals to trigger child component re-renders when parent signals change.
+  - **TemplateEngine Integration**: Proper integration with Eleva's TemplateEngine for seamless re-rendering.
+
+- **Enhanced Props Plugin Architecture**
+  - **TemplateEngine Import**: Added proper TemplateEngine import for template parsing and DOM patching.
+  - **Plugin Metadata**: Added plugin name, version, and description metadata for better plugin management.
+  - **Improved Error Handling**: Enhanced error handling throughout the signal linking process.
+
+#### 🔧 Technical Improvements
+
+- **Signal Linking Mechanism**: 
+  - Detects when child components need signal references
+  - Links child props to parent signal references after mounting
+  - Sets up automatic watchers for reactive updates
+  - Handles component re-rendering when signals change
+
+- **Performance Optimizations**:
+  - Parent context caching using WeakMap
+  - Efficient signal reference detection
+  - Minimal DOM updates through targeted re-rendering
+
+#### 🧪 Testing
+
+- **Reactive Props Test Suite**: Comprehensive testing of signal reference passing and automatic re-rendering.
+- **Parent-Child Communication**: Verified proper communication between parent and child components through signals.
+- **Signal Watcher Validation**: Confirmed signal watchers are properly set up and trigger re-renders.
+
+---
+
+## v1.0.0-rc.5 (08-09-2025)
 
 ### 🚀 Major Release: Props Plugin Introduction
 - **Introducing Props Plugin**: Eleva now features a dedicated Props plugin for handling complex data structures with automatic type detection and reactive prop updates.
@@ -54,7 +103,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.4 🎯 (15-08-2025)
+## v1.0.0-rc.4 (15-08-2025)
 
 ### 🚀 Major Release: Plugin System Introduction
 - **Introducing Core Plugins**: Eleva now features a modular plugin architecture that separates core functionality from optional features.

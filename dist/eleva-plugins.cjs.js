@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.5 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.6 | MIT License | https://elevajs.com */
 'use strict';
 
 /**
@@ -1326,6 +1326,68 @@ const RouterPlugin = {
 };
 
 /**
+ * @class 🔒 TemplateEngine
+ * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
+ * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+ * All methods are static and can be called directly on the class.
+ *
+ * @example
+ * const template = "Hello, {{name}}!";
+ * const data = { name: "World" };
+ * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
+ */
+class TemplateEngine {
+  /**
+   * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+   * @type {RegExp}
+   */
+  static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
+
+  /**
+   * Parses a template string, replacing expressions with their evaluated values.
+   * Expressions are evaluated in the provided data context.
+   *
+   * @public
+   * @static
+   * @param {string} template - The template string to parse.
+   * @param {Record<string, unknown>} data - The data context for evaluating expressions.
+   * @returns {string} The parsed template with expressions replaced by their values.
+   * @example
+   * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+   *   user: { name: "John", age: 30 }
+   * }); // Returns: "John is 30 years old"
+   */
+  static parse(template, data) {
+    if (typeof template !== "string") return template;
+    return template.replace(this.expressionPattern, (_, expression) => this.evaluate(expression, data));
+  }
+
+  /**
+   * Evaluates an expression in the context of the provided data object.
+   * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
+   * The use of the `with` statement is necessary for expression evaluation but has security implications.
+   * Expressions should be carefully validated before evaluation.
+   *
+   * @public
+   * @static
+   * @param {string} expression - The expression to evaluate.
+   * @param {Record<string, unknown>} data - The data context for evaluation.
+   * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
+   * @example
+   * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
+   * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
+   */
+  static evaluate(expression, data) {
+    if (typeof expression !== "string") return expression;
+    try {
+      return new Function("data", `with(data) { return ${expression}; }`)(data);
+    } catch {
+      return "";
+    }
+  }
+}
+
+/**
  * @class 🎯 PropsPlugin
  * @classdesc A plugin that extends Eleva's props data handling to support any type of data structure
  * with automatic type detection, parsing, and reactive prop updates. This plugin enables seamless
@@ -1383,7 +1445,7 @@ const PropsPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.1",
+  version: "1.0.0-rc.2",
   /**
    * Plugin description
    * @type {string}
@@ -1613,6 +1675,167 @@ const PropsPlugin = {
       return await originalMount.call(eleva, container, compName, enhancedProps);
     };
 
+    // Override Eleva's _mountComponents method to enable signal reference passing
+    const originalMountComponents = eleva._mountComponents;
+
+    // Cache to store parent contexts by container element
+    const parentContextCache = new WeakMap();
+    // Store child instances that need signal linking
+    const pendingSignalLinks = new Set();
+    eleva._mountComponents = async (container, children, childInstances) => {
+      for (const [selector, component] of Object.entries(children)) {
+        if (!selector) continue;
+        for (const el of container.querySelectorAll(selector)) {
+          if (!(el instanceof HTMLElement)) continue;
+
+          // Extract props from DOM attributes
+          const extractedProps = eleva._extractProps(el);
+
+          // Get parent context to check for signal references
+          let enhancedProps = extractedProps;
+
+          // Try to find parent context by looking up the DOM tree
+          let parentContext = parentContextCache.get(container);
+          if (!parentContext) {
+            let currentElement = container;
+            while (currentElement && !parentContext) {
+              if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
+                parentContext = currentElement._eleva_instance.data;
+                // Cache the parent context for future use
+                parentContextCache.set(container, parentContext);
+                break;
+              }
+              currentElement = currentElement.parentElement;
+            }
+          }
+          if (enableReactivity && parentContext) {
+            const signalProps = {};
+
+            // Check each extracted prop to see if there's a matching signal in parent context
+            Object.keys(extractedProps).forEach(propName => {
+              if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
+                // Found a signal in parent context with the same name as the prop
+                // Pass the signal reference instead of creating a new one
+                signalProps[propName] = parentContext[propName];
+              }
+            });
+
+            // Merge signal props with regular props (signal props take precedence)
+            enhancedProps = {
+              ...extractedProps,
+              ...signalProps
+            };
+          }
+
+          // Create reactive props for non-signal props only
+          let finalProps = enhancedProps;
+          if (enableReactivity) {
+            // Only create reactive props for values that aren't already signals
+            const nonSignalProps = {};
+            Object.entries(enhancedProps).forEach(([key, value]) => {
+              if (!(value && typeof value === 'object' && 'value' in value && 'watch' in value)) {
+                // This is not a signal, create a reactive prop for it
+                nonSignalProps[key] = value;
+              }
+            });
+
+            // Create reactive props only for non-signal values
+            const reactiveNonSignalProps = createReactiveProps(nonSignalProps);
+
+            // Merge signal props with reactive non-signal props
+            finalProps = {
+              ...reactiveNonSignalProps,
+              ...enhancedProps // Signal props take precedence
+            };
+          }
+
+          /** @type {MountResult} */
+          const instance = await eleva.mount(el, component, finalProps);
+          if (instance && !childInstances.includes(instance)) {
+            childInstances.push(instance);
+
+            // If we have extracted props but no parent context yet, mark for later signal linking
+            if (enableReactivity && Object.keys(extractedProps).length > 0 && !parentContext) {
+              pendingSignalLinks.add({
+                instance,
+                extractedProps,
+                container,
+                component
+              });
+            }
+          }
+        }
+      }
+
+      // After mounting all children, try to link signals for pending instances
+      if (enableReactivity && pendingSignalLinks.size > 0) {
+        for (const pending of pendingSignalLinks) {
+          const {
+            instance,
+            extractedProps,
+            container,
+            component
+          } = pending;
+
+          // Try to find parent context again
+          let parentContext = parentContextCache.get(container);
+          if (!parentContext) {
+            let currentElement = container;
+            while (currentElement && !parentContext) {
+              if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
+                parentContext = currentElement._eleva_instance.data;
+                parentContextCache.set(container, parentContext);
+                break;
+              }
+              currentElement = currentElement.parentElement;
+            }
+          }
+          if (parentContext) {
+            const signalProps = {};
+
+            // Check each extracted prop to see if there's a matching signal in parent context
+            Object.keys(extractedProps).forEach(propName => {
+              if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
+                signalProps[propName] = parentContext[propName];
+              }
+            });
+
+            // Update the child instance's data with signal references
+            if (Object.keys(signalProps).length > 0) {
+              Object.assign(instance.data, signalProps);
+
+              // Set up signal watchers for the newly linked signals
+              Object.keys(signalProps).forEach(propName => {
+                const signal = signalProps[propName];
+                if (signal && typeof signal.watch === 'function') {
+                  signal.watch(newValue => {
+                    // Trigger a re-render of the child component when the signal changes
+                    const childComponent = eleva._components.get(component) || component;
+                    if (childComponent && childComponent.template) {
+                      const templateResult = typeof childComponent.template === 'function' ? childComponent.template(instance.data) : childComponent.template;
+                      const newHtml = TemplateEngine.parse(templateResult, instance.data);
+                      eleva.renderer.patchDOM(instance.container, newHtml);
+                    }
+                  });
+                }
+              });
+
+              // Initial re-render to show the correct signal values
+              const childComponent = eleva._components.get(component) || component;
+              if (childComponent && childComponent.template) {
+                const templateResult = typeof childComponent.template === 'function' ? childComponent.template(instance.data) : childComponent.template;
+                const newHtml = TemplateEngine.parse(templateResult, instance.data);
+                eleva.renderer.patchDOM(instance.container, newHtml);
+              }
+            }
+
+            // Remove from pending list
+            pendingSignalLinks.delete(pending);
+          }
+        }
+      }
+    };
+
     /**
      * Expose utility methods on the Eleva instance
      * @namespace eleva.props
@@ -1652,6 +1875,7 @@ const PropsPlugin = {
     // Store original methods for uninstall
     eleva._originalExtractProps = eleva._extractProps;
     eleva._originalMount = originalMount;
+    eleva._originalMountComponents = originalMountComponents;
   },
   /**
    * Uninstalls the plugin from the Eleva instance
@@ -1678,6 +1902,12 @@ const PropsPlugin = {
     if (eleva._originalMount) {
       eleva.mount = eleva._originalMount;
       delete eleva._originalMount;
+    }
+
+    // Restore original _mountComponents method
+    if (eleva._originalMountComponents) {
+      eleva._mountComponents = eleva._originalMountComponents;
+      delete eleva._originalMountComponents;
     }
 
     // Remove plugin utility methods
