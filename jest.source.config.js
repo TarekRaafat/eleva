@@ -4,7 +4,7 @@ export default {
   verbose: true,
 
   // Path configurations
-  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
+  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/test/source/unit/plugins/"],
   coveragePathIgnorePatterns: [
     "/node_modules/",
     "/dist/",
@@ -24,6 +24,7 @@ export default {
     "!src/**/index.js",
     "!src/**/*.d.ts",
     "!src/**/*.min.js",
+    "!src/plugins/**/*.js", // Exclude plugin files from coverage
   ],
   collectCoverage: true,
   coverageReporters: ["text", "lcov", "html"],
