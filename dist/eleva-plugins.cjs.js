@@ -129,7 +129,7 @@ const AttrPlugin = {
           if (hasProperty) {
             // Boolean attribute handling
             if (enableBoolean) {
-              const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
+              const isBoolean = typeof oldEl[prop] === "boolean" || (descriptor == null ? void 0 : descriptor.get) && typeof descriptor.get.call(oldEl) === "boolean";
               if (isBoolean) {
                 const boolValue = value !== "false" && (value === "" || value === prop || value === "true");
                 oldEl[prop] = boolValue;
@@ -171,7 +171,7 @@ const AttrPlugin = {
 
       // Override the _patchNode method to use our attribute handler
       eleva.renderer._patchNode = function (oldNode, newNode) {
-        if (oldNode?._eleva_instance) return;
+        if (oldNode != null && oldNode._eleva_instance) return;
         if (!this._isSameNode(oldNode, newNode)) {
           oldNode.replaceWith(newNode.cloneNode(true));
           return;
@@ -221,18 +221,16 @@ const AttrPlugin = {
   }
 };
 
-/**
- * @typedef {import('eleva').Eleva} Eleva
- * @typedef {import('eleva').Signal} Signal
- * @typedef {import('eleva').ComponentDefinition} ComponentDefinition
- */
+function _extends() {
+  return _extends = Object.assign ? Object.assign.bind() : function (n) {
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments[e];
+      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+    }
+    return n;
+  }, _extends.apply(null, arguments);
+}
 
-/**
- * Simple error handler for the core router.
- * Can be overridden by error handling plugins.
- * Provides consistent error formatting and logging for router operations.
- * @private
- */
 const CoreErrorHandler = {
   /**
    * Handles router errors with basic formatting.
@@ -341,12 +339,11 @@ class Router {
     this.eleva = eleva;
 
     /** @type {RouterOptions} The merged router options. */
-    this.options = {
+    this.options = _extends({
       mode: "hash",
       queryParam: "view",
-      viewSelector: "root",
-      ...options
-    };
+      viewSelector: "root"
+    }, options);
 
     /** @private @type {RouteDefinition[]} The processed list of route definitions. */
     this.routes = this._processRoutes(options.routes || []);
@@ -410,10 +407,9 @@ class Router {
     const processedRoutes = [];
     for (const route of routes) {
       try {
-        processedRoutes.push({
-          ...route,
+        processedRoutes.push(_extends({}, route, {
           segments: this._parsePathIntoSegments(route.path)
-        });
+        }));
       } catch (error) {
         this.errorHandler.warn(`Invalid path in route definition "${route.path || "undefined"}": ${error.message}`, {
           route,
@@ -668,13 +664,12 @@ class Router {
         return false;
       }
     }
-    const to = {
-      ...toLocation,
+    const to = _extends({}, toLocation, {
       params: toMatch.params,
       meta: toMatch.route.meta || {},
       name: toMatch.route.name,
       matched: toMatch.route
-    };
+    });
     try {
       // 1. Run all *pre-navigation* guards.
       const canNavigate = await this._runGuards(to, from, toMatch.route);
@@ -905,7 +900,10 @@ class Router {
    * @returns {Function} A getter function.
    */
   _createRouteGetter(property, defaultValue) {
-    return () => this.currentRoute.value?.[property] ?? defaultValue;
+    return () => {
+      var _this$currentRoute$va, _this$currentRoute$va2;
+      return (_this$currentRoute$va = (_this$currentRoute$va2 = this.currentRoute.value) == null ? void 0 : _this$currentRoute$va2[property]) != null ? _this$currentRoute$va : defaultValue;
+    };
   }
 
   /**
@@ -917,8 +915,7 @@ class Router {
   _wrapComponent(component) {
     const originalSetup = component.setup;
     const self = this;
-    return {
-      ...component,
+    return _extends({}, component, {
       async setup(ctx) {
         ctx.router = {
           navigate: self.navigate.bind(self),
@@ -943,7 +940,7 @@ class Router {
         };
         return originalSetup ? await originalSetup(ctx) : {};
       }
-    };
+    });
   }
 
   /**
@@ -1338,12 +1335,6 @@ const RouterPlugin = {
  */
 class TemplateEngine {
   /**
-   * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
-   * @type {RegExp}
-   */
-  static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
-
-  /**
    * Parses a template string, replacing expressions with their evaluated values.
    * Expressions are evaluated in the provided data context.
    *
@@ -1381,11 +1372,16 @@ class TemplateEngine {
     if (typeof expression !== "string") return expression;
     try {
       return new Function("data", `with(data) { return ${expression}; }`)(data);
-    } catch {
+    } catch (_unused) {
       return "";
     }
   }
 }
+/**
+ * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+ * @type {RegExp}
+ */
+TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
 /**
  * @class 🎯 PropsPlugin
@@ -1721,10 +1717,7 @@ const PropsPlugin = {
             });
 
             // Merge signal props with regular props (signal props take precedence)
-            enhancedProps = {
-              ...extractedProps,
-              ...signalProps
-            };
+            enhancedProps = _extends({}, extractedProps, signalProps);
           }
 
           // Create reactive props for non-signal props only
@@ -1743,10 +1736,7 @@ const PropsPlugin = {
             const reactiveNonSignalProps = createReactiveProps(nonSignalProps);
 
             // Merge signal props with reactive non-signal props
-            finalProps = {
-              ...reactiveNonSignalProps,
-              ...enhancedProps // Signal props take precedence
-            };
+            finalProps = _extends({}, reactiveNonSignalProps, enhancedProps);
           }
 
           /** @type {MountResult} */
@@ -1917,61 +1907,6 @@ const PropsPlugin = {
   }
 };
 
-/**
- * @class 🏪 StorePlugin
- * @classdesc A powerful reactive state management plugin for Eleva.js that enables sharing
- * reactive data across the entire application. The Store plugin provides a centralized,
- * reactive data store that can be accessed from any component's setup function.
- *
- * Core Features:
- * - Centralized reactive state management using Eleva's signal system
- * - Global state accessibility through component setup functions
- * - Namespace support for organizing store modules
- * - Built-in persistence with localStorage/sessionStorage support
- * - Action-based state mutations with validation
- * - Subscription system for reactive updates
- * - DevTools integration for debugging
- * - Plugin architecture for extensibility
- *
- * @example
- * // Install the plugin
- * const app = new Eleva("myApp");
- * app.use(StorePlugin, {
- *   state: {
- *     user: { name: "John", email: "john@example.com" },
- *     counter: 0,
- *     todos: []
- *   },
- *   actions: {
- *     increment: (state) => state.counter.value++,
- *     addTodo: (state, todo) => state.todos.value.push(todo),
- *     setUser: (state, user) => state.user.value = user
- *   },
- *   persistence: {
- *     enabled: true,
- *     key: "myApp-store",
- *     storage: "localStorage"
- *   }
- * });
- *
- * // Use store in components
- * app.component("Counter", {
- *   setup({ store }) {
- *     return {
- *       count: store.state.counter,
- *       increment: () => store.dispatch("increment"),
- *       user: store.state.user
- *     };
- *   },
- *   template: (ctx) => `
- *     <div>
- *       <p>Hello ${ctx.user.value.name}!</p>
- *       <p>Count: ${ctx.count.value}</p>
- *       <button onclick="ctx.increment()">+</button>
- *     </div>
- *   `
- * });
- */
 const StorePlugin = {
   /**
    * Unique identifier for the plugin
@@ -2059,14 +1994,13 @@ const StorePlugin = {
         this.actions = {};
         this.subscribers = new Set();
         this.mutations = [];
-        this.persistence = {
+        this.persistence = _extends({
           enabled: false,
           key: "eleva-store",
           storage: "localStorage",
           include: null,
-          exclude: null,
-          ...persistence
-        };
+          exclude: null
+        }, persistence);
         this.devTools = devTools;
         this.onError = onError;
         this._initializeState(state, actions);
@@ -2086,9 +2020,7 @@ const StorePlugin = {
         });
 
         // Set up actions
-        this.actions = {
-          ...initialActions
-        };
+        this.actions = _extends({}, initialActions);
       }
 
       /**
@@ -2116,9 +2048,7 @@ const StorePlugin = {
           });
 
           // Set up namespaced actions
-          this.actions[namespace] = {
-            ...moduleActions
-          };
+          this.actions[namespace] = _extends({}, moduleActions);
         });
       }
 
@@ -2400,6 +2330,33 @@ const StorePlugin = {
         delete this.actions[namespace];
         this._saveState();
       }
+
+      /**
+       * Creates a new reactive state property at runtime
+       * @param {string} key - The state key
+       * @param {*} initialValue - The initial value
+       * @returns {Object} The created signal
+       */
+      createState(key, initialValue) {
+        if (this.state[key]) {
+          return this.state[key]; // Return existing state
+        }
+        this.state[key] = new eleva.signal(initialValue);
+        this._saveState();
+        return this.state[key];
+      }
+
+      /**
+       * Creates a new action at runtime
+       * @param {string} name - The action name
+       * @param {Function} actionFn - The action function
+       */
+      createAction(name, actionFn) {
+        if (typeof actionFn !== "function") {
+          throw new Error("Action must be a function");
+        }
+        this.actions[name] = actionFn;
+      }
     }
 
     // Create the store instance
@@ -2419,8 +2376,7 @@ const StorePlugin = {
       }
 
       // Create a wrapped component that injects store into setup
-      const wrappedComponent = {
-        ...componentDef,
+      const wrappedComponent = _extends({}, componentDef, {
         async setup(ctx) {
           // Inject store into the context with enhanced API
           ctx.store = {
@@ -2433,15 +2389,8 @@ const StorePlugin = {
             registerModule: store.registerModule.bind(store),
             unregisterModule: store.unregisterModule.bind(store),
             // Utilities for dynamic state/action creation
-            createState: (key, initialValue) => {
-              if (!store.state[key]) {
-                store.state[key] = new eleva.signal(initialValue);
-              }
-              return store.state[key];
-            },
-            createAction: (name, actionFn) => {
-              store.actions[name] = actionFn;
-            },
+            createState: store.createState.bind(store),
+            createAction: store.createAction.bind(store),
             // Access to signal constructor for manual state creation
             signal: eleva.signal
           };
@@ -2451,7 +2400,7 @@ const StorePlugin = {
           const result = originalSetup ? await originalSetup(ctx) : {};
           return result;
         }
-      };
+      });
 
       // Call original mount with wrapped component
       return await originalMount.call(eleva, container, wrappedComponent, props);
@@ -2465,8 +2414,7 @@ const StorePlugin = {
       for (const [selector, childComponent] of Object.entries(children)) {
         const componentDef = typeof childComponent === "string" ? eleva._components.get(childComponent) || childComponent : childComponent;
         if (componentDef && typeof componentDef === "object") {
-          wrappedChildren[selector] = {
-            ...componentDef,
+          wrappedChildren[selector] = _extends({}, componentDef, {
             async setup(ctx) {
               // Inject store into the context with enhanced API
               ctx.store = {
@@ -2479,15 +2427,8 @@ const StorePlugin = {
                 registerModule: store.registerModule.bind(store),
                 unregisterModule: store.unregisterModule.bind(store),
                 // Utilities for dynamic state/action creation
-                createState: (key, initialValue) => {
-                  if (!store.state[key]) {
-                    store.state[key] = new eleva.signal(initialValue);
-                  }
-                  return store.state[key];
-                },
-                createAction: (name, actionFn) => {
-                  store.actions[name] = actionFn;
-                },
+                createState: store.createState.bind(store),
+                createAction: store.createAction.bind(store),
                 // Access to signal constructor for manual state creation
                 signal: eleva.signal
               };
@@ -2497,7 +2438,7 @@ const StorePlugin = {
               const result = originalSetup ? await originalSetup(ctx) : {};
               return result;
             }
-          };
+          });
         } else {
           wrappedChildren[selector] = childComponent;
         }

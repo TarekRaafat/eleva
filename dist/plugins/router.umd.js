@@ -5,18 +5,16 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaRouterPlugin = {}));
 })(this, (function (exports) { 'use strict';
 
-  /**
-   * @typedef {import('eleva').Eleva} Eleva
-   * @typedef {import('eleva').Signal} Signal
-   * @typedef {import('eleva').ComponentDefinition} ComponentDefinition
-   */
+  function _extends() {
+    return _extends = Object.assign ? Object.assign.bind() : function (n) {
+      for (var e = 1; e < arguments.length; e++) {
+        var t = arguments[e];
+        for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+      }
+      return n;
+    }, _extends.apply(null, arguments);
+  }
 
-  /**
-   * Simple error handler for the core router.
-   * Can be overridden by error handling plugins.
-   * Provides consistent error formatting and logging for router operations.
-   * @private
-   */
   const CoreErrorHandler = {
     /**
      * Handles router errors with basic formatting.
@@ -125,12 +123,11 @@
       this.eleva = eleva;
 
       /** @type {RouterOptions} The merged router options. */
-      this.options = {
+      this.options = _extends({
         mode: "hash",
         queryParam: "view",
-        viewSelector: "root",
-        ...options
-      };
+        viewSelector: "root"
+      }, options);
 
       /** @private @type {RouteDefinition[]} The processed list of route definitions. */
       this.routes = this._processRoutes(options.routes || []);
@@ -194,10 +191,9 @@
       const processedRoutes = [];
       for (const route of routes) {
         try {
-          processedRoutes.push({
-            ...route,
+          processedRoutes.push(_extends({}, route, {
             segments: this._parsePathIntoSegments(route.path)
-          });
+          }));
         } catch (error) {
           this.errorHandler.warn(`Invalid path in route definition "${route.path || "undefined"}": ${error.message}`, {
             route,
@@ -452,13 +448,12 @@
           return false;
         }
       }
-      const to = {
-        ...toLocation,
+      const to = _extends({}, toLocation, {
         params: toMatch.params,
         meta: toMatch.route.meta || {},
         name: toMatch.route.name,
         matched: toMatch.route
-      };
+      });
       try {
         // 1. Run all *pre-navigation* guards.
         const canNavigate = await this._runGuards(to, from, toMatch.route);
@@ -689,7 +684,10 @@
      * @returns {Function} A getter function.
      */
     _createRouteGetter(property, defaultValue) {
-      return () => this.currentRoute.value?.[property] ?? defaultValue;
+      return () => {
+        var _this$currentRoute$va, _this$currentRoute$va2;
+        return (_this$currentRoute$va = (_this$currentRoute$va2 = this.currentRoute.value) == null ? void 0 : _this$currentRoute$va2[property]) != null ? _this$currentRoute$va : defaultValue;
+      };
     }
 
     /**
@@ -701,8 +699,7 @@
     _wrapComponent(component) {
       const originalSetup = component.setup;
       const self = this;
-      return {
-        ...component,
+      return _extends({}, component, {
         async setup(ctx) {
           ctx.router = {
             navigate: self.navigate.bind(self),
@@ -727,7 +724,7 @@
           };
           return originalSetup ? await originalSetup(ctx) : {};
         }
-      };
+      });
     }
 
     /**

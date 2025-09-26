@@ -5,6 +5,16 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaPropsPlugin = {}));
 })(this, (function (exports) { 'use strict';
 
+  function _extends() {
+    return _extends = Object.assign ? Object.assign.bind() : function (n) {
+      for (var e = 1; e < arguments.length; e++) {
+        var t = arguments[e];
+        for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+      }
+      return n;
+    }, _extends.apply(null, arguments);
+  }
+
   /**
    * @class 🔒 TemplateEngine
    * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -17,12 +27,6 @@
    * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
    */
   class TemplateEngine {
-    /**
-     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
-     * @type {RegExp}
-     */
-    static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
-
     /**
      * Parses a template string, replacing expressions with their evaluated values.
      * Expressions are evaluated in the provided data context.
@@ -61,11 +65,16 @@
       if (typeof expression !== "string") return expression;
       try {
         return new Function("data", `with(data) { return ${expression}; }`)(data);
-      } catch {
+      } catch (_unused) {
         return "";
       }
     }
   }
+  /**
+   * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+   * @type {RegExp}
+   */
+  TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
   /**
    * @class 🎯 PropsPlugin
@@ -401,10 +410,7 @@
               });
 
               // Merge signal props with regular props (signal props take precedence)
-              enhancedProps = {
-                ...extractedProps,
-                ...signalProps
-              };
+              enhancedProps = _extends({}, extractedProps, signalProps);
             }
 
             // Create reactive props for non-signal props only
@@ -423,10 +429,7 @@
               const reactiveNonSignalProps = createReactiveProps(nonSignalProps);
 
               // Merge signal props with reactive non-signal props
-              finalProps = {
-                ...reactiveNonSignalProps,
-                ...enhancedProps // Signal props take precedence
-              };
+              finalProps = _extends({}, reactiveNonSignalProps, enhancedProps);
             }
 
             /** @type {MountResult} */

@@ -72,7 +72,8 @@ export const StorePlugin = {
    * Plugin description
    * @type {string}
    */
-  description: "Reactive state management for sharing data across the entire Eleva application",
+  description:
+    "Reactive state management for sharing data across the entire Eleva application",
 
   /**
    * Installs the plugin into the Eleva instance
@@ -151,7 +152,7 @@ export const StorePlugin = {
           storage: "localStorage",
           include: null,
           exclude: null,
-          ...persistence
+          ...persistence,
         };
         this.devTools = devTools;
         this.onError = onError;
@@ -182,7 +183,8 @@ export const StorePlugin = {
        */
       _initializeNamespaces(namespaces) {
         Object.entries(namespaces).forEach(([namespace, module]) => {
-          const { state: moduleState = {}, actions: moduleActions = {} } = module;
+          const { state: moduleState = {}, actions: moduleActions = {} } =
+            module;
 
           // Create namespace object if it doesn't exist
           if (!this.state[namespace]) {
@@ -223,7 +225,10 @@ export const StorePlugin = {
           if (this.onError) {
             this.onError(error, "Failed to load persisted state");
           } else {
-            console.warn("[StorePlugin] Failed to load persisted state:", error);
+            console.warn(
+              "[StorePlugin] Failed to load persisted state:",
+              error
+            );
           }
         }
       }
@@ -237,10 +242,18 @@ export const StorePlugin = {
           const fullPath = path ? `${path}.${key}` : key;
 
           if (this._shouldPersist(fullPath)) {
-            if (currentState[key] && typeof currentState[key] === "object" && "value" in currentState[key]) {
+            if (
+              currentState[key] &&
+              typeof currentState[key] === "object" &&
+              "value" in currentState[key]
+            ) {
               // This is a signal, update its value
               currentState[key].value = value;
-            } else if (typeof value === "object" && value !== null && currentState[key]) {
+            } else if (
+              typeof value === "object" &&
+              value !== null &&
+              currentState[key]
+            ) {
               // This is a nested object, recurse
               this._applyPersistedData(value, currentState[key], fullPath);
             }
@@ -256,11 +269,11 @@ export const StorePlugin = {
         const { include, exclude } = this.persistence;
 
         if (include && include.length > 0) {
-          return include.some(includePath => path.startsWith(includePath));
+          return include.some((includePath) => path.startsWith(includePath));
         }
 
         if (exclude && exclude.length > 0) {
-          return !exclude.some(excludePath => path.startsWith(excludePath));
+          return !exclude.some((excludePath) => path.startsWith(excludePath));
         }
 
         return true;
@@ -320,7 +333,11 @@ export const StorePlugin = {
        * @private
        */
       _setupDevTools() {
-        if (!this.devTools || typeof window === "undefined" || !window.__ELEVA_DEVTOOLS__) {
+        if (
+          !this.devTools ||
+          typeof window === "undefined" ||
+          !window.__ELEVA_DEVTOOLS__
+        ) {
           return;
         }
 
@@ -348,7 +365,7 @@ export const StorePlugin = {
           const mutation = {
             type: actionName,
             payload,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           };
 
           // Record mutation for devtools
@@ -364,7 +381,7 @@ export const StorePlugin = {
           this._saveState();
 
           // Notify subscribers
-          this.subscribers.forEach(callback => {
+          this.subscribers.forEach((callback) => {
             try {
               callback(mutation, this.state);
             } catch (error) {
@@ -375,7 +392,11 @@ export const StorePlugin = {
           });
 
           // Notify devtools
-          if (this.devTools && typeof window !== "undefined" && window.__ELEVA_DEVTOOLS__) {
+          if (
+            this.devTools &&
+            typeof window !== "undefined" &&
+            window.__ELEVA_DEVTOOLS__
+          ) {
             window.__ELEVA_DEVTOOLS__.notifyMutation(mutation, this.state);
           }
 
@@ -496,6 +517,35 @@ export const StorePlugin = {
         delete this.actions[namespace];
         this._saveState();
       }
+
+      /**
+       * Creates a new reactive state property at runtime
+       * @param {string} key - The state key
+       * @param {*} initialValue - The initial value
+       * @returns {Object} The created signal
+       */
+      createState(key, initialValue) {
+        if (this.state[key]) {
+          return this.state[key]; // Return existing state
+        }
+
+        this.state[key] = new eleva.signal(initialValue);
+        this._saveState();
+        return this.state[key];
+      }
+
+      /**
+       * Creates a new action at runtime
+       * @param {string} name - The action name
+       * @param {Function} actionFn - The action function
+       */
+      createAction(name, actionFn) {
+        if (typeof actionFn !== "function") {
+          throw new Error("Action must be a function");
+        }
+
+        this.actions[name] = actionFn;
+      }
     }
 
     // Create the store instance
@@ -509,9 +559,10 @@ export const StorePlugin = {
      */
     eleva.mount = async (container, compName, props = {}) => {
       // Get the component definition
-      const componentDef = typeof compName === "string"
-        ? eleva._components.get(compName) || compName
-        : compName;
+      const componentDef =
+        typeof compName === "string"
+          ? eleva._components.get(compName) || compName
+          : compName;
 
       if (!componentDef) {
         return await originalMount.call(eleva, container, compName, props);
@@ -534,19 +585,11 @@ export const StorePlugin = {
             unregisterModule: store.unregisterModule.bind(store),
 
             // Utilities for dynamic state/action creation
-            createState: (key, initialValue) => {
-              if (!store.state[key]) {
-                store.state[key] = new eleva.signal(initialValue);
-              }
-              return store.state[key];
-            },
-
-            createAction: (name, actionFn) => {
-              store.actions[name] = actionFn;
-            },
+            createState: store.createState.bind(store),
+            createAction: store.createAction.bind(store),
 
             // Access to signal constructor for manual state creation
-            signal: eleva.signal
+            signal: eleva.signal,
           };
 
           // Call original setup if it exists
@@ -554,11 +597,16 @@ export const StorePlugin = {
           const result = originalSetup ? await originalSetup(ctx) : {};
 
           return result;
-        }
+        },
       };
 
       // Call original mount with wrapped component
-      return await originalMount.call(eleva, container, wrappedComponent, props);
+      return await originalMount.call(
+        eleva,
+        container,
+        wrappedComponent,
+        props
+      );
     };
 
     // Override _mountComponents to ensure child components also get store context
@@ -568,9 +616,10 @@ export const StorePlugin = {
       const wrappedChildren = {};
 
       for (const [selector, childComponent] of Object.entries(children)) {
-        const componentDef = typeof childComponent === "string"
-          ? eleva._components.get(childComponent) || childComponent
-          : childComponent;
+        const componentDef =
+          typeof childComponent === "string"
+            ? eleva._components.get(childComponent) || childComponent
+            : childComponent;
 
         if (componentDef && typeof componentDef === "object") {
           wrappedChildren[selector] = {
@@ -589,19 +638,11 @@ export const StorePlugin = {
                 unregisterModule: store.unregisterModule.bind(store),
 
                 // Utilities for dynamic state/action creation
-                createState: (key, initialValue) => {
-                  if (!store.state[key]) {
-                    store.state[key] = new eleva.signal(initialValue);
-                  }
-                  return store.state[key];
-                },
-
-                createAction: (name, actionFn) => {
-                  store.actions[name] = actionFn;
-                },
+                createState: store.createState.bind(store),
+                createAction: store.createAction.bind(store),
 
                 // Access to signal constructor for manual state creation
-                signal: eleva.signal
+                signal: eleva.signal,
               };
 
               // Call original setup if it exists
@@ -609,7 +650,7 @@ export const StorePlugin = {
               const result = originalSetup ? await originalSetup(ctx) : {};
 
               return result;
-            }
+            },
           };
         } else {
           wrappedChildren[selector] = childComponent;
@@ -617,7 +658,12 @@ export const StorePlugin = {
       }
 
       // Call original _mountComponents with wrapped children
-      return await originalMountComponents.call(eleva, container, wrappedChildren, childInstances);
+      return await originalMountComponents.call(
+        eleva,
+        container,
+        wrappedChildren,
+        childInstances
+      );
     };
 
     // Expose store instance and utilities on the Eleva instance

@@ -5,61 +5,16 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaStorePlugin = {}));
 })(this, (function (exports) { 'use strict';
 
-  /**
-   * @class 🏪 StorePlugin
-   * @classdesc A powerful reactive state management plugin for Eleva.js that enables sharing
-   * reactive data across the entire application. The Store plugin provides a centralized,
-   * reactive data store that can be accessed from any component's setup function.
-   *
-   * Core Features:
-   * - Centralized reactive state management using Eleva's signal system
-   * - Global state accessibility through component setup functions
-   * - Namespace support for organizing store modules
-   * - Built-in persistence with localStorage/sessionStorage support
-   * - Action-based state mutations with validation
-   * - Subscription system for reactive updates
-   * - DevTools integration for debugging
-   * - Plugin architecture for extensibility
-   *
-   * @example
-   * // Install the plugin
-   * const app = new Eleva("myApp");
-   * app.use(StorePlugin, {
-   *   state: {
-   *     user: { name: "John", email: "john@example.com" },
-   *     counter: 0,
-   *     todos: []
-   *   },
-   *   actions: {
-   *     increment: (state) => state.counter.value++,
-   *     addTodo: (state, todo) => state.todos.value.push(todo),
-   *     setUser: (state, user) => state.user.value = user
-   *   },
-   *   persistence: {
-   *     enabled: true,
-   *     key: "myApp-store",
-   *     storage: "localStorage"
-   *   }
-   * });
-   *
-   * // Use store in components
-   * app.component("Counter", {
-   *   setup({ store }) {
-   *     return {
-   *       count: store.state.counter,
-   *       increment: () => store.dispatch("increment"),
-   *       user: store.state.user
-   *     };
-   *   },
-   *   template: (ctx) => `
-   *     <div>
-   *       <p>Hello ${ctx.user.value.name}!</p>
-   *       <p>Count: ${ctx.count.value}</p>
-   *       <button onclick="ctx.increment()">+</button>
-   *     </div>
-   *   `
-   * });
-   */
+  function _extends() {
+    return _extends = Object.assign ? Object.assign.bind() : function (n) {
+      for (var e = 1; e < arguments.length; e++) {
+        var t = arguments[e];
+        for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+      }
+      return n;
+    }, _extends.apply(null, arguments);
+  }
+
   const StorePlugin = {
     /**
      * Unique identifier for the plugin
@@ -147,14 +102,13 @@
           this.actions = {};
           this.subscribers = new Set();
           this.mutations = [];
-          this.persistence = {
+          this.persistence = _extends({
             enabled: false,
             key: "eleva-store",
             storage: "localStorage",
             include: null,
-            exclude: null,
-            ...persistence
-          };
+            exclude: null
+          }, persistence);
           this.devTools = devTools;
           this.onError = onError;
           this._initializeState(state, actions);
@@ -174,9 +128,7 @@
           });
 
           // Set up actions
-          this.actions = {
-            ...initialActions
-          };
+          this.actions = _extends({}, initialActions);
         }
 
         /**
@@ -204,9 +156,7 @@
             });
 
             // Set up namespaced actions
-            this.actions[namespace] = {
-              ...moduleActions
-            };
+            this.actions[namespace] = _extends({}, moduleActions);
           });
         }
 
@@ -488,6 +438,33 @@
           delete this.actions[namespace];
           this._saveState();
         }
+
+        /**
+         * Creates a new reactive state property at runtime
+         * @param {string} key - The state key
+         * @param {*} initialValue - The initial value
+         * @returns {Object} The created signal
+         */
+        createState(key, initialValue) {
+          if (this.state[key]) {
+            return this.state[key]; // Return existing state
+          }
+          this.state[key] = new eleva.signal(initialValue);
+          this._saveState();
+          return this.state[key];
+        }
+
+        /**
+         * Creates a new action at runtime
+         * @param {string} name - The action name
+         * @param {Function} actionFn - The action function
+         */
+        createAction(name, actionFn) {
+          if (typeof actionFn !== "function") {
+            throw new Error("Action must be a function");
+          }
+          this.actions[name] = actionFn;
+        }
       }
 
       // Create the store instance
@@ -507,8 +484,7 @@
         }
 
         // Create a wrapped component that injects store into setup
-        const wrappedComponent = {
-          ...componentDef,
+        const wrappedComponent = _extends({}, componentDef, {
           async setup(ctx) {
             // Inject store into the context with enhanced API
             ctx.store = {
@@ -521,15 +497,8 @@
               registerModule: store.registerModule.bind(store),
               unregisterModule: store.unregisterModule.bind(store),
               // Utilities for dynamic state/action creation
-              createState: (key, initialValue) => {
-                if (!store.state[key]) {
-                  store.state[key] = new eleva.signal(initialValue);
-                }
-                return store.state[key];
-              },
-              createAction: (name, actionFn) => {
-                store.actions[name] = actionFn;
-              },
+              createState: store.createState.bind(store),
+              createAction: store.createAction.bind(store),
               // Access to signal constructor for manual state creation
               signal: eleva.signal
             };
@@ -539,7 +508,7 @@
             const result = originalSetup ? await originalSetup(ctx) : {};
             return result;
           }
-        };
+        });
 
         // Call original mount with wrapped component
         return await originalMount.call(eleva, container, wrappedComponent, props);
@@ -553,8 +522,7 @@
         for (const [selector, childComponent] of Object.entries(children)) {
           const componentDef = typeof childComponent === "string" ? eleva._components.get(childComponent) || childComponent : childComponent;
           if (componentDef && typeof componentDef === "object") {
-            wrappedChildren[selector] = {
-              ...componentDef,
+            wrappedChildren[selector] = _extends({}, componentDef, {
               async setup(ctx) {
                 // Inject store into the context with enhanced API
                 ctx.store = {
@@ -567,15 +535,8 @@
                   registerModule: store.registerModule.bind(store),
                   unregisterModule: store.unregisterModule.bind(store),
                   // Utilities for dynamic state/action creation
-                  createState: (key, initialValue) => {
-                    if (!store.state[key]) {
-                      store.state[key] = new eleva.signal(initialValue);
-                    }
-                    return store.state[key];
-                  },
-                  createAction: (name, actionFn) => {
-                    store.actions[name] = actionFn;
-                  },
+                  createState: store.createState.bind(store),
+                  createAction: store.createAction.bind(store),
                   // Access to signal constructor for manual state creation
                   signal: eleva.signal
                 };
@@ -585,7 +546,7 @@
                 const result = originalSetup ? await originalSetup(ctx) : {};
                 return result;
               }
-            };
+            });
           } else {
             wrappedChildren[selector] = childComponent;
           }

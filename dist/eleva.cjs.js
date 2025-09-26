@@ -1,6 +1,16 @@
 /*! Eleva v1.0.0-rc.7 | MIT License | https://elevajs.com */
 'use strict';
 
+function _extends() {
+  return _extends = Object.assign ? Object.assign.bind() : function (n) {
+    for (var e = 1; e < arguments.length; e++) {
+      var t = arguments[e];
+      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
+    }
+    return n;
+  }, _extends.apply(null, arguments);
+}
+
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
@@ -13,12 +23,6 @@
  * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
  */
 class TemplateEngine {
-  /**
-   * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
-   * @type {RegExp}
-   */
-  static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
-
   /**
    * Parses a template string, replacing expressions with their evaluated values.
    * Expressions are evaluated in the provided data context.
@@ -57,11 +61,16 @@ class TemplateEngine {
     if (typeof expression !== "string") return expression;
     try {
       return new Function("data", `with(data) { return ${expression}; }`)(data);
-    } catch {
+    } catch (_unused) {
       return "";
     }
   }
 }
+/**
+ * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+ * @type {RegExp}
+ */
+TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
 /**
  * @class ⚡ Signal
@@ -315,7 +324,7 @@ class Renderer {
    * @returns {void}
    */
   _diff(oldParent, newParent) {
-    if (oldParent === newParent || oldParent.isEqualNode?.(newParent)) return;
+    if (oldParent === newParent || oldParent.isEqualNode != null && oldParent.isEqualNode(newParent)) return;
     const oldChildren = Array.from(oldParent.childNodes);
     const newChildren = Array.from(newParent.childNodes);
     let oldStartIdx = 0,
@@ -369,7 +378,7 @@ class Renderer {
    * @returns {void}
    */
   _patchNode(oldNode, newNode) {
-    if (oldNode?._eleva_instance) return;
+    if (oldNode != null && oldNode._eleva_instance) return;
     if (!this._isSameNode(oldNode, newNode)) {
       oldNode.replaceWith(newNode.cloneNode(true));
       return;
@@ -476,7 +485,7 @@ class Renderer {
    * @returns {string|null} The key attribute value or null if not found.
    */
   _getNodeKey(node) {
-    return node?.nodeType === Node.ELEMENT_NODE ? node.getAttribute("key") : null;
+    return (node == null ? void 0 : node.nodeType) === Node.ELEMENT_NODE ? node.getAttribute("key") : null;
   }
 }
 
@@ -729,10 +738,7 @@ class Eleva {
      */
     const processMount = async data => {
       /** @type {ComponentContext} */
-      const mergedContext = {
-        ...context,
-        ...data
-      };
+      const mergedContext = _extends({}, context, data);
       /** @type {Array<() => void>} */
       const watchers = [];
       /** @type {Array<MountResult>} */
@@ -743,16 +749,16 @@ class Eleva {
       // Execute before hooks
       if (!this._isMounted) {
         /** @type {LifecycleHookContext} */
-        await mergedContext.onBeforeMount?.({
+        await (mergedContext.onBeforeMount == null ? void 0 : mergedContext.onBeforeMount({
           container,
           context: mergedContext
-        });
+        }));
       } else {
         /** @type {LifecycleHookContext} */
-        await mergedContext.onBeforeUpdate?.({
+        await (mergedContext.onBeforeUpdate == null ? void 0 : mergedContext.onBeforeUpdate({
           container,
           context: mergedContext
-        });
+        }));
       }
 
       /**
@@ -770,17 +776,17 @@ class Eleva {
         if (children) await this._mountComponents(container, children, childInstances);
         if (!this._isMounted) {
           /** @type {LifecycleHookContext} */
-          await mergedContext.onMount?.({
+          await (mergedContext.onMount == null ? void 0 : mergedContext.onMount({
             container,
             context: mergedContext
-          });
+          }));
           this._isMounted = true;
         } else {
           /** @type {LifecycleHookContext} */
-          await mergedContext.onUpdate?.({
+          await (mergedContext.onUpdate == null ? void 0 : mergedContext.onUpdate({
             container,
             context: mergedContext
-          });
+          }));
         }
       };
 
@@ -803,7 +809,7 @@ class Eleva {
          */
         unmount: async () => {
           /** @type {UnmountHookContext} */
-          await mergedContext.onUnmount?.({
+          await (mergedContext.onUnmount == null ? void 0 : mergedContext.onUnmount({
             container,
             context: mergedContext,
             cleanup: {
@@ -811,7 +817,7 @@ class Eleva {
               listeners: listeners,
               children: childInstances
             }
-          });
+          }));
           for (const fn of watchers) fn();
           for (const fn of listeners) fn();
           for (const child of childInstances) await child.unmount();

@@ -133,7 +133,7 @@
             if (hasProperty) {
               // Boolean attribute handling
               if (enableBoolean) {
-                const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
+                const isBoolean = typeof oldEl[prop] === "boolean" || (descriptor == null ? void 0 : descriptor.get) && typeof descriptor.get.call(oldEl) === "boolean";
                 if (isBoolean) {
                   const boolValue = value !== "false" && (value === "" || value === prop || value === "true");
                   oldEl[prop] = boolValue;
@@ -175,7 +175,7 @@
 
         // Override the _patchNode method to use our attribute handler
         eleva.renderer._patchNode = function (oldNode, newNode) {
-          if (oldNode?._eleva_instance) return;
+          if (oldNode != null && oldNode._eleva_instance) return;
           if (!this._isSameNode(oldNode, newNode)) {
             oldNode.replaceWith(newNode.cloneNode(true));
             return;
