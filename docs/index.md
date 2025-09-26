@@ -82,6 +82,7 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
       - [🎯 AttrPlugin](#-attrplugin)
       - [🚀 RouterPlugin](#-routerplugin)
       - [🎯 PropsPlugin](#-propsplugin)
+      - [🏪 StorePlugin](#-storeplugin)
       - [Plugin Installation](#plugin-installation)
       - [Bundle Sizes](#bundle-sizes)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
@@ -1417,17 +1418,150 @@ app.component("UserInfo", {
 - 🧹 **Attribute Cleanup**: Automatic removal of prop attributes after extraction
 - ⚡ **Performance Optimized**: Efficient parsing with minimal overhead
 
+#### 🏪 StorePlugin
+
+Reactive state management for sharing data across your entire Eleva.js application with centralized data store, persistence, and cross-component reactive updates.
+
+```javascript
+import { Store } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+
+// Install store with configuration
+app.use(Store, {
+    state: {
+        theme: "light",
+        counter: 0,
+        user: {
+            name: "John Doe",
+            email: "john@example.com"
+        }
+    },
+    actions: {
+        increment: (state) => state.counter.value++,
+        decrement: (state) => state.counter.value--,
+        toggleTheme: (state) => {
+            state.theme.value = state.theme.value === "light" ? "dark" : "light";
+        },
+        updateUser: (state, updates) => {
+            state.user.value = { ...state.user.value, ...updates };
+        }
+    },
+    // Optional: Namespaced modules
+    namespaces: {
+        auth: {
+            state: { token: null, isLoggedIn: false },
+            actions: {
+                login: (state, token) => {
+                    state.auth.token.value = token;
+                    state.auth.isLoggedIn.value = true;
+                },
+                logout: (state) => {
+                    state.auth.token.value = null;
+                    state.auth.isLoggedIn.value = false;
+                }
+            }
+        }
+    },
+    // Optional: State persistence
+    persistence: {
+        enabled: true,
+        key: "myApp-store",
+        storage: "localStorage",  // or "sessionStorage"
+        include: ["theme", "user"] // Only persist specific keys
+    }
+});
+
+// Use store in components
+app.component("Counter", {
+    setup({ store }) {
+        return {
+            count: store.state.counter,
+            theme: store.state.theme,
+            increment: () => store.dispatch("increment"),
+            decrement: () => store.dispatch("decrement")
+        };
+    },
+    template: (ctx) => `
+        <div class="${ctx.theme.value}">
+            <h3>Counter: ${ctx.count.value}</h3>
+            <button @click="decrement">-</button>
+            <button @click="increment">+</button>
+        </div>
+    `
+});
+
+// Create state and actions at runtime
+app.component("TodoManager", {
+    setup({ store }) {
+        // Register new module dynamically
+        store.registerModule("todos", {
+            state: { items: [], filter: "all" },
+            actions: {
+                addTodo: (state, text) => {
+                    state.todos.items.value.push({
+                        id: Date.now(),
+                        text,
+                        completed: false
+                    });
+                },
+                toggleTodo: (state, id) => {
+                    const todo = state.todos.items.value.find(t => t.id === id);
+                    if (todo) todo.completed = !todo.completed;
+                }
+            }
+        });
+
+        // Create individual state properties
+        const notification = store.createState("notification", null);
+
+        // Create individual actions
+        store.createAction("showNotification", (state, message) => {
+            state.notification.value = message;
+            setTimeout(() => state.notification.value = null, 3000);
+        });
+
+        return {
+            todos: store.state.todos.items,
+            notification,
+            addTodo: (text) => store.dispatch("todos.addTodo", text),
+            notify: (msg) => store.dispatch("showNotification", msg)
+        };
+    }
+});
+
+// Subscribe to store changes
+const unsubscribe = app.store.subscribe((mutation, state) => {
+    console.log('Store updated:', mutation.type, state);
+});
+
+// Access store globally
+console.log(app.store.getState()); // Get current state values
+app.dispatch("increment");          // Dispatch actions globally
+```
+
+**Features:**
+- 🔄 **Reactive State**: Uses Eleva's native signals for fine-grained reactivity
+- 🎯 **Action-Based Mutations**: Structured state updates through actions
+- 📦 **Namespaced Modules**: Organize state with modular architecture
+- 💾 **Built-in Persistence**: LocalStorage/SessionStorage integration
+- ⚡ **Component-Level Registration**: Register state and actions from components
+- 🔗 **Cross-Component Updates**: Automatic UI updates across all components
+- 🔧 **Runtime Extensibility**: Add state and actions dynamically
+- 🎛️ **DevTools Integration**: Debug with browser developer tools
+
 #### Plugin Installation
 
 ```javascript
 // Import plugins
-import { Attr, Router, Props } from 'eleva/plugins';
+import { Attr, Router, Props, Store } from 'eleva/plugins';
 
 // Install multiple plugins
 const app = new Eleva("myApp");
 app.use(Attr);
 app.use(Router, routerOptions);
 app.use(Props, propsOptions);
+app.use(Store, storeOptions);
 
 // Or install with options
 app.use(Attr, {
@@ -1439,6 +1573,14 @@ app.use(Props, {
     enableAutoParsing: true,
     enableReactivity: true
 });
+
+app.use(Store, {
+    state: { counter: 0, theme: "light" },
+    actions: {
+        increment: (state) => state.counter.value++
+    },
+    persistence: { enabled: true }
+});
 ```
 
 #### Bundle Sizes
@@ -1447,12 +1589,14 @@ app.use(Props, {
 - **Core + Attr plugin**: ~8.3KB (minified)
 - **Core + Router plugin**: ~19KB (minified)
 - **Core + Props plugin**: ~8.5KB (minified)
-- **Core + All plugins**: ~23KB (minified)
+- **Core + Store plugin**: ~9.5KB (minified)
+- **Core + All plugins**: ~25KB (minified)
 
 **Individual Plugin Sizes:**
 - **Attr plugin only**: ~2.3KB (minified)
 - **Router plugin only**: ~13KB (minified)
 - **Props plugin only**: ~2.5KB (minified)
+- **Store plugin only**: ~3.5KB (minified)
 
 ---
 
@@ -1514,7 +1658,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep yo
 _A:_ Yes! Eleva includes a powerful built-in RouterPlugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
 
 **Q: What plugins are available with Eleva?**
-_A:_ Eleva comes with three powerful built-in plugins: Attr for advanced attribute handling, Router for client-side routing, and Props for advanced props data handling with automatic type detection and reactivity. All plugins are designed to work seamlessly with the core framework.
+_A:_ Eleva comes with four powerful built-in plugins: Attr for advanced attribute handling, Router for client-side routing, Props for advanced props data handling with automatic type detection and reactivity, and Store for reactive state management with persistence and namespacing. All plugins are designed to work seamlessly with the core framework.
 
 ---
 
@@ -1556,6 +1700,7 @@ Detailed API documentation with parameter descriptions, return values, and usage
   - **Attr:** Advanced attribute handling with ARIA support
   - **Router:** Client-side routing with navigation guards and reactive state
   - **Props:** Advanced props data handling with automatic type detection and reactivity
+  - **Store:** Reactive state management with persistence and namespacing
 
 - **Eleva (Core):**  
   `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`

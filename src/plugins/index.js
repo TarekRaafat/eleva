@@ -22,14 +22,19 @@
  *
  * @example
  * // Import multiple plugins
- * import { Attr, Router } from 'eleva/plugins';
+ * import { Attr, Router, Store } from 'eleva/plugins';
  *
  * const app = new Eleva("myApp");
  * app.use(Attr);
  * app.use(Router);
+ * app.use(Store, {
+ *   state: { counter: 0 },
+ *   actions: { increment: (state) => state.counter.value++ }
+ * });
  */
 
 // Export plugins with clean names
 export { AttrPlugin as Attr } from "./Attr.js";
 export { RouterPlugin as Router } from "./Router.js";
 export { PropsPlugin as Props } from "./Props.js";
+export { StorePlugin as Store } from "./Store.js";

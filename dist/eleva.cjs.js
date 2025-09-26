@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.6 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.7 | MIT License | https://elevajs.com */
 'use strict';
 
 /**

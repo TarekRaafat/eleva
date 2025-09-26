@@ -6,7 +6,71 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.6 🔄 (10-09-2025)
+## v1.0.0-rc.7 🏪 (26-09-2025)
+
+### 🚀 Major Release: Store Plugin Introduction
+- **Introducing Store Plugin**: Eleva now features a powerful reactive state management plugin for sharing data across the entire application.
+- **Centralized State Management**: Unified, reactive data store with persistence, namespacing, and cross-component reactive updates.
+- **Component-Level State Registration**: Components can register their own state and actions dynamically at runtime.
+- **Built-in Persistence**: Automatic state persistence with localStorage/sessionStorage support.
+
+### 📝 Release Notes
+
+#### ➕ Added
+
+- **🏪 Store Plugin (Core Plugin)**
+  - **Reactive State Management**: Uses Eleva's native signal system for fine-grained reactivity and automatic UI updates.
+  - **Action-Based State Mutations**: Structured state updates through action functions with validation and error handling.
+  - **Namespace Support**: Organize state with modular architecture using namespaced modules (`auth`, `todos`, etc.).
+  - **Built-in Persistence**: LocalStorage/SessionStorage integration with selective persistence (include/exclude specific keys).
+  - **Component-Level Registration**: Register state and actions from components at runtime (`store.createState`, `store.createAction`).
+  - **Runtime Module Management**: Add/remove modules dynamically (`store.registerModule`, `store.unregisterModule`).
+  - **Cross-Component Updates**: Automatic UI updates across all components when shared state changes.
+  - **Store Subscriptions**: Monitor state changes with subscription system (`store.subscribe`).
+  - **Global Store Access**: Access store methods globally (`app.dispatch`, `app.getState`, `app.subscribe`).
+  - **DevTools Integration**: Browser developer tools integration for debugging state changes.
+  - **Comprehensive Error Handling**: Custom error callbacks and graceful error recovery.
+  - **Bundle Size**: ~3.5KB (minified) - lightweight and performant.
+
+- **Enhanced Plugin System**
+  - **Store Plugin Integration**: Seamless integration with existing plugin architecture alongside Attr, Router, and Props plugins.
+  - **Individual Plugin Access**: Direct access via `import { Store } from 'eleva/plugins'`.
+  - **CDN Support**: Separate CDN distribution for Store plugin.
+  - **Build Configuration**: Updated Rollup configuration to include Store plugin builds.
+
+#### 🎛️ Changed
+
+- **Plugin Ecosystem Architecture**
+  - **Four Core Plugins**: Store plugin joins Attr, Router, and Props as the fourth core Eleva plugin.
+  - **Bundle Size Updates**: Updated bundle calculations to include Store plugin (~25KB for all plugins).
+  - **Plugin Import Structure**: Enhanced plugin exports to include Store in main plugin bundle.
+
+#### 📚 Documentation
+
+- **Comprehensive Documentation Suite**:
+  - **README.md**: Updated with Store plugin examples and usage patterns.
+  - **docs/index.md**: Full Store plugin coverage in main documentation.
+- **Working Examples**: Functional examples demonstrating reactive state management, persistence, and cross-component updates.
+- **Migration Guide**: Clear migration patterns from other state management libraries (Redux, Vuex).
+- **Best Practices**: Comprehensive guide for optimal Store plugin usage and performance.
+
+#### 🔧 Technical Details
+
+- **Reactive Architecture**: Built on Eleva's signal system for optimal performance and automatic updates.
+- **State Organization**: Support for flat and nested state structures with namespaced modules.
+- **Persistence Strategy**: Selective persistence with configurable include/exclude patterns.
+- **Memory Management**: Proper cleanup and unsubscribe mechanisms to prevent memory leaks.
+- **Error Recovery**: Graceful handling of persistence failures and action errors.
+
+#### 🧪 Testing
+
+- **Cross-Component Reactivity**: Verified automatic UI updates across component boundaries.
+- **Persistence Testing**: Validated localStorage/sessionStorage integration and data recovery.
+- **Performance Validation**: Confirmed minimal overhead and efficient update propagation.
+
+---
+
+## v1.0.0-rc.6 (10-09-2025)
 
 ### 🚀 Major Enhancement: Reactive Props Signal Reference Passing
 - **Fixed Reactive Props Issue**: Resolved critical issue where child components with Props plugin installed were not updating when parent signal data changed.

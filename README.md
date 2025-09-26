@@ -78,6 +78,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
       - [Core Framework Only (Lightweight)](#core-framework-only-lightweight)
       - [AttrPlugin](#attrplugin)
       - [RouterPlugin](#routerplugin)
+      - [StorePlugin](#storeplugin)
   - [Development](#development)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -140,7 +141,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
-- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes and RouterPlugin for client-side routing
+- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes, RouterPlugin for client-side routing, and StorePlugin for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
 - **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
@@ -159,6 +160,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 - **🔌 Extensible:** Easily add features like routing or state management through plugins.
 - **🚀 Built-in Routing:** Advanced client-side routing with navigation guards and reactive state via RouterPlugin.
 - **🎯 Advanced Attributes:** Sophisticated attribute handling with ARIA support via AttrPlugin.
+- **🏪 Reactive State Management:** Centralized, reactive data store with persistence and namespacing via StorePlugin.
 - **📦 Module Format Flexibility:** Choose from ESM, CommonJS, or UMD formats based on your project's needs.
 
 ---
@@ -483,28 +485,155 @@ router.currentRoute.subscribe(route => {
 router.navigate('/users/123', { replace: true });
 ```
 
+#### StorePlugin
+
+🏪 **Reactive state management** with centralized data store, persistence, namespacing, and cross-component reactive updates:
+
+```javascript
+import Eleva from 'eleva';
+import { Store } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+
+// Install store with configuration
+app.use(Store, {
+    state: {
+        theme: "light",
+        counter: 0,
+        user: {
+            name: "John Doe",
+            email: "john@example.com"
+        }
+    },
+    actions: {
+        increment: (state) => state.counter.value++,
+        decrement: (state) => state.counter.value--,
+        toggleTheme: (state) => {
+            state.theme.value = state.theme.value === "light" ? "dark" : "light";
+        },
+        updateUser: (state, updates) => {
+            state.user.value = { ...state.user.value, ...updates };
+        }
+    },
+    // Optional: Namespaced modules
+    namespaces: {
+        auth: {
+            state: { token: null, isLoggedIn: false },
+            actions: {
+                login: (state, token) => {
+                    state.auth.token.value = token;
+                    state.auth.isLoggedIn.value = true;
+                },
+                logout: (state) => {
+                    state.auth.token.value = null;
+                    state.auth.isLoggedIn.value = false;
+                }
+            }
+        }
+    },
+    // Optional: State persistence
+    persistence: {
+        enabled: true,
+        key: "myApp-store",
+        storage: "localStorage",  // or "sessionStorage"
+        include: ["theme", "user"] // Only persist specific keys
+    }
+});
+
+// Use store in components
+app.component("Counter", {
+    setup({ store }) {
+        return {
+            count: store.state.counter,
+            theme: store.state.theme,
+            increment: () => store.dispatch("increment"),
+            decrement: () => store.dispatch("decrement")
+        };
+    },
+    template: (ctx) => `
+        <div class="${ctx.theme.value}">
+            <h3>Counter: ${ctx.count.value}</h3>
+            <button @click="decrement">-</button>
+            <button @click="increment">+</button>
+        </div>
+    `
+});
+
+// Create state and actions at runtime
+app.component("TodoManager", {
+    setup({ store }) {
+        // Register new module dynamically
+        store.registerModule("todos", {
+            state: { items: [], filter: "all" },
+            actions: {
+                addTodo: (state, text) => {
+                    state.todos.items.value.push({
+                        id: Date.now(),
+                        text,
+                        completed: false
+                    });
+                },
+                toggleTodo: (state, id) => {
+                    const todo = state.todos.items.value.find(t => t.id === id);
+                    if (todo) todo.completed = !todo.completed;
+                }
+            }
+        });
+
+        // Create individual state properties
+        const notification = store.createState("notification", null);
+
+        // Create individual actions
+        store.createAction("showNotification", (state, message) => {
+            state.notification.value = message;
+            setTimeout(() => state.notification.value = null, 3000);
+        });
+
+        return {
+            todos: store.state.todos.items,
+            notification,
+            addTodo: (text) => store.dispatch("todos.addTodo", text),
+            notify: (msg) => store.dispatch("showNotification", msg)
+        };
+    }
+});
+
+// Subscribe to store changes
+const unsubscribe = app.store.subscribe((mutation, state) => {
+    console.log('Store updated:', mutation.type, state);
+});
+
+// Access store globally
+console.log(app.store.getState()); // Get current state values
+app.dispatch("increment");          // Dispatch actions globally
+```
+
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
 - Core + AttrPlugin: ~8.5KB (minified)
 - Core + RouterPlugin: ~9KB (minified)
-- Core + Both plugins: ~11KB (minified)
+- Core + StorePlugin: ~9.5KB (minified)
+- Core + All plugins: ~13KB (minified)
 
 **Available Plugin Formats:**
 
 **For Bundlers (Tree-Shaking Supported):**
-- ESM: `import { Attr, Router } from 'eleva/plugins'`
-- CJS: `const { Attr, Router } = require('eleva/plugins')`
+- ESM: `import { Attr, Router, Store } from 'eleva/plugins'`
+- CJS: `const { Attr, Router, Store } = require('eleva/plugins')`
 
 **For CDN (Individual Plugins - Smaller Bundle Size):**
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/eleva.umd.min.js"></script>`
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/router.umd.min.js"></script>`
+- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/store.umd.min.js"></script>`
 
 **Individual Plugin Imports (Best for Tree-Shaking):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`
 - ESM: `import { Router } from 'eleva/plugins/router'`
+- ESM: `import { Store } from 'eleva/plugins/store'`
 - CJS: `const { Attr } = require('eleva/plugins/attr')`
 - CJS: `const { Router } = require('eleva/plugins/router')`
+- CJS: `const { Store } = require('eleva/plugins/store')`
 
 For detailed API documentation, please check the [docs](docs/index.md) folder.
 

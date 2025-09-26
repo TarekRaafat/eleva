@@ -8,6 +8,7 @@ import pkg from "./package.json" with { type: "json" };
 import { AttrPlugin } from "./src/plugins/Attr.js";
 import { RouterPlugin } from "./src/plugins/Router.js";
 import { PropsPlugin } from "./src/plugins/Props.js";
+import { StorePlugin } from "./src/plugins/Store.js";
 
 const name = "Eleva";
 
@@ -20,6 +21,7 @@ const pluginsBanner = createBanner("Eleva Plugins");
 const attrPluginBanner = createBanner("Eleva Attr Plugin", AttrPlugin.version);
 const routerPluginBanner = createBanner("Eleva Router Plugin", RouterPlugin.version);
 const propsPluginBanner = createBanner("Eleva Props Plugin", PropsPlugin.version);
+const storePluginBanner = createBanner("Eleva Store Plugin", StorePlugin.version);
 
 
 
@@ -235,6 +237,12 @@ const propsPluginConfig = createIndividualPluginConfig(
   propsPluginBanner
 );
 
+const storePluginConfig = createIndividualPluginConfig(
+  "Store",
+  "src/plugins/Store.js",
+  storePluginBanner
+);
+
 // Export all configurations
 export default [
   coreConfig,
@@ -242,4 +250,5 @@ export default [
   attrPluginConfig,
   routerPluginConfig,
   propsPluginConfig,
+  storePluginConfig,
 ];

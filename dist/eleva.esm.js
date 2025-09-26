@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.6 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.7 | MIT License | https://elevajs.com */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
