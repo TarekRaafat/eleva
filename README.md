@@ -40,9 +40,9 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.6` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.7` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.6`
+**Version:** `1.0.0-rc.7`
 
 
 
@@ -205,10 +205,10 @@ Preliminary benchmarks illustrate Eleva's efficiency compared to popular framewo
 
 | **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
 | ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **2**              | **0.05**                     | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
-| **React** (Virtual DOM)       | 4.1                   | 5.34                         | 0.020                    | 0.25                       | 9.71                                           |
-| **Vue** (Reactive State)      | 45                   | 4.72                         | 0.021                    | 3.10                       | 13.21                                           |
-| **Angular** (Two-way Binding) | 62                   | 5.26                        | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
+| **Eleva** (Direct DOM)        | **2**                | **0.05**                   | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
+| **React** (Virtual DOM)       | 4.1                  | 5.34                       | 0.020                    | 0.25                       | 9.71                                            |
+| **Vue** (Reactive State)      | 45                   | 4.72                       | 0.021                    | 3.10                       | 13.21                                           |
+| **Angular** (Two-way Binding) | 62                   | 5.26                       | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
 
 Detailed [Benchmark Metrics Report](BENCHMARK.md)
 
