@@ -134,6 +134,8 @@ export class Eleva {
     this.emitter = new Emitter();
     /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
     this.signal = Signal;
+    /** @public {typeof TemplateEngine} Static reference to the TemplateEngine class for template parsing */
+    this.templateEngine = TemplateEngine;
     /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */
     this.renderer = new Renderer();
 
@@ -296,7 +298,7 @@ export class Eleva {
           typeof template === "function"
             ? await template(mergedContext)
             : template;
-        const newHtml = TemplateEngine.parse(templateResult, mergedContext);
+        const newHtml = this.templateEngine.parse(templateResult, mergedContext);
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, listeners);
         if (style) this._injectStyles(container, compId, style, mergedContext);
@@ -393,7 +395,7 @@ export class Eleva {
         const handlerName = attr.value;
         /** @type {(event: Event) => void} */
         const handler =
-          context[handlerName] || TemplateEngine.evaluate(handlerName, context);
+          context[handlerName] || this.templateEngine.evaluate(handlerName, context);
         if (typeof handler === "function") {
           el.addEventListener(event, handler);
           el.removeAttribute(attr.name);
@@ -418,7 +420,7 @@ export class Eleva {
     /** @type {string} */
     const newStyle =
       typeof styleDef === "function"
-        ? TemplateEngine.parse(styleDef(context), context)
+        ? this.templateEngine.parse(styleDef(context), context)
         : styleDef;
 
     /** @type {HTMLStyleElement|null} */
