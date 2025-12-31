@@ -150,12 +150,23 @@ export class Eleva {
    * The plugin's install function will be called with the Eleva instance and provided options.
    * After installation, the plugin will be available for use by components.
    *
+   * Note: Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
+   * of installation (LIFO - Last In, First Out) to avoid conflicts.
+   *
    * @public
    * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
    * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
    * @returns {Eleva} The Eleva instance (for method chaining).
    * @example
    * app.use(myPlugin, { option1: "value1" });
+   *
+   * @example
+   * // Correct uninstall order (LIFO)
+   * app.use(PluginA);
+   * app.use(PluginB);
+   * // Uninstall in reverse order:
+   * PluginB.uninstall(app);
+   * PluginA.uninstall(app);
    */
   use(plugin, options = {}) {
     this._plugins.set(plugin.name, plugin);
