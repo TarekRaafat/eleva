@@ -141,8 +141,6 @@ export class Eleva {
     this._components = new Map();
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     this._plugins = new Map();
-    /** @private {boolean} Flag indicating if the root component is currently mounted */
-    this._isMounted = false;
     /** @private {number} Counter for generating unique component IDs */
     this._componentCounter = 0;
   }
@@ -259,29 +257,30 @@ export class Eleva {
       const childInstances = [];
       /** @type {Array<() => void>} */
       const listeners = [];
-
-      // Execute before hooks
-      if (!this._isMounted) {
-        /** @type {LifecycleHookContext} */
-        await mergedContext.onBeforeMount?.({
-          container,
-          context: mergedContext,
-        });
-      } else {
-        /** @type {LifecycleHookContext} */
-        await mergedContext.onBeforeUpdate?.({
-          container,
-          context: mergedContext,
-        });
-      }
+      /** @private {boolean} Local mounted state for this component instance */
+      let isMounted = false;
 
       /**
        * Renders the component by:
-       * 1. Processing the template
-       * 2. Updating the DOM
-       * 3. Processing events, injecting styles, and mounting child components.
+       * 1. Executing lifecycle hooks
+       * 2. Processing the template
+       * 3. Updating the DOM
+       * 4. Processing events, injecting styles, and mounting child components.
        */
       const render = async () => {
+        // Execute before hooks
+        if (!isMounted) {
+          await mergedContext.onBeforeMount?.({
+            container,
+            context: mergedContext,
+          });
+        } else {
+          await mergedContext.onBeforeUpdate?.({
+            container,
+            context: mergedContext,
+          });
+        }
+
         const templateResult =
           typeof template === "function"
             ? await template(mergedContext)
@@ -293,15 +292,14 @@ export class Eleva {
         if (children)
           await this._mountComponents(container, children, childInstances);
 
-        if (!this._isMounted) {
-          /** @type {LifecycleHookContext} */
+        // Execute after hooks
+        if (!isMounted) {
           await mergedContext.onMount?.({
             container,
             context: mergedContext,
           });
-          this._isMounted = true;
+          isMounted = true;
         } else {
-          /** @type {LifecycleHookContext} */
           await mergedContext.onUpdate?.({
             container,
             context: mergedContext,
