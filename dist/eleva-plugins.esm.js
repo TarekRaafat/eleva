@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.8 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.9 | MIT License | https://elevajs.com */
 /**
  * A regular expression to match hyphenated lowercase letters.
  * @private

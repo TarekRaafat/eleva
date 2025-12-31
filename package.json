@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.0-rc.8",
+  "version": "1.0.0-rc.9",
   "description": "A minimalist and lightweight, pure vanilla JavaScript frontend runtime framework.",
   "type": "module",
   "private": false,

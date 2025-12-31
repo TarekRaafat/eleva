@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.8 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.9 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :

@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
-## v1.0.0-rc.8 🔧 (01-01-2026)
+## v1.0.0-rc.9 🔧 (01-01-2026)
 
 ### 🚀 Core Architecture Improvements
 - **Lifecycle Hook Fix**: Fixed critical bug where lifecycle hooks fired incorrectly after first component mount.
