@@ -5,16 +5,61 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaStorePlugin = {}));
 })(this, (function (exports) { 'use strict';
 
-  function _extends() {
-    return _extends = Object.assign ? Object.assign.bind() : function (n) {
-      for (var e = 1; e < arguments.length; e++) {
-        var t = arguments[e];
-        for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
-      }
-      return n;
-    }, _extends.apply(null, arguments);
-  }
-
+  /**
+   * @class 🏪 StorePlugin
+   * @classdesc A powerful reactive state management plugin for Eleva.js that enables sharing
+   * reactive data across the entire application. The Store plugin provides a centralized,
+   * reactive data store that can be accessed from any component's setup function.
+   *
+   * Core Features:
+   * - Centralized reactive state management using Eleva's signal system
+   * - Global state accessibility through component setup functions
+   * - Namespace support for organizing store modules
+   * - Built-in persistence with localStorage/sessionStorage support
+   * - Action-based state mutations with validation
+   * - Subscription system for reactive updates
+   * - DevTools integration for debugging
+   * - Plugin architecture for extensibility
+   *
+   * @example
+   * // Install the plugin
+   * const app = new Eleva("myApp");
+   * app.use(StorePlugin, {
+   *   state: {
+   *     user: { name: "John", email: "john@example.com" },
+   *     counter: 0,
+   *     todos: []
+   *   },
+   *   actions: {
+   *     increment: (state) => state.counter.value++,
+   *     addTodo: (state, todo) => state.todos.value.push(todo),
+   *     setUser: (state, user) => state.user.value = user
+   *   },
+   *   persistence: {
+   *     enabled: true,
+   *     key: "myApp-store",
+   *     storage: "localStorage"
+   *   }
+   * });
+   *
+   * // Use store in components
+   * app.component("Counter", {
+   *   setup({ store }) {
+   *     return {
+   *       count: store.state.counter,
+   *       increment: () => store.dispatch("increment"),
+   *       user: store.state.user
+   *     };
+   *   },
+   *   template: (ctx) => `
+   *     <div>
+   *       <p>Hello ${ctx.user.value.name}!</p>
+   *       <p>Count: ${ctx.count.value}</p>
+   *       <button onclick="ctx.increment()">+</button>
+   *     </div>
+   *   `
+   * });
+   */
   const StorePlugin = {
     /**
      * Unique identifier for the plugin
@@ -102,13 +147,14 @@
           this.actions = {};
           this.subscribers = new Set();
           this.mutations = [];
-          this.persistence = _extends({
+          this.persistence = {
             enabled: false,
             key: "eleva-store",
             storage: "localStorage",
             include: null,
-            exclude: null
-          }, persistence);
+            exclude: null,
+            ...persistence
+          };
           this.devTools = devTools;
           this.onError = onError;
           this._initializeState(state, actions);
@@ -128,7 +174,9 @@
           });
 
           // Set up actions
-          this.actions = _extends({}, initialActions);
+          this.actions = {
+            ...initialActions
+          };
         }
 
         /**
@@ -156,7 +204,9 @@
             });
 
             // Set up namespaced actions
-            this.actions[namespace] = _extends({}, moduleActions);
+            this.actions[namespace] = {
+              ...moduleActions
+            };
           });
         }
 
@@ -484,7 +534,8 @@
         }
 
         // Create a wrapped component that injects store into setup
-        const wrappedComponent = _extends({}, componentDef, {
+        const wrappedComponent = {
+          ...componentDef,
           async setup(ctx) {
             // Inject store into the context with enhanced API
             ctx.store = {
@@ -508,7 +559,7 @@
             const result = originalSetup ? await originalSetup(ctx) : {};
             return result;
           }
-        });
+        };
 
         // Call original mount with wrapped component
         return await originalMount.call(eleva, container, wrappedComponent, props);
@@ -522,7 +573,8 @@
         for (const [selector, childComponent] of Object.entries(children)) {
           const componentDef = typeof childComponent === "string" ? eleva._components.get(childComponent) || childComponent : childComponent;
           if (componentDef && typeof componentDef === "object") {
-            wrappedChildren[selector] = _extends({}, componentDef, {
+            wrappedChildren[selector] = {
+              ...componentDef,
               async setup(ctx) {
                 // Inject store into the context with enhanced API
                 ctx.store = {
@@ -546,7 +598,7 @@
                 const result = originalSetup ? await originalSetup(ctx) : {};
                 return result;
               }
-            });
+            };
           } else {
             wrappedChildren[selector] = childComponent;
           }

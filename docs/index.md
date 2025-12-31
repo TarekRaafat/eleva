@@ -31,7 +31,7 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.7. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.8. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 

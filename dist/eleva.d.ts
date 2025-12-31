@@ -133,6 +133,56 @@ declare class Signal<T> {
 }
 
 /**
+ * @class 🔒 TemplateEngine
+ * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
+ * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+ * All methods are static and can be called directly on the class.
+ *
+ * @example
+ * const template = "Hello, {{name}}!";
+ * const data = { name: "World" };
+ * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
+ */
+declare class TemplateEngine {
+    /**
+     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+     * @type {RegExp}
+     */
+    private static expressionPattern;
+    /**
+     * Parses a template string, replacing expressions with their evaluated values.
+     * Expressions are evaluated in the provided data context.
+     *
+     * @public
+     * @static
+     * @param {string} template - The template string to parse.
+     * @param {Record<string, unknown>} data - The data context for evaluating expressions.
+     * @returns {string} The parsed template with expressions replaced by their values.
+     * @example
+     * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+     *   user: { name: "John", age: 30 }
+     * }); // Returns: "John is 30 years old"
+     */
+    public static parse(template: string, data: Record<string, unknown>): string;
+    /**
+     * Evaluates an expression in the context of the provided data object.
+     * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
+     * The use of the `with` statement is necessary for expression evaluation but has security implications.
+     * Expressions should be carefully validated before evaluation.
+     *
+     * @public
+     * @static
+     * @param {string} expression - The expression to evaluate.
+     * @param {Record<string, unknown>} data - The data context for evaluation.
+     * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
+     * @example
+     * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
+     * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
+     */
+    public static evaluate(expression: string, data: Record<string, unknown>): unknown;
+}
+
+/**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
  *
@@ -359,14 +409,14 @@ declare class Eleva {
     public emitter: Emitter;
     /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
     public signal: typeof Signal;
+    /** @public {typeof TemplateEngine} Static reference to the TemplateEngine class for template parsing */
+    public templateEngine: typeof TemplateEngine;
     /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */
     public renderer: Renderer;
     /** @private {Map<string, ComponentDefinition>} Registry of all component definitions by name */
     private _components;
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     private _plugins;
-    /** @private {boolean} Flag indicating if the root component is currently mounted */
-    private _isMounted;
     /** @private {number} Counter for generating unique component IDs */
     private _componentCounter;
     /**
@@ -374,12 +424,23 @@ declare class Eleva {
      * The plugin's install function will be called with the Eleva instance and provided options.
      * After installation, the plugin will be available for use by components.
      *
+     * Note: Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
+     * of installation (LIFO - Last In, First Out) to avoid conflicts.
+     *
      * @public
      * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
      * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
      * @returns {Eleva} The Eleva instance (for method chaining).
      * @example
      * app.use(myPlugin, { option1: "value1" });
+     *
+     * @example
+     * // Correct uninstall order (LIFO)
+     * app.use(PluginA);
+     * app.use(PluginB);
+     * // Uninstall in reverse order:
+     * PluginB.uninstall(app);
+     * PluginA.uninstall(app);
      */
     public use(plugin: ElevaPlugin, options?: {
         [x: string]: unknown;

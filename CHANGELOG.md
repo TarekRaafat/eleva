@@ -6,6 +6,89 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.0-rc.8 🔧 (01-01-2026)
+
+### 🚀 Core Architecture Improvements
+- **Lifecycle Hook Fix**: Fixed critical bug where lifecycle hooks fired incorrectly after first component mount.
+- **Plugin Extensibility**: Enhanced plugin system to allow complete customization of all core modules.
+- **Plugin Documentation**: Added clear guidelines for plugin uninstallation order.
+
+### 📝 Release Notes
+
+#### 🔧 Fixed
+
+- **Critical Lifecycle Hook Bug**
+  - Fixed `_isMounted` flag being stored at Eleva instance level instead of per-component.
+  - Previously, after the first component mounted, all subsequent components would fire `onBeforeUpdate`/`onUpdate` instead of `onBeforeMount`/`onMount`.
+  - Signal-triggered re-renders were also skipping `onBeforeUpdate` entirely.
+  - Each component now has independent lifecycle tracking via local `isMounted` variable.
+  - Before-hooks moved inside `render()` to fire correctly on every render cycle.
+  - **Size impact**: -100 bytes (5.9KB → 5.8KB minified).
+
+#### ➕ Added
+
+- **TemplateEngine Extensibility**
+  - Exposed `templateEngine` on Eleva instance (`this.templateEngine`).
+  - Previously hardcoded via static import, preventing plugins from customizing template behavior.
+  - Plugins can now:
+    - Swap the template engine entirely (JSX, lit-html, Handlebars, etc.)
+    - Add custom template syntax
+    - Implement template caching
+    - Override expression evaluation
+  - All internal usages updated to use `this.templateEngine.parse()` and `this.templateEngine.evaluate()`.
+  - **Size impact**: +100 bytes (5.8KB → 5.9KB minified).
+
+#### 📚 Documentation
+
+- **Plugin LIFO Uninstall Convention**
+  - Documented that plugins wrapping core methods must be uninstalled in reverse order of installation (Last In, First Out).
+  - Added clear example in `use()` method JSDoc showing correct uninstall order.
+  - Prevents method chain conflicts when multiple plugins wrap the same method.
+
+### 💻 Developer Notes
+
+#### 🎁 Benefits
+
+- **For Framework Users:**
+  - Lifecycle hooks now fire correctly for all components, not just the first one.
+  - More predictable component behavior with proper `onBeforeMount`/`onMount` lifecycle.
+  - Signal updates now correctly trigger `onBeforeUpdate` before re-rendering.
+
+- **For Plugin Developers:**
+  - Full control over template parsing via `app.templateEngine`.
+  - Can implement custom template engines without modifying core.
+  - Clear guidelines for plugin uninstallation order.
+  - All core modules now replaceable: `emitter`, `signal`, `renderer`, `templateEngine`.
+
+#### 🛠️ Technical Details
+
+- **Lifecycle Fix**: Replaced global `this._isMounted` with local `let isMounted` inside `processMount()`.
+- **TemplateEngine**: Added `this.templateEngine = TemplateEngine` to constructor; updated 3 call sites.
+- **Bundle Size**: Net zero impact (5.9KB minified, 2.37KB gzipped) - still well under 6KB target.
+
+#### 📋 Migration Guide
+
+No breaking changes. All fixes are backward compatible.
+
+```javascript
+// Lifecycle hooks now work correctly for all components
+const app = new Eleva("MyApp");
+
+// First component - works as before
+await app.mount(el1, "CompA"); // onBeforeMount ✓, onMount ✓
+
+// Second component - NOW FIXED
+await app.mount(el2, "CompB"); // onBeforeMount ✓, onMount ✓ (was broken before)
+
+// Plugin can now replace template engine
+app.templateEngine = {
+  parse: (template, data) => customParse(template, data),
+  evaluate: (expr, data) => customEval(expr, data)
+};
+```
+
+---
+
 ## v1.0.0-rc.7 🏪 (26-09-2025)
 
 ### 🚀 Major Release: Store Plugin Introduction

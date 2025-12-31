@@ -1,15 +1,5 @@
-/*! Eleva v1.0.0-rc.7 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.8 | MIT License | https://elevajs.com */
 'use strict';
-
-function _extends() {
-  return _extends = Object.assign ? Object.assign.bind() : function (n) {
-    for (var e = 1; e < arguments.length; e++) {
-      var t = arguments[e];
-      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);
-    }
-    return n;
-  }, _extends.apply(null, arguments);
-}
 
 /**
  * @class 🔒 TemplateEngine
@@ -23,6 +13,12 @@ function _extends() {
  * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
  */
 class TemplateEngine {
+  /**
+   * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+   * @type {RegExp}
+   */
+  static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
+
   /**
    * Parses a template string, replacing expressions with their evaluated values.
    * Expressions are evaluated in the provided data context.
@@ -61,16 +57,11 @@ class TemplateEngine {
     if (typeof expression !== "string") return expression;
     try {
       return new Function("data", `with(data) { return ${expression}; }`)(data);
-    } catch (_unused) {
+    } catch {
       return "";
     }
   }
 }
-/**
- * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
- * @type {RegExp}
- */
-TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
 /**
  * @class ⚡ Signal
@@ -324,7 +315,7 @@ class Renderer {
    * @returns {void}
    */
   _diff(oldParent, newParent) {
-    if (oldParent === newParent || oldParent.isEqualNode != null && oldParent.isEqualNode(newParent)) return;
+    if (oldParent === newParent || oldParent.isEqualNode?.(newParent)) return;
     const oldChildren = Array.from(oldParent.childNodes);
     const newChildren = Array.from(newParent.childNodes);
     let oldStartIdx = 0,
@@ -378,7 +369,7 @@ class Renderer {
    * @returns {void}
    */
   _patchNode(oldNode, newNode) {
-    if (oldNode != null && oldNode._eleva_instance) return;
+    if (oldNode?._eleva_instance) return;
     if (!this._isSameNode(oldNode, newNode)) {
       oldNode.replaceWith(newNode.cloneNode(true));
       return;
@@ -485,7 +476,7 @@ class Renderer {
    * @returns {string|null} The key attribute value or null if not found.
    */
   _getNodeKey(node) {
-    return (node == null ? void 0 : node.nodeType) === Node.ELEMENT_NODE ? node.getAttribute("key") : null;
+    return node?.nodeType === Node.ELEMENT_NODE ? node.getAttribute("key") : null;
   }
 }
 
@@ -618,6 +609,8 @@ class Eleva {
     this.emitter = new Emitter();
     /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
     this.signal = Signal;
+    /** @public {typeof TemplateEngine} Static reference to the TemplateEngine class for template parsing */
+    this.templateEngine = TemplateEngine;
     /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */
     this.renderer = new Renderer();
 
@@ -625,8 +618,6 @@ class Eleva {
     this._components = new Map();
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     this._plugins = new Map();
-    /** @private {boolean} Flag indicating if the root component is currently mounted */
-    this._isMounted = false;
     /** @private {number} Counter for generating unique component IDs */
     this._componentCounter = 0;
   }
@@ -636,12 +627,23 @@ class Eleva {
    * The plugin's install function will be called with the Eleva instance and provided options.
    * After installation, the plugin will be available for use by components.
    *
+   * Note: Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
+   * of installation (LIFO - Last In, First Out) to avoid conflicts.
+   *
    * @public
    * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
    * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
    * @returns {Eleva} The Eleva instance (for method chaining).
    * @example
    * app.use(myPlugin, { option1: "value1" });
+   *
+   * @example
+   * // Correct uninstall order (LIFO)
+   * app.use(PluginA);
+   * app.use(PluginB);
+   * // Uninstall in reverse order:
+   * PluginB.uninstall(app);
+   * PluginA.uninstall(app);
    */
   use(plugin, options = {}) {
     this._plugins.set(plugin.name, plugin);
@@ -738,55 +740,58 @@ class Eleva {
      */
     const processMount = async data => {
       /** @type {ComponentContext} */
-      const mergedContext = _extends({}, context, data);
+      const mergedContext = {
+        ...context,
+        ...data
+      };
       /** @type {Array<() => void>} */
       const watchers = [];
       /** @type {Array<MountResult>} */
       const childInstances = [];
       /** @type {Array<() => void>} */
       const listeners = [];
-
-      // Execute before hooks
-      if (!this._isMounted) {
-        /** @type {LifecycleHookContext} */
-        await (mergedContext.onBeforeMount == null ? void 0 : mergedContext.onBeforeMount({
-          container,
-          context: mergedContext
-        }));
-      } else {
-        /** @type {LifecycleHookContext} */
-        await (mergedContext.onBeforeUpdate == null ? void 0 : mergedContext.onBeforeUpdate({
-          container,
-          context: mergedContext
-        }));
-      }
+      /** @private {boolean} Local mounted state for this component instance */
+      let isMounted = false;
 
       /**
        * Renders the component by:
-       * 1. Processing the template
-       * 2. Updating the DOM
-       * 3. Processing events, injecting styles, and mounting child components.
+       * 1. Executing lifecycle hooks
+       * 2. Processing the template
+       * 3. Updating the DOM
+       * 4. Processing events, injecting styles, and mounting child components.
        */
       const render = async () => {
+        // Execute before hooks
+        if (!isMounted) {
+          await mergedContext.onBeforeMount?.({
+            container,
+            context: mergedContext
+          });
+        } else {
+          await mergedContext.onBeforeUpdate?.({
+            container,
+            context: mergedContext
+          });
+        }
         const templateResult = typeof template === "function" ? await template(mergedContext) : template;
-        const newHtml = TemplateEngine.parse(templateResult, mergedContext);
+        const newHtml = this.templateEngine.parse(templateResult, mergedContext);
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, listeners);
         if (style) this._injectStyles(container, compId, style, mergedContext);
         if (children) await this._mountComponents(container, children, childInstances);
-        if (!this._isMounted) {
-          /** @type {LifecycleHookContext} */
-          await (mergedContext.onMount == null ? void 0 : mergedContext.onMount({
+
+        // Execute after hooks
+        if (!isMounted) {
+          await mergedContext.onMount?.({
             container,
             context: mergedContext
-          }));
-          this._isMounted = true;
+          });
+          isMounted = true;
         } else {
-          /** @type {LifecycleHookContext} */
-          await (mergedContext.onUpdate == null ? void 0 : mergedContext.onUpdate({
+          await mergedContext.onUpdate?.({
             container,
             context: mergedContext
-          }));
+          });
         }
       };
 
@@ -809,7 +814,7 @@ class Eleva {
          */
         unmount: async () => {
           /** @type {UnmountHookContext} */
-          await (mergedContext.onUnmount == null ? void 0 : mergedContext.onUnmount({
+          await mergedContext.onUnmount?.({
             container,
             context: mergedContext,
             cleanup: {
@@ -817,7 +822,7 @@ class Eleva {
               listeners: listeners,
               children: childInstances
             }
-          }));
+          });
           for (const fn of watchers) fn();
           for (const fn of listeners) fn();
           for (const child of childInstances) await child.unmount();
@@ -860,7 +865,7 @@ class Eleva {
         /** @type {string} */
         const handlerName = attr.value;
         /** @type {(event: Event) => void} */
-        const handler = context[handlerName] || TemplateEngine.evaluate(handlerName, context);
+        const handler = context[handlerName] || this.templateEngine.evaluate(handlerName, context);
         if (typeof handler === "function") {
           el.addEventListener(event, handler);
           el.removeAttribute(attr.name);
@@ -883,7 +888,7 @@ class Eleva {
    */
   _injectStyles(container, compId, styleDef, context) {
     /** @type {string} */
-    const newStyle = typeof styleDef === "function" ? TemplateEngine.parse(styleDef(context), context) : styleDef;
+    const newStyle = typeof styleDef === "function" ? this.templateEngine.parse(styleDef(context), context) : styleDef;
 
     /** @type {HTMLStyleElement|null} */
     let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);

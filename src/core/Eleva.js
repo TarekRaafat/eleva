@@ -298,7 +298,10 @@ export class Eleva {
           typeof template === "function"
             ? await template(mergedContext)
             : template;
-        const newHtml = this.templateEngine.parse(templateResult, mergedContext);
+        const newHtml = this.templateEngine.parse(
+          templateResult,
+          mergedContext
+        );
         this.renderer.patchDOM(container, newHtml);
         this._processEvents(container, mergedContext, listeners);
         if (style) this._injectStyles(container, compId, style, mergedContext);
@@ -395,7 +398,8 @@ export class Eleva {
         const handlerName = attr.value;
         /** @type {(event: Event) => void} */
         const handler =
-          context[handlerName] || this.templateEngine.evaluate(handlerName, context);
+          context[handlerName] ||
+          this.templateEngine.evaluate(handlerName, context);
         if (typeof handler === "function") {
           el.addEventListener(event, handler);
           el.removeAttribute(attr.name);

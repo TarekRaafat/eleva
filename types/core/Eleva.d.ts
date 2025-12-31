@@ -121,14 +121,14 @@ export class Eleva {
     public emitter: Emitter;
     /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */
     public signal: typeof Signal;
+    /** @public {typeof TemplateEngine} Static reference to the TemplateEngine class for template parsing */
+    public templateEngine: typeof TemplateEngine;
     /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */
     public renderer: Renderer;
     /** @private {Map<string, ComponentDefinition>} Registry of all component definitions by name */
     private _components;
     /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */
     private _plugins;
-    /** @private {boolean} Flag indicating if the root component is currently mounted */
-    private _isMounted;
     /** @private {number} Counter for generating unique component IDs */
     private _componentCounter;
     /**
@@ -136,12 +136,23 @@ export class Eleva {
      * The plugin's install function will be called with the Eleva instance and provided options.
      * After installation, the plugin will be available for use by components.
      *
+     * Note: Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
+     * of installation (LIFO - Last In, First Out) to avoid conflicts.
+     *
      * @public
      * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
      * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
      * @returns {Eleva} The Eleva instance (for method chaining).
      * @example
      * app.use(myPlugin, { option1: "value1" });
+     *
+     * @example
+     * // Correct uninstall order (LIFO)
+     * app.use(PluginA);
+     * app.use(PluginB);
+     * // Uninstall in reverse order:
+     * PluginB.uninstall(app);
+     * PluginA.uninstall(app);
      */
     public use(plugin: ElevaPlugin, options?: {
         [x: string]: unknown;
@@ -350,5 +361,6 @@ export type ElevaPlugin = {
 };
 import { Emitter } from "../modules/Emitter.js";
 import { Signal } from "../modules/Signal.js";
+import { TemplateEngine } from "../modules/TemplateEngine.js";
 import { Renderer } from "../modules/Renderer.js";
 //# sourceMappingURL=Eleva.d.ts.map
