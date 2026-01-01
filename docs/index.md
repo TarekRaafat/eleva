@@ -107,6 +107,54 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
 
 Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Its goal is to empower developers who value simplicity, performance, and full control over their application to build modular and high-performance apps without the overhead of larger frameworks.
 
+### Quick Reference (TL;DR)
+
+```javascript
+// 1. Create an Eleva instance
+const app = new Eleva("MyApp");
+
+// 2. Define a component
+app.component("Counter", {
+  setup({ signal }) {
+    const count = signal(0);                    // Create reactive state
+    return {
+      count,
+      onMount: () => console.log("Mounted!")    // Lifecycle hook
+    };
+  },
+  template: (ctx) => `
+    <div>
+      <p>Count: ${ctx.count.value}</p>
+      <button @click="() => count.value++">+</button>
+    </div>
+  `
+});
+
+// 3. Mount to DOM
+app.mount(document.getElementById("app"), "Counter");
+```
+
+**Core API Summary:**
+| Method | Description |
+|--------|-------------|
+| `new Eleva(name)` | Create an app instance |
+| `app.component(name, definition)` | Register a component |
+| `app.mount(element, componentName, props?)` | Mount component to DOM (returns Promise) |
+| `app.use(plugin, options?)` | Install a plugin |
+| `signal(initialValue)` | Create reactive state (in setup) |
+| `emitter.emit(event, data)` | Emit custom events |
+| `emitter.on(event, handler)` | Listen to events |
+
+**Lifecycle Hooks:** `onBeforeMount`, `onMount`, `onBeforeUpdate`, `onUpdate`, `onUnmount`
+
+**Template Syntax:**
+- `${expr}` - One-time static interpolation
+- `{{ expr }}` - Dynamic reactive interpolation
+- `@click="handler"` - Event binding
+- `:prop="value"` - Prop passing to children
+
+**Built-in Plugins:** `Attr`, `Props`, `Router`, `Store` (import from `eleva/plugins`)
+
 ---
 
 ## 2. Design Philosophy
@@ -180,12 +228,16 @@ const app = new Eleva("MyApp");
 **With Individual Plugins (Optional):**
 ```javascript
 import Eleva from 'eleva';
-import { Attr } from 'eleva/plugins/attr';      // ~2.3KB
+import { Attr } from 'eleva/plugins/attr';      // ~2.4KB
+import { Props } from 'eleva/plugins/props';    // ~4.2KB
 import { Router } from 'eleva/plugins/router';  // ~13KB
+import { Store } from 'eleva/plugins/store';    // ~6KB
 
 const app = new Eleva("MyApp");
 app.use(Attr);    // Only if needed
+app.use(Props);   // Only if needed
 app.use(Router);  // Only if needed
+app.use(Store);   // Only if needed
 ```
 
 Or include it directly via CDN:
@@ -196,6 +248,12 @@ Or include it directly via CDN:
 
 <!-- With all plugins (Optional) -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/plugins"></script>
+
+<!-- Or individual plugins -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/props.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
 ```
 
 or
@@ -452,45 +510,31 @@ _Example:_
 ```js
 app.component("MyComponent", {
   setup() {
-    // Define your lifecycle hooks
-    const hooks = {
-      beforeMount: async ({ container, context }) => {
-        console.log("Component will mount");
-        // Can perform async operations
-        await someAsyncOperation();
-      },
-      mounted: async ({ container, context }) => {
-        console.log("Component mounted");
-        // Can perform async operations
-        await initializeComponent();
-      },
-      beforeUpdate: async ({ container, context }) => {
-        console.log("Component will update");
-        // Can perform async operations
-        await prepareForUpdate();
-      },
-      updated: async ({ container, context }) => {
-        console.log("Component updated");
-        // Can perform async operations
-        await afterUpdate();
-      },
-      beforeUnmount: async ({ container, context }) => {
-        console.log("Component will unmount");
-        // Can perform async operations
-        await cleanup();
-      },
-    };
-
-    // Return both your component state and lifecycle hooks
     return {
       // Your component state
       count: 0,
+
       // Lifecycle hooks (all optional)
-      onBeforeMount: hooks.beforeMount,
-      onMount: hooks.mounted,
-      onBeforeUpdate: hooks.beforeUpdate,
-      onUpdate: hooks.updated,
-      onUnmount: hooks.beforeUnmount,
+      onBeforeMount: async ({ container, context }) => {
+        console.log("Component will mount");
+        await someAsyncOperation();
+      },
+      onMount: async ({ container, context }) => {
+        console.log("Component mounted");
+        await initializeComponent();
+      },
+      onBeforeUpdate: async ({ container, context }) => {
+        console.log("Component will update");
+        await prepareForUpdate();
+      },
+      onUpdate: async ({ container, context }) => {
+        console.log("Component updated");
+        await afterUpdate();
+      },
+      onUnmount: async ({ container, context }) => {
+        console.log("Component will unmount");
+        await cleanup();
+      },
     };
   },
   template(ctx) {
@@ -1022,7 +1066,7 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
    This module processes template strings by replacing placeholders (e.g., `{{ count }}`) with live data, enabling dynamic rendering.
 
 4. **Renderer (DOM Diffing and Patching):**
-   The Renderer compares the new virtual DOM with the current DOM and patches only the parts that have changed, ensuring high performance and efficient updates.
+   The Renderer compares the new HTML structure with the current DOM and patches only the parts that have changed, ensuring high performance and efficient updates without the overhead of a virtual DOM.
 
 5. **Emitter (Event Handling):**
    The Emitter implements a publish–subscribe pattern to allow components to communicate by emitting and listening to custom events.
@@ -1586,17 +1630,17 @@ app.use(Store, {
 #### Bundle Sizes
 
 - **Core framework only**: ~6KB (minified)
-- **Core + Attr plugin**: ~8.3KB (minified)
+- **Core + Attr plugin**: ~8KB (minified)
+- **Core + Props plugin**: ~10KB (minified)
 - **Core + Router plugin**: ~19KB (minified)
-- **Core + Props plugin**: ~8.5KB (minified)
-- **Core + Store plugin**: ~9.5KB (minified)
+- **Core + Store plugin**: ~12KB (minified)
 - **Core + All plugins**: ~25KB (minified)
 
 **Individual Plugin Sizes:**
-- **Attr plugin only**: ~2.3KB (minified)
+- **Attr plugin only**: ~2.4KB (minified)
+- **Props plugin only**: ~4.2KB (minified)
 - **Router plugin only**: ~13KB (minified)
-- **Props plugin only**: ~2.5KB (minified)
-- **Store plugin only**: ~3.5KB (minified)
+- **Store plugin only**: ~6KB (minified)
 
 ---
 

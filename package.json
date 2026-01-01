@@ -94,6 +94,18 @@
       "browser": "./dist/plugins/router.umd.min.js",
       "default": "./dist/plugins/router.umd.min.js"
     },
+    "./plugins/props": {
+      "types": "./types/plugins/Props.d.ts",
+      "import": "./dist/plugins/props.umd.min.js",
+      "browser": "./dist/plugins/props.umd.min.js",
+      "default": "./dist/plugins/props.umd.min.js"
+    },
+    "./plugins/store": {
+      "types": "./types/plugins/Store.d.ts",
+      "import": "./dist/plugins/store.umd.min.js",
+      "browser": "./dist/plugins/store.umd.min.js",
+      "default": "./dist/plugins/store.umd.min.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [

@@ -78,6 +78,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
       - [Core Framework Only (Lightweight)](#core-framework-only-lightweight)
       - [AttrPlugin](#attrplugin)
       - [RouterPlugin](#routerplugin)
+      - [PropsPlugin](#propsplugin)
       - [StorePlugin](#storeplugin)
   - [Development](#development)
   - [Testing](#testing)
@@ -141,7 +142,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
-- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes, RouterPlugin for client-side routing, and StorePlugin for reactive state management
+- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes, PropsPlugin for complex data handling, RouterPlugin for client-side routing, and StorePlugin for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
 - **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
@@ -169,9 +170,8 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (Alpha/Beta):** Early versions like `1.2.0-alpha` indicate the API is still evolving. Expect frequent updates and share your feedback!
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.9` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
-- **Fresh Start:** This release (`1.2.0-alpha`) marks a significant update with enhanced inline documentation, improved JSDoc annotations, and a refined mounting context that now includes an `emitter` property.
 
 ---
 
@@ -485,6 +485,52 @@ router.currentRoute.subscribe(route => {
 router.navigate('/users/123', { replace: true });
 ```
 
+#### PropsPlugin
+
+🎯 **Advanced props handling** with automatic type detection, parsing, and reactivity for complex data structures:
+
+```javascript
+import Eleva from 'eleva';
+import { Props } from 'eleva/plugins';
+
+const app = new Eleva("myApp");
+app.use(Props, {
+    enableAutoParsing: true,    // Enable automatic type detection
+    enableReactivity: true,     // Enable reactive prop updates
+    onError: (error, value) => {
+        console.error('Props parsing error:', error, value);
+    }
+});
+
+// Use complex props in components
+app.component("UserCard", {
+    template: (ctx) => `
+        <div class="user-container"
+             :user='${JSON.stringify(ctx.user.value)}'
+             :permissions='${JSON.stringify(ctx.permissions.value)}'>
+        </div>
+    `,
+    children: {
+        '.user-container': 'UserInfo'
+    }
+});
+
+app.component("UserInfo", {
+    setup({ props }) {
+        return {
+            user: props.user,              // Automatically parsed object
+            permissions: props.permissions  // Automatically parsed array
+        };
+    },
+    template: (ctx) => `
+        <div class="user-info">
+            <h3>${ctx.user.value.name}</h3>
+            <p>Role: ${ctx.user.value.role}</p>
+        </div>
+    `
+});
+```
+
 #### StorePlugin
 
 🏪 **Reactive state management** with centralized data store, persistence, namespacing, and cross-component reactive updates:
@@ -610,28 +656,38 @@ app.dispatch("increment");          // Dispatch actions globally
 
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
-- Core + AttrPlugin: ~8.5KB (minified)
-- Core + RouterPlugin: ~9KB (minified)
-- Core + StorePlugin: ~9.5KB (minified)
-- Core + All plugins: ~13KB (minified)
+- Core + AttrPlugin: ~8KB (minified)
+- Core + PropsPlugin: ~10KB (minified)
+- Core + RouterPlugin: ~19KB (minified)
+- Core + StorePlugin: ~12KB (minified)
+- Core + All plugins: ~25KB (minified)
+
+**Individual Plugin Sizes:**
+- AttrPlugin: ~2.4KB (minified)
+- PropsPlugin: ~4.2KB (minified)
+- RouterPlugin: ~13KB (minified)
+- StorePlugin: ~6KB (minified)
 
 **Available Plugin Formats:**
 
 **For Bundlers (Tree-Shaking Supported):**
-- ESM: `import { Attr, Router, Store } from 'eleva/plugins'`
-- CJS: `const { Attr, Router, Store } = require('eleva/plugins')`
+- ESM: `import { Attr, Props, Router, Store } from 'eleva/plugins'`
+- CJS: `const { Attr, Props, Router, Store } = require('eleva/plugins')`
 
 **For CDN (Individual Plugins - Smaller Bundle Size):**
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/eleva.umd.min.js"></script>`
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
+- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/props.umd.min.js"></script>`
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/router.umd.min.js"></script>`
 - UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/store.umd.min.js"></script>`
 
 **Individual Plugin Imports (Best for Tree-Shaking):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`
+- ESM: `import { Props } from 'eleva/plugins/props'`
 - ESM: `import { Router } from 'eleva/plugins/router'`
 - ESM: `import { Store } from 'eleva/plugins/store'`
 - CJS: `const { Attr } = require('eleva/plugins/attr')`
+- CJS: `const { Props } = require('eleva/plugins/props')`
 - CJS: `const { Router } = require('eleva/plugins/router')`
 - CJS: `const { Store } = require('eleva/plugins/store')`
 
@@ -715,7 +771,7 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-**Note:** This is a beta release. I'm still polishing things up, so expect some bumps along the way. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
+**Note:** This is a release candidate (RC). The core functionality is stable and suitable for production use. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
 
 ---
 
