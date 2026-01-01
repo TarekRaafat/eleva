@@ -1,5 +1,7 @@
 # eleva.js - Pure JavaScript, Pure Performance
 
+> **Version:** 1.0.0-rc.10 | **Bundle Size:** ~6KB minified (~2KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
 [![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
@@ -31,13 +33,81 @@
 
 Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
 
-> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.9. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.10. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+
+---
+
+## TL;DR - Quick Start
+
+### 30-Second Setup
+
+```javascript
+// 1. Import
+import Eleva from "eleva";
+
+// 2. Create app
+const app = new Eleva("MyApp");
+
+// 3. Define component
+app.component("Counter", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `
+    <button @click="() => count.value++">
+      Count: ${ctx.count.value}
+    </button>
+  `
+});
+
+// 4. Mount
+app.mount(document.getElementById("app"), "Counter");
+```
+
+### API Cheatsheet
+
+| Method | Description | Returns |
+|--------|-------------|---------|
+| `new Eleva(name)` | Create app instance | `Eleva` |
+| `app.component(name, def)` | Register component | `Eleva` |
+| `app.mount(el, name, props?)` | Mount to DOM | `Promise<MountResult>` |
+| `app.use(plugin, options?)` | Install plugin | `Eleva` or plugin result |
+| `signal(value)` | Create reactive state | `Signal<T>` |
+| `emitter.on(event, fn)` | Subscribe to event | `() => void` (unsubscribe) |
+| `emitter.emit(event, data)` | Emit event | `void` |
+
+### Template Syntax Cheatsheet
+
+| Syntax | Purpose | Example |
+|--------|---------|---------|
+| `${expr}` | Static interpolation (one-time) | `${user.name}` |
+| `{{ expr }}` | Reactive interpolation | `{{ count.value }}` |
+| `@event` | Event binding | `@click="handler"` |
+| `:prop` | Pass prop to child | `:title="${todo.title}"` |
+
+### Lifecycle Hooks
+
+| Hook | When Called |
+|------|-------------|
+| `onBeforeMount` | Before component mounts to DOM |
+| `onMount` | After component mounts to DOM |
+| `onBeforeUpdate` | Before component re-renders |
+| `onUpdate` | After component re-renders |
+| `onUnmount` | Before component is destroyed |
+
+### Built-in Plugins
+
+| Plugin | Purpose | Size | Docs |
+|--------|---------|------|------|
+| `Attr` | ARIA, data-*, boolean attributes | ~2.4KB | [→](./plugins/attr.md) |
+| `Props` | Complex prop parsing & reactivity | ~4.2KB | [→](./plugins/props.md) |
+| `Router` | Client-side routing & guards | ~13KB | [→](./plugins/router.md) |
+| `Store` | Global state management | ~6KB | [→](./plugins/store.md) |
 
 ---
 
 ## Table of Contents
 
 - [eleva.js - Pure JavaScript, Pure Performance](#elevajs---pure-javascript-pure-performance)
+  - [TL;DR - Quick Start](#tldr---quick-start)
   - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-introduction)
   - [2. Design Philosophy](#2-design-philosophy)
@@ -100,6 +170,7 @@ Welcome to the official documentation for **eleva.js**, a minimalist, lightweigh
   - [17. Changelog](#17-changelog)
   - [18. License](#18-license)
   - [19. Sponsors \& Partners](#19-sponsors--partners)
+  - [Summary](#summary)
 
 ---
 
@@ -1336,6 +1407,8 @@ app.component("myComponent", {
 - 🔍 **Dynamic Properties**: Automatic property detection and mapping
 - 🧹 **Attribute Cleanup**: Automatic removal of unused attributes
 
+📚 **[Full Attr Documentation →](./plugins/attr.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
+
 #### 🚀 RouterPlugin
 
 Advanced client-side routing with reactive state, navigation guards, and component resolution.
@@ -1403,6 +1476,8 @@ router.navigate('/users/123', { replace: true });
 - 🔌 **Plugin System**: Router-level plugin extensibility
 - 🛠️ **Error Handling**: Comprehensive error management
 
+📚 **[Full Router Documentation →](./plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
+
 #### 🎯 PropsPlugin
 
 Advanced props data handling for complex data structures with automatic type detection and reactivity.
@@ -1461,6 +1536,8 @@ app.component("UserInfo", {
 - 🛠️ **Error Handling**: Comprehensive error handling with custom error callbacks
 - 🧹 **Attribute Cleanup**: Automatic removal of prop attributes after extraction
 - ⚡ **Performance Optimized**: Efficient parsing with minimal overhead
+
+📚 **[Full Props Documentation →](./plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, and complex data structures.
 
 #### 🏪 StorePlugin
 
@@ -1593,6 +1670,8 @@ app.dispatch("increment");          // Dispatch actions globally
 - 🔗 **Cross-Component Updates**: Automatic UI updates across all components
 - 🔧 **Runtime Extensibility**: Add state and actions dynamically
 - 🎛️ **DevTools Integration**: Debug with browser developer tools
+
+📚 **[Full Store Documentation →](./plugins/store.md)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
 
 #### Plugin Installation
 
@@ -1741,10 +1820,10 @@ Detailed API documentation with parameter descriptions, return values, and usage
   Methods: `patchDOM(container, newHtml)`, `diff(oldParent, newParent)`, and `updateAttributes(oldEl, newEl)`
 
 - **Built-in Plugins:**
-  - **Attr:** Advanced attribute handling with ARIA support
-  - **Router:** Client-side routing with navigation guards and reactive state
-  - **Props:** Advanced props data handling with automatic type detection and reactivity
-  - **Store:** Reactive state management with persistence and namespacing
+  - **[Attr](./plugins/attr.md):** Advanced attribute handling with ARIA support
+  - **[Router](./plugins/router.md):** Client-side routing with navigation guards and reactive state
+  - **[Props](./plugins/props.md):** Advanced props data handling with automatic type detection and reactivity
+  - **[Store](./plugins/store.md):** Reactive state management with persistence and namespacing
 
 - **Eleva (Core):**  
   `new Eleva(name, config)`, `use(plugin, options)`, `component(name, definition)`, and `mount(container, compName, props)`
@@ -1799,3 +1878,103 @@ We gratefully acknowledge the organizations that help make Eleva.js possible.
 ---
 
 Thank you for exploring Eleva! I hope this documentation helps you build amazing, high-performance frontend applications using pure vanilla JavaScript. For further information, interactive demos, and community support, please visit the [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions) page.
+
+---
+
+## Summary
+
+### Framework Statistics
+
+| Metric | Value |
+|--------|-------|
+| **Bundle Size** | ~6KB minified, ~2KB gzipped |
+| **Dependencies** | Zero |
+| **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
+| **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |
+| **Built-in Plugins** | 4 (Attr, Props, Router, Store) |
+| **Template Syntaxes** | 4 (${}, {{}}, @event, :prop) |
+
+### Core Modules Quick Reference
+
+| Module | Purpose | Key Methods |
+|--------|---------|-------------|
+| **Eleva** | App orchestration | `component()`, `mount()`, `use()` |
+| **Signal** | Reactive state | `.value`, `.watch()` |
+| **Emitter** | Event handling | `.on()`, `.off()`, `.emit()` |
+| **Renderer** | DOM diffing | `.patchDOM()` |
+| **TemplateEngine** | Template parsing | `.parse()`, `.evaluate()` |
+
+### Component Definition Structure
+
+```javascript
+{
+  setup({ signal, emitter, props }) {   // Optional: Initialize state
+    const state = signal(initialValue);
+    return {
+      state,
+      onMount: ({ container, context }) => {},   // Lifecycle hooks
+      onUnmount: ({ container, context, cleanup }) => {}
+    };
+  },
+  template(ctx) {                       // Required: Return HTML string
+    return `<div>${ctx.state.value}</div>`;
+  },
+  style(ctx) {                          // Optional: Scoped CSS
+    return `.component { color: blue; }`;
+  },
+  children: {                           // Optional: Child components
+    ".selector": "ComponentName"
+  }
+}
+```
+
+### Data Flow Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     ELEVA DATA FLOW                         │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [Component Registration]                                   │
+│          │                                                  │
+│          ▼                                                  │
+│  [Mounting & Context Creation]                              │
+│          │                                                  │
+│          ▼                                                  │
+│  [setup() Execution] ──► Returns { state, hooks }           │
+│          │                                                  │
+│          ▼                                                  │
+│  [template() Produces HTML]                                 │
+│          │                                                  │
+│          ▼                                                  │
+│  [TemplateEngine.parse()] ──► Interpolates {{ values }}     │
+│          │                                                  │
+│          ▼                                                  │
+│  [Renderer.patchDOM()] ──► Updates only changed nodes       │
+│          │                                                  │
+│          ▼                                                  │
+│  [DOM Rendered] ◄─────────────────────────────┐             │
+│          │                                    │             │
+│          ▼                                    │             │
+│  [User Interaction] ──► Event Handler         │             │
+│          │                                    │             │
+│          ▼                                    │             │
+│  [signal.value = newValue]                    │             │
+│          │                                    │             │
+│          ▼                                    │             │
+│  [Signal notifies watchers] ──────────────────┘             │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Installation Methods
+
+| Method | Command/Code |
+|--------|--------------|
+| **npm** | `npm install eleva` |
+| **CDN (jsDelivr)** | `<script src="https://cdn.jsdelivr.net/npm/eleva"></script>` |
+| **CDN (unpkg)** | `<script src="https://unpkg.com/eleva"></script>` |
+| **ESM Import** | `import Eleva from "eleva"` |
+| **Plugin Import** | `import { Router, Store } from "eleva/plugins"` |
+
+For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).

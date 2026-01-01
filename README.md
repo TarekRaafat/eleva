@@ -1,5 +1,7 @@
 # eleva.js 🚀
 
+> **Version:** 1.0.0-rc.10 | **Size:** ~6KB min (~2KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+
 Pure JavaScript, Pure Performance, Simply Elegant.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -40,9 +42,9 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
 _Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.9` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.10` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.9`
+**Version:** `1.0.0-rc.10`
 
 
 
@@ -54,6 +56,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 - [eleva.js 🚀](#elevajs-)
   - [Table of Contents](#table-of-contents)
+  - [Quick Reference](#quick-reference)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
   - [Handcrafted \& Developer-Centric Design](#handcrafted--developer-centric-design)
@@ -85,6 +88,45 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
   - [Contributing](#contributing)
   - [License](#license)
   - [Contact](#contact)
+
+---
+
+## Quick Reference
+
+### Minimal Setup (30 seconds)
+
+```javascript
+import Eleva from "eleva";
+
+const app = new Eleva("MyApp");
+
+app.component("Counter", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `<button @click="() => count.value++">${ctx.count.value}</button>`
+});
+
+app.mount(document.getElementById("app"), "Counter");
+```
+
+### API at a Glance
+
+| Method | Purpose |
+|--------|---------|
+| `new Eleva(name)` | Create app |
+| `app.component(name, def)` | Register component |
+| `app.mount(el, name)` | Mount to DOM |
+| `app.use(plugin)` | Add plugin |
+| `signal(value)` | Reactive state |
+| `emitter.on/emit` | Events |
+
+### Template Syntax
+
+| Syntax | Use |
+|--------|-----|
+| `${expr}` | Static value |
+| `{{ expr }}` | Reactive value |
+| `@click` | Event handler |
+| `:prop` | Pass to child |
 
 ---
 
@@ -170,7 +212,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.9` indicate the API is stable but still gathering community feedback before the final release.
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.10` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
@@ -426,6 +468,8 @@ app.component("myComponent", {
 });
 ```
 
+📚 **[Full Attr Documentation →](docs/plugins/attr.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
+
 #### RouterPlugin
 
 🚀 **Advanced client-side routing** with multiple modes, navigation guards, reactive state, and component resolution:
@@ -485,6 +529,8 @@ router.currentRoute.subscribe(route => {
 router.navigate('/users/123', { replace: true });
 ```
 
+📚 **[Full Router Documentation →](docs/plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
+
 #### PropsPlugin
 
 🎯 **Advanced props handling** with automatic type detection, parsing, and reactivity for complex data structures:
@@ -530,6 +576,8 @@ app.component("UserInfo", {
     `
 });
 ```
+
+📚 **[Full Props Documentation →](docs/plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, complex data structures, and error handling.
 
 #### StorePlugin
 
@@ -653,6 +701,8 @@ const unsubscribe = app.store.subscribe((mutation, state) => {
 console.log(app.store.getState()); // Get current state values
 app.dispatch("increment");          // Dispatch actions globally
 ```
+
+📚 **[Full Store Documentation →](docs/plugins/store.md)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
 
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)

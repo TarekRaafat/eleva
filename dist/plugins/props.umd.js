@@ -1,24 +1,82 @@
-/*! Eleva Props Plugin v1.0.0-rc.2 | MIT License | https://elevajs.com */
+/*! Eleva Props Plugin v1.0.0-rc.10 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaPropsPlugin = {}));
 })(this, (function (exports) { 'use strict';
 
+  // ============================================================================
+  // TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+  // ============================================================================
+
+  /**
+   * @typedef {Record<string, unknown>} TemplateData
+   *           Data context for template interpolation
+   */
+
+  /**
+   * @typedef {string} TemplateString
+   *           A string containing {{ expression }} interpolation markers
+   */
+
+  /**
+   * @typedef {string} Expression
+   *           A JavaScript expression to be evaluated in the data context
+   */
+
+  /**
+   * @typedef {unknown} EvaluationResult
+   *           The result of evaluating an expression (string, number, boolean, object, etc.)
+   */
+
   /**
    * @class 🔒 TemplateEngine
    * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
-   * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+   * Provides a way to evaluate expressions in templates.
    * All methods are static and can be called directly on the class.
    *
+   * Template Syntax:
+   * - `{{ expression }}` - Interpolate any JavaScript expression
+   * - `{{ variable }}` - Access data properties directly
+   * - `{{ object.property }}` - Access nested properties
+   * - `{{ condition ? a : b }}` - Ternary expressions
+   * - `{{ func(arg) }}` - Call functions from data context
+   *
    * @example
+   * // Basic interpolation
    * const template = "Hello, {{name}}!";
    * const data = { name: "World" };
-   * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Hello, World!"
+   *
+   * @example
+   * // Nested properties
+   * const template = "Welcome, {{user.name}}!";
+   * const data = { user: { name: "John" } };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Welcome, John!"
+   *
+   * @example
+   * // Expressions
+   * const template = "Status: {{active ? 'Online' : 'Offline'}}";
+   * const data = { active: true };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Status: Online"
+   *
+   * @example
+   * // With Signal values
+   * const template = "Count: {{count.value}}";
+   * const data = { count: { value: 42 } };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Count: 42"
    */
   class TemplateEngine {
     /**
-     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+     * Regular expression for matching template expressions in the format {{ expression }}
+     * Matches: {{ anything }} with optional whitespace inside braces
+     *
+     * @static
+     * @private
      * @type {RegExp}
      */
     static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
@@ -29,13 +87,37 @@
      *
      * @public
      * @static
-     * @param {string} template - The template string to parse.
-     * @param {Record<string, unknown>} data - The data context for evaluating expressions.
+     * @param {TemplateString|unknown} template - The template string to parse.
+     * @param {TemplateData} data - The data context for evaluating expressions.
      * @returns {string} The parsed template with expressions replaced by their values.
+     *
      * @example
-     * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+     * // Simple variables
+     * TemplateEngine.parse("Hello, {{name}}!", { name: "World" });
+     * // Result: "Hello, World!"
+     *
+     * @example
+     * // Nested properties
+     * TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
      *   user: { name: "John", age: 30 }
-     * }); // Returns: "John is 30 years old"
+     * });
+     * // Result: "John is 30 years old"
+     *
+     * @example
+     * // Multiple expressions
+     * TemplateEngine.parse("{{greeting}}, {{name}}! You have {{count}} messages.", {
+     *   greeting: "Hello",
+     *   name: "User",
+     *   count: 5
+     * });
+     * // Result: "Hello, User! You have 5 messages."
+     *
+     * @example
+     * // With conditionals
+     * TemplateEngine.parse("Status: {{online ? 'Active' : 'Inactive'}}", {
+     *   online: true
+     * });
+     * // Result: "Status: Active"
      */
     static parse(template, data) {
       if (typeof template !== "string") return template;
@@ -44,18 +126,44 @@
 
     /**
      * Evaluates an expression in the context of the provided data object.
+     *
      * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      * The use of the `with` statement is necessary for expression evaluation but has security implications.
-     * Expressions should be carefully validated before evaluation.
+     * Only use with trusted templates. User input should never be directly interpolated.
      *
      * @public
      * @static
-     * @param {string} expression - The expression to evaluate.
-     * @param {Record<string, unknown>} data - The data context for evaluation.
-     * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
+     * @param {Expression|unknown} expression - The expression to evaluate.
+     * @param {TemplateData} data - The data context for evaluation.
+     * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+     *
      * @example
-     * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
-     * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
+     * // Property access
+     * TemplateEngine.evaluate("user.name", { user: { name: "John" } });
+     * // Result: "John"
+     *
+     * @example
+     * // Numeric values
+     * TemplateEngine.evaluate("user.age", { user: { age: 30 } });
+     * // Result: 30
+     *
+     * @example
+     * // Expressions
+     * TemplateEngine.evaluate("items.length > 0", { items: [1, 2, 3] });
+     * // Result: true
+     *
+     * @example
+     * // Function calls
+     * TemplateEngine.evaluate("formatDate(date)", {
+     *   date: new Date(),
+     *   formatDate: (d) => d.toISOString()
+     * });
+     * // Result: "2024-01-01T00:00:00.000Z"
+     *
+     * @example
+     * // Failed evaluation returns empty string
+     * TemplateEngine.evaluate("nonexistent.property", {});
+     * // Result: ""
      */
     static evaluate(expression, data) {
       if (typeof expression !== "string") return expression;
@@ -125,7 +233,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.2",
+    version: "1.0.0-rc.10",
     /**
      * Plugin description
      * @type {string}

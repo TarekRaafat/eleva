@@ -1,19 +1,73 @@
 /**
+ * @template T
+ * @callback EventHandler
+ * @param {...T} args - Event arguments
+ * @returns {void|Promise<void>}
+ */
+/**
+ * @callback EventUnsubscribe
+ * @returns {void}
+ */
+/**
+ * @typedef {`${string}:${string}`} EventName
+ *           Event names follow the format 'namespace:action' (e.g., 'user:login', 'cart:update')
+ */
+/**
+ * @typedef {Object} EmitterLike
+ * @property {function(string, EventHandler<unknown>): EventUnsubscribe} on - Subscribe to an event
+ * @property {function(string, EventHandler<unknown>=): void} off - Unsubscribe from an event
+ * @property {function(string, ...unknown): void} emit - Emit an event
+ */
+/**
  * @class 📡 Emitter
  * @classdesc A robust event emitter that enables inter-component communication through a publish-subscribe pattern.
  * Components can emit events and listen for events from other components, facilitating loose coupling
  * and reactive updates across the application.
  * Events are handled synchronously in the order they were registered, with proper cleanup
  * of unsubscribed handlers.
- * Event names should follow the format 'namespace:action' (e.g., 'user:login', 'cart:update').
+ *
+ * Event names should follow the format 'namespace:action' for consistency and organization.
  *
  * @example
+ * // Basic usage
  * const emitter = new Emitter();
  * emitter.on('user:login', (user) => console.log(`User logged in: ${user.name}`));
  * emitter.emit('user:login', { name: 'John' }); // Logs: "User logged in: John"
+ *
+ * @example
+ * // With unsubscribe
+ * const unsub = emitter.on('cart:update', (items) => {
+ *   console.log(`Cart has ${items.length} items`);
+ * });
+ * emitter.emit('cart:update', [{ id: 1, name: 'Book' }]); // Logs: "Cart has 1 items"
+ * unsub(); // Stop listening
+ * emitter.emit('cart:update', []); // No log output
+ *
+ * @example
+ * // Multiple arguments
+ * emitter.on('order:placed', (orderId, amount, currency) => {
+ *   console.log(`Order ${orderId}: ${amount} ${currency}`);
+ * });
+ * emitter.emit('order:placed', 'ORD-123', 99.99, 'USD');
+ *
+ * @example
+ * // Common event patterns
+ * // Lifecycle events
+ * emitter.on('component:mount', (component) => {});
+ * emitter.on('component:unmount', (component) => {});
+ * // State events
+ * emitter.on('state:change', (newState, oldState) => {});
+ * // Navigation events
+ * emitter.on('router:navigate', (to, from) => {});
+ *
+ * @implements {EmitterLike}
  */
-declare class Emitter {
-    /** @private {Map<string, Set<(data: unknown) => void>>} Map of event names to their registered handler functions */
+declare class Emitter implements EmitterLike {
+    /**
+     * Map of event names to their registered handler functions
+     * @private
+     * @type {Map<string, Set<EventHandler<unknown>>>}
+     */
     private _events;
     /**
      * Registers an event handler for the specified event name.
@@ -21,49 +75,106 @@ declare class Emitter {
      * Event names should follow the format 'namespace:action' for consistency.
      *
      * @public
+     * @template T
      * @param {string} event - The name of the event to listen for (e.g., 'user:login').
-     * @param {(data: unknown) => void} handler - The callback function to invoke when the event occurs.
-     * @returns {() => void} A function to unsubscribe the event handler.
+     * @param {EventHandler<T>} handler - The callback function to invoke when the event occurs.
+     * @returns {EventUnsubscribe} A function to unsubscribe the event handler.
+     *
      * @example
+     * // Basic subscription
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
-     * // Later...
+     *
+     * @example
+     * // Typed handler
+     * emitter.on('user:update', (/** @type {{id: number, name: string}} *\/ user) => {
+     *   console.log(`User ${user.id}: ${user.name}`);
+     * });
+     *
+     * @example
+     * // Cleanup
      * unsubscribe(); // Stops listening for the event
      */
-    public on(event: string, handler: (data: unknown) => void): () => void;
+    public on<T>(event: string, handler: EventHandler<T>): EventUnsubscribe;
     /**
      * Removes an event handler for the specified event name.
      * If no handler is provided, all handlers for the event are removed.
      * Automatically cleans up empty event sets to prevent memory leaks.
      *
      * @public
+     * @template T
      * @param {string} event - The name of the event to remove handlers from.
-     * @param {(data: unknown) => void} [handler] - The specific handler function to remove.
+     * @param {EventHandler<T>} [handler] - The specific handler function to remove.
      * @returns {void}
+     *
      * @example
      * // Remove a specific handler
+     * const loginHandler = (user) => console.log(user);
+     * emitter.on('user:login', loginHandler);
      * emitter.off('user:login', loginHandler);
+     *
+     * @example
      * // Remove all handlers for an event
      * emitter.off('user:login');
      */
-    public off(event: string, handler?: (data: unknown) => void): void;
+    public off<T>(event: string, handler?: EventHandler<T>): void;
     /**
      * Emits an event with the specified data to all registered handlers.
      * Handlers are called synchronously in the order they were registered.
      * If no handlers are registered for the event, the emission is silently ignored.
      *
      * @public
+     * @template T
      * @param {string} event - The name of the event to emit.
-     * @param {...unknown} args - Optional arguments to pass to the event handlers.
+     * @param {...T} args - Optional arguments to pass to the event handlers.
      * @returns {void}
+     *
      * @example
      * // Emit an event with data
      * emitter.emit('user:login', { name: 'John', role: 'admin' });
+     *
+     * @example
      * // Emit an event with multiple arguments
-     * emitter.emit('cart:update', { items: [] }, { total: 0 });
+     * emitter.emit('order:placed', 'ORD-123', 99.99, 'USD');
+     *
+     * @example
+     * // Emit without data
+     * emitter.emit('app:ready');
      */
-    public emit(event: string, ...args: unknown[]): void;
+    public emit<T>(event: string, ...args: T[]): void;
 }
+type EventHandler<T> = (...args: T[]) => void | Promise<void>;
+type EventUnsubscribe = () => void;
+type EmitterLike = {
+    /**
+     * - Subscribe to an event
+     */
+    on: (arg0: string, arg1: EventHandler<unknown>) => EventUnsubscribe;
+    /**
+     * - Unsubscribe from an event
+     */
+    off: (arg0: string, arg1: EventHandler<unknown> | undefined) => void;
+    /**
+     * - Emit an event
+     */
+    emit: (arg0: string, ...args: unknown[]) => void;
+};
 
+/**
+ * @template T
+ * @callback SignalWatcher
+ * @param {T} value - The new value of the signal
+ * @returns {void}
+ */
+/**
+ * @callback SignalUnsubscribe
+ * @returns {boolean} True if the watcher was successfully removed
+ */
+/**
+ * @template T
+ * @typedef {Object} SignalLike
+ * @property {T} value - The current value
+ * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch - Subscribe to changes
+ */
 /**
  * @class ⚡ Signal
  * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
@@ -72,25 +183,69 @@ declare class Emitter {
  * Updates are batched using microtasks to prevent multiple synchronous notifications.
  * The class is generic, allowing type-safe handling of any value type T.
  *
+ * @template T The type of value held by this signal
+ *
  * @example
+ * // Basic usage
  * const count = new Signal(0);
  * count.watch((value) => console.log(`Count changed to: ${value}`));
  * count.value = 1; // Logs: "Count changed to: 1"
- * @template T
+ *
+ * @example
+ * // With unsubscribe
+ * const name = new Signal("John");
+ * const unsubscribe = name.watch((value) => console.log(value));
+ * name.value = "Jane"; // Logs: "Jane"
+ * unsubscribe(); // Stop watching
+ * name.value = "Bob"; // No log output
+ *
+ * @example
+ * // With objects
+ * /** @type {Signal<{x: number, y: number}>} *\/
+ * const position = new Signal({ x: 0, y: 0 });
+ * position.value = { x: 10, y: 20 }; // Triggers watchers
+ *
+ * @implements {SignalLike<T>}
  */
-declare class Signal<T> {
+declare class Signal<T> implements SignalLike<T> {
     /**
      * Creates a new Signal instance with the specified initial value.
      *
      * @public
      * @param {T} value - The initial value of the signal.
+     *
+     * @example
+     * // Primitive types
+     * const count = new Signal(0);        // Signal<number>
+     * const name = new Signal("John");    // Signal<string>
+     * const active = new Signal(true);    // Signal<boolean>
+     *
+     * @example
+     * // Complex types (use JSDoc for type inference)
+     * /** @type {Signal<string[]>} *\/
+     * const items = new Signal([]);
+     *
+     * /** @type {Signal<{id: number, name: string} | null>} *\/
+     * const user = new Signal(null);
      */
     constructor(value: T);
-    /** @private {T} Internal storage for the signal's current value */
+    /**
+     * Internal storage for the signal's current value
+     * @private
+     * @type {T}
+     */
     private _value;
-    /** @private {Set<(value: T) => void>} Collection of callback functions to be notified when value changes */
+    /**
+     * Collection of callback functions to be notified when value changes
+     * @private
+     * @type {Set<SignalWatcher<T>>}
+     */
     private _watchers;
-    /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
+    /**
+     * Flag to prevent multiple synchronous watcher notifications
+     * @private
+     * @type {boolean}
+     */
     private _pending;
     /**
      * Sets a new value for the signal and notifies all registered watchers if the value has changed.
@@ -113,14 +268,24 @@ declare class Signal<T> {
      * The watcher will receive the new value as its argument.
      *
      * @public
-     * @param {(value: T) => void} fn - The callback function to invoke on value change.
-     * @returns {() => boolean} A function to unsubscribe the watcher.
+     * @param {SignalWatcher<T>} fn - The callback function to invoke on value change.
+     * @returns {SignalUnsubscribe} A function to unsubscribe the watcher.
+     *
      * @example
+     * // Basic watching
      * const unsubscribe = signal.watch((value) => console.log(value));
-     * // Later...
-     * unsubscribe(); // Stops watching for changes
+     *
+     * @example
+     * // Stop watching
+     * unsubscribe(); // Returns true if watcher was removed
+     *
+     * @example
+     * // Multiple watchers
+     * const unsub1 = signal.watch((v) => console.log("Watcher 1:", v));
+     * const unsub2 = signal.watch((v) => console.log("Watcher 2:", v));
+     * signal.value = "test"; // Both watchers are called
      */
-    public watch(fn: (value: T) => void): () => boolean;
+    public watch(fn: SignalWatcher<T>): SignalUnsubscribe;
     /**
      * Notifies all registered watchers of a value change using microtask scheduling.
      * Uses a pending flag to batch multiple synchronous updates into a single notification.
@@ -131,21 +296,83 @@ declare class Signal<T> {
      */
     private _notify;
 }
+type SignalWatcher<T> = (value: T) => void;
+type SignalUnsubscribe = () => boolean;
+type SignalLike<T> = {
+    /**
+     * - The current value
+     */
+    value: T;
+    /**
+     * - Subscribe to changes
+     */
+    watch: (arg0: SignalWatcher<T>) => SignalUnsubscribe;
+};
 
+/**
+ * @typedef {Record<string, unknown>} TemplateData
+ *           Data context for template interpolation
+ */
+/**
+ * @typedef {string} TemplateString
+ *           A string containing {{ expression }} interpolation markers
+ */
+/**
+ * @typedef {string} Expression
+ *           A JavaScript expression to be evaluated in the data context
+ */
+/**
+ * @typedef {unknown} EvaluationResult
+ *           The result of evaluating an expression (string, number, boolean, object, etc.)
+ */
 /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
- * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+ * Provides a way to evaluate expressions in templates.
  * All methods are static and can be called directly on the class.
  *
+ * Template Syntax:
+ * - `{{ expression }}` - Interpolate any JavaScript expression
+ * - `{{ variable }}` - Access data properties directly
+ * - `{{ object.property }}` - Access nested properties
+ * - `{{ condition ? a : b }}` - Ternary expressions
+ * - `{{ func(arg) }}` - Call functions from data context
+ *
  * @example
+ * // Basic interpolation
  * const template = "Hello, {{name}}!";
  * const data = { name: "World" };
- * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
+ * const result = TemplateEngine.parse(template, data);
+ * // Result: "Hello, World!"
+ *
+ * @example
+ * // Nested properties
+ * const template = "Welcome, {{user.name}}!";
+ * const data = { user: { name: "John" } };
+ * const result = TemplateEngine.parse(template, data);
+ * // Result: "Welcome, John!"
+ *
+ * @example
+ * // Expressions
+ * const template = "Status: {{active ? 'Online' : 'Offline'}}";
+ * const data = { active: true };
+ * const result = TemplateEngine.parse(template, data);
+ * // Result: "Status: Online"
+ *
+ * @example
+ * // With Signal values
+ * const template = "Count: {{count.value}}";
+ * const data = { count: { value: 42 } };
+ * const result = TemplateEngine.parse(template, data);
+ * // Result: "Count: 42"
  */
 declare class TemplateEngine {
     /**
-     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+     * Regular expression for matching template expressions in the format {{ expression }}
+     * Matches: {{ anything }} with optional whitespace inside braces
+     *
+     * @static
+     * @private
      * @type {RegExp}
      */
     private static expressionPattern;
@@ -155,33 +382,114 @@ declare class TemplateEngine {
      *
      * @public
      * @static
-     * @param {string} template - The template string to parse.
-     * @param {Record<string, unknown>} data - The data context for evaluating expressions.
+     * @param {TemplateString|unknown} template - The template string to parse.
+     * @param {TemplateData} data - The data context for evaluating expressions.
      * @returns {string} The parsed template with expressions replaced by their values.
+     *
      * @example
-     * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+     * // Simple variables
+     * TemplateEngine.parse("Hello, {{name}}!", { name: "World" });
+     * // Result: "Hello, World!"
+     *
+     * @example
+     * // Nested properties
+     * TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
      *   user: { name: "John", age: 30 }
-     * }); // Returns: "John is 30 years old"
+     * });
+     * // Result: "John is 30 years old"
+     *
+     * @example
+     * // Multiple expressions
+     * TemplateEngine.parse("{{greeting}}, {{name}}! You have {{count}} messages.", {
+     *   greeting: "Hello",
+     *   name: "User",
+     *   count: 5
+     * });
+     * // Result: "Hello, User! You have 5 messages."
+     *
+     * @example
+     * // With conditionals
+     * TemplateEngine.parse("Status: {{online ? 'Active' : 'Inactive'}}", {
+     *   online: true
+     * });
+     * // Result: "Status: Active"
      */
-    public static parse(template: string, data: Record<string, unknown>): string;
+    public static parse(template: TemplateString | unknown, data: TemplateData): string;
     /**
      * Evaluates an expression in the context of the provided data object.
+     *
      * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      * The use of the `with` statement is necessary for expression evaluation but has security implications.
-     * Expressions should be carefully validated before evaluation.
+     * Only use with trusted templates. User input should never be directly interpolated.
      *
      * @public
      * @static
-     * @param {string} expression - The expression to evaluate.
-     * @param {Record<string, unknown>} data - The data context for evaluation.
-     * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
+     * @param {Expression|unknown} expression - The expression to evaluate.
+     * @param {TemplateData} data - The data context for evaluation.
+     * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+     *
      * @example
-     * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
-     * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
+     * // Property access
+     * TemplateEngine.evaluate("user.name", { user: { name: "John" } });
+     * // Result: "John"
+     *
+     * @example
+     * // Numeric values
+     * TemplateEngine.evaluate("user.age", { user: { age: 30 } });
+     * // Result: 30
+     *
+     * @example
+     * // Expressions
+     * TemplateEngine.evaluate("items.length > 0", { items: [1, 2, 3] });
+     * // Result: true
+     *
+     * @example
+     * // Function calls
+     * TemplateEngine.evaluate("formatDate(date)", {
+     *   date: new Date(),
+     *   formatDate: (d) => d.toISOString()
+     * });
+     * // Result: "2024-01-01T00:00:00.000Z"
+     *
+     * @example
+     * // Failed evaluation returns empty string
+     * TemplateEngine.evaluate("nonexistent.property", {});
+     * // Result: ""
      */
-    public static evaluate(expression: string, data: Record<string, unknown>): unknown;
+    public static evaluate(expression: Expression | unknown, data: TemplateData): EvaluationResult;
 }
+/**
+ * Data context for template interpolation
+ */
+type TemplateData = Record<string, unknown>;
+/**
+ * A string containing {{ expression }} interpolation markers
+ */
+type TemplateString = string;
+/**
+ * A JavaScript expression to be evaluated in the data context
+ */
+type Expression = string;
+/**
+ * The result of evaluating an expression (string, number, boolean, object, etc.)
+ */
+type EvaluationResult = unknown;
 
+/**
+ * @typedef {Object} PatchOptions
+ * @property {boolean} [preserveStyles=true]
+ *           Whether to preserve style elements with data-e-style attribute
+ * @property {boolean} [preserveInstances=true]
+ *           Whether to preserve elements with _eleva_instance property
+ */
+/**
+ * @typedef {Map<string, Node>} KeyMap
+ *           Map of key attribute values to their corresponding DOM nodes
+ */
+/**
+ * @typedef {'ELEMENT_NODE'|'TEXT_NODE'|'COMMENT_NODE'|'DOCUMENT_FRAGMENT_NODE'} NodeTypeName
+ *           Common DOM node type names
+ */
 /**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
@@ -198,20 +506,39 @@ declare class TemplateEngine {
  * It's particularly optimized for frequent updates and complex DOM structures.
  *
  * @example
+ * // Basic usage
  * const renderer = new Renderer();
  * const container = document.getElementById("app");
  * const newHtml = "<div>Updated content</div>";
  * renderer.patchDOM(container, newHtml);
+ *
+ * @example
+ * // With keyed elements for optimal list updates
+ * const listHtml = `
+ *   <ul>
+ *     <li key="item-1">First</li>
+ *     <li key="item-2">Second</li>
+ *     <li key="item-3">Third</li>
+ *   </ul>
+ * `;
+ * renderer.patchDOM(container, listHtml);
+ *
+ * @example
+ * // The renderer preserves Eleva-managed elements
+ * // Elements with _eleva_instance are not replaced during diffing
+ * // Style elements with data-e-style are preserved
  */
 declare class Renderer {
     /**
      * A temporary container to hold the new HTML content while diffing.
+     * Reused across patch operations to minimize memory allocation.
      * @private
-     * @type {HTMLElement}
+     * @type {HTMLDivElement}
      */
     private _tempContainer;
     /**
      * Patches the DOM of the given container with the provided HTML string.
+     * Uses an optimized diffing algorithm to minimize DOM operations.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
@@ -219,6 +546,18 @@ declare class Renderer {
      * @returns {void}
      * @throws {TypeError} If container is not an HTMLElement or newHtml is not a string.
      * @throws {Error} If DOM patching fails.
+     *
+     * @example
+     * // Update container content
+     * renderer.patchDOM(container, '<div class="updated">New content</div>');
+     *
+     * @example
+     * // Update list with keys for optimal diffing
+     * const items = ['a', 'b', 'c'];
+     * const html = items.map(item =>
+     *   `<li key="${item}">${item}</li>`
+     * ).join('');
+     * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
@@ -268,12 +607,13 @@ declare class Renderer {
     private _isSameNode;
     /**
      * Creates a key map for the children of a parent node.
+     * Used for efficient O(1) lookup of keyed elements during diffing.
      *
      * @private
-     * @param {Array<Node>} children - The children of the parent node.
+     * @param {Array<ChildNode>} children - The children of the parent node.
      * @param {number} start - The start index of the children.
      * @param {number} end - The end index of the children.
-     * @returns {Map<string, Node>} A key map for the children.
+     * @returns {KeyMap} A key map for the children.
      */
     private _createKeyMap;
     /**
@@ -287,70 +627,164 @@ declare class Renderer {
 }
 
 /**
+ * @typedef {Object} ElevaConfig
+ * @property {boolean} [debug=false]
+ *           Enable debug mode for verbose logging
+ * @property {string} [prefix='e']
+ *           Prefix for component style scoping
+ * @property {boolean} [async=true]
+ *           Enable async component setup
+ */
+/**
  * @typedef {Object} ComponentDefinition
- * @property {function(ComponentContext): (Record<string, unknown>|Promise<Record<string, unknown>>)} [setup]
+ * @property {SetupFunction} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {(function(ComponentContext): string|Promise<string>)} template
- *           Required function that defines the component's HTML structure
- * @property {(function(ComponentContext): string)|string} [style]
+ * @property {TemplateFunction|string} template
+ *           Required function or string that defines the component's HTML structure
+ * @property {StyleFunction|string} [style]
  *           Optional function or string that provides component-scoped CSS styles
- * @property {Record<string, ComponentDefinition>} [children]
+ * @property {ChildrenMap} [children]
  *           Optional object defining nested child components
  */
 /**
+ * @callback SetupFunction
+ * @param {ComponentContext} ctx - The component context with props, emitter, and signal factory
+ * @returns {SetupResult|Promise<SetupResult>} Reactive data and lifecycle hooks
+ */
+/**
+ * @typedef {Record<string, unknown> & LifecycleHooks} SetupResult
+ *           Data returned from setup function, may include lifecycle hooks
+ */
+/**
+ * @callback TemplateFunction
+ * @param {ComponentContext} ctx - The component context
+ * @returns {string|Promise<string>} HTML template string
+ */
+/**
+ * @callback StyleFunction
+ * @param {ComponentContext} ctx - The component context
+ * @returns {string} CSS styles string
+ */
+/**
+ * @typedef {Record<string, ComponentDefinition|string>} ChildrenMap
+ *           Map of CSS selectors to component definitions or registered component names
+ */
+/**
  * @typedef {Object} ComponentContext
- * @property {Record<string, unknown>} props
+ * @property {ComponentProps} props
  *           Component properties passed during mounting
  * @property {Emitter} emitter
  *           Event emitter instance for component event handling
- * @property {function<T>(value: T): Signal<T>} signal
+ * @property {SignalFactory} signal
  *           Factory function to create reactive Signal instances
- * @property {function(LifecycleHookContext): Promise<void>} [onBeforeMount]
+ */
+/**
+ * @typedef {Record<string, unknown>} ComponentProps
+ *           Properties passed to a component during mounting
+ */
+/**
+ * @callback SignalFactory
+ * @template T
+ * @param {T} initialValue - The initial value for the signal
+ * @returns {Signal<T>} A new Signal instance
+ */
+/**
+ * @typedef {Object} LifecycleHooks
+ * @property {LifecycleHook} [onBeforeMount]
  *           Hook called before component mounting
- * @property {function(LifecycleHookContext): Promise<void>} [onMount]
+ * @property {LifecycleHook} [onMount]
  *           Hook called after component mounting
- * @property {function(LifecycleHookContext): Promise<void>} [onBeforeUpdate]
+ * @property {LifecycleHook} [onBeforeUpdate]
  *           Hook called before component update
- * @property {function(LifecycleHookContext): Promise<void>} [onUpdate]
+ * @property {LifecycleHook} [onUpdate]
  *           Hook called after component update
- * @property {function(UnmountHookContext): Promise<void>} [onUnmount]
+ * @property {UnmountHook} [onUnmount]
  *           Hook called during component unmounting
+ */
+/**
+ * @callback LifecycleHook
+ * @param {LifecycleHookContext} ctx - Context with container and component data
+ * @returns {void|Promise<void>}
+ */
+/**
+ * @callback UnmountHook
+ * @param {UnmountHookContext} ctx - Context with cleanup resources
+ * @returns {void|Promise<void>}
  */
 /**
  * @typedef {Object} LifecycleHookContext
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} context
+ * @property {ComponentContext & SetupResult} context
  *           The component's reactive state and context data
  */
 /**
  * @typedef {Object} UnmountHookContext
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} context
+ * @property {ComponentContext & SetupResult} context
  *           The component's reactive state and context data
- * @property {{
- *   watchers: Array<() => void>,    // Signal watcher cleanup functions
- *   listeners: Array<() => void>,   // Event listener cleanup functions
- *   children: Array<MountResult>    // Child component instances
- * }} cleanup
+ * @property {CleanupResources} cleanup
  *           Object containing cleanup functions and instances
+ */
+/**
+ * @typedef {Object} CleanupResources
+ * @property {Array<UnsubscribeFunction>} watchers
+ *           Signal watcher cleanup functions
+ * @property {Array<UnsubscribeFunction>} listeners
+ *           Event listener cleanup functions
+ * @property {Array<MountResult>} children
+ *           Child component instances
  */
 /**
  * @typedef {Object} MountResult
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} data
+ * @property {ComponentContext & SetupResult} data
  *           The component's reactive state and context data
- * @property {function(): Promise<void>} unmount
+ * @property {UnmountFunction} unmount
  *           Function to clean up and unmount the component
  */
 /**
+ * @callback UnmountFunction
+ * @returns {Promise<void>}
+ */
+/**
+ * @callback UnsubscribeFunction
+ * @returns {void|boolean}
+ */
+/**
  * @typedef {Object} ElevaPlugin
- * @property {function(Eleva, Record<string, unknown>): void} install
+ * @property {PluginInstallFunction} install
  *           Function that installs the plugin into the Eleva instance
  * @property {string} name
  *           Unique identifier name for the plugin
+ * @property {PluginUninstallFunction} [uninstall]
+ *           Optional function to uninstall the plugin
+ */
+/**
+ * @callback PluginInstallFunction
+ * @param {Eleva} eleva - The Eleva instance
+ * @param {PluginOptions} options - Plugin configuration options
+ * @returns {void|Eleva|unknown} Optionally returns the Eleva instance or plugin result
+ */
+/**
+ * @callback PluginUninstallFunction
+ * @param {Eleva} eleva - The Eleva instance
+ * @returns {void}
+ */
+/**
+ * @typedef {Record<string, unknown>} PluginOptions
+ *           Configuration options passed to a plugin during installation
+ */
+/**
+ * @callback EventHandler
+ * @param {Event} event - The DOM event object
+ * @returns {void}
+ */
+/**
+ * @typedef {'click'|'submit'|'input'|'change'|'focus'|'blur'|'keydown'|'keyup'|'keypress'|'mouseenter'|'mouseleave'|'mouseover'|'mouseout'|'mousedown'|'mouseup'|'touchstart'|'touchend'|'touchmove'|'scroll'|'resize'|'load'|'error'|string} DOMEventName
+ *           Common DOM event names (prefixed with @ in templates)
  */
 /**
  * @class 🧩 Eleva
@@ -546,55 +980,74 @@ type ComponentDefinition = {
     /**
      * Optional setup function that initializes the component's state and returns reactive data
      */
-    setup?: ((arg0: ComponentContext) => (Record<string, unknown> | Promise<Record<string, unknown>>)) | undefined;
+    setup?: SetupFunction | undefined;
     /**
-     *           Required function that defines the component's HTML structure
+     *           Required function or string that defines the component's HTML structure
      */
-    template: ((arg0: ComponentContext) => string | Promise<string>);
+    template: TemplateFunction | string;
     /**
      * Optional function or string that provides component-scoped CSS styles
      */
-    style?: string | ((arg0: ComponentContext) => string) | undefined;
+    style?: string | StyleFunction | undefined;
     /**
      * Optional object defining nested child components
      */
-    children?: Record<string, ComponentDefinition> | undefined;
+    children?: ChildrenMap | undefined;
 };
+type SetupFunction = (ctx: ComponentContext) => SetupResult | Promise<SetupResult>;
+/**
+ * Data returned from setup function, may include lifecycle hooks
+ */
+type SetupResult = Record<string, unknown> & LifecycleHooks;
+type TemplateFunction = (ctx: ComponentContext) => string | Promise<string>;
+type StyleFunction = (ctx: ComponentContext) => string;
+/**
+ * Map of CSS selectors to component definitions or registered component names
+ */
+type ChildrenMap = Record<string, ComponentDefinition | string>;
 type ComponentContext = {
     /**
      *           Component properties passed during mounting
      */
-    props: Record<string, unknown>;
+    props: ComponentProps;
     /**
      *           Event emitter instance for component event handling
      */
     emitter: Emitter;
     /**
-     * <T>(value: T): Signal<T>} signal
-     * Factory function to create reactive Signal instances
+     *           Factory function to create reactive Signal instances
      */
-    "": Function;
+    signal: SignalFactory;
+};
+/**
+ * Properties passed to a component during mounting
+ */
+type ComponentProps = Record<string, unknown>;
+type SignalFactory = () => any;
+type LifecycleHooks = {
     /**
      * Hook called before component mounting
      */
-    onBeforeMount?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    onBeforeMount?: LifecycleHook | undefined;
     /**
      * Hook called after component mounting
      */
-    onMount?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    onMount?: LifecycleHook | undefined;
     /**
      * Hook called before component update
      */
-    onBeforeUpdate?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    onBeforeUpdate?: LifecycleHook | undefined;
     /**
      * Hook called after component update
      */
-    onUpdate?: ((arg0: LifecycleHookContext) => Promise<void>) | undefined;
+    onUpdate?: LifecycleHook | undefined;
     /**
      * Hook called during component unmounting
      */
-    onUnmount?: ((arg0: UnmountHookContext) => Promise<void>) | undefined;
+    onUnmount?: UnmountHook | undefined;
 };
+type LifecycleHook = (ctx: LifecycleHookContext) => void | Promise<void>;
+type UnmountHook = (ctx: UnmountHookContext) => void | Promise<void>;
 type LifecycleHookContext = {
     /**
      *           The DOM element where the component is mounted
@@ -603,7 +1056,7 @@ type LifecycleHookContext = {
     /**
      *           The component's reactive state and context data
      */
-    context: ComponentContext;
+    context: ComponentContext & SetupResult;
 };
 type UnmountHookContext = {
     /**
@@ -613,15 +1066,25 @@ type UnmountHookContext = {
     /**
      *           The component's reactive state and context data
      */
-    context: ComponentContext;
+    context: ComponentContext & SetupResult;
     /**
      *           Object containing cleanup functions and instances
      */
-    cleanup: {
-        watchers: Array<() => void>;
-        listeners: Array<() => void>;
-        children: Array<MountResult>;
-    };
+    cleanup: CleanupResources;
+};
+type CleanupResources = {
+    /**
+     *           Signal watcher cleanup functions
+     */
+    watchers: Array<UnsubscribeFunction>;
+    /**
+     *           Event listener cleanup functions
+     */
+    listeners: Array<UnsubscribeFunction>;
+    /**
+     *           Child component instances
+     */
+    children: Array<MountResult>;
 };
 type MountResult = {
     /**
@@ -631,22 +1094,34 @@ type MountResult = {
     /**
      *           The component's reactive state and context data
      */
-    data: ComponentContext;
+    data: ComponentContext & SetupResult;
     /**
      *           Function to clean up and unmount the component
      */
-    unmount: () => Promise<void>;
+    unmount: UnmountFunction;
 };
+type UnmountFunction = () => Promise<void>;
+type UnsubscribeFunction = () => void | boolean;
 type ElevaPlugin = {
     /**
      *           Function that installs the plugin into the Eleva instance
      */
-    install: (arg0: Eleva, arg1: Record<string, unknown>) => void;
+    install: PluginInstallFunction;
     /**
      *           Unique identifier name for the plugin
      */
     name: string;
+    /**
+     * Optional function to uninstall the plugin
+     */
+    uninstall?: PluginUninstallFunction | undefined;
 };
+type PluginInstallFunction = (eleva: Eleva, options: PluginOptions) => void | Eleva | unknown;
+type PluginUninstallFunction = (eleva: Eleva) => void;
+/**
+ * Configuration options passed to a plugin during installation
+ */
+type PluginOptions = Record<string, unknown>;
 
 //# sourceMappingURL=index.d.ts.map
 

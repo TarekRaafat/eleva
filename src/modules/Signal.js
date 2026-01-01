@@ -1,5 +1,28 @@
 "use strict";
 
+// ============================================================================
+// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// ============================================================================
+
+/**
+ * @template T
+ * @callback SignalWatcher
+ * @param {T} value - The new value of the signal
+ * @returns {void}
+ */
+
+/**
+ * @callback SignalUnsubscribe
+ * @returns {boolean} True if the watcher was successfully removed
+ */
+
+/**
+ * @template T
+ * @typedef {Object} SignalLike
+ * @property {T} value - The current value
+ * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch - Subscribe to changes
+ */
+
 /**
  * @class ⚡ Signal
  * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
@@ -8,11 +31,29 @@
  * Updates are batched using microtasks to prevent multiple synchronous notifications.
  * The class is generic, allowing type-safe handling of any value type T.
  *
+ * @template T The type of value held by this signal
+ *
  * @example
+ * // Basic usage
  * const count = new Signal(0);
  * count.watch((value) => console.log(`Count changed to: ${value}`));
  * count.value = 1; // Logs: "Count changed to: 1"
- * @template T
+ *
+ * @example
+ * // With unsubscribe
+ * const name = new Signal("John");
+ * const unsubscribe = name.watch((value) => console.log(value));
+ * name.value = "Jane"; // Logs: "Jane"
+ * unsubscribe(); // Stop watching
+ * name.value = "Bob"; // No log output
+ *
+ * @example
+ * // With objects
+ * /** @type {Signal<{x: number, y: number}>} *\/
+ * const position = new Signal({ x: 0, y: 0 });
+ * position.value = { x: 10, y: 20 }; // Triggers watchers
+ *
+ * @implements {SignalLike<T>}
  */
 export class Signal {
   /**
@@ -20,13 +61,39 @@ export class Signal {
    *
    * @public
    * @param {T} value - The initial value of the signal.
+   *
+   * @example
+   * // Primitive types
+   * const count = new Signal(0);        // Signal<number>
+   * const name = new Signal("John");    // Signal<string>
+   * const active = new Signal(true);    // Signal<boolean>
+   *
+   * @example
+   * // Complex types (use JSDoc for type inference)
+   * /** @type {Signal<string[]>} *\/
+   * const items = new Signal([]);
+   *
+   * /** @type {Signal<{id: number, name: string} | null>} *\/
+   * const user = new Signal(null);
    */
   constructor(value) {
-    /** @private {T} Internal storage for the signal's current value */
+    /**
+     * Internal storage for the signal's current value
+     * @private
+     * @type {T}
+     */
     this._value = value;
-    /** @private {Set<(value: T) => void>} Collection of callback functions to be notified when value changes */
+    /**
+     * Collection of callback functions to be notified when value changes
+     * @private
+     * @type {Set<SignalWatcher<T>>}
+     */
     this._watchers = new Set();
-    /** @private {boolean} Flag to prevent multiple synchronous watcher notifications and batch updates into microtasks */
+    /**
+     * Flag to prevent multiple synchronous watcher notifications
+     * @private
+     * @type {boolean}
+     */
     this._pending = false;
   }
 
@@ -60,12 +127,22 @@ export class Signal {
    * The watcher will receive the new value as its argument.
    *
    * @public
-   * @param {(value: T) => void} fn - The callback function to invoke on value change.
-   * @returns {() => boolean} A function to unsubscribe the watcher.
+   * @param {SignalWatcher<T>} fn - The callback function to invoke on value change.
+   * @returns {SignalUnsubscribe} A function to unsubscribe the watcher.
+   *
    * @example
+   * // Basic watching
    * const unsubscribe = signal.watch((value) => console.log(value));
-   * // Later...
-   * unsubscribe(); // Stops watching for changes
+   *
+   * @example
+   * // Stop watching
+   * unsubscribe(); // Returns true if watcher was removed
+   *
+   * @example
+   * // Multiple watchers
+   * const unsub1 = signal.watch((v) => console.log("Watcher 1:", v));
+   * const unsub2 = signal.watch((v) => console.log("Watcher 2:", v));
+   * signal.value = "test"; // Both watchers are called
    */
   watch(fn) {
     this._watchers.add(fn);

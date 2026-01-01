@@ -61,7 +61,7 @@ export const PropsPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.2",
+  version: "1.0.0-rc.10",
 
   /**
    * Plugin description

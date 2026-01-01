@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.9 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.10 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -51,7 +51,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.1",
+    version: "1.0.0-rc.10",
     /**
      * Plugin description
      * @type {string}
@@ -229,7 +229,164 @@
    * @typedef {import('eleva').Eleva} Eleva
    * @typedef {import('eleva').Signal} Signal
    * @typedef {import('eleva').ComponentDefinition} ComponentDefinition
+   * @typedef {import('eleva').Emitter} Emitter
+   * @typedef {import('eleva').MountResult} MountResult
    */
+
+  // ============================================
+  // Core Type Definitions
+  // ============================================
+
+  /**
+   * @typedef {'hash' | 'history' | 'query'} RouterMode
+   * The routing mode determines how the router manages URL state.
+   * - `hash`: Uses URL hash (e.g., `/#/path`) - works without server config
+   * - `history`: Uses HTML5 History API (e.g., `/path`) - requires server config
+   * - `query`: Uses query parameters (e.g., `?view=/path`) - useful for embedded apps
+   */
+
+  /**
+   * @typedef {Object} RouterOptions
+   * @property {RouterMode} [mode='hash'] - The routing mode to use.
+   * @property {string} [queryParam='view'] - Query parameter name for 'query' mode.
+   * @property {string} [viewSelector='root'] - Selector for the view container element.
+   * @property {string} mount - CSS selector for the mount point element.
+   * @property {RouteDefinition[]} routes - Array of route definitions.
+   * @property {string | ComponentDefinition} [globalLayout] - Default layout for all routes.
+   * @property {NavigationGuard} [onBeforeEach] - Global navigation guard.
+   * @description Configuration options for the Router plugin.
+   */
+
+  /**
+   * @typedef {Object} NavigationTarget
+   * @property {string} path - The target path (can include params like '/users/:id').
+   * @property {Record<string, string>} [params] - Route parameters to inject into the path.
+   * @property {Record<string, string>} [query] - Query parameters to append.
+   * @property {boolean} [replace=false] - Whether to replace current history entry.
+   * @property {Record<string, any>} [state] - State object to pass to history.
+   * @description Object describing a navigation target for `router.navigate()`.
+   */
+
+  /**
+   * @typedef {Object} ScrollPosition
+   * @property {number} x - Horizontal scroll position.
+   * @property {number} y - Vertical scroll position.
+   * @description Represents a saved scroll position.
+   */
+
+  /**
+   * @typedef {Object} RouteSegment
+   * @property {'static' | 'param'} type - The segment type.
+   * @property {string} value - The segment value (for static) or empty string (for param).
+   * @property {string} [name] - The parameter name (for param segments).
+   * @description Internal representation of a parsed route path segment.
+   * @private
+   */
+
+  /**
+   * @typedef {Object} RouteMatch
+   * @property {RouteDefinition} route - The matched route definition.
+   * @property {Record<string, string>} params - The extracted route parameters.
+   * @description Result of matching a path against route definitions.
+   * @private
+   */
+
+  /**
+   * @typedef {Record<string, any>} RouteMeta
+   * @description Arbitrary metadata attached to routes for use in guards and components.
+   * Common properties include:
+   * - `requiresAuth: boolean` - Whether the route requires authentication
+   * - `title: string` - Page title for the route
+   * - `roles: string[]` - Required user roles
+   * @example
+   * {
+   *   path: '/admin',
+   *   component: AdminPage,
+   *   meta: { requiresAuth: true, roles: ['admin'], title: 'Admin Dashboard' }
+   * }
+   */
+
+  /**
+   * @typedef {Object} RouterErrorHandler
+   * @property {(error: Error, context: string, details?: Record<string, any>) => void} handle - Throws a formatted error.
+   * @property {(message: string, details?: Record<string, any>) => void} warn - Logs a warning.
+   * @property {(message: string, error: Error, details?: Record<string, any>) => void} log - Logs an error without throwing.
+   * @description Interface for the router's error handling system.
+   */
+
+  // ============================================
+  // Event Callback Type Definitions
+  // ============================================
+
+  /**
+   * @callback NavigationContextCallback
+   * @param {NavigationContext} context - The navigation context (can be modified to block/redirect).
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:beforeEach` event. Modify context to control navigation.
+   */
+
+  /**
+   * @callback ResolveContextCallback
+   * @param {ResolveContext} context - The resolve context (can be modified to block/redirect).
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:beforeResolve` and `router:afterResolve` events.
+   */
+
+  /**
+   * @callback RenderContextCallback
+   * @param {RenderContext} context - The render context.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:beforeRender` and `router:afterRender` events.
+   */
+
+  /**
+   * @callback ScrollContextCallback
+   * @param {ScrollContext} context - The scroll context with saved position info.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:scroll` event. Use to implement scroll behavior.
+   */
+
+  /**
+   * @callback RouteChangeCallback
+   * @param {RouteLocation} to - The target route location.
+   * @param {RouteLocation | null} from - The source route location.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:afterEnter`, `router:afterLeave`, `router:afterEach` events.
+   */
+
+  /**
+   * @callback RouterErrorCallback
+   * @param {Error} error - The error that occurred.
+   * @param {RouteLocation} [to] - The target route (if available).
+   * @param {RouteLocation | null} [from] - The source route (if available).
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:onError` event.
+   */
+
+  /**
+   * @callback RouterReadyCallback
+   * @param {Router} router - The router instance.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:ready` event.
+   */
+
+  /**
+   * @callback RouteAddedCallback
+   * @param {RouteDefinition} route - The added route definition.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:routeAdded` event.
+   */
+
+  /**
+   * @callback RouteRemovedCallback
+   * @param {RouteDefinition} route - The removed route definition.
+   * @returns {void | Promise<void>}
+   * @description Callback for `router:routeRemoved` event.
+   */
+
+  // ============================================
+  // Core Type Definitions (continued)
+  // ============================================
 
   /**
    * Simple error handler for the core router.
@@ -285,53 +442,222 @@
   /**
    * @typedef {Object} RouteLocation
    * @property {string} path - The path of the route (e.g., '/users/123').
-   * @property {Object<string, string>} query - An object representing the query parameters.
+   * @property {Record<string, string>} query - Query parameters as key-value pairs.
    * @property {string} fullUrl - The complete URL including hash, path, and query string.
-   * @property {Object<string, string>} params - An object containing dynamic route parameters.
-   * @property {Object<string, any>} meta - The meta object associated with the matched route.
+   * @property {Record<string, string>} params - Dynamic route parameters (e.g., `{ id: '123' }`).
+   * @property {RouteMeta} meta - Metadata associated with the matched route.
    * @property {string} [name] - The optional name of the matched route.
    * @property {RouteDefinition} matched - The raw route definition object that was matched.
+   * @description Represents the current or target location in the router.
    */
 
   /**
-   * @typedef {(to: RouteLocation, from: RouteLocation | null) => boolean | string | {path: string} | void | Promise<boolean | string | {path: string} | void>} NavigationGuard
-   * A function that acts as a guard for navigation. It runs *before* the navigation is confirmed.
-   * It can return:
-   * - `true` or `undefined`: to allow navigation.
-   * - `false`: to abort the navigation.
-   * - a `string` (path) or a `location object`: to redirect to a new route.
+   * @typedef {boolean | string | NavigationTarget | void} NavigationGuardResult
+   * The return value of a navigation guard.
+   * - `true` or `undefined/void`: Allow navigation
+   * - `false`: Abort navigation
+   * - `string`: Redirect to path
+   * - `NavigationTarget`: Redirect with options
    */
 
   /**
-   * @typedef {(...args: any[]) => void | Promise<void>} NavigationHook
-   * A function that acts as a lifecycle hook, typically for side effects. It does not affect navigation flow.
+   * @callback NavigationGuard
+   * @param {RouteLocation} to - The target route location.
+   * @param {RouteLocation | null} from - The source route location (null on initial navigation).
+   * @returns {NavigationGuardResult | Promise<NavigationGuardResult>}
+   * @description A function that controls navigation flow. Runs before navigation is confirmed.
+   * @example
+   * // Simple auth guard
+   * const authGuard = (to, from) => {
+   *   if (to.meta.requiresAuth && !isLoggedIn()) {
+   *     return '/login'; // Redirect
+   *   }
+   *   // Allow navigation (implicit return undefined)
+   * };
+   */
+
+  /**
+   * @callback NavigationHook
+   * @param {RouteLocation} to - The target route location.
+   * @param {RouteLocation | null} from - The source route location.
+   * @returns {void | Promise<void>}
+   * @description A lifecycle hook for side effects. Does not affect navigation flow.
+   * @example
+   * // Analytics hook
+   * const analyticsHook = (to, from) => {
+   *   analytics.trackPageView(to.path);
+   * };
    */
 
   /**
    * @typedef {Object} RouterPlugin
-   * @property {string} name - The plugin name.
-   * @property {string} [version] - The plugin version.
-   * @property {Function} install - The install function that receives the router instance.
-   * @property {Function} [destroy] - Optional cleanup function called when the router is destroyed.
+   * @property {string} name - Unique plugin identifier.
+   * @property {string} [version] - Plugin version (recommended to match router version).
+   * @property {(router: Router, options?: Record<string, any>) => void} install - Installation function.
+   * @property {(router: Router) => void | Promise<void>} [destroy] - Cleanup function called on router.destroy().
+   * @description Interface for router plugins. Plugins can extend router functionality.
+   * @example
+   * const AnalyticsPlugin = {
+   *   name: 'analytics',
+   *   version: '1.0.0',
+   *   install(router, options) {
+   *     router.emitter.on('router:afterEach', (to, from) => {
+   *       analytics.track(to.path);
+   *     });
+   *   }
+   * };
+   */
+
+  /**
+   * @typedef {Object} NavigationContext
+   * @property {RouteLocation} to - The target route location.
+   * @property {RouteLocation | null} from - The source route location.
+   * @property {boolean} cancelled - Whether navigation has been cancelled.
+   * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
+   * @description A context object passed to navigation events that plugins can modify to control navigation flow.
+   */
+
+  /**
+   * @typedef {Object} ResolveContext
+   * @property {RouteLocation} to - The target route location.
+   * @property {RouteLocation | null} from - The source route location.
+   * @property {RouteDefinition} route - The matched route definition.
+   * @property {ComponentDefinition | null} layoutComponent - The resolved layout component (available in afterResolve).
+   * @property {ComponentDefinition | null} pageComponent - The resolved page component (available in afterResolve).
+   * @property {boolean} cancelled - Whether navigation has been cancelled.
+   * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
+   * @description A context object passed to component resolution events.
+   */
+
+  /**
+   * @typedef {Object} RenderContext
+   * @property {RouteLocation} to - The target route location.
+   * @property {RouteLocation | null} from - The source route location.
+   * @property {ComponentDefinition | null} layoutComponent - The layout component being rendered.
+   * @property {ComponentDefinition} pageComponent - The page component being rendered.
+   * @description A context object passed to render events.
+   */
+
+  /**
+   * @typedef {Object} ScrollContext
+   * @property {RouteLocation} to - The target route location.
+   * @property {RouteLocation | null} from - The source route location.
+   * @property {{x: number, y: number} | null} savedPosition - The saved scroll position (if navigating via back/forward).
+   * @description A context object passed to scroll events for plugins to handle scroll behavior.
+   */
+
+  /**
+   * @typedef {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} RouteComponent
+   * A component that can be rendered for a route.
+   * - `string`: Name of a registered component
+   * - `ComponentDefinition`: Inline component definition
+   * - `() => Promise<{default: ComponentDefinition}>`: Lazy-loaded component (e.g., `() => import('./Page.js')`)
    */
 
   /**
    * @typedef {Object} RouteDefinition
-   * @property {string} path - The URL path pattern (e.g., '/', '/about', '/users/:id', '*').
-   * @property {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} component - The component to render. Can be a registered name, a definition object, or an async import function.
-   * @property {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} [layout] - An optional layout component to wrap the route's component.
-   * @property {string} [name] - An optional name for the route.
-   * @property {Object<string, any>} [meta] - Optional metadata for the route (e.g., for titles, auth flags).
-   * @property {NavigationGuard} [beforeEnter] - A route-specific guard executed before entering the route.
-   * @property {NavigationHook} [afterEnter] - A hook executed *after* the route has been entered and the new component is mounted.
-   * @property {NavigationGuard} [beforeLeave] - A guard executed *before* leaving the current route.
-   * @property {NavigationHook} [afterLeave] - A hook executed *after* leaving the current route and its component has been unmounted.
+   * @property {string} path - URL path pattern. Supports:
+   *   - Static: `'/about'`
+   *   - Dynamic params: `'/users/:id'`
+   *   - Wildcard: `'*'` (catch-all, must be last)
+   * @property {RouteComponent} component - The component to render for this route.
+   * @property {RouteComponent} [layout] - Optional layout component to wrap the route component.
+   * @property {string} [name] - Optional route name for programmatic navigation.
+   * @property {RouteMeta} [meta] - Optional metadata (auth flags, titles, etc.).
+   * @property {NavigationGuard} [beforeEnter] - Route-specific guard before entering.
+   * @property {NavigationHook} [afterEnter] - Hook after entering and component is mounted.
+   * @property {NavigationGuard} [beforeLeave] - Guard before leaving this route.
+   * @property {NavigationHook} [afterLeave] - Hook after leaving and component is unmounted.
+   * @property {RouteSegment[]} [segments] - Internal: parsed path segments (added by router).
+   * @description Defines a route in the application.
+   * @example
+   * // Static route
+   * { path: '/about', component: AboutPage }
+   *
+   * // Dynamic route with params
+   * { path: '/users/:id', component: UserPage, meta: { requiresAuth: true } }
+   *
+   * // Lazy-loaded route with layout
+   * {
+   *   path: '/dashboard',
+   *   component: () => import('./Dashboard.js'),
+   *   layout: DashboardLayout,
+   *   beforeEnter: (to, from) => isLoggedIn() || '/login'
+   * }
+   *
+   * // Catch-all 404 route (must be last)
+   * { path: '*', component: NotFoundPage }
    */
 
   /**
    * @class Router
    * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js.
    * This class manages all routing logic, including state, navigation, and rendering.
+   *
+   * ## Features
+   * - Multiple routing modes (hash, history, query)
+   * - Reactive route state via Signals
+   * - Navigation guards and lifecycle hooks
+   * - Lazy-loaded components
+   * - Layout system
+   * - Plugin architecture
+   * - Scroll position management
+   *
+   * ## Events Reference
+   * | Event | Callback Type | Can Block | Description |
+   * |-------|--------------|-----------|-------------|
+   * | `router:ready` | {@link RouterReadyCallback} | No | Router initialized |
+   * | `router:beforeEach` | {@link NavigationContextCallback} | Yes | Before guards run |
+   * | `router:beforeResolve` | {@link ResolveContextCallback} | Yes | Before component loading |
+   * | `router:afterResolve` | {@link ResolveContextCallback} | No | After components loaded |
+   * | `router:afterLeave` | {@link RouteChangeCallback} | No | After leaving route |
+   * | `router:beforeRender` | {@link RenderContextCallback} | No | Before DOM update |
+   * | `router:afterRender` | {@link RenderContextCallback} | No | After DOM update |
+   * | `router:scroll` | {@link ScrollContextCallback} | No | For scroll behavior |
+   * | `router:afterEnter` | {@link RouteChangeCallback} | No | After entering route |
+   * | `router:afterEach` | {@link RouteChangeCallback} | No | Navigation complete |
+   * | `router:onError` | {@link RouterErrorCallback} | No | Navigation error |
+   * | `router:routeAdded` | {@link RouteAddedCallback} | No | Dynamic route added |
+   * | `router:routeRemoved` | {@link RouteRemovedCallback} | No | Dynamic route removed |
+   *
+   * ## Reactive Signals
+   * - `currentRoute: Signal<RouteLocation | null>` - Current route info
+   * - `previousRoute: Signal<RouteLocation | null>` - Previous route info
+   * - `currentParams: Signal<Record<string, string>>` - Current route params
+   * - `currentQuery: Signal<Record<string, string>>` - Current query params
+   * - `currentLayout: Signal<MountResult | null>` - Mounted layout instance
+   * - `currentView: Signal<MountResult | null>` - Mounted view instance
+   * - `isReady: Signal<boolean>` - Router readiness state
+   *
+   * @note Internal API Access Policy:
+   * As a core Eleva plugin, the Router may access internal Eleva APIs (prefixed with _)
+   * such as `eleva._components`. This is intentional and these internal APIs are
+   * considered stable for official plugins. Third-party plugins should avoid
+   * accessing internal APIs as they may change without notice.
+   *
+   * @example
+   * // Basic setup
+   * const router = new Router(eleva, {
+   *   mode: 'hash',
+   *   mount: '#app',
+   *   routes: [
+   *     { path: '/', component: HomePage },
+   *     { path: '/users/:id', component: UserPage },
+   *     { path: '*', component: NotFoundPage }
+   *   ]
+   * });
+   *
+   * // Start router
+   * await router.start();
+   *
+   * // Navigate programmatically
+   * const success = await router.navigate('/users/123');
+   *
+   * // Watch for route changes
+   * router.currentRoute.watch((route) => {
+   *   document.title = route?.meta?.title || 'My App';
+   * });
+   *
    * @private
    */
   class Router {
@@ -364,6 +690,9 @@
       /** @private @type {boolean} A flag to prevent navigation loops from history events. */
       this._isNavigating = false;
 
+      /** @private @type {number} Counter for tracking navigation operations to prevent race conditions. */
+      this._navigationId = 0;
+
       /** @private @type {Array<() => void>} A collection of cleanup functions for event listeners. */
       this.eventListeners = [];
 
@@ -385,11 +714,25 @@
       /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted view (page) instance. */
       this.currentView = new this.eleva.signal(null);
 
+      /** @type {Signal<boolean>} A reactive signal indicating if the router is ready (started and initial navigation complete). */
+      this.isReady = new this.eleva.signal(false);
+
       /** @private @type {Map<string, RouterPlugin>} Map of registered plugins by name. */
       this.plugins = new Map();
 
+      /** @private @type {Array<NavigationGuard>} Array of global before-each navigation guards. */
+      this._beforeEachGuards = [];
+
+      // If onBeforeEach was provided in options, add it to the guards array
+      if (options.onBeforeEach) {
+        this._beforeEachGuards.push(options.onBeforeEach);
+      }
+
       /** @type {Object} The error handler instance. Can be overridden by plugins. */
       this.errorHandler = CoreErrorHandler;
+
+      /** @private @type {Map<string, {x: number, y: number}>} Saved scroll positions by route path. */
+      this._scrollPositions = new Map();
       this._validateOptions();
     }
 
@@ -479,22 +822,34 @@
 
     /**
      * Starts the router, initializes event listeners, and performs the initial navigation.
-     * @returns {Promise<void>}
+     * @returns {Promise<Router>} The router instance for method chaining.
+     *
+     * @example
+     * // Basic usage
+     * await router.start();
+     *
+     * // Method chaining
+     * await router.start().then(r => r.navigate('/home'));
+     *
+     * // Reactive readiness
+     * router.isReady.watch((ready) => {
+     *   if (ready) console.log('Router is ready!');
+     * });
      */
     async start() {
       if (this.isStarted) {
         this.errorHandler.warn("Router is already started");
-        return;
+        return this;
       }
       if (typeof window === "undefined") {
         this.errorHandler.warn("Router start skipped: `window` object not available (SSR environment)");
-        return;
+        return this;
       }
       if (typeof document !== "undefined" && !document.querySelector(this.options.mount)) {
         this.errorHandler.warn(`Mount element "${this.options.mount}" was not found in the DOM. The router will not start.`, {
           mountSelector: this.options.mount
         });
-        return;
+        return this;
       }
       const handler = () => this._handleRouteChange();
       if (this.options.mode === "hash") {
@@ -505,7 +860,12 @@
         this.eventListeners.push(() => window.removeEventListener("popstate", handler));
       }
       this.isStarted = true;
-      await this._handleRouteChange();
+      // Initial navigation is not a popstate event
+      await this._handleRouteChange(false);
+      // Set isReady to true after initial navigation completes
+      this.isReady.value = true;
+      await this.emitter.emit("router:ready", this);
+      return this;
     }
 
     /**
@@ -531,13 +891,46 @@
         await this.currentLayout.value.unmount();
       }
       this.isStarted = false;
+      this.isReady.value = false;
+    }
+
+    /**
+     * Alias for destroy(). Stops the router and cleans up all resources.
+     * Provided for semantic consistency (start/stop pattern).
+     * @returns {Promise<void>}
+     *
+     * @example
+     * await router.start();
+     * // ... later
+     * await router.stop();
+     */
+    async stop() {
+      return this.destroy();
     }
 
     /**
      * Programmatically navigates to a new route.
-     * @param {string | {path: string, query?: object, params?: object, replace?: boolean, state?: object}} location - The target location as a string or object.
-     * @param {object} [params] - Optional route parameters (for string-based location).
-     * @returns {Promise<void>}
+     * @param {string | NavigationTarget} location - The target location as a path string or navigation target object.
+     * @param {Record<string, string>} [params] - Route parameters (only used when location is a string).
+     * @returns {Promise<boolean>} True if navigation succeeded, false if blocked by guards or failed.
+     *
+     * @example
+     * // Basic navigation
+     * await router.navigate('/users/123');
+     *
+     * // Check if navigation succeeded
+     * const success = await router.navigate('/protected');
+     * if (!success) {
+     *   console.log('Navigation was blocked by a guard');
+     * }
+     *
+     * // Navigate with options
+     * await router.navigate({
+     *   path: '/users/:id',
+     *   params: { id: '123' },
+     *   query: { tab: 'profile' },
+     *   replace: true
+     * });
      */
     async navigate(location, params = {}) {
       try {
@@ -552,10 +945,12 @@
           if (queryString) path += `?${queryString}`;
         }
         if (this._isSameRoute(path, target.params, query)) {
-          return;
+          return true; // Already at this route, consider it successful
         }
         const navigationSuccessful = await this._proceedWithNavigation(path);
         if (navigationSuccessful) {
+          // Increment navigation ID and capture it for this navigation
+          const currentNavId = ++this._navigationId;
           this._isNavigating = true;
           const state = target.state || {};
           const replace = target.replace || false;
@@ -571,13 +966,19 @@
             const url = this.options.mode === "query" ? this._buildQueryUrl(path) : path;
             history[historyMethod](state, "", url);
           }
+
+          // Only reset the flag if no newer navigation has started
           queueMicrotask(() => {
-            this._isNavigating = false;
+            if (this._navigationId === currentNavId) {
+              this._isNavigating = false;
+            }
           });
         }
+        return navigationSuccessful;
       } catch (error) {
         this.errorHandler.log("Navigation failed", error);
         await this.emitter.emit("router:onError", error);
+        return false;
       }
     }
 
@@ -626,30 +1027,50 @@
     /**
      * The handler for browser-initiated route changes (e.g., back/forward buttons).
      * @private
+     * @param {boolean} [isPopState=true] - Whether this is a popstate event (back/forward navigation).
      */
-    async _handleRouteChange() {
+    async _handleRouteChange(isPopState = true) {
       if (this._isNavigating) return;
-      const from = this.currentRoute.value;
-      const toLocation = this._getCurrentLocation();
-      const navigationSuccessful = await this._proceedWithNavigation(toLocation.fullUrl);
+      try {
+        const from = this.currentRoute.value;
+        const toLocation = this._getCurrentLocation();
+        const navigationSuccessful = await this._proceedWithNavigation(toLocation.fullUrl, isPopState);
 
-      // If navigation was blocked by a guard, revert the URL change
-      if (!navigationSuccessful && from) {
-        this.navigate({
-          path: from.path,
-          query: from.query,
-          replace: true
+        // If navigation was blocked by a guard, revert the URL change
+        if (!navigationSuccessful && from) {
+          this.navigate({
+            path: from.path,
+            query: from.query,
+            replace: true
+          });
+        }
+      } catch (error) {
+        this.errorHandler.log("Route change handling failed", error, {
+          currentUrl: typeof window !== "undefined" ? window.location.href : ""
         });
+        await this.emitter.emit("router:onError", error);
       }
     }
 
     /**
      * Manages the core navigation lifecycle. Runs guards before committing changes.
+     * Emits lifecycle events that plugins can hook into:
+     * - router:beforeEach - Before guards run (can block/redirect via context)
+     * - router:beforeResolve - Before component resolution (can block/redirect)
+     * - router:afterResolve - After components are resolved
+     * - router:beforeRender - Before DOM rendering
+     * - router:afterRender - After DOM rendering
+     * - router:scroll - After render, for scroll behavior
+     * - router:afterEnter - After entering a route
+     * - router:afterLeave - After leaving a route
+     * - router:afterEach - After navigation completes
+     *
      * @private
      * @param {string} fullPath - The full path (e.g., '/users/123?foo=bar') to navigate to.
+     * @param {boolean} [isPopState=false] - Whether this navigation was triggered by popstate (back/forward).
      * @returns {Promise<boolean>} - `true` if navigation succeeded, `false` if aborted.
      */
-    async _proceedWithNavigation(fullPath) {
+    async _proceedWithNavigation(fullPath, isPopState = false) {
       const from = this.currentRoute.value;
       const [path, queryString] = (fullPath || "/").split("?");
       const toLocation = {
@@ -664,7 +1085,7 @@
           toMatch = {
             route: notFoundRoute,
             params: {
-              pathMatch: toLocation.path.substring(1)
+              pathMatch: decodeURIComponent(toLocation.path.substring(1))
             }
           };
         } else {
@@ -684,13 +1105,46 @@
         const canNavigate = await this._runGuards(to, from, toMatch.route);
         if (!canNavigate) return false;
 
-        // 2. Resolve async components *before* touching the DOM.
+        // 2. Save current scroll position before navigating away
+        if (from && typeof window !== "undefined") {
+          this._scrollPositions.set(from.path, {
+            x: window.scrollX || window.pageXOffset || 0,
+            y: window.scrollY || window.pageYOffset || 0
+          });
+        }
+
+        // 3. Emit beforeResolve event - plugins can show loading indicators
+        /** @type {ResolveContext} */
+        const resolveContext = {
+          to,
+          from,
+          route: toMatch.route,
+          layoutComponent: null,
+          pageComponent: null,
+          cancelled: false,
+          redirectTo: null
+        };
+        await this.emitter.emit("router:beforeResolve", resolveContext);
+
+        // Check if resolution was cancelled or redirected
+        if (resolveContext.cancelled) return false;
+        if (resolveContext.redirectTo) {
+          this.navigate(resolveContext.redirectTo);
+          return false;
+        }
+
+        // 4. Resolve async components *before* touching the DOM.
         const {
           layoutComponent,
           pageComponent
         } = await this._resolveComponents(toMatch.route);
 
-        // 3. Unmount the previous view/layout.
+        // 5. Emit afterResolve event - plugins can hide loading indicators
+        resolveContext.layoutComponent = layoutComponent;
+        resolveContext.pageComponent = pageComponent;
+        await this.emitter.emit("router:afterResolve", resolveContext);
+
+        // 6. Unmount the previous view/layout.
         if (from) {
           const toLayout = toMatch.route.layout || this.options.globalLayout;
           const fromLayout = from.matched.layout || this.options.globalLayout;
@@ -713,27 +1167,49 @@
             this.currentView.value = null;
           }
 
-          // 4. Call `afterLeave` hook *after* the old component has been unmounted.
+          // Call `afterLeave` hook *after* the old component has been unmounted.
           if (from.matched.afterLeave) {
             await from.matched.afterLeave(to, from);
-            await this.emitter.emit("router:afterLeave", to, from);
           }
+          await this.emitter.emit("router:afterLeave", to, from);
         }
 
-        // 5. Update reactive state.
+        // 7. Update reactive state.
         this.previousRoute.value = from;
         this.currentRoute.value = to;
         this.currentParams.value = to.params || {};
         this.currentQuery.value = to.query || {};
 
-        // 6. Render the new components.
+        // 8. Emit beforeRender event - plugins can add transitions
+        /** @type {RenderContext} */
+        const renderContext = {
+          to,
+          from,
+          layoutComponent,
+          pageComponent
+        };
+        await this.emitter.emit("router:beforeRender", renderContext);
+
+        // 9. Render the new components.
         await this._render(layoutComponent, pageComponent, to);
 
-        // 7. Run post-navigation hooks.
+        // 10. Emit afterRender event - plugins can trigger animations
+        await this.emitter.emit("router:afterRender", renderContext);
+
+        // 11. Emit scroll event - plugins can handle scroll restoration
+        /** @type {ScrollContext} */
+        const scrollContext = {
+          to,
+          from,
+          savedPosition: isPopState ? this._scrollPositions.get(to.path) || null : null
+        };
+        await this.emitter.emit("router:scroll", scrollContext);
+
+        // 12. Run post-navigation hooks.
         if (toMatch.route.afterEnter) {
           await toMatch.route.afterEnter(to, from);
-          await this.emitter.emit("router:afterEnter", to, from);
         }
+        await this.emitter.emit("router:afterEnter", to, from);
         await this.emitter.emit("router:afterEach", to, from);
         return true;
       } catch (error) {
@@ -748,11 +1224,40 @@
 
     /**
      * Executes all applicable navigation guards for a transition in order.
+     * Guards are executed in the following order:
+     * 1. Global beforeEach event (emitter-based, can block via context)
+     * 2. Global beforeEach guards (registered via onBeforeEach)
+     * 3. Route-specific beforeLeave guard (from the route being left)
+     * 4. Route-specific beforeEnter guard (from the route being entered)
+     *
      * @private
+     * @param {RouteLocation} to - The target route location.
+     * @param {RouteLocation | null} from - The current route location (null on initial navigation).
+     * @param {RouteDefinition} route - The matched route definition.
      * @returns {Promise<boolean>} - `false` if navigation should be aborted.
      */
     async _runGuards(to, from, route) {
-      const guards = [...(this.options.onBeforeEach ? [this.options.onBeforeEach] : []), ...(from && from.matched.beforeLeave ? [from.matched.beforeLeave] : []), ...(route.beforeEnter ? [route.beforeEnter] : [])];
+      // Create navigation context that plugins can modify to block navigation
+      /** @type {NavigationContext} */
+      const navContext = {
+        to,
+        from,
+        cancelled: false,
+        redirectTo: null
+      };
+
+      // Emit beforeEach event with context - plugins can block by modifying context
+      await this.emitter.emit("router:beforeEach", navContext);
+
+      // Check if navigation was cancelled or redirected by event listeners
+      if (navContext.cancelled) return false;
+      if (navContext.redirectTo) {
+        this.navigate(navContext.redirectTo);
+        return false;
+      }
+
+      // Collect all guards in execution order
+      const guards = [...this._beforeEachGuards, ...(from && from.matched.beforeLeave ? [from.matched.beforeLeave] : []), ...(route.beforeEnter ? [route.beforeEnter] : [])];
       for (const guard of guards) {
         const result = await guard(to, from);
         if (result === false) return false;
@@ -770,6 +1275,11 @@
      * @param {string} def - The component name to resolve.
      * @returns {ComponentDefinition} The resolved component.
      * @throws {Error} If the component is not registered.
+     *
+     * @note Core plugins (Router, Attr, Props, Store) may access eleva._components
+     * directly. This is intentional and stable for official Eleva plugins shipped
+     * with the framework. Third-party plugins should use eleva.component() for
+     * registration and avoid direct access to internal APIs.
      */
     _resolveStringComponent(def) {
       const componentDef = this.eleva._components.get(def);
@@ -953,10 +1463,20 @@
     /**
      * Recursively wraps all child components to ensure they have access to router context.
      * @private
-     * @param {ComponentDefinition} component - The component to wrap.
-     * @returns {ComponentDefinition} The wrapped component definition.
+     * @param {ComponentDefinition | string} component - The component to wrap (can be a definition object or a registered component name).
+     * @returns {ComponentDefinition | string} The wrapped component definition or the original string reference.
      */
     _wrapComponentWithChildren(component) {
+      // If the component is a string (registered component name), return as-is
+      // The router context will be injected when the component is resolved during mounting
+      if (typeof component === "string") {
+        return component;
+      }
+
+      // If not a valid component object, return as-is
+      if (!component || typeof component !== "object") {
+        return component;
+      }
       const wrappedComponent = this._wrapComponent(component);
 
       // If the component has children, wrap them too
@@ -1058,25 +1578,197 @@
       return null;
     }
 
-    /** Registers a global pre-navigation guard. */
+    // ============================================
+    // Dynamic Route Management API
+    // ============================================
+
+    /**
+     * Adds a new route dynamically at runtime.
+     * The route will be processed and available for navigation immediately.
+     *
+     * @param {RouteDefinition} route - The route definition to add.
+     * @param {RouteDefinition} [parentRoute] - Optional parent route to add as a child (not yet implemented).
+     * @returns {() => void} A function to remove the added route.
+     *
+     * @example
+     * // Add a route dynamically
+     * const removeRoute = router.addRoute({
+     *   path: '/dynamic',
+     *   component: DynamicPage,
+     *   meta: { title: 'Dynamic Page' }
+     * });
+     *
+     * // Later, remove the route
+     * removeRoute();
+     */
+    addRoute(route, parentRoute = null) {
+      if (!route || !route.path) {
+        this.errorHandler.warn("Invalid route definition: missing path", {
+          route
+        });
+        return () => {};
+      }
+
+      // Check if route already exists
+      if (this.hasRoute(route.path)) {
+        this.errorHandler.warn(`Route "${route.path}" already exists`, {
+          route
+        });
+        return () => {};
+      }
+
+      // Process the route (parse segments)
+      const processedRoute = {
+        ...route,
+        segments: this._parsePathIntoSegments(route.path)
+      };
+
+      // Add to routes array (before wildcard if exists)
+      const wildcardIndex = this.routes.findIndex(r => r.path === "*");
+      if (wildcardIndex !== -1) {
+        this.routes.splice(wildcardIndex, 0, processedRoute);
+      } else {
+        this.routes.push(processedRoute);
+      }
+
+      // Emit event for plugins
+      this.emitter.emit("router:routeAdded", processedRoute);
+
+      // Return removal function
+      return () => this.removeRoute(route.path);
+    }
+
+    /**
+     * Removes a route by its path.
+     *
+     * @param {string} path - The path of the route to remove.
+     * @returns {boolean} True if the route was removed, false if not found.
+     *
+     * @example
+     * router.removeRoute('/dynamic');
+     */
+    removeRoute(path) {
+      const index = this.routes.findIndex(r => r.path === path);
+      if (index === -1) {
+        return false;
+      }
+      const [removedRoute] = this.routes.splice(index, 1);
+
+      // Emit event for plugins
+      this.emitter.emit("router:routeRemoved", removedRoute);
+      return true;
+    }
+
+    /**
+     * Checks if a route with the given path exists.
+     *
+     * @param {string} path - The path to check.
+     * @returns {boolean} True if the route exists.
+     *
+     * @example
+     * if (router.hasRoute('/users/:id')) {
+     *   console.log('User route exists');
+     * }
+     */
+    hasRoute(path) {
+      return this.routes.some(r => r.path === path);
+    }
+
+    /**
+     * Gets all registered routes.
+     *
+     * @returns {RouteDefinition[]} A copy of the routes array.
+     *
+     * @example
+     * const routes = router.getRoutes();
+     * console.log('Available routes:', routes.map(r => r.path));
+     */
+    getRoutes() {
+      return [...this.routes];
+    }
+
+    /**
+     * Gets a route by its path.
+     *
+     * @param {string} path - The path of the route to get.
+     * @returns {RouteDefinition | undefined} The route definition or undefined.
+     *
+     * @example
+     * const route = router.getRoute('/users/:id');
+     * if (route) {
+     *   console.log('Route meta:', route.meta);
+     * }
+     */
+    getRoute(path) {
+      return this.routes.find(r => r.path === path);
+    }
+
+    // ============================================
+    // Hook Registration Methods
+    // ============================================
+
+    /**
+     * Registers a global pre-navigation guard.
+     * Multiple guards can be registered and will be executed in order.
+     * Guards can also be registered via the emitter using `router:beforeEach` event.
+     *
+     * @param {NavigationGuard} guard - The guard function to register.
+     * @returns {() => void} A function to unregister the guard.
+     *
+     * @example
+     * // Register a guard
+     * const unregister = router.onBeforeEach((to, from) => {
+     *   if (to.meta.requiresAuth && !isAuthenticated()) {
+     *     return '/login';
+     *   }
+     * });
+     *
+     * // Later, unregister the guard
+     * unregister();
+     */
     onBeforeEach(guard) {
-      this.options.onBeforeEach = guard;
+      this._beforeEachGuards.push(guard);
+      return () => {
+        const index = this._beforeEachGuards.indexOf(guard);
+        if (index > -1) {
+          this._beforeEachGuards.splice(index, 1);
+        }
+      };
     }
-    /** Registers a global hook that runs after a new route component has been mounted *if* the route has an `afterEnter` hook. */
+    /**
+     * Registers a global hook that runs after a new route component has been mounted.
+     * @param {NavigationHook} hook - The hook function to register.
+     * @returns {() => void} A function to unregister the hook.
+     */
     onAfterEnter(hook) {
-      this.emitter.on("router:afterEnter", hook);
+      return this.emitter.on("router:afterEnter", hook);
     }
-    /** Registers a global hook that runs after a route component has been unmounted *if* the route has an `afterLeave` hook. */
+
+    /**
+     * Registers a global hook that runs after a route component has been unmounted.
+     * @param {NavigationHook} hook - The hook function to register.
+     * @returns {() => void} A function to unregister the hook.
+     */
     onAfterLeave(hook) {
-      this.emitter.on("router:afterLeave", hook);
+      return this.emitter.on("router:afterLeave", hook);
     }
-    /** Registers a global hook that runs after a navigation has been confirmed and all hooks have completed. */
+
+    /**
+     * Registers a global hook that runs after a navigation has been confirmed and all hooks have completed.
+     * @param {NavigationHook} hook - The hook function to register.
+     * @returns {() => void} A function to unregister the hook.
+     */
     onAfterEach(hook) {
-      this.emitter.on("router:afterEach", hook);
+      return this.emitter.on("router:afterEach", hook);
     }
-    /** Registers a global error handler for navigation. */
+
+    /**
+     * Registers a global error handler for navigation errors.
+     * @param {(error: Error, to?: RouteLocation, from?: RouteLocation) => void} handler - The error handler function.
+     * @returns {() => void} A function to unregister the handler.
+     */
     onError(handler) {
-      this.emitter.on("router:onError", handler);
+      return this.emitter.on("router:onError", handler);
     }
 
     /**
@@ -1205,7 +1897,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.1",
+    version: "1.0.0-rc.10",
     /**
      * Plugin description
      * @type {string}
@@ -1329,20 +2021,78 @@
     }
   };
 
+  // ============================================================================
+  // TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+  // ============================================================================
+
+  /**
+   * @typedef {Record<string, unknown>} TemplateData
+   *           Data context for template interpolation
+   */
+
+  /**
+   * @typedef {string} TemplateString
+   *           A string containing {{ expression }} interpolation markers
+   */
+
+  /**
+   * @typedef {string} Expression
+   *           A JavaScript expression to be evaluated in the data context
+   */
+
+  /**
+   * @typedef {unknown} EvaluationResult
+   *           The result of evaluating an expression (string, number, boolean, object, etc.)
+   */
+
   /**
    * @class 🔒 TemplateEngine
    * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
-   * Provides a safe way to evaluate expressions in templates while preventing XSS attacks.
+   * Provides a way to evaluate expressions in templates.
    * All methods are static and can be called directly on the class.
    *
+   * Template Syntax:
+   * - `{{ expression }}` - Interpolate any JavaScript expression
+   * - `{{ variable }}` - Access data properties directly
+   * - `{{ object.property }}` - Access nested properties
+   * - `{{ condition ? a : b }}` - Ternary expressions
+   * - `{{ func(arg) }}` - Call functions from data context
+   *
    * @example
+   * // Basic interpolation
    * const template = "Hello, {{name}}!";
    * const data = { name: "World" };
-   * const result = TemplateEngine.parse(template, data); // Returns: "Hello, World!"
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Hello, World!"
+   *
+   * @example
+   * // Nested properties
+   * const template = "Welcome, {{user.name}}!";
+   * const data = { user: { name: "John" } };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Welcome, John!"
+   *
+   * @example
+   * // Expressions
+   * const template = "Status: {{active ? 'Online' : 'Offline'}}";
+   * const data = { active: true };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Status: Online"
+   *
+   * @example
+   * // With Signal values
+   * const template = "Count: {{count.value}}";
+   * const data = { count: { value: 42 } };
+   * const result = TemplateEngine.parse(template, data);
+   * // Result: "Count: 42"
    */
   class TemplateEngine {
     /**
-     * @private {RegExp} Regular expression for matching template expressions in the format {{ expression }}
+     * Regular expression for matching template expressions in the format {{ expression }}
+     * Matches: {{ anything }} with optional whitespace inside braces
+     *
+     * @static
+     * @private
      * @type {RegExp}
      */
     static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
@@ -1353,13 +2103,37 @@
      *
      * @public
      * @static
-     * @param {string} template - The template string to parse.
-     * @param {Record<string, unknown>} data - The data context for evaluating expressions.
+     * @param {TemplateString|unknown} template - The template string to parse.
+     * @param {TemplateData} data - The data context for evaluating expressions.
      * @returns {string} The parsed template with expressions replaced by their values.
+     *
      * @example
-     * const result = TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
+     * // Simple variables
+     * TemplateEngine.parse("Hello, {{name}}!", { name: "World" });
+     * // Result: "Hello, World!"
+     *
+     * @example
+     * // Nested properties
+     * TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
      *   user: { name: "John", age: 30 }
-     * }); // Returns: "John is 30 years old"
+     * });
+     * // Result: "John is 30 years old"
+     *
+     * @example
+     * // Multiple expressions
+     * TemplateEngine.parse("{{greeting}}, {{name}}! You have {{count}} messages.", {
+     *   greeting: "Hello",
+     *   name: "User",
+     *   count: 5
+     * });
+     * // Result: "Hello, User! You have 5 messages."
+     *
+     * @example
+     * // With conditionals
+     * TemplateEngine.parse("Status: {{online ? 'Active' : 'Inactive'}}", {
+     *   online: true
+     * });
+     * // Result: "Status: Active"
      */
     static parse(template, data) {
       if (typeof template !== "string") return template;
@@ -1368,18 +2142,44 @@
 
     /**
      * Evaluates an expression in the context of the provided data object.
+     *
      * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      * The use of the `with` statement is necessary for expression evaluation but has security implications.
-     * Expressions should be carefully validated before evaluation.
+     * Only use with trusted templates. User input should never be directly interpolated.
      *
      * @public
      * @static
-     * @param {string} expression - The expression to evaluate.
-     * @param {Record<string, unknown>} data - The data context for evaluation.
-     * @returns {unknown} The result of the evaluation, or an empty string if evaluation fails.
+     * @param {Expression|unknown} expression - The expression to evaluate.
+     * @param {TemplateData} data - The data context for evaluation.
+     * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+     *
      * @example
-     * const result = TemplateEngine.evaluate("user.name", { user: { name: "John" } }); // Returns: "John"
-     * const age = TemplateEngine.evaluate("user.age", { user: { age: 30 } }); // Returns: 30
+     * // Property access
+     * TemplateEngine.evaluate("user.name", { user: { name: "John" } });
+     * // Result: "John"
+     *
+     * @example
+     * // Numeric values
+     * TemplateEngine.evaluate("user.age", { user: { age: 30 } });
+     * // Result: 30
+     *
+     * @example
+     * // Expressions
+     * TemplateEngine.evaluate("items.length > 0", { items: [1, 2, 3] });
+     * // Result: true
+     *
+     * @example
+     * // Function calls
+     * TemplateEngine.evaluate("formatDate(date)", {
+     *   date: new Date(),
+     *   formatDate: (d) => d.toISOString()
+     * });
+     * // Result: "2024-01-01T00:00:00.000Z"
+     *
+     * @example
+     * // Failed evaluation returns empty string
+     * TemplateEngine.evaluate("nonexistent.property", {});
+     * // Result: ""
      */
     static evaluate(expression, data) {
       if (typeof expression !== "string") return expression;
@@ -1449,7 +2249,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.2",
+    version: "1.0.0-rc.10",
     /**
      * Plugin description
      * @type {string}
@@ -1986,7 +2786,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.1",
+    version: "1.0.0-rc.10",
     /**
      * Plugin description
      * @type {string}

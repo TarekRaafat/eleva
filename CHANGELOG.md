@@ -6,6 +6,333 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.0-rc.10 🛣️ (01-01-2026)
+
+### 🚀 Router Plugin Improvements
+
+This release focuses on stability and bug fixes for the Router plugin, along with unified plugin versioning.
+
+### 📝 Release Notes
+
+#### 🔧 Fixed
+
+- **Router: Children Wrapping Bug**
+  - Fixed `_wrapComponentWithChildren` attempting to wrap string component references.
+  - Previously, using registered component names as children (e.g., `children: { '.container': 'TodoItem' }`) would cause errors.
+  - Now properly handles string references by returning them as-is, deferring context injection to mount time.
+
+- **Router: Race Condition in Navigation**
+  - Fixed potential race condition when multiple navigations are triggered rapidly.
+  - Added `_navigationId` counter to track navigation operations.
+  - The `_isNavigating` flag now only resets if no newer navigation has started.
+  - Prevents navigation state corruption during rapid route changes.
+
+- **Router: Missing Error Handling**
+  - Added try-catch to `_handleRouteChange` method.
+  - Previously, errors from `_getCurrentLocation()` or navigation logic could propagate unexpectedly.
+  - Errors are now properly logged and emitted via `router:onError` event.
+
+- **Router: Wildcard Route Params Decoding**
+  - Fixed wildcard route (`*`) params not being URL-decoded.
+  - Previously, paths like `/path%20with%20spaces` would have `pathMatch: "path%20with%20spaces"`.
+  - Now properly decoded to `pathMatch: "path with spaces"`, matching regular route param behavior.
+
+#### ➕ Added
+
+- **Router: Multiple Global Navigation Guards**
+  - `onBeforeEach()` now supports multiple guards instead of replacing the previous one.
+  - Guards are executed in registration order (FIFO).
+  - Each call returns an unregister function for cleanup.
+  - Backwards compatible: options-based `onBeforeEach` still works as the first guard.
+  - Example:
+    ```javascript
+    const unregister = router.onBeforeEach((to, from) => {
+      if (!isAuthenticated) return '/login';
+    });
+    // Later: unregister() to remove the guard
+    ```
+
+- **Router: `router:beforeEach` Event Emission**
+  - Navigation guards now emit `router:beforeEach` event via the emitter before guard execution.
+  - Plugins can now hook into pre-navigation without replacing the guard system.
+  - Enables logging, analytics, and third-party plugin integration.
+  - Example:
+    ```javascript
+    router.emitter.on('router:beforeEach', (to, from) => {
+      console.log(`Navigating from ${from?.path} to ${to.path}`);
+    });
+    ```
+
+- **Router: Hook Methods Return Unsubscribe Functions**
+  - `onAfterEnter()`, `onAfterLeave()`, `onAfterEach()`, and `onError()` now return unsubscribe functions.
+  - Consistent API with `onBeforeEach()` pattern.
+  - Prevents memory leaks when components register hooks and later unmount.
+  - Example:
+    ```javascript
+    const unsubscribe = router.onAfterEach((to, from) => {
+      analytics.trackPageView(to.path);
+    });
+    // Later: unsubscribe() to remove the hook
+    ```
+
+- **Router: `router:beforeEach` Event Can Now Block Navigation**
+  - The `router:beforeEach` event now passes a `NavigationContext` object that plugins can modify.
+  - Plugins can block navigation by setting `context.cancelled = true`.
+  - Plugins can redirect by setting `context.redirectTo = '/path'`.
+  - Enables auth guards, analytics blocking, and navigation control via the emitter pattern.
+  - Example:
+    ```javascript
+    router.emitter.on('router:beforeEach', (context) => {
+      if (!isAuthenticated && context.to.meta.requiresAuth) {
+        context.redirectTo = '/login';
+      }
+    });
+    ```
+
+- **Router: Component Resolution Hooks**
+  - Added `router:beforeResolve` event before async component loading.
+  - Added `router:afterResolve` event after components are resolved.
+  - Plugins can show/hide loading indicators during lazy component loading.
+  - `router:beforeResolve` can also block or redirect navigation via context.
+  - Example:
+    ```javascript
+    router.emitter.on('router:beforeResolve', (context) => {
+      showLoadingSpinner();
+    });
+    router.emitter.on('router:afterResolve', (context) => {
+      hideLoadingSpinner();
+    });
+    ```
+
+- **Router: Render Lifecycle Hooks**
+  - Added `router:beforeRender` event before DOM rendering.
+  - Added `router:afterRender` event after DOM rendering completes.
+  - Enables page transition plugins, animation libraries, and render timing.
+  - Example:
+    ```javascript
+    router.emitter.on('router:beforeRender', ({ to, from }) => {
+      document.body.classList.add('page-transitioning');
+    });
+    router.emitter.on('router:afterRender', ({ to, from }) => {
+      document.body.classList.remove('page-transitioning');
+    });
+    ```
+
+- **Router: Scroll Management Hook**
+  - Added `router:scroll` event after rendering for scroll behavior plugins.
+  - Provides `savedPosition` for back/forward navigation (popstate).
+  - Router now automatically saves scroll positions per route.
+  - Enables scroll restoration, smooth scrolling, and anchor navigation.
+  - Example:
+    ```javascript
+    router.emitter.on('router:scroll', ({ to, from, savedPosition }) => {
+      if (savedPosition) {
+        window.scrollTo(savedPosition.x, savedPosition.y);
+      } else if (to.path.includes('#')) {
+        // Handle anchor links
+      } else {
+        window.scrollTo(0, 0);
+      }
+    });
+    ```
+
+- **Router: Dynamic Route Management API**
+  - Added `addRoute(route)` to add routes at runtime with proper segment processing.
+  - Added `removeRoute(path)` to remove routes dynamically.
+  - Added `hasRoute(path)` to check if a route exists.
+  - Added `getRoutes()` to get all registered routes.
+  - Added `getRoute(path)` to get a specific route by path.
+  - Emits `router:routeAdded` and `router:routeRemoved` events for plugins.
+  - `addRoute()` returns an unsubscribe function for easy cleanup.
+  - Example:
+    ```javascript
+    // Dynamically add a route
+    const removeRoute = router.addRoute({
+      path: '/admin',
+      component: AdminPage,
+      meta: { requiresAuth: true }
+    });
+
+    // Later, remove it
+    removeRoute();
+    ```
+
+#### 🎯 Developer Experience & Consistency Improvements
+
+- **Router: `navigate()` Now Returns `Promise<boolean>`**
+  - Navigation success/failure is now programmatically detectable.
+  - Returns `true` if navigation succeeded, `false` if blocked by guards or failed.
+  - Same-route navigation returns `true` (no-op but considered successful).
+  - Example:
+    ```javascript
+    const success = await router.navigate('/protected');
+    if (!success) {
+      console.log('Navigation was blocked by a guard');
+    }
+    ```
+
+- **Router: `start()` Now Returns `Promise<Router>`**
+  - Enables method chaining after starting the router.
+  - Consistent with Eleva core patterns.
+  - Example:
+    ```javascript
+    await router.start().then(r => r.navigate('/home'));
+    ```
+
+- **Router: Added `isReady` Signal**
+  - New reactive signal indicating when router is fully initialized.
+  - Set to `true` after `start()` completes and initial navigation finishes.
+  - Set to `false` when `stop()`/`destroy()` is called.
+  - Emits `router:ready` event when ready.
+  - Example:
+    ```javascript
+    router.isReady.watch((ready) => {
+      if (ready) console.log('Router is ready!');
+    });
+    ```
+
+- **Router: Added `stop()` Alias**
+  - `stop()` is now an alias for `destroy()`.
+  - Provides semantic consistency with the `start()`/`stop()` pattern.
+  - Example:
+    ```javascript
+    await router.start();
+    // ... later
+    await router.stop();
+    ```
+
+#### 📘 TypeScript-Friendly JSDoc Enhancements
+
+- **Comprehensive Type Definitions**
+  - Added `RouterMode` type: `'hash' | 'history' | 'query'`
+  - Added `RouterOptions` interface for router configuration
+  - Added `NavigationTarget` interface for `navigate()` options
+  - Added `ScrollPosition` interface for scroll management
+  - Added `RouteSegment` and `RouteMatch` internal types
+  - Added `RouteMeta` type with documentation for common properties
+  - Added `RouterErrorHandler` interface
+  - Added `RouteComponent` union type for component definitions
+
+- **Event Callback Types**
+  - Added `NavigationContextCallback` for `router:beforeEach`
+  - Added `ResolveContextCallback` for resolve events
+  - Added `RenderContextCallback` for render events
+  - Added `ScrollContextCallback` for scroll events
+  - Added `RouteChangeCallback` for navigation events
+  - Added `RouterErrorCallback` for error handling
+  - Added `RouterReadyCallback` for ready event
+  - Added `RouteAddedCallback` and `RouteRemovedCallback` for dynamic routes
+
+- **Enhanced Documentation**
+  - Added `NavigationGuardResult` type for clearer guard return values
+  - Converted `NavigationGuard` and `NavigationHook` to `@callback` for better IDE support
+  - Added comprehensive examples to all type definitions
+  - Added events reference table to Router class documentation
+  - Added reactive signals reference to Router class documentation
+
+#### 📘 Core Framework JSDoc Enhancements
+
+Enhanced TypeScript-friendly JSDoc types across all core modules for better IDE support, autocomplete, and type inference.
+
+- **Eleva Core (`Eleva.js`)**
+  - Added `ElevaConfig` type for framework configuration
+  - Added `SetupFunction`, `TemplateFunction`, `StyleFunction` callback types
+  - Added `SetupResult` type for setup return values with lifecycle hooks
+  - Added `ComponentProps`, `ChildrenMap` type aliases
+  - Added `SignalFactory` callback type with generics
+  - Added `LifecycleHooks` interface with all hook types
+  - Added `LifecycleHook` and `UnmountHook` callback types
+  - Added `CleanupResources` type for unmount context
+  - Added `UnmountFunction`, `UnsubscribeFunction` callback types
+  - Added `PluginInstallFunction`, `PluginUninstallFunction` callback types
+  - Added `PluginOptions` type alias
+  - Added `EventHandler` and `DOMEventName` types for event handling
+  - Organized types with sectioned headers for clarity
+
+- **Signal Module (`Signal.js`)**
+  - Added `SignalWatcher<T>` generic callback type
+  - Added `SignalUnsubscribe` callback type
+  - Added `SignalLike<T>` interface for duck typing
+  - Added comprehensive examples for typed signal usage
+  - Enhanced template type documentation
+
+- **Emitter Module (`Emitter.js`)**
+  - Added `EventHandler<T>` generic callback type
+  - Added `EventUnsubscribe` callback type
+  - Added `EventName` template literal type for naming convention
+  - Added `EmitterLike` interface for duck typing
+  - Added examples for common event patterns
+
+- **Renderer Module (`Renderer.js`)**
+  - Added `PatchOptions` type for render configuration
+  - Added `KeyMap` type alias for keyed reconciliation
+  - Added `NodeTypeName` type for DOM node types
+  - Added examples for keyed list updates
+
+- **TemplateEngine Module (`TemplateEngine.js`)**
+  - Added `TemplateData`, `TemplateString` type aliases
+  - Added `Expression`, `EvaluationResult` types
+  - Added template syntax documentation in class description
+  - Added comprehensive examples for all expression types
+
+#### 📦 Unified Plugin Versioning
+
+- **All core plugins now share the framework version** (`1.0.0-rc.10`).
+- This ensures clear compatibility between the framework and its plugins.
+- Updated versions:
+  - `AttrPlugin`: `1.0.0-rc.1` → `1.0.0-rc.10`
+  - `PropsPlugin`: `1.0.0-rc.2` → `1.0.0-rc.10`
+  - `RouterPlugin`: `1.0.0-rc.1` → `1.0.0-rc.10`
+  - `StorePlugin`: `1.0.0-rc.1` → `1.0.0-rc.10`
+
+#### 📚 Documentation
+
+- **Comprehensive Router Plugin Documentation** (`docs/plugins/router.md`)
+  - Complete rewrite of Router plugin documentation
+  - Added Table of Contents for easy navigation
+  - Added detailed sections for all features
+  - Added Event Reference table with blocking capabilities
+  - Added TypeScript types reference
+  - Added API Reference with all properties and methods
+  - Added migration guides from Vue Router and React Router
+  - Added practical examples (Complete App, SPA with Auth, Micro-Frontend)
+  - Added example plugins (Analytics, Page Title, Loading, Auth)
+
+- **Comprehensive Store Plugin Documentation** (`docs/plugins/store.md`)
+  - Complete rewrite of Store plugin documentation
+  - Added TL;DR Quick Reference with API cheatsheet
+  - Added detailed Core Concepts (State, Actions, Namespaces)
+  - Added Usage Patterns (Counter, Todo, Auth, Cart)
+  - Added Persistence and Dynamic Modules sections
+  - Added Data Flow Diagram
+  - Added Best Practices and Troubleshooting guides
+  - Added migration guides from Vuex, Redux, and MobX
+
+- **Comprehensive Attr Plugin Documentation** (`docs/plugins/attr.md`)
+  - Complete rewrite of Attr plugin documentation
+  - Added TL;DR Quick Reference with API cheatsheet
+  - Added Core Features (ARIA, Data, Boolean, Dynamic attributes)
+  - Added ARIA Attribute Reference table (14 attributes)
+  - Added Usage Patterns (Accessible Form, Accordion, Tabs, Modal)
+  - Added Best Practices and Troubleshooting guides
+  - Added Data Flow Diagram
+
+- **Comprehensive Props Plugin Documentation** (`docs/plugins/props.md`)
+  - Complete rewrite of Props plugin documentation
+  - Added TL;DR Quick Reference with type conversion table
+  - Added Core Features (Type Parsing, Reactive Props, Signal Linking)
+  - Added Usage Patterns (Form Binding, Data Table, Modal, Shopping Cart)
+  - Added Best Practices and Troubleshooting guides
+  - Added Data Flow and Signal Linking diagrams
+
+- Added plugin documentation links to README.md (Router, Store, Attr, Props)
+- Added Quick Reference (TL;DR) section to docs/index.md
+- Updated bundle sizes to reflect accurate values
+- Fixed virtual DOM terminology in architecture documentation
+- Synchronized documentation across README.md and docs/index.md
+
+---
+
 ## v1.0.0-rc.9 🔧 (01-01-2026)
 
 ### 🚀 Core Architecture Improvements

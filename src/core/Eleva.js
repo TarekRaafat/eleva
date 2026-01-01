@@ -5,43 +5,129 @@ import { Signal } from "../modules/Signal.js";
 import { Emitter } from "../modules/Emitter.js";
 import { Renderer } from "../modules/Renderer.js";
 
+// ============================================================================
+// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// ============================================================================
+
+// -----------------------------------------------------------------------------
+// Configuration Types
+// -----------------------------------------------------------------------------
+
+/**
+ * @typedef {Object} ElevaConfig
+ * @property {boolean} [debug=false]
+ *           Enable debug mode for verbose logging
+ * @property {string} [prefix='e']
+ *           Prefix for component style scoping
+ * @property {boolean} [async=true]
+ *           Enable async component setup
+ */
+
+// -----------------------------------------------------------------------------
+// Component Types
+// -----------------------------------------------------------------------------
+
 /**
  * @typedef {Object} ComponentDefinition
- * @property {function(ComponentContext): (Record<string, unknown>|Promise<Record<string, unknown>>)} [setup]
+ * @property {SetupFunction} [setup]
  *           Optional setup function that initializes the component's state and returns reactive data
- * @property {(function(ComponentContext): string|Promise<string>)} template
- *           Required function that defines the component's HTML structure
- * @property {(function(ComponentContext): string)|string} [style]
+ * @property {TemplateFunction|string} template
+ *           Required function or string that defines the component's HTML structure
+ * @property {StyleFunction|string} [style]
  *           Optional function or string that provides component-scoped CSS styles
- * @property {Record<string, ComponentDefinition>} [children]
+ * @property {ChildrenMap} [children]
  *           Optional object defining nested child components
  */
 
 /**
+ * @callback SetupFunction
+ * @param {ComponentContext} ctx - The component context with props, emitter, and signal factory
+ * @returns {SetupResult|Promise<SetupResult>} Reactive data and lifecycle hooks
+ */
+
+/**
+ * @typedef {Record<string, unknown> & LifecycleHooks} SetupResult
+ *           Data returned from setup function, may include lifecycle hooks
+ */
+
+/**
+ * @callback TemplateFunction
+ * @param {ComponentContext} ctx - The component context
+ * @returns {string|Promise<string>} HTML template string
+ */
+
+/**
+ * @callback StyleFunction
+ * @param {ComponentContext} ctx - The component context
+ * @returns {string} CSS styles string
+ */
+
+/**
+ * @typedef {Record<string, ComponentDefinition|string>} ChildrenMap
+ *           Map of CSS selectors to component definitions or registered component names
+ */
+
+// -----------------------------------------------------------------------------
+// Context Types
+// -----------------------------------------------------------------------------
+
+/**
  * @typedef {Object} ComponentContext
- * @property {Record<string, unknown>} props
+ * @property {ComponentProps} props
  *           Component properties passed during mounting
  * @property {Emitter} emitter
  *           Event emitter instance for component event handling
- * @property {function<T>(value: T): Signal<T>} signal
+ * @property {SignalFactory} signal
  *           Factory function to create reactive Signal instances
- * @property {function(LifecycleHookContext): Promise<void>} [onBeforeMount]
+ */
+
+/**
+ * @typedef {Record<string, unknown>} ComponentProps
+ *           Properties passed to a component during mounting
+ */
+
+/**
+ * @callback SignalFactory
+ * @template T
+ * @param {T} initialValue - The initial value for the signal
+ * @returns {Signal<T>} A new Signal instance
+ */
+
+// -----------------------------------------------------------------------------
+// Lifecycle Hook Types
+// -----------------------------------------------------------------------------
+
+/**
+ * @typedef {Object} LifecycleHooks
+ * @property {LifecycleHook} [onBeforeMount]
  *           Hook called before component mounting
- * @property {function(LifecycleHookContext): Promise<void>} [onMount]
+ * @property {LifecycleHook} [onMount]
  *           Hook called after component mounting
- * @property {function(LifecycleHookContext): Promise<void>} [onBeforeUpdate]
+ * @property {LifecycleHook} [onBeforeUpdate]
  *           Hook called before component update
- * @property {function(LifecycleHookContext): Promise<void>} [onUpdate]
+ * @property {LifecycleHook} [onUpdate]
  *           Hook called after component update
- * @property {function(UnmountHookContext): Promise<void>} [onUnmount]
+ * @property {UnmountHook} [onUnmount]
  *           Hook called during component unmounting
+ */
+
+/**
+ * @callback LifecycleHook
+ * @param {LifecycleHookContext} ctx - Context with container and component data
+ * @returns {void|Promise<void>}
+ */
+
+/**
+ * @callback UnmountHook
+ * @param {UnmountHookContext} ctx - Context with cleanup resources
+ * @returns {void|Promise<void>}
  */
 
 /**
  * @typedef {Object} LifecycleHookContext
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} context
+ * @property {ComponentContext & SetupResult} context
  *           The component's reactive state and context data
  */
 
@@ -49,32 +135,91 @@ import { Renderer } from "../modules/Renderer.js";
  * @typedef {Object} UnmountHookContext
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} context
+ * @property {ComponentContext & SetupResult} context
  *           The component's reactive state and context data
- * @property {{
- *   watchers: Array<() => void>,    // Signal watcher cleanup functions
- *   listeners: Array<() => void>,   // Event listener cleanup functions
- *   children: Array<MountResult>    // Child component instances
- * }} cleanup
+ * @property {CleanupResources} cleanup
  *           Object containing cleanup functions and instances
  */
+
+/**
+ * @typedef {Object} CleanupResources
+ * @property {Array<UnsubscribeFunction>} watchers
+ *           Signal watcher cleanup functions
+ * @property {Array<UnsubscribeFunction>} listeners
+ *           Event listener cleanup functions
+ * @property {Array<MountResult>} children
+ *           Child component instances
+ */
+
+// -----------------------------------------------------------------------------
+// Mount Result Types
+// -----------------------------------------------------------------------------
 
 /**
  * @typedef {Object} MountResult
  * @property {HTMLElement} container
  *           The DOM element where the component is mounted
- * @property {ComponentContext} data
+ * @property {ComponentContext & SetupResult} data
  *           The component's reactive state and context data
- * @property {function(): Promise<void>} unmount
+ * @property {UnmountFunction} unmount
  *           Function to clean up and unmount the component
  */
 
 /**
+ * @callback UnmountFunction
+ * @returns {Promise<void>}
+ */
+
+/**
+ * @callback UnsubscribeFunction
+ * @returns {void|boolean}
+ */
+
+// -----------------------------------------------------------------------------
+// Plugin Types
+// -----------------------------------------------------------------------------
+
+/**
  * @typedef {Object} ElevaPlugin
- * @property {function(Eleva, Record<string, unknown>): void} install
+ * @property {PluginInstallFunction} install
  *           Function that installs the plugin into the Eleva instance
  * @property {string} name
  *           Unique identifier name for the plugin
+ * @property {PluginUninstallFunction} [uninstall]
+ *           Optional function to uninstall the plugin
+ */
+
+/**
+ * @callback PluginInstallFunction
+ * @param {Eleva} eleva - The Eleva instance
+ * @param {PluginOptions} options - Plugin configuration options
+ * @returns {void|Eleva|unknown} Optionally returns the Eleva instance or plugin result
+ */
+
+/**
+ * @callback PluginUninstallFunction
+ * @param {Eleva} eleva - The Eleva instance
+ * @returns {void}
+ */
+
+/**
+ * @typedef {Record<string, unknown>} PluginOptions
+ *           Configuration options passed to a plugin during installation
+ */
+
+// -----------------------------------------------------------------------------
+// Event Types
+// -----------------------------------------------------------------------------
+
+/**
+ * @callback EventHandler
+ * @param {Event} event - The DOM event object
+ * @returns {void}
+ */
+
+/**
+ * @typedef {'click'|'submit'|'input'|'change'|'focus'|'blur'|'keydown'|'keyup'|'keypress'|'mouseenter'|'mouseleave'|'mouseover'|'mouseout'|'mousedown'|'mouseup'|'touchstart'|'touchend'|'touchmove'|'scroll'|'resize'|'load'|'error'|string} DOMEventName
+ *           Common DOM event names (prefixed with @ in templates)
  */
 
 /**

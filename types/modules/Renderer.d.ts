@@ -1,4 +1,19 @@
 /**
+ * @typedef {Object} PatchOptions
+ * @property {boolean} [preserveStyles=true]
+ *           Whether to preserve style elements with data-e-style attribute
+ * @property {boolean} [preserveInstances=true]
+ *           Whether to preserve elements with _eleva_instance property
+ */
+/**
+ * @typedef {Map<string, Node>} KeyMap
+ *           Map of key attribute values to their corresponding DOM nodes
+ */
+/**
+ * @typedef {'ELEMENT_NODE'|'TEXT_NODE'|'COMMENT_NODE'|'DOCUMENT_FRAGMENT_NODE'} NodeTypeName
+ *           Common DOM node type names
+ */
+/**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
  *
@@ -14,20 +29,39 @@
  * It's particularly optimized for frequent updates and complex DOM structures.
  *
  * @example
+ * // Basic usage
  * const renderer = new Renderer();
  * const container = document.getElementById("app");
  * const newHtml = "<div>Updated content</div>";
  * renderer.patchDOM(container, newHtml);
+ *
+ * @example
+ * // With keyed elements for optimal list updates
+ * const listHtml = `
+ *   <ul>
+ *     <li key="item-1">First</li>
+ *     <li key="item-2">Second</li>
+ *     <li key="item-3">Third</li>
+ *   </ul>
+ * `;
+ * renderer.patchDOM(container, listHtml);
+ *
+ * @example
+ * // The renderer preserves Eleva-managed elements
+ * // Elements with _eleva_instance are not replaced during diffing
+ * // Style elements with data-e-style are preserved
  */
 export class Renderer {
     /**
      * A temporary container to hold the new HTML content while diffing.
+     * Reused across patch operations to minimize memory allocation.
      * @private
-     * @type {HTMLElement}
+     * @type {HTMLDivElement}
      */
     private _tempContainer;
     /**
      * Patches the DOM of the given container with the provided HTML string.
+     * Uses an optimized diffing algorithm to minimize DOM operations.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
@@ -35,6 +69,18 @@ export class Renderer {
      * @returns {void}
      * @throws {TypeError} If container is not an HTMLElement or newHtml is not a string.
      * @throws {Error} If DOM patching fails.
+     *
+     * @example
+     * // Update container content
+     * renderer.patchDOM(container, '<div class="updated">New content</div>');
+     *
+     * @example
+     * // Update list with keys for optimal diffing
+     * const items = ['a', 'b', 'c'];
+     * const html = items.map(item =>
+     *   `<li key="${item}">${item}</li>`
+     * ).join('');
+     * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
@@ -84,12 +130,13 @@ export class Renderer {
     private _isSameNode;
     /**
      * Creates a key map for the children of a parent node.
+     * Used for efficient O(1) lookup of keyed elements during diffing.
      *
      * @private
-     * @param {Array<Node>} children - The children of the parent node.
+     * @param {Array<ChildNode>} children - The children of the parent node.
      * @param {number} start - The start index of the children.
      * @param {number} end - The end index of the children.
-     * @returns {Map<string, Node>} A key map for the children.
+     * @returns {KeyMap} A key map for the children.
      */
     private _createKeyMap;
     /**
@@ -101,4 +148,22 @@ export class Renderer {
      */
     private _getNodeKey;
 }
+export type PatchOptions = {
+    /**
+     * Whether to preserve style elements with data-e-style attribute
+     */
+    preserveStyles?: boolean | undefined;
+    /**
+     * Whether to preserve elements with _eleva_instance property
+     */
+    preserveInstances?: boolean | undefined;
+};
+/**
+ * Map of key attribute values to their corresponding DOM nodes
+ */
+export type KeyMap = Map<string, Node>;
+/**
+ * Common DOM node type names
+ */
+export type NodeTypeName = "ELEMENT_NODE" | "TEXT_NODE" | "COMMENT_NODE" | "DOCUMENT_FRAGMENT_NODE";
 //# sourceMappingURL=Renderer.d.ts.map
