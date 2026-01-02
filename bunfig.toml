@@ -11,3 +11,8 @@ coverageDir = "./test/coverage"
 coverageSkipTestFiles = true
 coverageReporter = ["text", "lcov"]
 coverageIgnoreSourcemaps = true
+coveragePathIgnorePatterns = [
+  "dist/**",
+  "src/plugins/**",
+  "test/**"
+]
