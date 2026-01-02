@@ -1,22 +1,30 @@
 # Experimentation Lab
 .exp
-docs/index.html
-docs/js
-docs/styles
-examples/index.html
 
 # Dependencies
 node_modules
 
-# Cleanup
+# OS
 .DS_Store
+Thumbs.db
+
+# Editor/IDE
 .vscode
+.idea/
+*.swp
+*.swo
 
 # Environment variables
 .env
+*.local
 
-# Ignore coverage reports
-test/source/reports
-test/source/coverage
-test/build/reports
-test/build/coverage
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage reports
+coverage/
+test/coverage/
+
+# Performance test archives
+test/__results__/performance/archive/

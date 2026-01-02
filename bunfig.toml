@@ -1,0 +1,13 @@
+# Bun configuration for Eleva.js
+
+[test]
+# Test configuration
+preload = ["./test/setup.ts"]
+timeout = 30000
+bail = false
+
+# Coverage configuration (enabled via --coverage flag)
+coverageDir = "./test/coverage"
+coverageSkipTestFiles = true
+coverageReporter = ["text", "lcov"]
+coverageIgnoreSourcemaps = true
