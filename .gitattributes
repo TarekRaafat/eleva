@@ -1,0 +1,5 @@
+# Exclude from GitHub language statistics
+test/** linguist-vendored
+types/** linguist-vendored
+docs/** linguist-documentation
+*.d.ts linguist-vendored
