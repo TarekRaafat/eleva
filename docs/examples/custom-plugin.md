@@ -63,7 +63,7 @@ npm init -y
 npm install eleva --save-peer
 
 # Install development dependencies
-npm install --save-dev vite @types/node
+npm install --save-dev vite vitest @types/node
 ```
 
 ### Step 2: Create Your Plugin
@@ -74,7 +74,7 @@ Create `src/index.js`:
 const LoggerPlugin = {
   name: 'logger',
   install(eleva, options) {
-    const { level = 'info', prefix = '[Eleva]' } = options;
+    const { level = 'info', prefix = '[Eleva]' } = options || {};
     
     // Add logging methods to Eleva instance
     eleva.log = {
@@ -158,12 +158,13 @@ Create `vite.config.js`:
 
 ```js
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
 export default defineConfig({
   root: 'demo',
   build: {
     lib: {
-      entry: 'src/index.js',
+      entry: resolve(__dirname, '../src/index.js'),
       formats: ['es', 'umd'],
       name: 'ElevaLoggerPlugin'
     }
@@ -265,7 +266,7 @@ const ComposedPlugin = {
 Create `test/plugin.test.js`:
 
 ```js
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Eleva from 'eleva';
 import LoggerPlugin from '../src/index.js';
 
@@ -338,12 +339,12 @@ describe('Logger Plugin', () => {
 2. **Error Handling**
    ```js
    install(eleva) {
-    try {
-      // Plugin implementation
-    } catch (error) {
-      console.error('Plugin installation failed:', error);
-      throw error;
-    }
+     try {
+       // Plugin implementation
+     } catch (error) {
+       console.error('Plugin installation failed:', error);
+       throw error;
+     }
    }
    ```
 
@@ -388,6 +389,10 @@ export default LoggerPlugin;
 - Join the [Eleva community](https://github.com/TarekRaafat/eleva/discussions)
 - Share your plugins
 - Contribute to the ecosystem
-- Follow [@elevajs](https://twitter.com/elevajs) for updates
+- Check out the [official plugins](../plugins/index.md) for inspiration
 
 Remember: The best plugins are those that solve real problems while maintaining Eleva's philosophy of simplicity and performance.
+
+---
+
+[← Back to Examples](./index.md) | [Previous: Simple Blog](./apps/blog.md)

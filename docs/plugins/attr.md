@@ -12,10 +12,10 @@ The Attr plugin provides intelligent attribute binding for Eleva components, aut
 
 ```javascript
 import Eleva from "eleva";
-import { AttrPlugin } from "eleva/plugins";
+import { Attr } from "eleva/plugins";
 
-const app = new Eleva("App", document.getElementById("app"));
-app.use(AttrPlugin);  // Enable attribute binding
+const app = new Eleva("App");
+app.use(Attr);  // Enable attribute binding
 ```
 
 ### API Cheatsheet
@@ -27,6 +27,9 @@ app.use(AttrPlugin);  // Enable attribute binding
 | **Boolean Attributes** | `disabled="{{ isDisabled }}"` | Presence-based attributes |
 | **Dynamic Properties** | `value="{{ inputValue }}"` | DOM property binding |
 | **Update Method** | `app.updateElementAttributes(old, new)` | Manual attribute sync |
+
+> **Context Rule:** Inside `{{ }}`, access properties directly without `ctx.` prefix.
+> Use `{{ isLoading.value }}` not `{{ ctx.isLoading.value }}`.
 
 ### Configuration Options
 
@@ -61,10 +64,10 @@ bun add eleva
 
 ```html
 <!-- Core + All Plugins -->
-<script src="https://unpkg.com/eleva/dist/eleva-plugins.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 
 <!-- Attr Plugin Only -->
-<script src="https://unpkg.com/eleva/dist/plugins/attr.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
 ```
 
 ---
@@ -75,16 +78,16 @@ bun add eleva
 
 ```javascript
 import Eleva from "eleva";
-import { AttrPlugin } from "eleva/plugins";
+import { Attr } from "eleva/plugins";
 
 // Create app instance
-const app = new Eleva("MyApp", document.getElementById("app"));
+const app = new Eleva("MyApp");
 
 // Install Attr plugin with default options
-app.use(AttrPlugin);
+app.use(Attr);
 
 // Or with custom configuration
-app.use(AttrPlugin, {
+app.use(Attr, {
   enableAria: true,      // Handle ARIA attributes
   enableData: true,      // Handle data-* attributes
   enableBoolean: true,   // Handle boolean attributes
@@ -95,7 +98,7 @@ app.use(AttrPlugin, {
 ### First Component with Attributes
 
 ```javascript
-const AccessibleButton = {
+app.component("AccessibleButton", {
   setup({ signal }) {
     const isLoading = signal(false);
     const buttonLabel = signal("Submit Form");
@@ -110,21 +113,19 @@ const AccessibleButton = {
 
     return { isLoading, buttonLabel, handleClick };
   },
-  template({ isLoading, buttonLabel }) {
-    return `
-      <button
-        aria-label="{{ buttonLabel.value }}"
-        aria-busy="{{ isLoading.value }}"
-        disabled="{{ isLoading.value }}"
-        @click="handleClick"
-      >
-        {{ isLoading.value ? 'Loading...' : buttonLabel.value }}
-      </button>
-    `;
-  }
-};
+  template: (ctx) => `
+    <button
+      aria-label="{{ buttonLabel.value }}"
+      aria-busy="{{ isLoading.value }}"
+      disabled="{{ isLoading.value }}"
+      @click="handleClick"
+    >
+      {{ isLoading.value ? 'Loading...' : buttonLabel.value }}
+    </button>
+  `
+});
 
-app.component("accessible-button", AccessibleButton).mount();
+app.mount(document.getElementById("app"), "AccessibleButton");
 ```
 
 ---
@@ -550,7 +551,7 @@ const SelectAllComponent = {
 ### Plugin Options
 
 ```javascript
-app.use(AttrPlugin, {
+app.use(Attr, {
   enableAria: true,      // Enable ARIA attribute handling
   enableData: true,      // Enable data-* attribute handling
   enableBoolean: true,   // Enable boolean attribute handling
@@ -562,7 +563,7 @@ app.use(AttrPlugin, {
 
 ```javascript
 // Only ARIA attributes (accessibility-focused)
-app.use(AttrPlugin, {
+app.use(Attr, {
   enableAria: true,
   enableData: false,
   enableBoolean: false,
@@ -570,7 +571,7 @@ app.use(AttrPlugin, {
 });
 
 // Only data attributes (data storage)
-app.use(AttrPlugin, {
+app.use(Attr, {
   enableAria: false,
   enableData: true,
   enableBoolean: false,
@@ -578,7 +579,7 @@ app.use(AttrPlugin, {
 });
 
 // Form handling (boolean + dynamic)
-app.use(AttrPlugin, {
+app.use(Attr, {
   enableAria: false,
   enableData: false,
   enableBoolean: true,
@@ -590,14 +591,14 @@ app.use(AttrPlugin, {
 
 ## API Reference
 
-### AttrPlugin
+### Attr
 
 The main plugin object to install on your Eleva application.
 
 ```javascript
-import { AttrPlugin } from "eleva/plugins";
+import { Attr } from "eleva/plugins";
 
-app.use(AttrPlugin, options);
+app.use(Attr, options);
 ```
 
 #### Options
@@ -1321,19 +1322,19 @@ const safeMessage = () => encodeURIComponent(message.value);
 1. **Check installation order**:
    ```javascript
    const app = new Eleva("App", container);
-   app.use(AttrPlugin);  // Must be before mount()
+   app.use(Attr);  // Must be before mount()
    app.component("my-component", MyComponent).mount();
    ```
 
 2. **Verify plugin is imported**:
    ```javascript
-   import { AttrPlugin } from "eleva/plugins";
+   import { Attr } from "eleva/plugins";
    // or
-   const { AttrPlugin } = window.ElevaPlugins;
+   const { Attr } = window.ElevaPlugins;
    ```
 
 3. **Check for conflicting plugins**:
-   Some plugins may override attribute handling. Install AttrPlugin first.
+   Some plugins may override attribute handling. Install Attr first.
 
 ### Debugging Tips
 
@@ -1420,7 +1421,11 @@ console.log('ARIA:', el.getAttribute('aria-label'));
 
 ### Plugin Statistics
 
-- **Size**: ~1KB minified
+- **Size**: ~2.4KB minified
 - **Dependencies**: None (uses core Eleva only)
 - **Browser Support**: All modern browsers
 - **Configuration Options**: 4
+
+---
+
+[← Back to Plugins](./index.md) | [Back to Main Docs](../index.md) | [Next: Props Plugin →](./props.md)

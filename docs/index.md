@@ -76,12 +76,14 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### Template Syntax Cheatsheet
 
-| Syntax | Purpose | Example |
-|--------|---------|---------|
-| `${expr}` | Static interpolation (one-time) | `${user.name}` |
-| `{{ expr }}` | Reactive interpolation | `{{ count.value }}` |
-| `@event` | Event binding | `@click="handler"` |
-| `:prop` | Pass prop to child | `:title="${todo.title}"` |
+> **Quick Rule:** `${}` needs `ctx.` — everything else doesn't.
+
+| Syntax | Purpose | `ctx.`? | Example |
+|--------|---------|:-------:|---------|
+| `${expr}` | Static interpolation | ✓ | `${ctx.user.name}` |
+| `{{ expr }}` | Reactive interpolation | ✗ | `{{ count.value }}` |
+| `@event` | Event binding | ✗ | `@click="handleClick"` |
+| `:prop` | Pass prop to child | ✓ | `:title="${ctx.todo.title}"` |
 
 ### Lifecycle Hooks
 
@@ -99,7 +101,7 @@ app.mount(document.getElementById("app"), "Counter");
 |--------|---------|------|------|
 | `Attr` | ARIA, data-*, boolean attributes | ~2.4KB | [→](./plugins/attr.md) |
 | `Props` | Complex prop parsing & reactivity | ~4.2KB | [→](./plugins/props.md) |
-| `Router` | Client-side routing & guards | ~13KB | [→](./plugins/router.md) |
+| `Router` | Client-side routing & guards | ~15KB | [→](./plugins/router.md) |
 | `Store` | Global state management | ~6KB | [→](./plugins/store.md) |
 
 ---
@@ -119,6 +121,7 @@ app.mount(document.getElementById("app"), "Counter");
   - [6. Core Concepts](#6-core-concepts)
     - [TemplateEngine](#templateengine)
     - [Template Interpolation](#template-interpolation)
+      - [Common Mistakes](#common-mistakes)
     - [Setup Context vs. Event Context](#setup-context-vs-event-context)
       - [Setup Context](#setup-context)
       - [Event Context](#event-context)
@@ -144,7 +147,7 @@ app.mount(document.getElementById("app"), "Counter");
     - [Plugin Structure](#plugin-structure)
     - [Installing Plugins](#installing-plugins)
     - [Plugin Capabilities](#plugin-capabilities)
-    - [Best Practices](#best-practices)
+    - [Plugin Development Best Practices](#plugin-development-best-practices)
     - [Example Plugin](#example-plugin)
     - [Plugin Lifecycle](#plugin-lifecycle)
     - [TypeScript Support](#typescript-support)
@@ -158,6 +161,16 @@ app.mount(document.getElementById("app"), "Counter");
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
   - [10. Best Practices \& Use Cases](#10-best-practices--use-cases)
     - [Best Practices](#best-practices-1)
+      - [Component Structure Order](#component-structure-order)
+      - [Setup Function: Patterns & Best Practices](#setup-function-patterns--best-practices)
+      - [Lifecycle Hooks: Patterns & Best Practices](#lifecycle-hooks-patterns--best-practices)
+      - [Signal Reactivity: Patterns & Best Practices](#signal-reactivity-patterns--best-practices)
+      - [Async Patterns: Setup, Template & Style](#async-patterns-setup-template--style)
+      - [Style Property: String vs Function](#style-property-string-vs-function)
+      - [Template Property: Patterns & Best Practices](#template-property-patterns--best-practices)
+      - [Children Property: Patterns & Best Practices](#children-property-patterns--best-practices)
+      - [Component Communication: Props vs Emitter vs Store](#component-communication-props-vs-emitter-vs-store)
+      - [General Guidelines](#general-guidelines)
     - [Use Cases](#use-cases)
   - [11. Examples and Tutorials](#11-examples-and-tutorials)
   - [12. FAQ](#12-faq)
@@ -178,53 +191,7 @@ app.mount(document.getElementById("app"), "Counter");
 
 Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Its goal is to empower developers who value simplicity, performance, and full control over their application to build modular and high-performance apps without the overhead of larger frameworks.
 
-### Quick Reference (TL;DR)
-
-```javascript
-// 1. Create an Eleva instance
-const app = new Eleva("MyApp");
-
-// 2. Define a component
-app.component("Counter", {
-  setup({ signal }) {
-    const count = signal(0);                    // Create reactive state
-    return {
-      count,
-      onMount: () => console.log("Mounted!")    // Lifecycle hook
-    };
-  },
-  template: (ctx) => `
-    <div>
-      <p>Count: ${ctx.count.value}</p>
-      <button @click="() => count.value++">+</button>
-    </div>
-  `
-});
-
-// 3. Mount to DOM
-app.mount(document.getElementById("app"), "Counter");
-```
-
-**Core API Summary:**
-| Method | Description |
-|--------|-------------|
-| `new Eleva(name)` | Create an app instance |
-| `app.component(name, definition)` | Register a component |
-| `app.mount(element, componentName, props?)` | Mount component to DOM (returns Promise) |
-| `app.use(plugin, options?)` | Install a plugin |
-| `signal(initialValue)` | Create reactive state (in setup) |
-| `emitter.emit(event, data)` | Emit custom events |
-| `emitter.on(event, handler)` | Listen to events |
-
-**Lifecycle Hooks:** `onBeforeMount`, `onMount`, `onBeforeUpdate`, `onUpdate`, `onUnmount`
-
-**Template Syntax:**
-- `${expr}` - One-time static interpolation
-- `{{ expr }}` - Dynamic reactive interpolation
-- `@click="handler"` - Event binding
-- `:prop="value"` - Prop passing to children
-
-**Built-in Plugins:** `Attr`, `Props`, `Router`, `Store` (import from `eleva/plugins`)
+> **New to Eleva?** Check out the [TL;DR - Quick Start](#tldr---quick-start) section above for a 30-second setup guide and API cheatsheet.
 
 ---
 
@@ -301,7 +268,7 @@ const app = new Eleva("MyApp");
 import Eleva from 'eleva';
 import { Attr } from 'eleva/plugins/attr';      // ~2.4KB
 import { Props } from 'eleva/plugins/props';    // ~4.2KB
-import { Router } from 'eleva/plugins/router';  // ~13KB
+import { Router } from 'eleva/plugins/router';  // ~15KB
 import { Store } from 'eleva/plugins/store';    // ~6KB
 
 const app = new Eleva("MyApp");
@@ -418,6 +385,54 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 
 - Use **`${...}`** for one-time, static content.
 - Use **`{{...}}`** for dynamic, reactive data binding.
+
+> **Important: Context Difference**
+>
+> **Simple Rule:** If it's inside `"quotes"`, no `ctx.` needed. If it's a `${template literal}`, use `ctx.`
+>
+> | Syntax | Inside Quotes? | Uses `ctx.`? | Example |
+> |--------|---------------|--------------|---------|
+> | `${...}` | No | Yes | `${ctx.count.value}` |
+> | `{{ ... }}` | Yes | No | `{{ count.value }}` |
+> | `@event="..."` | Yes | No | `@click="increment"` |
+> | `:prop="${...}"` | No (it's a `${}`) | Yes | `:data="${ctx.items.value}"` |
+>
+> ```js
+> template: (ctx) => `
+>   <p>Static: ${ctx.count.value}</p>
+>   <p>Reactive: {{ count.value }}</p>
+>   <button @click="increment">+</button>
+>   <child-component :data="${ctx.items.value}"></child-component>
+> `
+> ```
+>
+> **Why?** Template literals (`${}`) are evaluated by JavaScript where `ctx` is the function parameter. Quoted content (`{{ }}`, `@event`) is evaluated by Eleva's TemplateEngine which already has your context unwrapped.
+
+#### Common Mistakes
+
+```js
+// ❌ WRONG: Using ctx. inside {{ }}
+template: (ctx) => `<p>{{ ctx.count.value }}</p>`
+
+// ✓ CORRECT: No ctx. inside {{ }}
+template: (ctx) => `<p>{{ count.value }}</p>`
+```
+
+```js
+// ❌ WRONG: Using ctx. in event handlers
+template: (ctx) => `<button @click="ctx.handleClick">Click</button>`
+
+// ✓ CORRECT: No ctx. in event handlers
+template: (ctx) => `<button @click="handleClick">Click</button>`
+```
+
+```js
+// ❌ WRONG: Missing ctx. in template literals
+template: (ctx) => `<p>Count: ${count.value}</p>`
+
+// ✓ CORRECT: Use ctx. in template literals
+template: (ctx) => `<p>Count: ${ctx.count.value}</p>`
+```
 
 ### Setup Context vs. Event Context
 
@@ -1015,22 +1030,60 @@ Eleva supports various selector types for defining child components in the `chil
 
 ### Style Injection & Scoped CSS
 
-Eleva supports component-scoped styling through an optional `style` function defined in a component.
-The styles are injected into the component's container to avoid global leakage.
+Eleva supports component-scoped styling through an optional `style` property. The styles are injected into the component's container to avoid global leakage.
 
-_Example:_
+The `style` property can be defined in two ways:
+
+#### 1. Static Styles (String)
+
+Use a string when your styles don't depend on component state. This is slightly more performant since no function call is needed.
 
 ```js
 const MyComponent = {
-  style: (ctx) => `
+  template: () => `<div class="my-component">Styled Component</div>`,
+  style: `
     .my-component {
       color: blue;
-      padding: {{ctx.padding}}rem;
+      padding: 1rem;
     }
-  `,
-  template: (ctx) => `<div class="my-component">Styled Component</div>`,
+  `
 };
 ```
+
+#### 2. Dynamic Styles (Function)
+
+Use a function when your styles need to react to component state. The function receives the component context (`ctx`) and can use template interpolation.
+
+```js
+const MyComponent = {
+  setup: ({ signal }) => {
+    const isActive = signal(false);
+    const padding = signal(2);
+    return { isActive, padding };
+  },
+  template: (ctx) => `
+    <div class="my-component" @click="() => isActive.value = !isActive.value">
+      Click to toggle (${ctx.isActive.value ? 'Active' : 'Inactive'})
+    </div>
+  `,
+  style: (ctx) => `
+    .my-component {
+      color: ${ctx.isActive.value ? 'green' : 'gray'};
+      padding: ${ctx.padding.value}rem;
+      transition: color 0.3s ease;
+    }
+  `
+};
+```
+
+**When to use which:**
+
+| Use Case | Style Type | Example |
+|----------|------------|---------|
+| Fixed colors, layouts, typography | String | `style: \`.btn { color: blue; }\`` |
+| Theme-based colors | Function | `style: (ctx) => \`.btn { color: ${ctx.theme.value}; }\`` |
+| State-dependent styles | Function | `style: (ctx) => \`.item { opacity: ${ctx.isVisible.value ? 1 : 0}; }\`` |
+| Responsive values from signals | Function | `style: (ctx) => \`.box { width: ${ctx.width.value}px; }\`` |
 
 ### Inter-Component Communication
 
@@ -1283,7 +1336,7 @@ Plugins can:
    }
    ```
 
-### Best Practices
+### Plugin Development Best Practices
 
 1. **Naming Conventions**
    - Use unique, descriptive names for plugins
@@ -1711,14 +1764,14 @@ app.use(Store, {
 - **Core framework only**: ~6KB (minified)
 - **Core + Attr plugin**: ~8KB (minified)
 - **Core + Props plugin**: ~10KB (minified)
-- **Core + Router plugin**: ~19KB (minified)
+- **Core + Router plugin**: ~21KB (minified)
 - **Core + Store plugin**: ~12KB (minified)
 - **Core + All plugins**: ~25KB (minified)
 
 **Individual Plugin Sizes:**
 - **Attr plugin only**: ~2.4KB (minified)
 - **Props plugin only**: ~4.2KB (minified)
-- **Router plugin only**: ~13KB (minified)
+- **Router plugin only**: ~15KB (minified)
 - **Store plugin only**: ~6KB (minified)
 
 ---
@@ -1737,9 +1790,1882 @@ app.use(Store, {
 
 ### Best Practices
 
+#### Component Structure Order
+
+For consistency and readability, always define component properties in this order:
+
+```js
+app.component("MyComponent", {
+  // 1. Setup - Initialize state and functions
+  setup({ signal, emitter, props }) {
+    const state = signal(initialValue);
+    return { state, /* ...other exports */ };
+  },
+
+  // 2. Template - Define the component's HTML structure
+  template: (ctx) => `
+    <div>${ctx.state.value}</div>
+  `,
+
+  // 3. Style - Component-scoped CSS (optional)
+  style: `
+    div { color: blue; }
+  `,
+
+  // 4. Children - Child component mappings (optional)
+  children: {
+    ".child-container": "ChildComponent"
+  }
+});
+```
+
+**Why this order?**
+- `setup` initializes the data that `template` and `style` might reference
+- `template` defines the structure that `style` will style
+- `style` applies to the template's elements
+- `children` maps to elements created in the template
+
+#### Setup Function: Patterns & Best Practices
+
+The `setup` function initializes your component's state, functions, and lifecycle hooks. Here's how to use it effectively.
+
+##### When to Use Setup
+
+| Scenario | Use Setup? | Example |
+|----------|------------|---------|
+| Component has reactive state | ✅ Yes | `signal(0)`, `signal([])` |
+| Component handles events | ✅ Yes | Click handlers, form submission |
+| Component uses lifecycle hooks | ✅ Yes | `onMount`, `onUnmount` |
+| Component receives props | ✅ Yes | Access via `props` parameter |
+| Component emits events | ✅ Yes | Access via `emitter` parameter |
+| Purely static display | ❌ Optional | Can omit setup entirely |
+
+```js
+// ✅ With setup - component has state and behavior
+app.component("Counter", {
+  setup: ({ signal }) => ({
+    count: signal(0),
+    increment: function() { this.count.value++; }
+  }),
+  template: (ctx) => `<button @click="increment">${ctx.count.value}</button>`
+});
+
+// ✅ Without setup - purely static component
+app.component("Logo", {
+  template: () => `<img src="/logo.png" alt="Logo" />`
+});
+```
+
+##### Destructuring the Context Parameter
+
+The setup function receives a context object with utilities. Destructure only what you need:
+
+```js
+// ✅ Destructure only what's needed
+setup: ({ signal }) => {
+  const count = signal(0);
+  return { count };
+}
+
+// ✅ Multiple utilities
+setup: ({ signal, emitter, props }) => {
+  const items = signal(props.initialItems || []);
+  emitter.on("refresh", () => loadItems());
+  return { items };
+}
+
+// ✅ Full context when needed (rare)
+setup: (context) => {
+  const { signal, emitter, props, onMount, onUnmount } = context;
+  // ... use all utilities
+}
+```
+
+**Available context properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `signal` | Function | Create reactive state: `signal(initialValue)` |
+| `emitter` | Object | Event bus: `emit()`, `on()`, `off()` |
+| `props` | Object | Props passed from parent component |
+| `onBeforeMount` | Function | Hook: before component mounts |
+| `onMount` | Function | Hook: after component mounts |
+| `onBeforeUpdate` | Function | Hook: before re-render |
+| `onUpdate` | Function | Hook: after re-render |
+| `onUnmount` | Function | Hook: before component destroys |
+
+##### Organizing Setup Logic
+
+Structure your setup function in this order for consistency:
+
+```js
+setup: ({ signal, emitter, props, onMount, onUnmount }) => {
+  // 1. Props extraction (if needed)
+  const { userId, initialData } = props;
+
+  // 2. Reactive state (signals)
+  const items = signal(initialData || []);
+  const loading = signal(false);
+  const error = signal(null);
+  const selectedId = signal(null);
+
+  // 3. Computed/derived values (functions that read signals)
+  const getSelectedItem = () => items.value.find(i => i.id === selectedId.value);
+  const getItemCount = () => items.value.length;
+
+  // 4. Actions/handlers (functions that modify state)
+  async function loadItems() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const response = await fetch(`/api/users/${userId}/items`);
+      items.value = await response.json();
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  }
+
+  function selectItem(id) {
+    selectedId.value = id;
+    emitter.emit("item:selected", getSelectedItem());
+  }
+
+  function deleteItem(id) {
+    items.value = items.value.filter(i => i.id !== id);
+  }
+
+  // 5. Event subscriptions
+  const unsubscribe = emitter.on("refresh:items", loadItems);
+
+  // 6. Lifecycle hooks
+  onMount(() => {
+    loadItems();
+    console.log("Component mounted");
+  });
+
+  onUnmount(() => {
+    unsubscribe();
+    console.log("Component unmounted");
+  });
+
+  // 7. Return public interface
+  return {
+    // State
+    items,
+    loading,
+    error,
+    selectedId,
+    // Computed
+    getSelectedItem,
+    getItemCount,
+    // Actions
+    loadItems,
+    selectItem,
+    deleteItem
+  };
+}
+```
+
+##### Setup Return Value: What to Export
+
+Only return what the template needs:
+
+```js
+// ❌ Avoid: Returning everything
+setup: ({ signal }) => {
+  const count = signal(0);
+  const internalCache = new Map();  // Not needed in template
+  const helperFn = () => { /* ... */ };  // Only used internally
+
+  function increment() {
+    helperFn();
+    count.value++;
+    internalCache.set(count.value, Date.now());
+  }
+
+  return { count, increment, internalCache, helperFn };  // Too much!
+}
+
+// ✅ Better: Return only template-facing API
+setup: ({ signal }) => {
+  const count = signal(0);
+  const internalCache = new Map();
+  const helperFn = () => { /* ... */ };
+
+  function increment() {
+    helperFn();
+    count.value++;
+    internalCache.set(count.value, Date.now());
+  }
+
+  return { count, increment };  // Only what template needs
+}
+```
+
+##### Arrow Function vs Regular Function
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Arrow with implicit return** | Simple state, no logic | `setup: ({ signal }) => ({ count: signal(0) })` |
+| **Arrow with block body** | Most components | `setup: ({ signal }) => { ... return { }; }` |
+| **Regular function** | Need `this` binding (rare) | `setup: function({ signal }) { ... }` |
+
+```js
+// ✅ Arrow with implicit return - simplest components
+app.component("SimpleCounter", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `<p>${ctx.count.value}</p>`
+});
+
+// ✅ Arrow with block - most common, recommended
+app.component("Counter", {
+  setup: ({ signal }) => {
+    const count = signal(0);
+    const increment = () => count.value++;
+    const decrement = () => count.value--;
+    return { count, increment, decrement };
+  },
+  template: (ctx) => `
+    <button @click="decrement">-</button>
+    <span>${ctx.count.value}</span>
+    <button @click="increment">+</button>
+  `
+});
+```
+
+##### Setup Decision Guide
+
+| Scenario | Recommendation |
+|----------|----------------|
+| No state, no events, no props | Omit setup entirely |
+| Just one or two signals | Arrow with implicit return |
+| Multiple signals + functions | Arrow with block body |
+| Need lifecycle hooks | Arrow with block body |
+| Complex async operations | Arrow with block, organize by category |
+| Subscribing to events | Remember to unsubscribe in `onUnmount` |
+
+#### Lifecycle Hooks: Patterns & Best Practices
+
+Lifecycle hooks let you run code at specific points in a component's life. Here's how to use them effectively.
+
+##### Available Hooks
+
+| Hook | When Called | Common Use Cases |
+|------|-------------|------------------|
+| `onBeforeMount` | Before component renders to DOM | Validate props, prepare data |
+| `onMount` | After component renders to DOM | Fetch data, set up subscriptions, DOM access |
+| `onBeforeUpdate` | Before component re-renders | Compare old/new state, cancel updates |
+| `onUpdate` | After component re-renders | DOM measurements, third-party library sync |
+| `onUnmount` | Before component is destroyed | Cleanup subscriptions, timers, listeners |
+
+##### Execution Order
+
+```
+Component Created
+    │
+    ▼
+┌─────────────────┐
+│ onBeforeMount   │  ← Props validated, initial data ready
+└────────┬────────┘
+         │
+    ▼ (DOM renders)
+         │
+┌─────────────────┐
+│ onMount         │  ← DOM available, fetch data, set up listeners
+└────────┬────────┘
+         │
+    ▼ (User interacts, state changes)
+         │
+┌─────────────────┐
+│ onBeforeUpdate  │  ← Before re-render
+└────────┬────────┘
+         │
+    ▼ (DOM updates)
+         │
+┌─────────────────┐
+│ onUpdate        │  ← After re-render
+└────────┬────────┘
+         │
+    ▼ (Component removed)
+         │
+┌─────────────────┐
+│ onUnmount       │  ← Cleanup everything
+└─────────────────┘
+```
+
+##### onMount: The Most Common Hook
+
+Use `onMount` for initialization that requires the DOM or async operations:
+
+```js
+setup: ({ signal, onMount }) => {
+  const users = signal([]);
+  const loading = signal(true);
+  const error = signal(null);
+
+  onMount(async () => {
+    try {
+      const response = await fetch("/api/users");
+      users.value = await response.json();
+    } catch (err) {
+      error.value = err.message;
+    } finally {
+      loading.value = false;
+    }
+  });
+
+  return { users, loading, error };
+}
+```
+
+**Common onMount use cases:**
+- Fetching initial data from APIs
+- Setting up event listeners (window, document)
+- Initializing third-party libraries
+- Starting timers or intervals
+- Focusing input elements
+
+##### onUnmount: Essential for Cleanup
+
+**Always clean up** what you set up in `onMount`:
+
+```js
+setup: ({ signal, onMount, onUnmount }) => {
+  const windowWidth = signal(window.innerWidth);
+  let intervalId = null;
+  let resizeHandler = null;
+
+  onMount(() => {
+    // Set up resize listener
+    resizeHandler = () => { windowWidth.value = window.innerWidth; };
+    window.addEventListener("resize", resizeHandler);
+
+    // Set up interval
+    intervalId = setInterval(() => {
+      console.log("Tick");
+    }, 1000);
+  });
+
+  onUnmount(() => {
+    // ✅ Clean up everything!
+    window.removeEventListener("resize", resizeHandler);
+    clearInterval(intervalId);
+  });
+
+  return { windowWidth };
+}
+```
+
+**What to clean up in onUnmount:**
+| Resource | Cleanup Method |
+|----------|----------------|
+| Event listeners | `removeEventListener()` |
+| Timers | `clearTimeout()`, `clearInterval()` |
+| Subscriptions | Call unsubscribe function |
+| WebSocket | `socket.close()` |
+| AbortController | `controller.abort()` |
+| Third-party libraries | Library-specific destroy method |
+
+##### onBeforeMount: Validation & Preparation
+
+Use for synchronous preparation before rendering:
+
+```js
+setup: ({ props, signal, onBeforeMount }) => {
+  const isValid = signal(true);
+  const preparedData = signal(null);
+
+  onBeforeMount(() => {
+    // Validate required props
+    if (!props.userId) {
+      console.error("userId prop is required");
+      isValid.value = false;
+      return;
+    }
+
+    // Prepare/transform data synchronously
+    preparedData.value = {
+      id: props.userId,
+      timestamp: Date.now()
+    };
+  });
+
+  return { isValid, preparedData };
+}
+```
+
+##### onBeforeUpdate & onUpdate: Re-render Hooks
+
+Use for comparing state or syncing with external systems:
+
+```js
+setup: ({ signal, onBeforeUpdate, onUpdate }) => {
+  const count = signal(0);
+  let previousCount = 0;
+
+  onBeforeUpdate(() => {
+    // Capture previous value before re-render
+    previousCount = count.value;
+  });
+
+  onUpdate(() => {
+    // Compare after re-render
+    if (count.value !== previousCount) {
+      console.log(`Count changed: ${previousCount} → ${count.value}`);
+    }
+
+    // Sync with third-party library after DOM updates
+    if (window.Chart) {
+      window.Chart.update();
+    }
+  });
+
+  return { count };
+}
+```
+
+##### Async Operations in Hooks
+
+Handle async operations properly with cleanup:
+
+```js
+setup: ({ signal, onMount, onUnmount }) => {
+  const data = signal(null);
+  const loading = signal(true);
+
+  // AbortController for cancellable fetch
+  let abortController = null;
+
+  onMount(async () => {
+    abortController = new AbortController();
+
+    try {
+      const response = await fetch("/api/data", {
+        signal: abortController.signal
+      });
+      data.value = await response.json();
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Fetch failed:", err);
+      }
+    } finally {
+      loading.value = false;
+    }
+  });
+
+  onUnmount(() => {
+    // Cancel pending request on unmount
+    if (abortController) {
+      abortController.abort();
+    }
+  });
+
+  return { data, loading };
+}
+```
+
+##### Combining Multiple Hooks
+
+Organize hooks logically within setup:
+
+```js
+setup: ({ signal, emitter, onBeforeMount, onMount, onUpdate, onUnmount }) => {
+  // State
+  const users = signal([]);
+  const selectedId = signal(null);
+
+  // Refs for cleanup
+  let unsubscribe = null;
+  let pollInterval = null;
+
+  // Lifecycle hooks (in execution order)
+  onBeforeMount(() => {
+    console.log("Preparing component...");
+  });
+
+  onMount(() => {
+    // Initial data fetch
+    fetchUsers();
+
+    // Set up polling
+    pollInterval = setInterval(fetchUsers, 30000);
+
+    // Subscribe to events
+    unsubscribe = emitter.on("user:refresh", fetchUsers);
+  });
+
+  onUpdate(() => {
+    console.log("Component updated, users:", users.value.length);
+  });
+
+  onUnmount(() => {
+    // Clean up everything
+    clearInterval(pollInterval);
+    if (unsubscribe) unsubscribe();
+  });
+
+  // Functions
+  async function fetchUsers() {
+    const response = await fetch("/api/users");
+    users.value = await response.json();
+  }
+
+  return { users, selectedId, fetchUsers };
+}
+```
+
+##### Lifecycle Anti-Patterns
+
+```js
+// ❌ DON'T: Heavy synchronous work in onBeforeMount
+onBeforeMount(() => {
+  // This blocks rendering!
+  const result = heavyComputation(millionItems);
+});
+
+// ❌ DON'T: Forget cleanup in onUnmount
+onMount(() => {
+  window.addEventListener("scroll", handleScroll);
+  // Memory leak if not removed!
+});
+
+// ❌ DON'T: Set state in onUpdate (infinite loop)
+onUpdate(() => {
+  count.value++;  // Triggers another update!
+});
+
+// ❌ DON'T: Async in onBeforeMount (won't wait)
+onBeforeMount(async () => {
+  await fetchData();  // Render happens before this completes
+});
+
+// ✅ DO: Async in onMount
+onMount(async () => {
+  await fetchData();  // Safe, DOM already rendered
+});
+
+// ✅ DO: Always clean up
+onMount(() => {
+  const handler = () => {};
+  window.addEventListener("scroll", handler);
+
+  // Return cleanup or use onUnmount
+});
+onUnmount(() => {
+  window.removeEventListener("scroll", handler);
+});
+
+// ✅ DO: Guard state updates in onUpdate
+onUpdate(() => {
+  if (shouldSync && !synced) {
+    syncExternalLibrary();
+    synced = true;
+  }
+});
+```
+
+##### Lifecycle Decision Guide
+
+| Task | Recommended Hook |
+|------|------------------|
+| Fetch initial data | `onMount` |
+| Validate props | `onBeforeMount` |
+| Set up event listeners | `onMount` |
+| Remove event listeners | `onUnmount` |
+| Clear timers/intervals | `onUnmount` |
+| Cancel pending requests | `onUnmount` |
+| Initialize third-party library | `onMount` |
+| Destroy third-party library | `onUnmount` |
+| Focus an input element | `onMount` |
+| Measure DOM elements | `onMount` or `onUpdate` |
+| Sync state with external system | `onUpdate` |
+| Log state changes | `onUpdate` |
+| Compare previous/current state | `onBeforeUpdate` + `onUpdate` |
+
+#### Signal Reactivity: Patterns & Best Practices
+
+Signals are Eleva's reactivity primitive. They hold values and automatically trigger UI updates when changed. Here's how to use them effectively.
+
+##### When to Use Signals vs Regular Variables
+
+| Data Type | Use Signal? | Why |
+|-----------|-------------|-----|
+| UI state (counts, toggles, form values) | ✅ Yes | Triggers re-render on change |
+| Data from API | ✅ Yes | UI updates when data loads |
+| Derived/computed values | ❌ No | Use functions instead |
+| Constants | ❌ No | Never changes |
+| Internal helpers (caches, refs) | ❌ No | Not displayed in UI |
+| Props received from parent | ⚠️ Depends | Use Props plugin for reactivity |
+
+```js
+setup: ({ signal }) => {
+  // ✅ Use signals for reactive UI state
+  const count = signal(0);
+  const isOpen = signal(false);
+  const items = signal([]);
+  const formData = signal({ name: "", email: "" });
+
+  // ❌ Don't use signals for constants
+  const API_URL = "/api/users";  // Regular variable
+  const MAX_ITEMS = 100;         // Regular variable
+
+  // ❌ Don't use signals for internal refs
+  let timerRef = null;           // Regular variable
+  const cache = new Map();       // Regular variable
+
+  // ❌ Don't use signals for computed values
+  const getItemCount = () => items.value.length;  // Function
+  const getTotal = () => items.value.reduce((a, b) => a + b.price, 0);
+
+  return { count, isOpen, items, formData, getItemCount, getTotal };
+}
+```
+
+##### Creating Signals
+
+```js
+setup: ({ signal }) => {
+  // Primitive values
+  const count = signal(0);
+  const name = signal("");
+  const isActive = signal(false);
+
+  // Arrays
+  const items = signal([]);
+  const users = signal([{ id: 1, name: "John" }]);
+
+  // Objects
+  const user = signal({ name: "", email: "" });
+  const settings = signal({ theme: "dark", language: "en" });
+
+  // Null/undefined (for async data)
+  const data = signal(null);
+  const error = signal(undefined);
+
+  return { count, name, isActive, items, users, user, settings, data, error };
+}
+```
+
+##### Accessing Signal Values
+
+Always use `.value` to read or write:
+
+```js
+// ✅ Correct: Access with .value
+template: (ctx) => `
+  <p>Count: ${ctx.count.value}</p>
+  <p>Name: ${ctx.user.value.name}</p>
+  <p>Items: ${ctx.items.value.length}</p>
+`
+
+// ❌ Wrong: Forgetting .value
+template: (ctx) => `
+  <p>Count: ${ctx.count}</p>        <!-- Shows [object Signal] -->
+  <p>Name: ${ctx.user.name}</p>     <!-- undefined -->
+`
+```
+
+##### Updating Signals
+
+```js
+setup: ({ signal }) => {
+  const count = signal(0);
+  const user = signal({ name: "John", age: 25 });
+  const items = signal(["a", "b", "c"]);
+
+  // Primitives - direct assignment
+  function increment() {
+    count.value++;
+  }
+
+  function setCount(n) {
+    count.value = n;
+  }
+
+  // Objects - replace entire object for reactivity
+  function updateName(newName) {
+    user.value = { ...user.value, name: newName };
+  }
+
+  // ⚠️ This won't trigger update!
+  function brokenUpdate(newName) {
+    user.value.name = newName;  // Mutating, not replacing
+  }
+
+  // Arrays - replace entire array for reactivity
+  function addItem(item) {
+    items.value = [...items.value, item];
+  }
+
+  function removeItem(index) {
+    items.value = items.value.filter((_, i) => i !== index);
+  }
+
+  function updateItem(index, newValue) {
+    items.value = items.value.map((item, i) =>
+      i === index ? newValue : item
+    );
+  }
+
+  return { count, user, items, increment, setCount, updateName, addItem, removeItem, updateItem };
+}
+```
+
+##### Object & Array Immutability
+
+**Key Rule:** Always replace objects and arrays, never mutate them.
+
+```js
+const user = signal({ name: "John", settings: { theme: "dark" } });
+const items = signal([1, 2, 3]);
+
+// ❌ WRONG: Mutation (won't trigger re-render)
+user.value.name = "Jane";
+user.value.settings.theme = "light";
+items.value.push(4);
+items.value[0] = 10;
+
+// ✅ CORRECT: Replacement (triggers re-render)
+user.value = { ...user.value, name: "Jane" };
+user.value = {
+  ...user.value,
+  settings: { ...user.value.settings, theme: "light" }
+};
+items.value = [...items.value, 4];
+items.value = items.value.map((v, i) => i === 0 ? 10 : v);
+```
+
+##### Computed/Derived Values
+
+Use functions for values derived from signals:
+
+```js
+setup: ({ signal }) => {
+  const items = signal([
+    { name: "Widget", price: 10, qty: 2 },
+    { name: "Gadget", price: 25, qty: 1 }
+  ]);
+  const taxRate = signal(0.08);
+
+  // ✅ Computed as functions - recalculated on each render
+  const getSubtotal = () =>
+    items.value.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const getTax = () => getSubtotal() * taxRate.value;
+
+  const getTotal = () => getSubtotal() + getTax();
+
+  const getItemCount = () => items.value.length;
+
+  const getExpensiveItems = () =>
+    items.value.filter(item => item.price > 20);
+
+  return {
+    items,
+    taxRate,
+    getSubtotal,
+    getTax,
+    getTotal,
+    getItemCount,
+    getExpensiveItems
+  };
+}
+
+// In template
+template: (ctx) => `
+  <p>Subtotal: $${ctx.getSubtotal().toFixed(2)}</p>
+  <p>Tax: $${ctx.getTax().toFixed(2)}</p>
+  <p>Total: $${ctx.getTotal().toFixed(2)}</p>
+  <p>Items: ${ctx.getItemCount()}</p>
+`
+```
+
+##### Watching Signal Changes
+
+Use `.watch()` to react to signal changes:
+
+```js
+setup: ({ signal, onUnmount }) => {
+  const searchQuery = signal("");
+  const results = signal([]);
+
+  // Watch for changes and perform side effects
+  const unwatch = searchQuery.watch(async (newValue) => {
+    if (newValue.length >= 3) {
+      const response = await fetch(`/api/search?q=${newValue}`);
+      results.value = await response.json();
+    } else {
+      results.value = [];
+    }
+  });
+
+  // Clean up watcher on unmount
+  onUnmount(() => {
+    unwatch();
+  });
+
+  return { searchQuery, results };
+}
+```
+
+**Common watch use cases:**
+- Debounced search/autocomplete
+- Persisting to localStorage
+- Analytics tracking
+- Syncing with external systems
+
+##### Debouncing Signal Updates
+
+For frequent updates (like search input), debounce to avoid excessive operations:
+
+```js
+setup: ({ signal, onUnmount }) => {
+  const searchQuery = signal("");
+  const results = signal([]);
+  let debounceTimer = null;
+
+  function handleSearch(query) {
+    searchQuery.value = query;
+
+    // Clear previous timer
+    clearTimeout(debounceTimer);
+
+    // Set new timer
+    debounceTimer = setTimeout(async () => {
+      if (query.length >= 2) {
+        const response = await fetch(`/api/search?q=${query}`);
+        results.value = await response.json();
+      }
+    }, 300);  // 300ms debounce
+  }
+
+  onUnmount(() => {
+    clearTimeout(debounceTimer);
+  });
+
+  return { searchQuery, results, handleSearch };
+}
+```
+
+##### Multiple Related Signals vs Single Object Signal
+
+| Pattern | When to Use |
+|---------|-------------|
+| **Multiple signals** | Independent values, updated separately |
+| **Single object signal** | Related values, often updated together |
+
+```js
+// Pattern 1: Multiple signals (independent values)
+const firstName = signal("");
+const lastName = signal("");
+const email = signal("");
+
+// Easy to update individually
+firstName.value = "John";
+
+// Pattern 2: Single object signal (related values)
+const formData = signal({
+  firstName: "",
+  lastName: "",
+  email: ""
+});
+
+// Update requires spread
+formData.value = { ...formData.value, firstName: "John" };
+
+// But easier to reset
+formData.value = { firstName: "", lastName: "", email: "" };
+
+// And easier to pass around
+submitForm(formData.value);
+```
+
+**Recommendation:** Use multiple signals for truly independent values. Use object signals for form data or related state that's often passed together.
+
+##### Signal Anti-Patterns
+
+```js
+// ❌ DON'T: Create signals outside setup
+const globalCount = signal(0);  // Won't work properly
+
+// ❌ DON'T: Forget .value
+template: (ctx) => `<p>${ctx.count}</p>`  // Shows [object Signal]
+
+// ❌ DON'T: Mutate objects/arrays
+items.value.push(newItem);      // Won't trigger update
+user.value.name = "Jane";       // Won't trigger update
+
+// ❌ DON'T: Create signals for constants
+const MAX_SIZE = signal(100);   // Never changes, waste of resources
+
+// ❌ DON'T: Create signals for computed values
+const total = signal(items.value.reduce(...));  // Stale after items change
+
+// ❌ DON'T: Update signals in render
+template: (ctx) => {
+  ctx.renderCount.value++;  // Infinite loop!
+  return `<p>...</p>`;
+}
+
+// ✅ DO: Create signals in setup
+setup: ({ signal }) => {
+  const count = signal(0);
+  return { count };
+}
+
+// ✅ DO: Use .value consistently
+template: (ctx) => `<p>${ctx.count.value}</p>`
+
+// ✅ DO: Replace objects/arrays
+items.value = [...items.value, newItem];
+
+// ✅ DO: Use regular variables for constants
+const MAX_SIZE = 100;
+
+// ✅ DO: Use functions for computed values
+const getTotal = () => items.value.reduce(...);
+```
+
+##### Signal Decision Guide
+
+| Scenario | Recommendation |
+|----------|----------------|
+| Counter, toggle, form input | Single primitive signal |
+| Form with multiple fields | Object signal or multiple signals |
+| List of items | Array signal |
+| Loading/error states | Separate boolean signals |
+| Data from API | Signal initialized as `null` |
+| Computed/derived value | Function, not signal |
+| Constant value | Regular variable |
+| Internal reference (timer, cache) | Regular variable |
+| Debounced input | Signal + debounce timer |
+| Persisted to localStorage | Signal + watch |
+
+#### Async Patterns: Setup, Template & Style
+
+Understanding when to use async functions in your component properties is crucial for performance and predictable behavior.
+
+##### Quick Reference
+
+| Property | Async Support | Recommendation |
+|----------|---------------|----------------|
+| `setup` | ✅ Yes | Use sparingly; prefer sync setup + async in `onMount` |
+| `template` | ❌ No | Never use async; must return string synchronously |
+| `style` | ❌ No | Never use async; must return string synchronously |
+
+##### Setup: Async Considerations
+
+The `setup` function CAN be async, but use it carefully:
+
+```js
+// ⚠️ Async setup - blocks mounting until resolved
+app.component("AsyncSetup", {
+  setup: async ({ signal }) => {
+    const data = signal(null);
+
+    // This delays the entire component mount
+    const response = await fetch("/api/config");
+    data.value = await response.json();
+
+    return { data };
+  },
+  template: (ctx) => `<div>${JSON.stringify(ctx.data.value)}</div>`
+});
+```
+
+**When Async Setup is Acceptable:**
+- Loading critical configuration before render
+- Initializing a required dependency
+- Component cannot render without the data
+
+**Problems with Async Setup:**
+- Blocks mounting - user sees nothing until resolved
+- No loading state shown during fetch
+- Error handling is more complex
+- Harder to show fallback UI
+
+##### Recommended: Sync Setup + Async in onMount
+
+```js
+// ✅ RECOMMENDED: Sync setup, async data in onMount
+app.component("BetterAsync", {
+  setup: ({ signal }) => {
+    const data = signal(null);
+    const loading = signal(true);
+    const error = signal(null);
+
+    async function loadData() {
+      try {
+        loading.value = true;
+        const response = await fetch("/api/data");
+        if (!response.ok) throw new Error("Failed to load");
+        data.value = await response.json();
+      } catch (err) {
+        error.value = err.message;
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    return {
+      data,
+      loading,
+      error,
+      loadData,
+      onMount: () => loadData()  // Trigger fetch after mount
+    };
+  },
+  template: (ctx) => `
+    <div>
+      ${ctx.loading.value ? `
+        <p>Loading...</p>
+      ` : ctx.error.value ? `
+        <p class="error">${ctx.error.value}</p>
+        <button @click="loadData">Retry</button>
+      ` : `
+        <div>${JSON.stringify(ctx.data.value)}</div>
+      `}
+    </div>
+  `
+});
+```
+
+**Benefits of this Pattern:**
+- Component mounts immediately
+- User sees loading state
+- Easy retry on error
+- Better user experience
+
+##### Template: Never Async
+
+The `template` property must return a string synchronously. Eleva calls template on every render cycle - async templates would break reactivity.
+
+```js
+// ❌ WRONG: Async template (will not work)
+app.component("WrongAsync", {
+  template: async (ctx) => {
+    const data = await fetch("/api/data");  // DON'T DO THIS
+    return `<div>${data}</div>`;
+  }
+});
+
+// ✅ CORRECT: Sync template, data loaded elsewhere
+app.component("CorrectAsync", {
+  setup: ({ signal }) => {
+    const data = signal(null);
+    return {
+      data,
+      onMount: async () => {
+        const response = await fetch("/api/data");
+        data.value = await response.json();
+      }
+    };
+  },
+  template: (ctx) => `
+    <div>${ctx.data.value ? JSON.stringify(ctx.data.value) : "Loading..."}</div>
+  `
+});
+```
+
+##### Style: Never Async
+
+Like template, the `style` property must return CSS synchronously.
+
+```js
+// ❌ WRONG: Async style (will not work)
+app.component("WrongStyle", {
+  style: async () => {
+    const theme = await fetch("/api/theme");  // DON'T DO THIS
+    return `.btn { color: ${theme.primary}; }`;
+  }
+});
+
+// ✅ CORRECT: Load theme data in setup, use in sync style
+app.component("CorrectStyle", {
+  setup: ({ signal }) => {
+    const theme = signal({ primary: "#007bff" });  // Default
+    return {
+      theme,
+      onMount: async () => {
+        const response = await fetch("/api/theme");
+        theme.value = await response.json();
+      }
+    };
+  },
+  template: (ctx) => `<button>Click me</button>`,
+  style: (ctx) => `
+    button { background: ${ctx.theme.value.primary}; color: white; }
+  `
+});
+```
+
+##### Async Decision Guide
+
+| Scenario | Approach |
+|----------|----------|
+| Fetch data on component load | Sync setup + async `onMount` |
+| Load critical config before render | Async setup (rare) |
+| Periodic data refresh | Sync setup + `setInterval` in `onMount` |
+| User-triggered fetch | Sync setup + async function called on event |
+| Load theme/styles dynamically | Signal with default + async `onMount` |
+| Lazy load child component | Use Router plugin with lazy routes |
+
+##### Anti-Patterns
+
+```js
+// ❌ DON'T: Async template
+template: async (ctx) => { ... }
+
+// ❌ DON'T: Async style
+style: async (ctx) => { ... }
+
+// ❌ DON'T: Await in template body
+template: (ctx) => {
+  const data = await fetch(...);  // Syntax error / won't work
+  return `...`;
+}
+
+// ❌ DON'T: Block setup for non-critical data
+setup: async ({ signal }) => {
+  const analytics = await loadAnalytics();  // User waits for analytics?
+  return { ... };
+}
+
+// ✅ DO: Sync setup, async operations in lifecycle
+setup: ({ signal }) => {
+  const data = signal(null);
+  return {
+    data,
+    onMount: async () => { data.value = await fetchData(); }
+  };
+}
+
+// ✅ DO: Handle loading and error states
+setup: ({ signal }) => {
+  const data = signal(null);
+  const loading = signal(false);
+  const error = signal(null);
+  return { data, loading, error, ... };
+}
+```
+
+#### Style Property: String vs Function
+
+| Scenario | Use | Example |
+|----------|-----|---------|
+| **Static styles** | String | `style: \`.btn { color: blue; }\`` |
+| **Dynamic styles** (state-dependent) | Function | `style: (ctx) => \`.btn { color: ${ctx.isActive.value ? 'green' : 'gray'}; }\`` |
+
+```js
+// Static styles - use string (better performance)
+app.component("StaticStyled", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `<button>Count: ${ctx.count.value}</button>`,
+  style: `
+    button { background: blue; color: white; }
+  `
+});
+
+// Dynamic styles - use function
+app.component("DynamicStyled", {
+  setup: ({ signal }) => ({ isActive: signal(false) }),
+  template: (ctx) => `
+    <button @click="() => isActive.value = !isActive.value">
+      ${ctx.isActive.value ? 'Active' : 'Inactive'}
+    </button>
+  `,
+  style: (ctx) => `
+    button {
+      background: ${ctx.isActive.value ? 'green' : 'gray'};
+      color: white;
+    }
+  `
+});
+```
+
+#### Template Property: Patterns & Best Practices
+
+The `template` property defines your component's HTML structure. Eleva supports multiple patterns - here's when to use each.
+
+##### Template as Function vs String
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Function with context** | Component has state, props, or functions | `template: (ctx) => \`...\`` |
+| **Function without context** | Static HTML, no dynamic data | `template: () => \`...\`` |
+| **String** | Not recommended | `template: \`...\`` |
+
+```js
+// ✅ Function with context - most common pattern
+app.component("Counter", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `
+    <button @click="() => count.value++">
+      Count: ${ctx.count.value}
+    </button>
+  `
+});
+
+// ✅ Function without context - for static components
+app.component("Footer", {
+  template: () => `
+    <footer>
+      <p>&copy; 2026 My Company</p>
+    </footer>
+  `
+});
+
+// ❌ Avoid: String template (no access to context)
+app.component("Broken", {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: `<p>Count: ${count.value}</p>`  // Error: count is not defined
+});
+```
+
+##### Accessing Context: Direct vs Destructured
+
+| Pattern | When to Use | Pros/Cons |
+|---------|-------------|-----------|
+| **Direct access** `(ctx)` | Many properties, consistency | Clear source, slightly verbose |
+| **Destructured** `({ count, user })` | Few properties, cleaner template | Shorter, but hides source |
+
+```js
+// Pattern 1: Direct context access (Recommended for consistency)
+template: (ctx) => `
+  <div>
+    <h1>${ctx.user.value.name}</h1>
+    <p>Count: ${ctx.count.value}</p>
+    <button @click="increment">+</button>
+  </div>
+`
+
+// Pattern 2: Destructured context (Good for simple components)
+template: ({ user, count }) => `
+  <div>
+    <h1>${user.value.name}</h1>
+    <p>Count: ${count.value}</p>
+    <button @click="increment">+</button>
+  </div>
+`
+```
+
+> **Note:** Event handlers (`@click`, `@input`, etc.) always use the handler name directly without `ctx.` prefix, regardless of which pattern you use. This is because events are resolved by the framework, not by JavaScript template literals.
+
+**Recommendation:** Use direct `ctx` access for consistency across your codebase. Destructuring is acceptable for simple components with few properties.
+
+##### Complex Logic: Function Body vs Inline
+
+For templates with computed values or complex logic, use a function body:
+
+```js
+// ❌ Avoid: Complex logic inline in template
+template: (ctx) => `
+  <div>
+    <p>Total: $${ctx.items.value.reduce((sum, item) => sum + item.price * item.qty, 0).toFixed(2)}</p>
+    <p>Items: ${ctx.items.value.filter(i => i.inStock).length} in stock</p>
+  </div>
+`
+
+// ✅ Better: Compute values before returning template
+template: (ctx) => {
+  const total = ctx.items.value
+    .reduce((sum, item) => sum + item.price * item.qty, 0)
+    .toFixed(2);
+  const inStockCount = ctx.items.value.filter(i => i.inStock).length;
+
+  return `
+    <div>
+      <p>Total: $${total}</p>
+      <p>Items: ${inStockCount} in stock</p>
+    </div>
+  `;
+}
+
+// ✅ Best: Move logic to setup, keep template clean
+app.component("Cart", {
+  setup: ({ signal }) => {
+    const items = signal([]);
+
+    // Computed-like functions
+    const getTotal = () => items.value
+      .reduce((sum, item) => sum + item.price * item.qty, 0)
+      .toFixed(2);
+
+    const getInStockCount = () => items.value.filter(i => i.inStock).length;
+
+    return { items, getTotal, getInStockCount };
+  },
+  template: (ctx) => `
+    <div>
+      <p>Total: $${ctx.getTotal()}</p>
+      <p>Items: ${ctx.getInStockCount()} in stock</p>
+    </div>
+  `
+});
+```
+
+##### Event Handlers: Inline vs Named Functions
+
+| Pattern | When to Use | Example |
+|---------|-------------|---------|
+| **Named function** | Reusable, complex logic, testable | `@click="handleClick"` |
+| **Inline arrow** | Simple one-liners, value updates | `@click="() => count.value++"` |
+| **Inline with event** | Need event object | `@click="(e) => handleClick(e, item)"` |
+
+```js
+app.component("TodoItem", {
+  setup: ({ signal, props }) => {
+    const isEditing = signal(false);
+
+    // Named function - reusable, testable
+    function toggleEdit() {
+      isEditing.value = !isEditing.value;
+    }
+
+    // Named function with parameters
+    function handleDelete(id) {
+      props.onDelete(id);
+    }
+
+    return { isEditing, toggleEdit, handleDelete, todo: props.todo };
+  },
+  template: (ctx) => `
+    <div class="todo-item">
+      <!-- Named function - clean -->
+      <button @click="toggleEdit">Edit</button>
+
+      <!-- Inline arrow - simple value toggle -->
+      <input type="checkbox" @change="() => todo.done = !todo.done" />
+
+      <!-- Inline with parameter - passes data -->
+      <button @click="() => handleDelete(${ctx.todo.id})">Delete</button>
+
+      <!-- Inline with event object -->
+      <input @input="(e) => todo.title = e.target.value" />
+    </div>
+  `
+});
+```
+
+##### Template Decision Guide
+
+| Scenario | Recommended Pattern |
+|----------|---------------------|
+| Component has reactive state | `template: (ctx) => \`...\`` |
+| Component is purely static | `template: () => \`...\`` |
+| Need computed values in template | Use function body with `return` |
+| Complex calculations | Move to `setup`, expose as functions |
+| Simple state update on click | Inline arrow: `@click="() => count.value++"` |
+| Complex event handling | Named function: `@click="handleSubmit"` |
+| Accessing many context properties | Use `ctx` directly |
+| Simple component, few properties | Destructure: `({ count }) => ...` |
+
+#### Children Property: Patterns & Best Practices
+
+The `children` property maps child components to DOM elements in your template. Here's how to use it effectively.
+
+##### When to Use Children
+
+| Scenario | Use Children? | Alternative |
+|----------|---------------|-------------|
+| Reusable component in template | ✅ Yes | - |
+| Multiple instances of same component | ✅ Yes | - |
+| Dynamic component based on state | ✅ Yes | - |
+| Simple static content | ❌ No | Inline HTML in template |
+| One-off complex markup | ❌ No | Keep in template |
+
+```js
+// ✅ Use children - reusable component pattern
+app.component("TodoList", {
+  setup: ({ signal }) => ({ todos: signal([]) }),
+  template: (ctx) => `
+    <ul>
+      ${ctx.todos.value.map(todo => `
+        <li class="todo-item" :todo='${JSON.stringify(todo)}'></li>
+      `).join("")}
+    </ul>
+  `,
+  children: {
+    ".todo-item": "TodoItem"  // Mount TodoItem into each .todo-item
+  }
+});
+
+// ❌ Don't use children for simple content
+app.component("SimpleCard", {
+  template: () => `
+    <div class="card">
+      <h2>Title</h2>
+      <p>Content goes here</p>  <!-- No need for child component -->
+    </div>
+  `
+  // No children needed
+});
+```
+
+##### Selector Patterns
+
+Use CSS selectors to target where children mount:
+
+| Selector Type | Example | Use Case |
+|---------------|---------|----------|
+| **Class** | `".item"` | Multiple elements, list items |
+| **ID** | `"#sidebar"` | Single unique element |
+| **Data attribute** | `"[data-component]"` | Explicit component markers |
+| **Nested** | `".container .item"` | Scoped selection |
+
+```js
+// Class selector - for lists/multiple instances
+children: {
+  ".user-card": "UserCard",
+  ".comment": "Comment"
+}
+
+// ID selector - for unique elements
+children: {
+  "#header": "Header",
+  "#footer": "Footer"
+}
+
+// Data attribute - explicit and clear
+template: () => `
+  <div data-component="sidebar"></div>
+  <div data-component="content"></div>
+`,
+children: {
+  "[data-component='sidebar']": "Sidebar",
+  "[data-component='content']": "Content"
+}
+```
+
+**Recommendation:** Use classes for lists, IDs for unique elements, and data attributes when you want explicit component markers.
+
+##### Registered vs Inline Component Definitions
+
+| Pattern | When to Use | Pros/Cons |
+|---------|-------------|-----------|
+| **Registered name** | Reusable across app | Clean, testable, reusable |
+| **Inline definition** | One-off, tightly coupled | Colocated, but not reusable |
+
+```js
+// ✅ Registered component (Recommended)
+app.component("UserCard", {
+  setup: ({ props }) => ({ user: props.user }),
+  template: (ctx) => `<div class="user">${ctx.user.name}</div>`
+});
+
+app.component("UserList", {
+  template: (ctx) => `
+    <div class="users">
+      ${ctx.users.value.map(u => `
+        <div class="card" :user='${JSON.stringify(u)}'></div>
+      `).join("")}
+    </div>
+  `,
+  children: {
+    ".card": "UserCard"  // Reference by name
+  }
+});
+
+// ⚠️ Inline definition (Use sparingly)
+app.component("Dashboard", {
+  template: () => `<div class="widget"></div>`,
+  children: {
+    ".widget": {
+      // Inline component definition
+      setup: ({ signal }) => ({ count: signal(0) }),
+      template: (ctx) => `<span>${ctx.count.value}</span>`
+    }
+  }
+});
+```
+
+**Recommendation:** Prefer registered components for reusability and testing. Use inline definitions only for tightly-coupled, one-off components.
+
+##### Passing Props to Children
+
+Props flow from parent template to child via `:prop` attributes:
+
+```js
+app.component("ProductList", {
+  setup: ({ signal }) => {
+    const products = signal([
+      { id: 1, name: "Widget", price: 29.99 },
+      { id: 2, name: "Gadget", price: 49.99 }
+    ]);
+
+    function handleSelect(product) {
+      console.log("Selected:", product);
+    }
+
+    return { products, handleSelect };
+  },
+  template: (ctx) => `
+    <div class="products">
+      ${ctx.products.value.map(product => `
+        <div class="product-card"
+          :product='${JSON.stringify(product)}'
+          :onSelect="() => handleSelect(${JSON.stringify(product)})">
+        </div>
+      `).join("")}
+    </div>
+  `,
+  children: {
+    ".product-card": "ProductCard"
+  }
+});
+
+// Child receives props
+app.component("ProductCard", {
+  setup: ({ props }) => {
+    const { product, onSelect } = props;
+    return { product, onSelect };
+  },
+  template: (ctx) => `
+    <div class="card" @click="onSelect">
+      <h3>${ctx.product.name}</h3>
+      <p>$${ctx.product.price}</p>
+    </div>
+  `
+});
+```
+
+##### Nesting Depth Guidelines
+
+| Depth | Recommendation |
+|-------|----------------|
+| 1-2 levels | ✅ Ideal, easy to understand |
+| 3 levels | ⚠️ Acceptable, consider flattening |
+| 4+ levels | ❌ Too deep, refactor |
+
+```js
+// ✅ Good: 2 levels deep
+// App → UserList → UserCard
+
+// ⚠️ Acceptable: 3 levels
+// App → Dashboard → WidgetList → Widget
+
+// ❌ Avoid: 4+ levels - hard to trace data flow
+// App → Page → Section → List → Item → SubItem
+// Consider: Flatten structure or use Store for shared state
+```
+
+##### Multiple Children Mounting
+
+Mount different components to different selectors:
+
+```js
+app.component("Layout", {
+  template: () => `
+    <div class="layout">
+      <header id="header"></header>
+      <nav id="nav"></nav>
+      <main id="content"></main>
+      <aside id="sidebar"></aside>
+      <footer id="footer"></footer>
+    </div>
+  `,
+  children: {
+    "#header": "Header",
+    "#nav": "Navigation",
+    "#content": "MainContent",
+    "#sidebar": "Sidebar",
+    "#footer": "Footer"
+  }
+});
+```
+
+##### Dynamic Children Based on State
+
+Conditionally render different components:
+
+```js
+app.component("TabPanel", {
+  setup: ({ signal }) => {
+    const activeTab = signal("home");
+    const setTab = (tab) => { activeTab.value = tab; };
+    return { activeTab, setTab };
+  },
+  template: (ctx) => `
+    <div class="tabs">
+      <button @click="() => setTab('home')">Home</button>
+      <button @click="() => setTab('profile')">Profile</button>
+      <button @click="() => setTab('settings')">Settings</button>
+    </div>
+    <div class="tab-content" data-tab="${ctx.activeTab.value}"></div>
+  `,
+  children: {
+    "[data-tab='home']": "HomeTab",
+    "[data-tab='profile']": "ProfileTab",
+    "[data-tab='settings']": "SettingsTab"
+  }
+});
+```
+
+##### Children Anti-Patterns
+
+```js
+// ❌ DON'T: Overly generic selectors
+children: {
+  "div": "SomeComponent"  // Too broad, may match unintended elements
+}
+
+// ❌ DON'T: Deep nesting without reason
+children: {
+  ".a": {
+    children: {
+      ".b": {
+        children: {
+          ".c": "DeepComponent"  // Hard to follow
+        }
+      }
+    }
+  }
+}
+
+// ❌ DON'T: Duplicate component for same data
+template: (ctx) => `
+  <div class="card1" :user='${JSON.stringify(ctx.user)}'></div>
+  <div class="card2" :user='${JSON.stringify(ctx.user)}'></div>
+`,
+children: {
+  ".card1": "UserCard",
+  ".card2": "UserCard"  // Same component, same data - unnecessary
+}
+
+// ✅ DO: Use specific selectors
+children: {
+  ".product-card": "ProductCard",
+  "#featured-product": "FeaturedProduct"
+}
+
+// ✅ DO: Keep nesting shallow
+children: {
+  ".item": "ListItem"  // ListItem can have its own children if needed
+}
+```
+
+##### Children Decision Guide
+
+| Scenario | Recommendation |
+|----------|----------------|
+| List of items | Use class selector: `".item": "Item"` |
+| Single unique component | Use ID selector: `"#sidebar": "Sidebar"` |
+| Reusable component | Register and reference by name |
+| One-off tightly coupled | Inline definition (sparingly) |
+| 4+ nesting levels | Refactor or use Store |
+| Dynamic component switching | Use data attributes with state |
+| Passing data to child | Use `:prop` attributes in template |
+
+#### Component Communication: Props vs Emitter vs Store
+
+Eleva provides multiple ways to share data between components. Choosing the right method is crucial for maintainable code.
+
+##### Basic Props (No Plugin)
+
+**Limitations:**
+- Only supports **strings** in attributes
+- Complex objects require manual `JSON.stringify`/`JSON.parse`
+- Functions cannot be passed directly
+- No automatic reactivity for prop changes
+
+```js
+// Parent - must stringify complex data
+template: (ctx) => `
+  <div class="child" :name="John" :count="5"></div>
+  <div class="child" :user='${JSON.stringify(ctx.user)}'></div>
+`
+
+// Child - receives strings, must parse manually
+setup({ props }) {
+  const count = parseInt(props.count);  // "5" → 5
+  const user = JSON.parse(props.user);  // string → object
+  return { count, user };
+}
+```
+
+**Use when:** Simple string/number values, small data, no reactivity needed.
+
+##### Props Plugin (Recommended for Complex Data)
+
+**Capabilities:**
+- **Automatic type detection** (boolean, number, object, array, date)
+- **Reactive props** - child updates when parent data changes
+- **Functions can be passed** via parent context
+- Handles large/complex data structures
+
+```js
+import { Props } from "eleva/plugins";
+app.use(Props);
+
+// Parent - pass complex data naturally
+template: (ctx) => `
+  <div class="child"
+    :user='${JSON.stringify(ctx.user)}'
+    :items='${JSON.stringify(ctx.items)}'
+    :onSelect="(item) => handleSelect(item)">
+  </div>
+`
+
+// Child - props are automatically parsed and reactive
+setup({ props }) {
+  // props.user is already an object
+  // props.items is already an array
+  // props.onSelect is a callable function
+  return { user: props.user, items: props.items };
+}
+```
+
+**Use when:** Passing objects, arrays, dates, or need reactive prop updates.
+
+##### Emitter (Events Up)
+
+**Purpose:** Child-to-parent communication, sibling communication, decoupled messaging.
+
+```js
+// Child component - emits events
+setup({ emitter }) {
+  function handleClick(item) {
+    emitter.emit("item:selected", item);
+    emitter.emit("cart:add", { id: item.id, qty: 1 });
+  }
+  return { handleClick };
+}
+
+// Parent or any component - listens for events
+setup({ emitter }) {
+  emitter.on("item:selected", (item) => {
+    console.log("Selected:", item);
+  });
+
+  emitter.on("cart:add", ({ id, qty }) => {
+    // Update cart state
+  });
+
+  return {};
+}
+```
+
+**Use when:**
+- Child needs to notify parent of actions
+- Sibling components need to communicate
+- Decoupled, event-driven architecture
+- Actions/commands rather than data sharing
+
+##### Store Plugin (Global State)
+
+**Purpose:** Shared state accessible by any component, persisted state, app-wide data.
+
+```js
+import { Store } from "eleva/plugins";
+
+// Initialize store with state and actions
+app.use(Store, {
+  state: {
+    user: null,
+    theme: "light"
+  },
+  actions: {
+    setUser: (state, user) => { state.user.value = user; },
+    setTheme: (state, theme) => { state.theme.value = theme; },
+    logout: (state) => { state.user.value = null; }
+  },
+  persistence: {
+    enabled: true,
+    key: "my-app-store",
+    include: ["theme"]  // Only persist theme
+  }
+});
+
+// Any component can access store via setup
+app.component("UserProfile", {
+  setup({ store }) {
+    // Read reactive state
+    const user = store.state.user;
+    const theme = store.state.theme;
+
+    // Update via actions
+    function logout() {
+      store.dispatch("logout");
+    }
+
+    function toggleTheme() {
+      const newTheme = store.state.theme.value === "light" ? "dark" : "light";
+      store.dispatch("setTheme", newTheme);
+    }
+
+    return { user, theme, logout, toggleTheme };
+  },
+  template: (ctx) => `
+    <div class="profile">
+      ${ctx.user.value
+        ? `<p>Welcome, ${ctx.user.value.name}!</p>
+           <button @click="logout">Logout</button>`
+        : `<p>Please log in</p>`
+      }
+      <button @click="toggleTheme">Theme: ${ctx.theme.value}</button>
+    </div>
+  `
+});
+
+// Subscribe to all state changes (optional)
+app.store.subscribe((mutation) => {
+  console.log("State changed:", mutation);
+});
+```
+
+**Use when:**
+- Multiple unrelated components need the same data
+- User session, authentication state
+- App-wide settings (theme, language)
+- Data that persists across navigation
+
+##### Decision Guide
+
+| Scenario | Solution | Why |
+|----------|----------|-----|
+| Pass string/number to child | Basic Props | Simple, no plugin needed |
+| Pass object/array to child | Props Plugin | Auto-parsing, reactivity |
+| Pass function to child | Props Plugin | Function reference preserved |
+| Child notifies parent of action | Emitter | Events flow up |
+| Siblings need to communicate | Emitter | Decoupled messaging |
+| Many components need same data | Store | Central state management |
+| User session/auth state | Store | Global, persistent |
+| Parent updates, child should react | Props Plugin | Reactive props |
+| Form data in multi-step wizard | Store or Props | Depends on component structure |
+
+##### Anti-Patterns to Avoid
+
+```js
+// ❌ DON'T: Pass large objects without Props plugin
+:data='${JSON.stringify(massiveObject)}'  // String size limits
+
+// ❌ DON'T: Use Store for parent-child only communication
+store.dispatch("setParentData", data);  // Overkill, use props
+
+// ❌ DON'T: Use Emitter for data that multiple components read
+emitter.emit("userData", user);  // Use Store instead
+
+// ❌ DON'T: Mutate store state directly
+store.state.user.value = newUser;  // Use actions instead
+store.dispatch("setUser", newUser);  // ✅ Correct
+
+// ✅ DO: Use the right tool for each job
+// - Props for parent→child data
+// - Emitter for child→parent events
+// - Store for global/shared state
+```
+
+#### General Guidelines
+
 - **Modularity:** Build your application using small, reusable components.
 - **Reactivity:** Use signals to update only the necessary parts of your UI.
 - **Simplicity:** Keep templates clean and logic minimal.
+- **Naming:** Use PascalCase for component names (`UserProfile`, not `user-profile`).
+- **Single Responsibility:** Each component should do one thing well.
+- **Props Down, Events Up:** Pass data to children via props, communicate up via emitter.
+- **Use Store Sparingly:** Only for truly global state, not for local component data.
 - **Testing:** Write tests for components and plugins.
 - **Documentation:** Maintain clear documentation for your application and custom plugins.
 
@@ -1754,15 +3680,43 @@ app.use(Store, {
 
 ## 11. Examples and Tutorials
 
-Explore these guides for real-world examples:
+Comprehensive code examples are available in a dedicated section for easy navigation and exploration.
 
-- [Basic Counter Example](https://github.com/TarekRaafat/eleva/blob/master/examples/counter.md)
-- [Todo App Example](https://github.com/TarekRaafat/eleva/blob/master/examples/todo-app.md)
-- [Creating a Custom Plugin](https://github.com/TarekRaafat/eleva/blob/master/examples/custom-plugin.md)
-- [Router Plugin Example](https://github.com/TarekRaafat/eleva/blob/master/examples/router-plugin.html)
-- [Attribute Handler Plugin Example](https://github.com/TarekRaafat/eleva/blob/master/examples/attribute-handler-plugin.html)
+### [View All Examples →](./examples/index.md)
 
-Interactive demos are also available on Eleva's [CodePen Collection](https://codepen.io/collection/dGGqWr) for you to experiment live.
+### UI Patterns
+
+Reusable code patterns for common scenarios.
+
+| Pattern | Description | Link |
+|---------|-------------|------|
+| **Forms** | Input binding, validation, submission | [View →](./examples/patterns/forms.md) |
+| **Async Data** | API fetching, loading states, pagination | [View →](./examples/patterns/async-data.md) |
+| **Conditional Rendering** | Show/hide, tabs, modals, skeletons | [View →](./examples/patterns/conditional-rendering.md) |
+| **Lists** | Search, filter, sort, drag-and-drop, CRUD | [View →](./examples/patterns/lists.md) |
+| **State Management** | Computed values, undo/redo, wizards | [View →](./examples/patterns/state.md) |
+| **Local Storage** | Persistence, session storage, caching | [View →](./examples/patterns/storage.md) |
+
+### Complete Apps
+
+Full mini-applications demonstrating multiple features.
+
+| App | Description | Link |
+|-----|-------------|------|
+| **Task Manager** | Filtering, sorting, priorities, localStorage | [View →](./examples/apps/task-manager.md) |
+| **Weather Dashboard** | API fetching, search history, unit conversion | [View →](./examples/apps/weather-dashboard.md) |
+| **Simple Blog** | Posts, comments, component composition | [View →](./examples/apps/blog.md) |
+
+### Guides
+
+| Guide | Description | Link |
+|-------|-------------|------|
+| **Custom Plugins** | Create and publish your own plugins | [View →](./examples/custom-plugin.md) |
+
+### External Resources
+
+- [CodePen Collection](https://codepen.io/collection/dGGqWr) - Interactive demos
+- [GitHub Examples](https://github.com/TarekRaafat/eleva/tree/master/examples) - Full source code
 
 ---
 

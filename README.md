@@ -79,10 +79,10 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
     - [Eleva (Core)](#eleva-core)
     - [Plugins](#plugins)
       - [Core Framework Only (Lightweight)](#core-framework-only-lightweight)
-      - [AttrPlugin](#attrplugin)
-      - [RouterPlugin](#routerplugin)
-      - [PropsPlugin](#propsplugin)
-      - [StorePlugin](#storeplugin)
+      - [Attr Plugin](#attr-plugin)
+      - [Router Plugin](#router-plugin)
+      - [Props Plugin](#props-plugin)
+      - [Store Plugin](#store-plugin)
   - [Development](#development)
   - [Testing](#testing)
   - [Contributing](#contributing)
@@ -121,12 +121,14 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### Template Syntax
 
-| Syntax | Use |
-|--------|-----|
-| `${expr}` | Static value |
-| `{{ expr }}` | Reactive value |
-| `@click` | Event handler |
-| `:prop` | Pass to child |
+> **Quick Rule:** `${}` needs `ctx.` — `{{ }}` and `@events` don't.
+
+| Syntax | Use | `ctx.`? |
+|--------|-----|:-------:|
+| `${expr}` | Static value | ✓ |
+| `{{ expr }}` | Reactive value | ✗ |
+| `@click` | Event handler | ✗ |
+| `:prop` | Pass to child | ✓ |
 
 ---
 
@@ -184,7 +186,7 @@ This unique, developer-first approach makes Eleva a standout choice for building
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
-- **🎯 Built-in Plugins:** AttrPlugin for advanced attributes, PropsPlugin for complex data handling, RouterPlugin for client-side routing, and StorePlugin for reactive state management
+- **🎯 Built-in Plugins:** Attr for advanced attributes, Props for complex data handling, Router for client-side routing, and Store for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
 - **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
@@ -201,9 +203,9 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
 - **🧪 Rapid Prototyping:** Quickly prototype ideas with a minimal and extendable framework.
 - **🔌 Extensible:** Easily add features like routing or state management through plugins.
-- **🚀 Built-in Routing:** Advanced client-side routing with navigation guards and reactive state via RouterPlugin.
-- **🎯 Advanced Attributes:** Sophisticated attribute handling with ARIA support via AttrPlugin.
-- **🏪 Reactive State Management:** Centralized, reactive data store with persistence and namespacing via StorePlugin.
+- **🚀 Built-in Routing:** Advanced client-side routing with navigation guards and reactive state via Router plugin.
+- **🎯 Advanced Attributes:** Sophisticated attribute handling with ARIA support via Attr plugin.
+- **🏪 Reactive State Management:** Centralized, reactive data store with persistence and namespacing via Store plugin.
 - **📦 Module Format Flexibility:** Choose from ESM, CommonJS, or UMD formats based on your project's needs.
 
 ---
@@ -318,10 +320,10 @@ app.component("HelloWorld", {
       }
     };
   },
-  template: ({ count }) => `
+  template: (ctx) => `
     <div>
       <h1>Hello, Eleva! 👋</h1>
-      <p>Count: ${count.value}</p>
+      <p>Count: ${ctx.count.value}</p>
       <button @click="() => count.value++">Increment</button>
     </div>
   `
@@ -359,10 +361,10 @@ Include Eleva via a script tag and use the global variable:
           const count = signal(0);
           return { count };
         },
-        template: ({ count }) => `
+        template: (ctx) => `
           <div>
             <h1>Hello, Eleva! 👋</h1>
-            <p>Count: ${count.value}</p>
+            <p>Count: ${ctx.count.value}</p>
             <button @click="() => count.value++">Increment</button>
           </div>
         `,
@@ -428,6 +430,15 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 
 Eleva's plugin system allows you to extend functionality as needed. Plugins are **separately bundled** from the core framework, ensuring optimal tree-shaking and minimal bundle sizes.
 
+**Plugin Types:**
+
+| Type | Source | Installation |
+|------|--------|--------------|
+| **Core Plugins** | Bundled with Eleva | `import { X } from "eleva/plugins"` |
+| **External Plugins** | Community/Ecosystem | `npm install eleva-plugin-x` |
+
+> **Core plugins** (Attr, Props, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](docs/plugins/index.md) for details.
+
 #### Core Framework Only (Lightweight)
 
 ```javascript
@@ -437,7 +448,7 @@ const app = new Eleva("myApp");
 // Core framework only - ~6KB minified
 ```
 
-#### AttrPlugin
+#### Attr Plugin
 
 Advanced attribute handling for ARIA, data attributes, boolean properties, and dynamic property detection:
 
@@ -470,7 +481,7 @@ app.component("myComponent", {
 
 📚 **[Full Attr Documentation →](docs/plugins/attr.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
 
-#### RouterPlugin
+#### Router Plugin
 
 🚀 **Advanced client-side routing** with multiple modes, navigation guards, reactive state, and component resolution:
 
@@ -531,7 +542,7 @@ router.navigate('/users/123', { replace: true });
 
 📚 **[Full Router Documentation →](docs/plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
 
-#### PropsPlugin
+#### Props Plugin
 
 🎯 **Advanced props handling** with automatic type detection, parsing, and reactivity for complex data structures:
 
@@ -579,7 +590,7 @@ app.component("UserInfo", {
 
 📚 **[Full Props Documentation →](docs/plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, complex data structures, and error handling.
 
-#### StorePlugin
+#### Store Plugin
 
 🏪 **Reactive state management** with centralized data store, persistence, namespacing, and cross-component reactive updates:
 
@@ -706,17 +717,17 @@ app.dispatch("increment");          // Dispatch actions globally
 
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
-- Core + AttrPlugin: ~8KB (minified)
-- Core + PropsPlugin: ~10KB (minified)
-- Core + RouterPlugin: ~19KB (minified)
-- Core + StorePlugin: ~12KB (minified)
+- Core + Attr: ~8KB (minified)
+- Core + Props: ~10KB (minified)
+- Core + Router: ~21KB (minified)
+- Core + Store: ~12KB (minified)
 - Core + All plugins: ~25KB (minified)
 
 **Individual Plugin Sizes:**
-- AttrPlugin: ~2.4KB (minified)
-- PropsPlugin: ~4.2KB (minified)
-- RouterPlugin: ~13KB (minified)
-- StorePlugin: ~6KB (minified)
+- Attr: ~2.4KB (minified)
+- Props: ~4.2KB (minified)
+- Router: ~15KB (minified)
+- Store: ~6KB (minified)
 
 **Available Plugin Formats:**
 
@@ -725,11 +736,11 @@ app.dispatch("increment");          // Dispatch actions globally
 - CJS: `const { Attr, Props, Router, Store } = require('eleva/plugins')`
 
 **For CDN (Individual Plugins - Smaller Bundle Size):**
-- UMD: `<script src="https://unpkg.com/eleva@latest/dist/eleva.umd.min.js"></script>`
-- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
-- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/props.umd.min.js"></script>`
-- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/router.umd.min.js"></script>`
-- UMD: `<script src="https://unpkg.com/eleva@latest/dist/plugins/store.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/eleva.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/props.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/router.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/store.umd.min.js"></script>`
 
 **Individual Plugin Imports (Best for Tree-Shaking):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`

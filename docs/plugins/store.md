@@ -85,6 +85,8 @@ app.use(Store, {
 });
 ```
 
+> **Template Context:** Use `${ctx.count.value}` in templates, but `@click="increment"` for events (no `ctx.`).
+
 ---
 
 ## Table of Contents
@@ -1737,3 +1739,7 @@ store.state.count.watch((value) => {
 6. **Dynamic Modules** - Runtime extensibility
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+---
+
+[← Back to Plugins](./index.md) | [Previous: Router Plugin](./router.md) | [Back to Main Docs](../index.md)

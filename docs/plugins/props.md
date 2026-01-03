@@ -12,10 +12,10 @@ The Props plugin supercharges Eleva's component system by enabling automatic typ
 
 ```javascript
 import Eleva from "eleva";
-import { PropsPlugin } from "eleva/plugins";
+import { Props } from "eleva/plugins";
 
-const app = new Eleva("App", document.getElementById("app"));
-app.use(PropsPlugin);  // Enable advanced props handling
+const app = new Eleva("App");
+app.use(Props);  // Enable advanced props handling
 ```
 
 ### API Cheatsheet
@@ -52,6 +52,8 @@ app.use(PropsPlugin);  // Enable advanced props handling
 | `"undefined"` | `undefined` | → `undefined` |
 | ISO date string | `Date` | → `Date` object |
 
+> **Template Context:** Use `${ctx.user.value}` in templates, `:prop="${ctx.data}"` for child props (both need `ctx.`).
+
 ---
 
 ## Installation
@@ -76,10 +78,10 @@ bun add eleva
 
 ```html
 <!-- Core + All Plugins -->
-<script src="https://unpkg.com/eleva/dist/eleva-plugins.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 
 <!-- Props Plugin Only -->
-<script src="https://unpkg.com/eleva/dist/plugins/props.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/props.umd.min.js"></script>
 ```
 
 ---
@@ -90,16 +92,16 @@ bun add eleva
 
 ```javascript
 import Eleva from "eleva";
-import { PropsPlugin } from "eleva/plugins";
+import { Props } from "eleva/plugins";
 
 // Create app instance
-const app = new Eleva("MyApp", document.getElementById("app"));
+const app = new Eleva("MyApp");
 
 // Install Props plugin with default options
-app.use(PropsPlugin);
+app.use(Props);
 
 // Or with custom configuration
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: true,   // Automatically parse prop values
   enableReactivity: true,    // Make props reactive with signals
   onError: (error, value) => {
@@ -112,7 +114,7 @@ app.use(PropsPlugin, {
 
 ```javascript
 // Parent Component
-const UserList = {
+app.component("UserList", {
   setup({ signal }) {
     const users = signal([
       { id: 1, name: "Alice", role: "Admin" },
@@ -121,26 +123,24 @@ const UserList = {
 
     return { users };
   },
-  template({ users }) {
-    return `
-      <div class="user-list">
-        <h2>Users</h2>
-        ${users.value.map(user => `
-          <div class="user-card-container"
-               :user='${JSON.stringify(user)}'
-               :editable="true">
-          </div>
-        `).join('')}
-      </div>
-    `;
-  },
+  template: (ctx) => `
+    <div class="user-list">
+      <h2>Users</h2>
+      ${ctx.users.value.map(user => `
+        <div class="user-card-container"
+             :user='${JSON.stringify(user)}'
+             :editable="true">
+        </div>
+      `).join('')}
+    </div>
+  `,
   children: {
     ".user-card-container": "UserCard"
   }
-};
+});
 
 // Child Component
-const UserCard = {
+app.component("UserCard", {
   setup({ props }) {
     // Props are automatically parsed and reactive
     return {
@@ -148,19 +148,15 @@ const UserCard = {
       editable: props.editable // Parsed boolean
     };
   },
-  template({ user, editable }) {
-    return `
-      <div class="user-card">
-        <h3>${user.value.name}</h3>
-        <p>Role: ${user.value.role}</p>
-        ${editable.value ? '<button>Edit</button>' : ''}
-      </div>
-    `;
-  }
-};
+  template: (ctx) => `
+    <div class="user-card">
+      <h3>${ctx.user.value.name}</h3>
+      <p>Role: ${ctx.user.value.role}</p>
+      ${ctx.editable.value ? '<button>Edit</button>' : ''}
+    </div>
+  `
+});
 
-app.component("UserList", UserList);
-app.component("UserCard", UserCard);
 app.mount(document.getElementById("app"), "UserList");
 ```
 
@@ -535,7 +531,7 @@ The Props plugin provides comprehensive error handling for parsing failures.
 #### Custom Error Handler
 
 ```javascript
-app.use(PropsPlugin, {
+app.use(Props, {
   onError: (error, rawValue) => {
     // Log to console
     console.error("Props parsing error:", {
@@ -627,7 +623,7 @@ app.props.detectType(undefined);            // "undefined"
 ### Plugin Options
 
 ```javascript
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: true,   // Enable automatic type detection and parsing
   enableReactivity: true,    // Wrap props in signals for reactivity
   onError: null              // Custom error handler function
@@ -640,9 +636,9 @@ app.use(PropsPlugin, {
 
 ```javascript
 // Everything automatic - parsing and reactivity
-app.use(PropsPlugin);
+app.use(Props);
 // or
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: true,
   enableReactivity: true
 });
@@ -652,7 +648,7 @@ app.use(PropsPlugin, {
 
 ```javascript
 // Parse props but don't wrap in signals
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: true,
   enableReactivity: false
 });
@@ -673,7 +669,7 @@ const MyComponent = {
 
 ```javascript
 // Wrap props in signals but don't auto-parse
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: false,
   enableReactivity: true
 });
@@ -691,7 +687,7 @@ const MyComponent = {
 #### With Error Handling
 
 ```javascript
-app.use(PropsPlugin, {
+app.use(Props, {
   enableAutoParsing: true,
   enableReactivity: true,
   onError: (error, value) => {
@@ -711,14 +707,14 @@ app.use(PropsPlugin, {
 
 ## API Reference
 
-### PropsPlugin
+### Props
 
 The main plugin object to install on your Eleva application.
 
 ```javascript
-import { PropsPlugin } from "eleva/plugins";
+import { Props } from "eleva/plugins";
 
-app.use(PropsPlugin, options);
+app.use(Props, options);
 ```
 
 #### Options
@@ -782,7 +778,7 @@ const typeName = app.props.detectType(value);
 | undefined | `"undefined"` |
 | Other | `"unknown"` |
 
-### PropsPlugin.uninstall(eleva)
+### Props.uninstall(eleva)
 
 Removes the plugin and restores original Eleva behavior.
 
@@ -791,7 +787,7 @@ Removes the plugin and restores original Eleva behavior.
  * Uninstall the plugin
  * @param {Eleva} eleva - The Eleva instance
  */
-PropsPlugin.uninstall(app);
+Props.uninstall(app);
 ```
 
 ---
@@ -1386,7 +1382,7 @@ Always use `JSON.stringify` when passing objects or arrays:
 Always provide an error handler in production:
 
 ```javascript
-app.use(PropsPlugin, {
+app.use(Props, {
   onError: (error, value) => {
     console.error("Props parsing failed:", { error, value });
     // Report to error tracking
@@ -1505,7 +1501,7 @@ const UserCard = {
 
 ```javascript
 // Check: Is enableReactivity true?
-app.use(PropsPlugin, { enableReactivity: true });
+app.use(Props, { enableReactivity: true });
 
 // Check: Are you accessing .value on the signal?
 template({ count }) {
@@ -1564,19 +1560,19 @@ const safeStringify = (obj) => {
 1. **Check installation order**:
    ```javascript
    const app = new Eleva("App", container);
-   app.use(PropsPlugin);  // Must be before component registration
+   app.use(Props);  // Must be before component registration
    app.component("MyComponent", MyComponent);
    ```
 
 2. **Verify plugin is imported**:
    ```javascript
-   import { PropsPlugin } from "eleva/plugins";
+   import { Props } from "eleva/plugins";
    // or
-   const { PropsPlugin } = window.ElevaPlugins;
+   const { Props } = window.ElevaPlugins;
    ```
 
 3. **Check for conflicting plugins**:
-   Install PropsPlugin before other plugins that modify prop handling.
+   Install Props before other plugins that modify prop handling.
 
 ### Debugging Tips
 
@@ -1719,3 +1715,7 @@ Signal Linking Flow:
 | Error handling per component | Centralized error handler |
 | No type detection | Smart type detection |
 | Props as strings | Props as correct types |
+
+---
+
+[← Back to Plugins](./index.md) | [Previous: Attr Plugin](./attr.md) | [Next: Router Plugin →](./router.md)

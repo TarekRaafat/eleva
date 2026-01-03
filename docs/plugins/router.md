@@ -1,6 +1,6 @@
 # Router Plugin
 
-> **Version:** 1.0.0-rc.10 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~13KB minified | **Dependencies:** Eleva.js core
+> **Version:** 1.0.0-rc.10 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva.js core
 
 The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva.js. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
 
@@ -79,6 +79,8 @@ await router.stop();
 | `router:scroll` | No | Scroll restoration |
 | `router:afterEach` | No | Analytics |
 | `router:onError` | No | Error reporting |
+
+> **Template Context:** Use `${ctx.router.xxx}` in templates, but `@click="handler"` for events (no `ctx.`).
 
 ---
 
@@ -2183,3 +2185,7 @@ The Eleva Router Plugin provides:
 - **Plugin system**: Extensible architecture for custom functionality
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+---
+
+[← Back to Plugins](./index.md) | [Previous: Props Plugin](./props.md) | [Next: Store Plugin →](./store.md)
