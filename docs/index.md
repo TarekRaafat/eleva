@@ -81,7 +81,7 @@ app.mount(document.getElementById("app"), "Counter");
 | Syntax | Purpose | `ctx.`? | Example |
 |--------|---------|:-------:|---------|
 | `${expr}` | Static interpolation | ✓ | `${ctx.user.name}` |
-| `{{ expr }}` | Reactive interpolation | ✗ | `{{ count.value }}` |
+| `{% raw %}{{ expr }}{% endraw %}` | Reactive interpolation | ✗ | `{% raw %}{{ count.value }}{% endraw %}` |
 | `@event` | Event binding | ✗ | `@click="handleClick"` |
 | `:prop` | Pass prop to child | ✓ | `:title="${ctx.todo.title}"` |
 
@@ -342,7 +342,7 @@ For interactive demos, check out the [CodePen Example](https://codepen.io/tarekr
 
 The **TemplateEngine** is responsible for parsing templates and evaluating embedded expressions.
 
-- **`TemplateEngine.parse(template, data)`**: Replaces `{{ expression }}` with values from `data`.
+- **`TemplateEngine.parse(template, data)`**: Replaces `{% raw %}{{ expression }}{% endraw %}` with values from `data`.
 - **`TemplateEngine.evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context.
 
 _Example:_
@@ -374,7 +374,7 @@ _Example:_
 const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "World"
 ```
 
-2. **Handlebars-like Syntax (`{{...}}`):**  
+2. **Handlebars-like Syntax (`{% raw %}{{...}}{% endraw %}`):**
    Enables dynamic, reactive updates.
 
 ```html
@@ -384,7 +384,7 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 **When to Use Each:**
 
 - Use **`${...}`** for one-time, static content.
-- Use **`{{...}}`** for dynamic, reactive data binding.
+- Use **`{% raw %}{{...}}{% endraw %}`** for dynamic, reactive data binding.
 
 > **Important: Context Difference**
 >
@@ -393,7 +393,7 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 > | Syntax | Inside Quotes? | Uses `ctx.`? | Example |
 > |--------|---------------|--------------|---------|
 > | `${...}` | No | Yes | `${ctx.count.value}` |
-> | `{{ ... }}` | Yes | No | `{{ count.value }}` |
+> | `{% raw %}{{ ... }}{% endraw %}` | Yes | No | `{% raw %}{{ count.value }}{% endraw %}` |
 > | `@event="..."` | Yes | No | `@click="increment"` |
 > | `:prop="${...}"` | No (it's a `${}`) | Yes | `:data="${ctx.items.value}"` |
 >
@@ -406,7 +406,7 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 > `
 > ```
 >
-> **Why?** Template literals (`${}`) are evaluated by JavaScript where `ctx` is the function parameter. Quoted content (`{{ }}`, `@event`) is evaluated by Eleva's TemplateEngine which already has your context unwrapped.
+> **Why?** Template literals (`${}`) are evaluated by JavaScript where `ctx` is the function parameter. Quoted content (`{% raw %}{{ }}{% endraw %}`, `@event`) is evaluated by Eleva's TemplateEngine which already has your context unwrapped.
 
 #### Common Mistakes
 
@@ -1187,7 +1187,7 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
    Signals are reactive data holders that notify watchers when their values change, triggering re-renders of the affected UI.
 
 3. **TemplateEngine (Rendering):**
-   This module processes template strings by replacing placeholders (e.g., `{{ count }}`) with live data, enabling dynamic rendering.
+   This module processes template strings by replacing placeholders (e.g., `{% raw %}{{ count }}{% endraw %}`) with live data, enabling dynamic rendering.
 
 4. **Renderer (DOM Diffing and Patching):**
    The Renderer compares the new HTML structure with the current DOM and patches only the parts that have changed, ensuring high performance and efficient updates without the overhead of a virtual DOM.
@@ -1205,7 +1205,7 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 2. **Rendering:**
 
    - The **template** function is called with the combined context and reactive state.
-   - The **TemplateEngine** parses the template, replacing expressions like `{{ count }}` with the current values.
+   - The **TemplateEngine** parses the template, replacing expressions like `{% raw %}{{ count }}{% endraw %}` with the current values.
    - The **Renderer** takes the resulting HTML and patches it into the DOM, ensuring only changes are applied.
 
 3. **Reactivity:**
@@ -3846,7 +3846,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 | **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
 | **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |
 | **Built-in Plugins** | 4 (Attr, Props, Router, Store) |
-| **Template Syntaxes** | 4 (${}, {{}}, @event, :prop) |
+| **Template Syntaxes** | 4 (${}, {% raw %}{{}}{% endraw %}, @event, :prop) |
 
 ### Core Modules Quick Reference
 
