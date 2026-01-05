@@ -568,7 +568,7 @@ The **TemplateEngine** is responsible for parsing templates and evaluating embed
 _Example:_
 
 ```js
-const template = "Hello, {{ name }}!";
+const template = "Hello, {% raw %}{{ name }}{% endraw %}!";
 const data = { name: "World" };
 const output = TemplateEngine.parse(template, data);
 console.log(output); // "Hello, World!"
@@ -598,7 +598,7 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
    Enables dynamic, reactive updates.
 
 ```html
-<p>Hello, {{ name }}!</p>
+<p>Hello, {% raw %}{{ name }}{% endraw %}!</p>
 ```
 
 **When to Use Each:**
@@ -620,7 +620,7 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 > ```js
 > template: (ctx) => `
 >   <p>Static: ${ctx.count.value}</p>
->   <p>Reactive: {{ count.value }}</p>
+>   <p>Reactive: {% raw %}{{ count.value }}{% endraw %}</p>
 >   <button @click="increment">+</button>
 >   <child-component :data="${ctx.items.value}"></child-component>
 > `
@@ -631,11 +631,11 @@ const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "
 #### Common Mistakes
 
 ```js
-// ❌ WRONG: Using ctx. inside {{ }}
-template: (ctx) => `<p>{{ ctx.count.value }}</p>`
+// ❌ WRONG: Using ctx. inside {% raw %}{{ }}{% endraw %}
+template: (ctx) => `<p>{% raw %}{{ ctx.count.value }}{% endraw %}</p>`
 
-// ✓ CORRECT: No ctx. inside {{ }}
-template: (ctx) => `<p>{{ count.value }}</p>`
+// ✓ CORRECT: No ctx. inside {% raw %}{{ }}{% endraw %}
+template: (ctx) => `<p>{% raw %}{{ count.value }}{% endraw %}</p>`
 ```
 
 ```js
@@ -4429,7 +4429,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 │  [template() Produces HTML]                                 │
 │          │                                                  │
 │          ▼                                                  │
-│  [TemplateEngine.parse()] ──► Interpolates {{ values }}     │
+│  [TemplateEngine.parse()] ──► Interpolates {% raw %}{{ values }}{% endraw %}     │
 │          │                                                  │
 │          ▼                                                  │
 │  [Renderer.patchDOM()] ──► Updates only changed nodes       │
