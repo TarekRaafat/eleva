@@ -362,8 +362,8 @@ describe("js-framework-benchmark Style Performance Test", () => {
     // Register the benchmark component (similar to js-framework-benchmark structure)
     app.component("benchmark-table", {
       setup: ({ signal }: any) => {
-        rowsSignal = signal<Row[]>([]);
-        selectedSignal = signal<number | null>(null);
+        rowsSignal = signal([]);
+        selectedSignal = signal(null);
 
         return {
           rows: rowsSignal,
@@ -444,7 +444,7 @@ describe("js-framework-benchmark Style Performance Test", () => {
         let sig: any;
         a.component("table", {
           setup: ({ signal }: any) => {
-            sig = signal<Row[]>([]);
+            sig = signal([]);
             return { rows: sig };
           },
           template: (ctx: any) =>
@@ -468,7 +468,7 @@ describe("js-framework-benchmark Style Performance Test", () => {
         let sig: any;
         a.component("table", {
           setup: ({ signal }: any) => {
-            sig = signal<Row[]>([]);
+            sig = signal([]);
             return { rows: sig };
           },
           template: (ctx: any) =>
@@ -632,7 +632,7 @@ describe("js-framework-benchmark Style Performance Test", () => {
 
       a.component("table", {
         setup: ({ signal }: any) => {
-          sig = signal<Row[]>([]);
+          sig = signal([]);
           return { rows: sig };
         },
         template: (ctx: any) =>
