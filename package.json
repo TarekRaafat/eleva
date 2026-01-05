@@ -165,7 +165,7 @@
     "test:fps": "bun test ./test/performance/fps-benchmark.test.ts",
     "test:integration": "bun test ./test/integration",
     "test:all": "bun test",
-    "test:coverage": "bun test --coverage",
+    "test:coverage": "bun test --coverage ./test/unit ./test/integration",
     "test:watch": "bun test --watch",
     "codecov": "npx codecov",
     "lint": "eslint src/**/*.js",
