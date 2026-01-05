@@ -85,7 +85,7 @@ app.component("BlogPost", {
       ${ctx.showComments.value ? `
         <div class="comments-section">
           ${ctx.comments.value.map(comment => `
-            <div class="comment-wrapper" :comment='${JSON.stringify(comment)}'></div>
+            <div key="${comment.id}" class="comment-wrapper" :comment='${JSON.stringify(comment)}'></div>
           `).join('')}
 
           <div class="add-comment">
@@ -110,11 +110,11 @@ app.component("Blog", {
     const posts = signal([
       {
         id: 1,
-        title: "Getting Started with Eleva.js",
+        title: "Getting Started with Eleva",
         author: "John Doe",
         date: "January 3, 2026",
         readTime: 5,
-        excerpt: "Learn the basics of Eleva.js, a minimalist JavaScript framework that emphasizes simplicity and performance. In this guide, we'll cover components, signals, and the template system.",
+        excerpt: "Learn the basics of Eleva, a minimalist JavaScript framework that emphasizes simplicity and performance. In this guide, we'll cover components, signals, and the template system.",
         comments: [
           { id: 1, author: "Jane", text: "Great introduction!", date: "January 3, 2026" }
         ]
@@ -147,13 +147,13 @@ app.component("Blog", {
   template: (ctx) => `
     <div class="blog">
       <header class="blog-header">
-        <h1>Eleva.js Blog</h1>
+        <h1>Eleva Blog</h1>
         <p>Tutorials, guides, and best practices</p>
       </header>
 
       <div class="posts">
         ${ctx.posts.value.map(post => `
-          <div class="post-wrapper" :post='${JSON.stringify(post)}'></div>
+          <div key="${post.id}" class="post-wrapper" :post='${JSON.stringify(post)}'></div>
         `).join('')}
       </div>
     </div>

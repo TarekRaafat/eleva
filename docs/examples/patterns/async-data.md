@@ -66,7 +66,7 @@ app.component("UserProfile", {
       <div class="user-selector">
         <label>Load user: </label>
         ${[1, 2, 3, 4, 5].map(id => `
-          <button @click="() => fetchUser(${id})">${id}</button>
+          <button key="${id}" @click="() => fetchUser(${id})">${id}</button>
         `).join("")}
       </div>
     </div>
@@ -143,7 +143,7 @@ app.component("PostList", {
 
       <div class="posts">
         ${ctx.posts.value.map(post => `
-          <article class="post">
+          <article key="${post.id}" class="post">
             <h3>${post.title}</h3>
             <p>${post.body}</p>
           </article>
@@ -238,7 +238,7 @@ app.component("UserSearch", {
       ` : `
         <ul class="results">
           ${ctx.results.value.map(user => `
-            <li class="result-item">
+            <li key="${user.id}" class="result-item">
               <strong>${user.name}</strong>
               <span>${user.email}</span>
             </li>
@@ -303,7 +303,7 @@ app.component("CachedData", {
     <div class="cached-data">
       <div class="controls">
         ${[1, 2, 3, 4, 5].map(id => `
-          <button @click="() => fetchData(${id})">Post ${id}</button>
+          <button key="${id}" @click="() => fetchData(${id})">Post ${id}</button>
         `).join("")}
         <button @click="clearCache" class="clear">Clear Cache</button>
       </div>
@@ -384,21 +384,21 @@ app.component("Dashboard", {
           <section class="card">
             <h3>Users (${ctx.users.value.length})</h3>
             <ul>
-              ${ctx.users.value.map(u => `<li>${u.name}</li>`).join("")}
+              ${ctx.users.value.map(u => `<li key="${u.id}">${u.name}</li>`).join("")}
             </ul>
           </section>
 
           <section class="card">
             <h3>Recent Posts (${ctx.posts.value.length})</h3>
             <ul>
-              ${ctx.posts.value.map(p => `<li>${p.title.substring(0, 30)}...</li>`).join("")}
+              ${ctx.posts.value.map(p => `<li key="${p.id}">${p.title.substring(0, 30)}...</li>`).join("")}
             </ul>
           </section>
 
           <section class="card">
             <h3>Comments (${ctx.comments.value.length})</h3>
             <ul>
-              ${ctx.comments.value.map(c => `<li>${c.name.substring(0, 25)}...</li>`).join("")}
+              ${ctx.comments.value.map(c => `<li key="${c.id}">${c.name.substring(0, 25)}...</li>`).join("")}
             </ul>
           </section>
         </div>

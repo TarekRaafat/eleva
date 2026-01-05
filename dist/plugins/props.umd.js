@@ -1,4 +1,4 @@
-/*! Eleva Props Plugin v1.0.0-rc.10 | MIT License | https://elevajs.com */
+/*! Eleva Props Plugin v1.0.0-rc.11 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -233,7 +233,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.10",
+    version: "1.0.0-rc.11",
     /**
      * Plugin description
      * @type {string}
@@ -705,6 +705,7 @@
     }
   };
 
+  exports.Props = PropsPlugin;
   exports.PropsPlugin = PropsPlugin;
 
 }));

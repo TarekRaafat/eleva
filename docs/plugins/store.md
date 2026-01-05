@@ -1,8 +1,8 @@
 # Store Plugin
 
-> **Version:** 1.0.0-rc.10 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva.js core (Signal system)
+> **Version:** 1.0.0-rc.11 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
 
-The Store plugin provides centralized, reactive state management for Eleva.js applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
+The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
 
 ---
 
@@ -113,6 +113,7 @@ app.use(Store, {
   - [Data Flow](#data-flow)
   - [Best Practices](#best-practices)
   - [Troubleshooting](#troubleshooting)
+  - [Batching Tips \& Gotchas](#batching-tips--gotchas)
   - [Migration Guide](#migration-guide)
   - [Summary](#summary)
 
@@ -811,7 +812,7 @@ app.component("TodoApp", {
 
       <ul class="todo-list">
         ${ctx.filteredTodos().map(todo => `
-          <li class="${todo.completed ? 'completed' : ''}">
+          <li key="${todo.id}" class="${todo.completed ? 'completed' : ''}">
             <input
               type="checkbox"
               ${todo.completed ? 'checked' : ''}
@@ -1054,7 +1055,7 @@ app.component("CartWidget", {
           ` : `
             <ul>
               ${ctx.items.value.map(item => `
-                <li>
+                <li key="${item.id}">
                   <span>${item.name}</span>
                   <span>$${item.price}</span>
                   <input
@@ -1655,6 +1656,100 @@ store.state.count.watch((value) => {
     // Safe conditional update
   }
 });
+```
+
+---
+
+## Batching Tips & Gotchas
+
+Eleva uses **render batching** via `queueMicrotask` to optimize performance. This means DOM updates happen asynchronously after state changes. Here's what you need to know when using the Store plugin:
+
+### 1. Multiple Dispatches Are Batched
+
+When you dispatch multiple actions in sequence, DOM updates are batched into a single render:
+
+```javascript
+// These three dispatches result in ONE DOM update, not three
+store.dispatch("increment");
+store.dispatch("setUser", { name: "John" });
+store.dispatch("setTheme", "dark");
+// DOM updates after all three complete
+```
+
+**Benefit**: Better performance. No unnecessary intermediate renders.
+
+### 2. DOM Updates Are Async
+
+After dispatching an action, the DOM won't update immediately:
+
+```javascript
+store.dispatch("increment");
+console.log(document.querySelector('.count').textContent); // Still shows OLD value!
+
+// To read updated DOM, wait for the microtask:
+store.dispatch("increment");
+queueMicrotask(() => {
+  console.log(document.querySelector('.count').textContent); // Now shows NEW value
+});
+```
+
+### 3. Tests May Need Delays
+
+When testing Store-based components, allow time for batched renders:
+
+```javascript
+// In tests, use await with a small delay or queueMicrotask
+test("counter increments", async () => {
+  store.dispatch("increment");
+
+  // Wait for batched render
+  await new Promise(resolve => queueMicrotask(resolve));
+
+  expect(document.querySelector('.count').textContent).toBe("1");
+});
+```
+
+### 4. Use Immutable Updates for Arrays/Objects
+
+Always create new references for clearer state changes and proper reactivity:
+
+```javascript
+// Good - new array reference triggers update
+state.todos.value = [...state.todos.value, newTodo];
+
+// Bad - mutation may not trigger update
+state.todos.value.push(newTodo); // Might not re-render!
+```
+
+### 5. Subscription Callbacks Are Synchronous
+
+While DOM updates are batched, `store.subscribe()` callbacks fire immediately after each dispatch:
+
+```javascript
+store.subscribe((mutation, state) => {
+  // This fires immediately after dispatch
+  console.log("Action dispatched:", mutation.type);
+
+  // But DOM hasn't updated yet!
+  // Use queueMicrotask if you need to read the DOM
+});
+```
+
+### 6. Async Actions and Batching
+
+Each `await` in an async action creates a new batch boundary:
+
+```javascript
+actions: {
+  loadData: async (state) => {
+    state.loading.value = true;  // Batch 1
+
+    const data = await fetchData();  // Batch boundary
+
+    state.data.value = data;         // Batch 2
+    state.loading.value = false;     // Batch 2 (same batch)
+  }
+}
 ```
 
 ---

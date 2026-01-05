@@ -349,4 +349,29 @@ describe("Children Components & Passing Props", () => {
     expect(appContainer.innerHTML).toContain("Parent Component");
     expect(appContainer.innerHTML).toContain("Child: Hello from Parent");
   });
+
+  test("should handle _extractProps when element has no attributes property", () => {
+    // Create a mock element without attributes property
+    const mockElement = {} as unknown as HTMLElement;
+    const result = (app as any)._extractProps(mockElement);
+    expect(result).toEqual({});
+  });
+
+  test("should skip render when children map has empty selector", async () => {
+    const ChildComponent = {
+      template: () => `<div>Child</div>`,
+    };
+    const ParentComponent = {
+      template: () => `<div><span class="target"></span></div>`,
+      children: {
+        "": ChildComponent, // Empty selector should be skipped
+        ".target": ChildComponent,
+      },
+    };
+
+    const instance = await app.mount(appContainer, ParentComponent);
+    expect(instance).toBeTruthy();
+    expect(appContainer.innerHTML).toContain("Child");
+    await instance.unmount();
+  });
 });

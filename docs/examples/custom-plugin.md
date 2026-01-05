@@ -71,7 +71,7 @@ npm install --save-dev vite vitest @types/node
 Create `src/index.js`:
 
 ```js
-const LoggerPlugin = {
+const Logger = {
   name: 'logger',
   install(eleva, options) {
     const { level = 'info', prefix = '[Eleva]' } = options || {};
@@ -98,7 +98,7 @@ const LoggerPlugin = {
   }
 };
 
-export default LoggerPlugin;
+export default Logger;
 ```
 
 ### Step 3: Create a Demo Application
@@ -123,12 +123,12 @@ Create `demo/main.js`:
 
 ```js
 import Eleva from 'eleva';
-import LoggerPlugin from '../src/index.js';
+import Logger from '../src/index.js';
 
 const app = new Eleva('LoggerDemo');
 
 // Use the plugin with custom options
-app.use(LoggerPlugin, {
+app.use(Logger, {
   level: 'debug',
   prefix: '[MyApp]'
 });
@@ -166,7 +166,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, '../src/index.js'),
       formats: ['es', 'umd'],
-      name: 'ElevaLoggerPlugin'
+      name: 'ElevaLogger'
     }
   }
 });
@@ -255,8 +255,8 @@ const ComposedPlugin = {
   name: 'composed',
   install(eleva, options) {
     // Use other plugins
-    eleva.use(LoggerPlugin, options.logger);
-    eleva.use(StorePlugin, options.store);
+    eleva.use(Logger, options.logger);
+    eleva.use(Store, options.store);
   }
 };
 ```
@@ -268,14 +268,14 @@ Create `test/plugin.test.js`:
 ```js
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Eleva from 'eleva';
-import LoggerPlugin from '../src/index.js';
+import Logger from '../src/index.js';
 
 describe('Logger Plugin', () => {
   let app;
   
   beforeEach(() => {
     app = new Eleva('TestApp');
-    app.use(LoggerPlugin, { level: 'debug' });
+    app.use(Logger, { level: 'debug' });
   });
   
   it('should add logging methods to Eleva', () => {
@@ -376,12 +376,12 @@ declare module 'eleva' {
   }
 }
 
-export interface LoggerPluginOptions {
+export interface LoggerOptions {
   level?: 'info' | 'warn' | 'error' | 'debug';
   prefix?: string;
 }
 
-export default LoggerPlugin;
+export default Logger;
 ```
 
 ## Next Steps

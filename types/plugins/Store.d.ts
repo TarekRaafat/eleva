@@ -83,4 +83,5 @@ export namespace StorePlugin {
      */
     function uninstall(eleva: Object): void;
 }
+export { StorePlugin as Store };
 //# sourceMappingURL=Store.d.ts.map

@@ -255,7 +255,7 @@ app.component("TaskManager", {
               ${ctx.searchQuery.value ? 'No tasks match your search' : 'No tasks yet. Add one!'}
             </p>
           ` : filtered.map(task => `
-            <div class="task-item-container"
+            <div key="${task.id}" class="task-item-container"
                  :task='${JSON.stringify(task)}'
                  :onToggle="() => toggleTask(${task.id})"
                  :onDelete="() => deleteTask(${task.id})"

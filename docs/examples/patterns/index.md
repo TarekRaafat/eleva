@@ -6,6 +6,7 @@ Reusable code patterns for common UI scenarios. Each pattern is a focused, copy-
 
 | Pattern | Description | Link |
 |---------|-------------|------|
+| **Best Practices** | Selectors, components, lifecycle, performance | [View →](./best-practices.md) |
 | **Forms** | Input binding, validation, submission | [View →](./forms.md) |
 | **Async Data** | API fetching, loading states, pagination | [View →](./async-data.md) |
 | **Conditional Rendering** | Show/hide, tabs, modals, skeletons | [View →](./conditional-rendering.md) |
@@ -14,6 +15,12 @@ Reusable code patterns for common UI scenarios. Each pattern is a focused, copy-
 | **Local Storage** | Persistence, session storage, caching | [View →](./storage.md) |
 
 ## Quick Links
+
+### Best Practices
+- [Selector Performance](./best-practices.md#selector-performance)
+- [Component Structure](./best-practices.md#component-structure)
+- [Lifecycle Hooks](./best-practices.md#lifecycle-hooks)
+- [Signal Reactivity](./best-practices.md#signal-reactivity)
 
 ### Forms
 - [Basic Input Binding](./forms.md#basic-input-binding)

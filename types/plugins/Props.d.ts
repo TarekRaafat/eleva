@@ -45,4 +45,5 @@ export namespace PropsPlugin {
      */
     function uninstall(eleva: Object): void;
 }
+export { PropsPlugin as Props };
 //# sourceMappingURL=Props.d.ts.map

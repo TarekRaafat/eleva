@@ -25,4 +25,5 @@ export namespace AttrPlugin {
      */
     function uninstall(eleva: Object): void;
 }
+export { AttrPlugin as Attr };
 //# sourceMappingURL=Attr.d.ts.map

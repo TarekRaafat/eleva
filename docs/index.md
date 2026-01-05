@@ -1,6 +1,33 @@
-# eleva.js - Pure JavaScript, Pure Performance
+---
+title: Eleva.js - Best DX for Building the Best UX | Official Documentation
+description: Eleva.js is a 6KB minimalist pure vanilla JavaScript frontend framework designed for the best Developer Experience (DX). Signal-based reactivity, zero dependencies, and built-in TypeScript support. The perfect React and Vue alternative for developers who want simplicity without sacrificing power.
+head:
+  - - meta
+    - name: keywords
+      content: eleva, eleva.js, elevajs, javascript framework, lightweight javascript framework, vanilla javascript framework, reactive javascript, frontend framework, react alternative, vue alternative, signal-based reactivity, typescript framework, zero dependencies, minimalist framework, web components, SPA framework, developer experience, DX, UX, user experience
+  - - meta
+    - property: og:title
+      content: Eleva.js - Best DX for Building the Best UX
+  - - meta
+    - property: og:description
+      content: A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.
+  - - meta
+    - property: og:type
+      content: website
+  - - meta
+    - name: twitter:card
+      content: summary_large_image
+  - - meta
+    - name: twitter:title
+      content: Eleva.js - Best DX for Building the Best UX
+  - - meta
+    - name: twitter:description
+      content: A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.
+---
 
-> **Version:** 1.0.0-rc.10 | **Bundle Size:** ~6KB minified (~2KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+# Eleva.js - Best DX for Building the Best UX
+
+> **Version:** `1.0.0-rc.11` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -16,24 +43,153 @@
 <br>
 
 <p align="center">
-  <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/eleva.js Full Logo.png" alt="eleva.js Full Logo" width="50%"></a>
+  <a href="https://github.com/TarekRaafat/eleva"><img src="./imgs/eleva.js Full Logo.png" alt="Eleva.js - Lightweight JavaScript Framework Logo" width="50%"></a>
 </p>
 
 <p align="center">
-  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="eleva.js - A&#0032;minimalist&#0044;&#0032;pure&#0032;vanilla&#0032;javascript&#0032;frontend&#0032;framework&#0046; | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
+  <a href="https://www.producthunt.com/posts/eleva?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-eleva" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=938663&theme=light&t=1741247713068" alt="Eleva.js - A minimalist pure vanilla JavaScript frontend framework | Product Hunt" style="width: 250px; height: 54px;" width="250" height="54" /></a>
 </p>
 
 <p align="center">
-  <a href="https://chatgpt.com/g/g-684b2a1bf9548191a0b0e25f44eebefc-eleva-website-builder"><img src="./imgs/Eleva Website Builder Button.png" alt="eleva.js Full Logo" width="30%"></a>
+  <a href="https://chatgpt.com/g/g-684b2a1bf9548191a0b0e25f44eebefc-eleva-website-builder"><img src="./imgs/Eleva Website Builder Button.png" alt="Eleva Website Builder - AI-powered website creation tool" width="30%"></a>
 </p>
 
 <br>
 <br>
 <br>
 
-Welcome to the official documentation for **eleva.js**, a minimalist, lightweight, pure vanilla JavaScript frontend runtime framework. Whether you're new to JavaScript or an experienced developer, this guide will help you understand Eleva's core concepts, architecture, and how to integrate and extend it in your projects.
+## What is Eleva?
 
-> **RC Release Notice**: This documentation is for eleva.js v1.0.0-rc.10. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+**Eleva** is a minimalist, lightweight (6KB), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI).
+
+Unlike React, Vue, or Angular, Eleva:
+- **Has zero dependencies** - No node_modules bloat
+- **Requires no build step** - Works directly in browsers via CDN
+- **Uses real DOM** - No virtual DOM overhead for simple apps
+- **Provides signal-based reactivity** - Fine-grained updates like Solid.js
+- **Includes TypeScript support** - Built-in type declarations
+
+Eleva is ideal for developers building lightweight web applications, prototypes, micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+
+> _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
+
+> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.11. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+
+---
+
+## Eleva vs Other JavaScript Frameworks
+
+How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, and Angular?
+
+| Feature | Eleva | React | Vue | Svelte | Angular |
+|---------|----------|-------|-----|--------|---------|
+| **Bundle Size** | ~6KB | ~42KB | ~34KB | ~2.5KB* | ~130KB |
+| **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
+| **Virtual DOM** | No | Yes | Yes | No | No |
+| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
+| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in |
+| **Build Required** | No | Yes | Optional | Yes | Yes |
+| **Learning Curve** | Low | Medium | Medium | Low | High |
+| **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | Decorators |
+
+_*Svelte compiles away, so runtime is minimal but build step is required._
+
+### When to Use Eleva
+
+**Choose Eleva when you need:**
+- A lightweight framework without build complexity
+- Quick prototypes or MVPs
+- Micro-frontends or embedded widgets
+- Server-side rendered pages with progressive enhancement
+- Projects where bundle size matters
+- A simpler alternative to React or Vue
+
+**Consider other frameworks when you need:**
+- Large enterprise applications (Angular)
+- Extensive ecosystem and community (React)
+- Full-featured SPA with routing built-in (Vue + Vue Router)
+- Maximum performance for complex UIs (Svelte)
+
+---
+
+## Developer Experience (DX)
+
+Eleva is built on a simple principle: **great DX leads to great UX**. When developers have intuitive tools, they build better interfaces.
+
+### Why Eleva's DX Stands Out
+
+| DX Feature | How It Helps You Build Better UX |
+|------------|----------------------------------|
+| **Zero Config** | Start building immediately — no webpack, no bundlers, no setup |
+| **Intuitive API** | Learn in minutes, master in hours — more time for polishing UI |
+| **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
+| **Instant Feedback** | Signal-based reactivity shows changes immediately |
+| **TypeScript Built-in** | Full autocomplete and type safety out of the box |
+| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
+| **No Hidden Magic** | Debug easily with transparent, predictable behavior |
+| **Sync & Async Hooks** | Lifecycle hooks that work the way you expect |
+
+### DX-First Design Principles
+
+- **🎯 Predictable** — No surprises. The framework behaves exactly as documented.
+- **🔍 Debuggable** — Clear error messages and easy-to-trace execution flow.
+- **📖 Self-Documenting** — API names that make sense without checking docs.
+- **⚡ Fast Iteration** — Change code, see results instantly. No build delays.
+- **🤝 Familiar Patterns** — If you know JavaScript, you know Eleva.
+
+---
+
+## Browser Support
+
+Eleva targets **modern evergreen browsers** and requires no polyfills for supported environments.
+
+### Supported Browsers
+
+| Browser | Minimum Version | Release Date |
+|---------|-----------------|--------------|
+| **Chrome** | 71+ | Dec 2018 |
+| **Firefox** | 69+ | Sep 2019 |
+| **Safari** | 12.1+ | Mar 2019 |
+| **Edge** | 79+ (Chromium) | Jan 2020 |
+| **Opera** | 58+ | Jan 2019 |
+| **iOS Safari** | 12.2+ | Mar 2019 |
+| **Chrome Android** | 71+ | Dec 2018 |
+
+### Key JavaScript Features Used
+
+Eleva uses the following modern JavaScript features:
+
+| Feature | Purpose in Eleva |
+|---------|------------------|
+| `queueMicrotask()` | Batched rendering scheduler |
+| `Map` / `Set` | Internal state management |
+| ES6 Classes | Component architecture |
+| Template Literals | Template system |
+| Async/Await | Lifecycle hooks |
+| Optional Chaining (`?.`) | Safe property access |
+| Spread Operator | Props and context merging |
+
+### Legacy Browser Support
+
+Eleva does **not** support:
+- Internet Explorer (any version)
+- Legacy Edge (non-Chromium, version < 79)
+- Older mobile browsers
+
+If you need to support legacy browsers, consider:
+1. Using a transpiler like Babel with appropriate polyfills
+2. Adding polyfills for `queueMicrotask` and other modern APIs
+3. Choosing a framework with built-in legacy support
+
+### Why Modern Browsers Only?
+
+Eleva's design philosophy prioritizes:
+- **Small bundle size** - No polyfills means smaller footprint
+- **Performance** - Native browser APIs are faster than polyfilled alternatives
+- **Simplicity** - No build step required for modern browsers
+- **Future-forward** - Aligns with web platform evolution
+
+> **Note:** As of 2024, the supported browsers cover approximately **96%+ of global web traffic** according to [caniuse.com](https://caniuse.com/mdn-api_queuemicrotask).
 
 ---
 
@@ -87,6 +243,8 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### Lifecycle Hooks
 
+Lifecycle hooks are **returned from setup**, not destructured from context. They support **both sync and async** functions:
+
 | Hook | When Called |
 |------|-------------|
 | `onBeforeMount` | Before component mounts to DOM |
@@ -94,6 +252,24 @@ app.mount(document.getElementById("app"), "Counter");
 | `onBeforeUpdate` | Before component re-renders |
 | `onUpdate` | After component re-renders |
 | `onUnmount` | Before component is destroyed |
+
+```js
+// Sync hooks
+setup: ({ signal }) => ({
+  count: signal(0),
+  onMount: () => console.log("Mounted!"),
+  onUnmount: () => console.log("Unmounting!")
+})
+
+// Async hooks (awaited by framework)
+setup: ({ signal }) => ({
+  data: signal(null),
+  onMount: async ({ context }) => {
+    const res = await fetch("/api/data");
+    context.data.value = await res.json();
+  }
+})
+```
 
 ### Built-in Plugins
 
@@ -108,7 +284,12 @@ app.mount(document.getElementById("app"), "Counter");
 
 ## Table of Contents
 
-- [eleva.js - Pure JavaScript, Pure Performance](#elevajs---pure-javascript-pure-performance)
+- [Eleva.js - Best DX for Building the Best UX](#elevajs---best-dx-for-building-the-best-ux)
+  - [What is Eleva?](#what-is-eleva)
+  - [Eleva vs Other JavaScript Frameworks](#eleva-vs-other-javascript-frameworks)
+    - [When to Use Eleva](#when-to-use-eleva)
+  - [Developer Experience (DX)](#developer-experience-dx)
+  - [Browser Support](#browser-support)
   - [TL;DR - Quick Start](#tldr---quick-start)
   - [Table of Contents](#table-of-contents)
   - [1. Introduction](#1-introduction)
@@ -152,10 +333,10 @@ app.mount(document.getElementById("app"), "Counter");
     - [Plugin Lifecycle](#plugin-lifecycle)
     - [TypeScript Support](#typescript-support)
     - [Built-in Plugins](#built-in-plugins)
-      - [🎯 AttrPlugin](#-attrplugin)
-      - [🚀 RouterPlugin](#-routerplugin)
-      - [🎯 PropsPlugin](#-propsplugin)
-      - [🏪 StorePlugin](#-storeplugin)
+      - [🎯 Attr Plugin](#-attr-plugin)
+      - [🚀 Router Plugin](#-router-plugin)
+      - [🎯 Props Plugin](#-props-plugin)
+      - [🏪 Store Plugin](#-store-plugin)
       - [Plugin Installation](#plugin-installation)
       - [Bundle Sizes](#bundle-sizes)
   - [9. Debugging \& Developer Tools](#9-debugging--developer-tools)
@@ -174,15 +355,16 @@ app.mount(document.getElementById("app"), "Counter");
     - [Use Cases](#use-cases)
   - [11. Examples and Tutorials](#11-examples-and-tutorials)
   - [12. FAQ](#12-faq)
-  - [13. Troubleshooting \& Migration Guidelines](#13-troubleshooting--migration-guidelines)
+  - [13. Testing](#13-testing)
+  - [14. Troubleshooting \& Migration](#14-troubleshooting--migration)
     - [Troubleshooting](#troubleshooting)
     - [Migration Guidelines](#migration-guidelines)
-  - [14. API Reference](#14-api-reference)
-  - [15. Contributing](#15-contributing)
-  - [16. Community \& Support](#16-community--support)
-  - [17. Changelog](#17-changelog)
-  - [18. License](#18-license)
-  - [19. Sponsors \& Partners](#19-sponsors--partners)
+  - [15. API Reference](#15-api-reference)
+  - [16. Contributing](#16-contributing)
+  - [17. Community \& Support](#17-community--support)
+  - [18. Changelog](#18-changelog)
+  - [19. License](#19-license)
+  - [20. Sponsors \& Partners](#20-sponsors--partners)
   - [Summary](#summary)
 
 ---
@@ -232,18 +414,56 @@ At the heart of Eleva are a few fundamental principles that guide its design and
 
 ## 4. Performance Benchmarks
 
-Preliminary benchmarks illustrate Eleva's efficiency compared to popular frameworks:
+### ⚡ 240fps+ Ready - The Framework Is Never the Bottleneck
 
-| **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
-| ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **2**                | **0.05**                   | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
-| **React** (Virtual DOM)       | 4.1                  | 5.34                       | 0.020                    | 0.25                       | 9.71                                            |
-| **Vue** (Reactive State)      | 45                   | 4.72                       | 0.021                    | 3.10                       | 13.21                                           |
-| **Angular** (Two-way Binding) | 62                   | 5.26                       | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
+Eleva is built for high-performance applications. With an average render time of **0.010ms**, Eleva can theoretically achieve **100,000+ fps** for simple updates:
 
-Detailed [Benchmark Metrics Report](https://github.com/TarekRaafat/eleva/blob/master/BENCHMARK.md)
+| FPS Target | Frame Budget | Eleva Capability | Status |
+|------------|--------------|------------------|:------:|
+| **60 fps** | 16.67ms | ~1,700 renders possible | ✅ |
+| **120 fps** | 8.33ms | ~833 renders possible | ✅ |
+| **240 fps** | 4.17ms | ~417 renders possible | ✅ |
 
-> ⚠️ **Disclaimer:** Benchmarks are based on internal tests and may vary by project and environment.
+**FPS Throughput Benchmarks:**
+
+| Scenario | Ops/Second | Avg Render Time | 240fps Ready? |
+|----------|-----------|-----------------|:-------------:|
+| Simple counter | 24,428 | 0.041ms | ✅ |
+| Position animation (2 signals) | 50,928 | 0.020ms | ✅ |
+| 5 signals batched | 31,403 | 0.032ms | ✅ |
+| 100-item list | 1,453 | 0.688ms | ✅ |
+| Complex nested template | 6,369 | 0.157ms | ✅ |
+
+Even the **heaviest scenario** (100-item list at 0.688ms) comfortably fits within a 240fps frame budget of 4.17ms.
+
+### js-framework-benchmark Comparison
+
+Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
+
+| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
+| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
+| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~37**                 | ~97*                    | ~15             |
+| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
+| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
+| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
+
+_*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
+
+**Eleva's Strengths:**
+- **240fps+ capable** - Framework never limits frame rate
+- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
+- **Competitive initial render** (~37ms for 1K rows)
+- **Zero dependencies** and minimal runtime overhead
+- **Automatic render batching** - Multiple signal changes = 1 render
+
+**Performance Tips:**
+- Use `key` attribute on list items for optimal diffing
+- Split large lists into smaller components
+- Eleva excels at initial renders and small-to-medium updates
+
+> 💡 **Run benchmarks yourself:** `bun run test:benchmark` or `bun run test:fps`
+
+> ⚠️ **Disclaimer:** Benchmarks vary by application complexity, browser, and hardware. Eleva results from internal test suite using Bun runtime. Other framework data from [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/).
 
 ---
 
@@ -514,6 +734,23 @@ count.value = 1; // Logs: "Count updated: 1"
 - Efficient update propagation
 - Memory leak prevention through unsubscribe
 
+**Automatic Render Batching:**
+
+Eleva automatically batches multiple signal changes into a single render, optimizing performance without any code changes:
+
+```js
+// All 3 changes result in just 1 render
+x.value = 10;
+y.value = 20;
+z.value = 30;
+```
+
+| Scenario | Without Batching | With Batching |
+|----------|------------------|---------------|
+| Drag events (60/sec × 3 signals) | 180 renders/sec | 60 renders/sec |
+| Form reset (10 fields) | 10 renders | 1 render |
+| API response (5 state updates) | 5 renders | 1 render |
+
 ### Emitter (Event Handling)
 
 The **Emitter** enables inter-component communication through events and using a publish–subscribe pattern.
@@ -589,7 +826,7 @@ Each hook receives a context object with the following properties:
 - `container`: The component's container element
 - `context`: The component's context object containing props, state, and utilities
 
-All hooks are asynchronous and return Promises, allowing you to perform async operations.
+**Sync & Async Support:** All hooks are awaited by the framework, meaning they support **both synchronous and asynchronous** functions. If you return a Promise (or use `async`), the framework will wait for it to resolve before continuing.
 
 _Example:_
 
@@ -624,7 +861,7 @@ app.component("MyComponent", {
     };
   },
   template(ctx) {
-    return `<div>Count: ${ctx.count}</div>`;
+    return `<div>Count: ${ctx.count.value}</div>`;
   },
 });
 ```
@@ -633,8 +870,8 @@ app.component("MyComponent", {
 1. Lifecycle hooks are optional and only need to be defined if you want to use them
 2. Hooks must be returned from the setup method to be effective
 3. Each hook receives a context object with the component's container and context
-4. All hooks are asynchronous and return Promises
-5. Hooks can perform async operations like data fetching, initialization, or cleanup
+4. Hooks support both sync and async functions - async hooks are awaited before continuing
+5. Common async use cases: data fetching, initialization, timers, and cleanup
 
 _Example (with Reactive State and Async Operations):_
 
@@ -669,6 +906,107 @@ app.component("Counter", {
       </div>
     `;
   },
+});
+```
+
+_Example (Async Data Fetching with Loading State):_
+
+```js
+app.component("UserProfile", {
+  setup({ signal }) {
+    const user = signal(null);
+    const loading = signal(true);
+    const error = signal(null);
+
+    return {
+      user,
+      loading,
+      error,
+
+      // Async onMount - framework awaits this before continuing
+      onMount: async ({ container, context }) => {
+        try {
+          const response = await fetch("/api/user/123");
+          if (!response.ok) throw new Error("Failed to fetch");
+          context.user.value = await response.json();
+        } catch (err) {
+          context.error.value = err.message;
+        } finally {
+          context.loading.value = false;
+        }
+      },
+
+      // Sync onUnmount - no async needed for simple cleanup
+      onUnmount: ({ context }) => {
+        console.log("Cleaning up user profile");
+      }
+    };
+  },
+  template(ctx) {
+    if (ctx.loading.value) {
+      return `<div class="spinner">Loading...</div>`;
+    }
+    if (ctx.error.value) {
+      return `<div class="error">Error: ${ctx.error.value}</div>`;
+    }
+    return `
+      <div class="profile">
+        <h2>${ctx.user.value.name}</h2>
+        <p>${ctx.user.value.email}</p>
+      </div>
+    `;
+  }
+});
+```
+
+_Example (Async Cleanup with AbortController):_
+
+```js
+app.component("LiveData", {
+  setup({ signal }) {
+    const data = signal([]);
+    let abortController = null;
+
+    return {
+      data,
+
+      onMount: async ({ context }) => {
+        abortController = new AbortController();
+
+        // Start polling for live data
+        const poll = async () => {
+          try {
+            const res = await fetch("/api/live", {
+              signal: abortController.signal
+            });
+            context.data.value = await res.json();
+          } catch (err) {
+            if (err.name !== "AbortError") console.error(err);
+          }
+        };
+
+        // Initial fetch
+        await poll();
+
+        // Continue polling every 5 seconds
+        const interval = setInterval(poll, 5000);
+        abortController.intervalId = interval;
+      },
+
+      onUnmount: async () => {
+        // Cancel pending requests and stop polling
+        if (abortController) {
+          abortController.abort();
+          clearInterval(abortController.intervalId);
+        }
+      }
+    };
+  },
+  template: (ctx) => `
+    <ul>
+      ${ctx.data.value.map(item => `<li>${item.name}</li>`).join("")}
+    </ul>
+  `
 });
 ```
 
@@ -759,7 +1097,7 @@ Eleva provides two powerful ways to mount child components in your application:
        <div class="todo-list">
          <h2>My Todo List</h2>
          ${ctx.todos.value.map((todo) => `
-           <div class="todo-item" 
+           <div key="${todo.id}" class="todo-item"
                 :title="${todo.title}"
                 :completed="${todo.completed}"
                 @click="() => toggleTodo(todo.id)">
@@ -814,7 +1152,7 @@ Eleva provides two powerful ways to mount child components in your application:
        <div class="user-list">
          <h2>Team Members</h2>
          ${ctx.users.value.map((user) => `
-           <div id="user-card-container"></div>
+           <div key="${user.id}" class="user-card-container"></div>
          `).join("")}
        </div>
      `,
@@ -1018,10 +1356,33 @@ Eleva supports various selector types for defining child components in the `chil
    - Building complex component hierarchies
 
 **Performance Considerations:**
-- Component name selectors are generally the most performant
-- Class selectors are efficient for multiple instances
-- ID selectors are fast but limited to single elements
-- Attribute selectors can be slower for complex queries
+
+| Selector Type | Performance | Best For |
+|---------------|-------------|----------|
+| **ID** `#app` | Fastest | Root components, unique elements |
+| **Component Name** `UserCard` | Very Fast | Child component mounting |
+| **Class** `.container` | Fast | Lists, multiple instances |
+| **Attribute** `[data-component]` | Moderate | Dynamic/generated elements |
+| **Complex** `div.app > .content` | Slowest | Avoid if possible |
+
+```js
+// ✅ Best - ID selector for root mounting
+app.mount("#app", "App");
+
+// ✅ Good - Component name or class for children
+children: {
+  "UserCard": "UserCard",
+  ".todo-item": "TodoItem"
+}
+
+// ❌ Avoid - Complex or tag-only selectors
+children: {
+  "div.wrapper > .item": "Item",  // Slow
+  "div": "SomeComponent"          // Too generic
+}
+```
+
+> **[See Best Practices Guide →](./examples/patterns/best-practices.md#selector-performance)** for detailed selector performance benchmarks, examples, and guidelines
 
 **Key Benefits of Component Mounting:**
 - **Explicit Control**: Clear parent-child relationships and component hierarchy
@@ -1361,7 +1722,7 @@ Plugins can:
 Here's a complete example of a custom plugin:
 
 ```js
-const LoggerPlugin = {
+const Logger = {
   name: "logger",
   install(eleva, options = {}) {
     const { level = "info" } = options;
@@ -1386,7 +1747,7 @@ const LoggerPlugin = {
 
 // Usage
 const app = new Eleva("myApp");
-app.use(LoggerPlugin, { level: "debug" });
+app.use(Logger, { level: "debug" });
 ```
 
 ### Plugin Lifecycle
@@ -1423,7 +1784,7 @@ This ensures type safety when developing plugins in TypeScript.
 
 Eleva comes with several powerful built-in plugins that extend the framework's capabilities:
 
-#### 🎯 AttrPlugin
+#### 🎯 Attr Plugin
 
 Advanced attribute handling for Eleva components with ARIA support, data attributes, boolean attributes, and dynamic property detection.
 
@@ -1462,7 +1823,7 @@ app.component("myComponent", {
 
 📚 **[Full Attr Documentation →](./plugins/attr.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
 
-#### 🚀 RouterPlugin
+#### 🚀 Router Plugin
 
 Advanced client-side routing with reactive state, navigation guards, and component resolution.
 
@@ -1531,7 +1892,7 @@ router.navigate('/users/123', { replace: true });
 
 📚 **[Full Router Documentation →](./plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
 
-#### 🎯 PropsPlugin
+#### 🎯 Props Plugin
 
 Advanced props data handling for complex data structures with automatic type detection and reactivity.
 
@@ -1575,7 +1936,7 @@ app.component("UserInfo", {
             <p>Age: ${ctx.user.value.age}</p>
             <p>Active: ${ctx.user.value.active}</p>
             <ul>
-                ${ctx.permissions.value.map(perm => `<li>${perm}</li>`).join('')}
+                ${ctx.permissions.value.map((perm, index) => `<li key="${index}">${perm}</li>`).join('')}
             </ul>
         </div>
     `
@@ -1592,9 +1953,9 @@ app.component("UserInfo", {
 
 📚 **[Full Props Documentation →](./plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, and complex data structures.
 
-#### 🏪 StorePlugin
+#### 🏪 Store Plugin
 
-Reactive state management for sharing data across your entire Eleva.js application with centralized data store, persistence, and cross-component reactive updates.
+Reactive state management for sharing data across your entire Eleva application with centralized data store, persistence, and cross-component reactive updates.
 
 ```javascript
 import { Store } from 'eleva/plugins';
@@ -1788,6 +2149,8 @@ app.use(Store, {
 
 ## 10. Best Practices & Use Cases
 
+> **Quick Reference:** For a comprehensive, copy-paste ready guide, see the **[Best Practices Guide →](./examples/patterns/best-practices.md)** which covers selectors, components, lifecycle, signals, and more.
+
 ### Best Practices
 
 #### Component Structure Order
@@ -1876,7 +2239,7 @@ setup: ({ signal, emitter, props }) => {
 
 // ✅ Full context when needed (rare)
 setup: (context) => {
-  const { signal, emitter, props, onMount, onUnmount } = context;
+  const { signal, emitter, props } = context;
   // ... use all utilities
 }
 ```
@@ -1888,18 +2251,15 @@ setup: (context) => {
 | `signal` | Function | Create reactive state: `signal(initialValue)` |
 | `emitter` | Object | Event bus: `emit()`, `on()`, `off()` |
 | `props` | Object | Props passed from parent component |
-| `onBeforeMount` | Function | Hook: before component mounts |
-| `onMount` | Function | Hook: after component mounts |
-| `onBeforeUpdate` | Function | Hook: before re-render |
-| `onUpdate` | Function | Hook: after re-render |
-| `onUnmount` | Function | Hook: before component destroys |
+
+**Lifecycle hooks** (`onBeforeMount`, `onMount`, `onBeforeUpdate`, `onUpdate`, `onUnmount`) are **returned from setup**, not destructured from context. See [Lifecycle Hooks](#lifecycle-hooks-patterns--best-practices) for details.
 
 ##### Organizing Setup Logic
 
 Structure your setup function in this order for consistency:
 
 ```js
-setup: ({ signal, emitter, props, onMount, onUnmount }) => {
+setup: ({ signal, emitter, props }) => {
   // 1. Props extraction (if needed)
   const { userId, initialData } = props;
 
@@ -1936,21 +2296,10 @@ setup: ({ signal, emitter, props, onMount, onUnmount }) => {
     items.value = items.value.filter(i => i.id !== id);
   }
 
-  // 5. Event subscriptions
-  const unsubscribe = emitter.on("refresh:items", loadItems);
+  // 5. Event subscription ref (will be set in onMount)
+  let unsubscribe = null;
 
-  // 6. Lifecycle hooks
-  onMount(() => {
-    loadItems();
-    console.log("Component mounted");
-  });
-
-  onUnmount(() => {
-    unsubscribe();
-    console.log("Component unmounted");
-  });
-
-  // 7. Return public interface
+  // 6. Return public interface + lifecycle hooks
   return {
     // State
     items,
@@ -1963,7 +2312,17 @@ setup: ({ signal, emitter, props, onMount, onUnmount }) => {
     // Actions
     loadItems,
     selectItem,
-    deleteItem
+    deleteItem,
+    // Lifecycle hooks (returned, not destructured)
+    onMount: () => {
+      loadItems();
+      unsubscribe = emitter.on("refresh:items", loadItems);
+      console.log("Component mounted");
+    },
+    onUnmount: () => {
+      if (unsubscribe) unsubscribe();
+      console.log("Component unmounted");
+    }
   };
 }
 ```
@@ -2100,23 +2459,27 @@ Component Created
 Use `onMount` for initialization that requires the DOM or async operations:
 
 ```js
-setup: ({ signal, onMount }) => {
+setup: ({ signal }) => {
   const users = signal([]);
   const loading = signal(true);
   const error = signal(null);
 
-  onMount(async () => {
-    try {
-      const response = await fetch("/api/users");
-      users.value = await response.json();
-    } catch (err) {
-      error.value = err.message;
-    } finally {
-      loading.value = false;
+  return {
+    users,
+    loading,
+    error,
+    // Lifecycle hooks are returned, not destructured
+    onMount: async () => {
+      try {
+        const response = await fetch("/api/users");
+        users.value = await response.json();
+      } catch (err) {
+        error.value = err.message;
+      } finally {
+        loading.value = false;
+      }
     }
-  });
-
-  return { users, loading, error };
+  };
 }
 ```
 
@@ -2132,29 +2495,29 @@ setup: ({ signal, onMount }) => {
 **Always clean up** what you set up in `onMount`:
 
 ```js
-setup: ({ signal, onMount, onUnmount }) => {
+setup: ({ signal }) => {
   const windowWidth = signal(window.innerWidth);
   let intervalId = null;
   let resizeHandler = null;
 
-  onMount(() => {
-    // Set up resize listener
-    resizeHandler = () => { windowWidth.value = window.innerWidth; };
-    window.addEventListener("resize", resizeHandler);
+  return {
+    windowWidth,
+    onMount: () => {
+      // Set up resize listener
+      resizeHandler = () => { windowWidth.value = window.innerWidth; };
+      window.addEventListener("resize", resizeHandler);
 
-    // Set up interval
-    intervalId = setInterval(() => {
-      console.log("Tick");
-    }, 1000);
-  });
-
-  onUnmount(() => {
-    // ✅ Clean up everything!
-    window.removeEventListener("resize", resizeHandler);
-    clearInterval(intervalId);
-  });
-
-  return { windowWidth };
+      // Set up interval
+      intervalId = setInterval(() => {
+        console.log("Tick");
+      }, 1000);
+    },
+    onUnmount: () => {
+      // ✅ Clean up everything!
+      window.removeEventListener("resize", resizeHandler);
+      clearInterval(intervalId);
+    }
+  };
 }
 ```
 
@@ -2173,26 +2536,28 @@ setup: ({ signal, onMount, onUnmount }) => {
 Use for synchronous preparation before rendering:
 
 ```js
-setup: ({ props, signal, onBeforeMount }) => {
+setup: ({ props, signal }) => {
   const isValid = signal(true);
   const preparedData = signal(null);
 
-  onBeforeMount(() => {
-    // Validate required props
-    if (!props.userId) {
-      console.error("userId prop is required");
-      isValid.value = false;
-      return;
+  return {
+    isValid,
+    preparedData,
+    onBeforeMount: () => {
+      // Validate required props
+      if (!props.userId) {
+        console.error("userId prop is required");
+        isValid.value = false;
+        return;
+      }
+
+      // Prepare/transform data synchronously
+      preparedData.value = {
+        id: props.userId,
+        timestamp: Date.now()
+      };
     }
-
-    // Prepare/transform data synchronously
-    preparedData.value = {
-      id: props.userId,
-      timestamp: Date.now()
-    };
-  });
-
-  return { isValid, preparedData };
+  };
 }
 ```
 
@@ -2201,28 +2566,28 @@ setup: ({ props, signal, onBeforeMount }) => {
 Use for comparing state or syncing with external systems:
 
 ```js
-setup: ({ signal, onBeforeUpdate, onUpdate }) => {
+setup: ({ signal }) => {
   const count = signal(0);
   let previousCount = 0;
 
-  onBeforeUpdate(() => {
-    // Capture previous value before re-render
-    previousCount = count.value;
-  });
+  return {
+    count,
+    onBeforeUpdate: () => {
+      // Capture previous value before re-render
+      previousCount = count.value;
+    },
+    onUpdate: () => {
+      // Compare after re-render
+      if (count.value !== previousCount) {
+        console.log(`Count changed: ${previousCount} → ${count.value}`);
+      }
 
-  onUpdate(() => {
-    // Compare after re-render
-    if (count.value !== previousCount) {
-      console.log(`Count changed: ${previousCount} → ${count.value}`);
+      // Sync with third-party library after DOM updates
+      if (window.Chart) {
+        window.Chart.update();
+      }
     }
-
-    // Sync with third-party library after DOM updates
-    if (window.Chart) {
-      window.Chart.update();
-    }
-  });
-
-  return { count };
+  };
 }
 ```
 
@@ -2231,38 +2596,39 @@ setup: ({ signal, onBeforeUpdate, onUpdate }) => {
 Handle async operations properly with cleanup:
 
 ```js
-setup: ({ signal, onMount, onUnmount }) => {
+setup: ({ signal }) => {
   const data = signal(null);
   const loading = signal(true);
 
   // AbortController for cancellable fetch
   let abortController = null;
 
-  onMount(async () => {
-    abortController = new AbortController();
+  return {
+    data,
+    loading,
+    onMount: async () => {
+      abortController = new AbortController();
 
-    try {
-      const response = await fetch("/api/data", {
-        signal: abortController.signal
-      });
-      data.value = await response.json();
-    } catch (err) {
-      if (err.name !== "AbortError") {
-        console.error("Fetch failed:", err);
+      try {
+        const response = await fetch("/api/data", {
+          signal: abortController.signal
+        });
+        data.value = await response.json();
+      } catch (err) {
+        if (err.name !== "AbortError") {
+          console.error("Fetch failed:", err);
+        }
+      } finally {
+        loading.value = false;
       }
-    } finally {
-      loading.value = false;
+    },
+    onUnmount: () => {
+      // Cancel pending request on unmount
+      if (abortController) {
+        abortController.abort();
+      }
     }
-  });
-
-  onUnmount(() => {
-    // Cancel pending request on unmount
-    if (abortController) {
-      abortController.abort();
-    }
-  });
-
-  return { data, loading };
+  };
 }
 ```
 
@@ -2271,7 +2637,7 @@ setup: ({ signal, onMount, onUnmount }) => {
 Organize hooks logically within setup:
 
 ```js
-setup: ({ signal, emitter, onBeforeMount, onMount, onUpdate, onUnmount }) => {
+setup: ({ signal, emitter }) => {
   // State
   const users = signal([]);
   const selectedId = signal(null);
@@ -2280,39 +2646,40 @@ setup: ({ signal, emitter, onBeforeMount, onMount, onUpdate, onUnmount }) => {
   let unsubscribe = null;
   let pollInterval = null;
 
-  // Lifecycle hooks (in execution order)
-  onBeforeMount(() => {
-    console.log("Preparing component...");
-  });
-
-  onMount(() => {
-    // Initial data fetch
-    fetchUsers();
-
-    // Set up polling
-    pollInterval = setInterval(fetchUsers, 30000);
-
-    // Subscribe to events
-    unsubscribe = emitter.on("user:refresh", fetchUsers);
-  });
-
-  onUpdate(() => {
-    console.log("Component updated, users:", users.value.length);
-  });
-
-  onUnmount(() => {
-    // Clean up everything
-    clearInterval(pollInterval);
-    if (unsubscribe) unsubscribe();
-  });
-
   // Functions
   async function fetchUsers() {
     const response = await fetch("/api/users");
     users.value = await response.json();
   }
 
-  return { users, selectedId, fetchUsers };
+  // Return state, functions, and lifecycle hooks together
+  return {
+    users,
+    selectedId,
+    fetchUsers,
+    // Lifecycle hooks (returned as properties)
+    onBeforeMount: () => {
+      console.log("Preparing component...");
+    },
+    onMount: () => {
+      // Initial data fetch
+      fetchUsers();
+
+      // Set up polling
+      pollInterval = setInterval(fetchUsers, 30000);
+
+      // Subscribe to events
+      unsubscribe = emitter.on("user:refresh", fetchUsers);
+    },
+    onUpdate: () => {
+      console.log("Component updated, users:", users.value.length);
+    },
+    onUnmount: () => {
+      // Clean up everything
+      clearInterval(pollInterval);
+      if (unsubscribe) unsubscribe();
+    }
+  };
 }
 ```
 
@@ -2320,50 +2687,65 @@ setup: ({ signal, emitter, onBeforeMount, onMount, onUpdate, onUnmount }) => {
 
 ```js
 // ❌ DON'T: Heavy synchronous work in onBeforeMount
-onBeforeMount(() => {
-  // This blocks rendering!
-  const result = heavyComputation(millionItems);
-});
+return {
+  onBeforeMount: () => {
+    // This blocks rendering!
+    const result = heavyComputation(millionItems);
+  }
+};
 
-// ❌ DON'T: Forget cleanup in onUnmount
-onMount(() => {
-  window.addEventListener("scroll", handleScroll);
-  // Memory leak if not removed!
-});
+// ❌ DON'T: Forget cleanup - this causes memory leaks!
+return {
+  onMount: () => {
+    window.addEventListener("scroll", handleScroll);
+    // Memory leak if onUnmount doesn't remove it!
+  }
+  // Missing onUnmount!
+};
 
 // ❌ DON'T: Set state in onUpdate (infinite loop)
-onUpdate(() => {
-  count.value++;  // Triggers another update!
-});
+return {
+  onUpdate: () => {
+    count.value++;  // Triggers another update - infinite loop!
+  }
+};
 
 // ❌ DON'T: Async in onBeforeMount (won't wait)
-onBeforeMount(async () => {
-  await fetchData();  // Render happens before this completes
-});
+return {
+  onBeforeMount: async () => {
+    await fetchData();  // Render happens before this completes
+  }
+};
 
 // ✅ DO: Async in onMount
-onMount(async () => {
-  await fetchData();  // Safe, DOM already rendered
-});
+return {
+  onMount: async () => {
+    await fetchData();  // Safe, DOM already rendered
+  }
+};
 
-// ✅ DO: Always clean up
-onMount(() => {
-  const handler = () => {};
-  window.addEventListener("scroll", handler);
-
-  // Return cleanup or use onUnmount
-});
-onUnmount(() => {
-  window.removeEventListener("scroll", handler);
-});
+// ✅ DO: Always clean up what you set up
+let handler = null;
+return {
+  onMount: () => {
+    handler = () => {};
+    window.addEventListener("scroll", handler);
+  },
+  onUnmount: () => {
+    window.removeEventListener("scroll", handler);
+  }
+};
 
 // ✅ DO: Guard state updates in onUpdate
-onUpdate(() => {
-  if (shouldSync && !synced) {
-    syncExternalLibrary();
-    synced = true;
+let synced = false;
+return {
+  onUpdate: () => {
+    if (shouldSync && !synced) {
+      syncExternalLibrary();
+      synced = true;
+    }
   }
-});
+};
 ```
 
 ##### Lifecycle Decision Guide
@@ -2587,7 +2969,7 @@ template: (ctx) => `
 Use `.watch()` to react to signal changes:
 
 ```js
-setup: ({ signal, onUnmount }) => {
+setup: ({ signal }) => {
   const searchQuery = signal("");
   const results = signal([]);
 
@@ -2601,12 +2983,14 @@ setup: ({ signal, onUnmount }) => {
     }
   });
 
-  // Clean up watcher on unmount
-  onUnmount(() => {
-    unwatch();
-  });
-
-  return { searchQuery, results };
+  return {
+    searchQuery,
+    results,
+    // Clean up watcher on unmount
+    onUnmount: () => {
+      unwatch();
+    }
+  };
 }
 ```
 
@@ -2621,7 +3005,7 @@ setup: ({ signal, onUnmount }) => {
 For frequent updates (like search input), debounce to avoid excessive operations:
 
 ```js
-setup: ({ signal, onUnmount }) => {
+setup: ({ signal }) => {
   const searchQuery = signal("");
   const results = signal([]);
   let debounceTimer = null;
@@ -2641,11 +3025,14 @@ setup: ({ signal, onUnmount }) => {
     }, 300);  // 300ms debounce
   }
 
-  onUnmount(() => {
-    clearTimeout(debounceTimer);
-  });
-
-  return { searchQuery, results, handleSearch };
+  return {
+    searchQuery,
+    results,
+    handleSearch,
+    onUnmount: () => {
+      clearTimeout(debounceTimer);
+    }
+  };
 }
 ```
 
@@ -3183,7 +3570,7 @@ app.component("TodoList", {
   template: (ctx) => `
     <ul>
       ${ctx.todos.value.map(todo => `
-        <li class="todo-item" :todo='${JSON.stringify(todo)}'></li>
+        <li key="${todo.id}" class="todo-item" :todo='${JSON.stringify(todo)}'></li>
       `).join("")}
     </ul>
   `,
@@ -3259,7 +3646,7 @@ app.component("UserList", {
   template: (ctx) => `
     <div class="users">
       ${ctx.users.value.map(u => `
-        <div class="card" :user='${JSON.stringify(u)}'></div>
+        <div key="${u.id}" class="card" :user='${JSON.stringify(u)}'></div>
       `).join("")}
     </div>
   `,
@@ -3304,7 +3691,7 @@ app.component("ProductList", {
   template: (ctx) => `
     <div class="products">
       ${ctx.products.value.map(product => `
-        <div class="product-card"
+        <div key="${product.id}" class="product-card"
           :product='${JSON.stringify(product)}'
           :onSelect="() => handleSelect(${JSON.stringify(product)})">
         </div>
@@ -3722,24 +4109,165 @@ Full mini-applications demonstrating multiple features.
 
 ## 12. FAQ
 
+### General Questions
+
+**Q: What is Eleva?**
+_A:_ Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks.
+
 **Q: Is Eleva production-ready?**
 _A:_ Eleva is currently in release candidate (RC). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
 
+### Comparison Questions
+
+**Q: What is the difference between Eleva and React?**
+_A:_ Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX. Choose Eleva for simpler projects where bundle size matters; choose React for larger applications needing its extensive ecosystem.
+
+**Q: What is the difference between Eleva and Vue?**
+_A:_ Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package. Choose Eleva for simpler projects; choose Vue for larger SPAs needing its mature ecosystem.
+
+**Q: What is the difference between Eleva and Svelte?**
+_A:_ Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva for quick prototypes or when avoiding build complexity; choose Svelte for production apps where you're already using a bundler.
+
+**Q: Is Eleva a React alternative?**
+_A:_ Yes, Eleva can serve as a lightweight React alternative for projects that don't need React's full ecosystem. Eleva offers similar component-based architecture and reactivity patterns but with a much smaller footprint (6KB vs 42KB+) and zero dependencies.
+
+### Technical Questions
+
+**Q: How does Eleva's reactivity work?**
+_A:_ Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing.
+
+**Q: Does Eleva use Virtual DOM?**
+_A:_ No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach is simpler and often faster for smaller applications.
+
 **Q: Can I use Eleva with TypeScript?**
-_A:_ Absolutely! Eleva includes built-in TypeScript declarations to help keep your codebase strongly typed.
+_A:_ Absolutely! Eleva includes built-in TypeScript declarations (`.d.ts` files) to help keep your codebase strongly typed. No additional `@types` packages are needed.
+
+**Q: Does Eleva require a build step?**
+_A:_ No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer.
+
+**Q: Is Eleva suitable for large applications?**
+_A:_ Eleva is designed for small to medium applications. For large enterprise applications with complex state management, routing, and team collaboration needs, you may benefit from the more extensive ecosystems of React, Vue, or Angular. However, Eleva's plugin system (Router, Store) can handle moderately complex SPAs.
+
+### Plugin Questions
 
 **Q: Does Eleva include routing capabilities?**
-_A:_ Yes! Eleva includes a powerful built-in RouterPlugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
+_A:_ Yes! Eleva includes a powerful built-in Router plugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
 
 **Q: What plugins are available with Eleva?**
 _A:_ Eleva comes with four powerful built-in plugins: Attr for advanced attribute handling, Router for client-side routing, Props for advanced props data handling with automatic type detection and reactivity, and Store for reactive state management with persistence and namespacing. All plugins are designed to work seamlessly with the core framework.
 
+**Q: Can I create custom plugins for Eleva?**
+_A:_ Yes! Eleva has a simple plugin API. Plugins are objects with an `install(eleva, options)` method. See the [Custom Plugin Guide](./examples/custom-plugin.md) for detailed instructions on creating and publishing your own plugins.
+
+### Migration Questions
+
+**Q: How do I migrate from React to Eleva?**
+_A:_ Migration involves: (1) Replace `useState` with Eleva's `signal()`, (2) Convert JSX components to Eleva's template string components, (3) Replace `useEffect` with signal watchers or lifecycle hooks, (4) Replace React Router with Eleva's Router plugin. See the [Migration Guide](./migration/from-react.md) for detailed examples.
+
+**Q: How do I migrate from Vue to Eleva?**
+_A:_ Migration involves: (1) Convert SFCs to Eleva component objects, (2) Replace Vue's reactive/ref with Eleva's signals, (3) Convert Vue Router to Eleva's Router plugin, (4) Replace Vuex/Pinia with Eleva's Store plugin. See the [Migration Guide](./migration/from-vue.md) for detailed examples.
+
+**Q: How do I migrate from Alpine.js to Eleva?**
+_A:_ Both Alpine and Eleva share a similar philosophy—lightweight, no build step. The key difference is approach: Alpine is HTML-first with directives, Eleva is JS-first with template functions. Migration involves: (1) Replace `x-data` with `setup()` + `signal()`, (2) Convert `x-show`/`x-if` to ternary expressions, (3) Replace `x-for` with `.map().join('')`, (4) Convert `x-model` to value + `@input` pattern. See the [Migration Guide](./migration/from-alpine.md) for detailed examples.
+
+**Q: How do I migrate from jQuery to Eleva?**
+_A:_ Eleva is a great step up from jQuery for those wanting modern component architecture. Migration involves: (1) Replace DOM selection with component templates, (2) Replace jQuery events with Eleva's `@event` syntax, (3) Replace global state with signals, (4) Organize code into reusable components. See the [Migration Guide](./migration/from-jquery.md) for detailed examples.
+
 ---
 
-## 13. Troubleshooting & Migration Guidelines
+## 13. Testing
+
+Eleva has a comprehensive test suite ensuring reliability and stability.
+
+### Test Coverage
+
+| Metric | Value |
+|--------|-------|
+| **Total Tests** | 273 |
+| **Line Coverage** | 100% |
+| **Function Coverage** | 100% (core) |
+| **Test Runner** | Bun |
+
+### Running Tests
+
+```bash
+# Run all tests
+bun test
+
+# Run with coverage report
+bun test:coverage
+
+# Run unit tests only
+bun test test/unit
+
+# Run performance benchmarks
+bun test:benchmark
+
+# Run prepublish checks (lint + test + build)
+bun run prepublishOnly
+```
+
+### Test Structure
+
+```
+test/
+├── unit/                    # Unit tests
+│   ├── core/               # Core Eleva tests
+│   │   └── Eleva.test.ts
+│   ├── modules/            # Module tests
+│   │   ├── Emitter.test.ts
+│   │   ├── Renderer.test.ts
+│   │   ├── Signal.test.ts
+│   │   └── TemplateEngine.test.ts
+│   └── plugins/            # Plugin tests
+│       ├── Attr.test.ts
+│       ├── Props.test.ts
+│       ├── Router.test.ts
+│       └── Store.test.ts
+└── performance/            # Performance benchmarks
+    ├── fps-benchmark.test.ts
+    └── js-framework-benchmark.test.ts
+```
+
+### Writing Tests
+
+Eleva uses [Bun's built-in test runner](https://bun.sh/docs/cli/test) with a Jest-compatible API:
+
+```typescript
+import { describe, test, expect, beforeEach } from "bun:test";
+import Eleva from "../../src/index.js";
+
+describe("MyComponent", () => {
+  let app: Eleva;
+
+  beforeEach(() => {
+    document.body.innerHTML = `<div id="app"></div>`;
+    app = new Eleva("TestApp");
+  });
+
+  test("should mount correctly", async () => {
+    const component = {
+      setup: ({ signal }) => ({ count: signal(0) }),
+      template: (ctx) => `<div>${ctx.count.value}</div>`
+    };
+
+    const instance = await app.mount(
+      document.getElementById("app")!,
+      component
+    );
+
+    expect(instance).toBeTruthy();
+    expect(document.body.innerHTML).toContain("0");
+  });
+});
+```
+
+---
+
+## 14. Troubleshooting & Migration
 
 ### Troubleshooting
 
@@ -3757,7 +4285,7 @@ _A:_ Eleva comes with four powerful built-in plugins: Attr for advanced attribut
 
 ---
 
-## 14. API Reference
+## 15. API Reference
 
 Detailed API documentation with parameter descriptions, return values, and usage examples can be found in the [docs](https://github.com/TarekRaafat/eleva/blob/master/docs/index.md) folder.
 
@@ -3784,13 +4312,13 @@ Detailed API documentation with parameter descriptions, return values, and usage
 
 ---
 
-## 15. Contributing
+## 16. Contributing
 
 Contributions are welcome! Whether you're fixing bugs, adding features, or improving documentation, your input is invaluable. Please checkout the [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md) file for detailed guidelines on how to get started.
 
 ---
 
-## 16. Community & Support
+## 17. Community & Support
 
 Join our community for support, discussions, and collaboration:
 
@@ -3798,26 +4326,26 @@ Join our community for support, discussions, and collaboration:
 - **GitHub Issues:** Report bugs or request features on [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
 - **Stack Overflow:** For technical questions and support, please post your question on Stack Overflow using any of these tags [eleva](https://stackoverflow.com/questions/tagged/eleva), [eleva.js](https://stackoverflow.com/questions/tagged/eleva.js)
 - **Reddit:** Join our subreddit community at [r/elevajs](https://www.reddit.com/r/elevajs/) to share projects, ask questions, and connect with other developers
-- **Discord:** Connect with us on [Discord](https://discord.gg/Dg7cMKpvyZ) to discuss eleva.js, ask questions, and contribute!
+- **Discord:** Connect with us on [Discord](https://discord.gg/Dg7cMKpvyZ) to discuss Eleva, ask questions, and contribute!
 - **Telegram:** For general questions, new ideas please, or even support join us on our [Telegram](https://t.me/+TcMXcHsRX9tkMmI0) group for realtime feedback.
 
 ---
 
-## 17. Changelog
+## 18. Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).
 
 ---
 
-## 18. License
+## 19. License
 
 Eleva is open-source and available under the [MIT License](https://github.com/TarekRaafat/eleva/blob/master/LICENSE).
 
 ---
 
-## 19. Sponsors & Partners
+## 20. Sponsors & Partners
 
-We gratefully acknowledge the organizations that help make Eleva.js possible.
+We gratefully acknowledge the organizations that help make Eleva possible.
 
 <p>
   <a href="https://canonical.com" target="_blank" rel="noopener">
@@ -3841,7 +4369,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 
 | Metric | Value |
 |--------|-------|
-| **Bundle Size** | ~6KB minified, ~2KB gzipped |
+| **Bundle Size** | ~6KB minified, ~2.5KB gzipped |
 | **Dependencies** | Zero |
 | **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
 | **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |

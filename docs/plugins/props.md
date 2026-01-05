@@ -1,6 +1,6 @@
 # Props Plugin
 
-> **Version:** 1.0.0-rc.10 | **Type:** Props Handling Plugin | **Bundle Size:** ~4.2KB minified | **Dependencies:** Eleva.js core
+> **Version:** 1.0.0-rc.11 | **Type:** Props Handling Plugin | **Bundle Size:** ~4.2KB minified | **Dependencies:** Eleva core
 
 The Props plugin supercharges Eleva's component system by enabling automatic type detection, parsing, and reactivity for component props. It allows you to pass complex data structures (objects, arrays, dates) directly via HTML attributes and ensures they stay in sync with parent state.
 
@@ -127,7 +127,7 @@ app.component("UserList", {
     <div class="user-list">
       <h2>Users</h2>
       ${ctx.users.value.map(user => `
-        <div class="user-card-container"
+        <div key="${user.id}" class="user-card-container"
              :user='${JSON.stringify(user)}'
              :editable="true">
         </div>
@@ -349,7 +349,7 @@ const TodoApp = {
       <div class="todo-app">
         <h1>Todo App</h1>
         ${todos.value.map(todo => `
-          <div class="todo-item"
+          <div key="${todo.id}" class="todo-item"
                :todo='${JSON.stringify(todo)}'
                :on-toggle="toggleTodo">
           </div>
@@ -487,7 +487,7 @@ const ProductList = {
     return `
       <div class="product-list">
         ${products.value.map(product => `
-          <div class="product-card"
+          <div key="${product.id}" class="product-card"
                :product='${JSON.stringify(product)}'>
           </div>
         `).join('')}
@@ -510,12 +510,12 @@ const ProductCard = {
         <p class="price">$${product.value.price.toFixed(2)}</p>
         <div class="specs">
           ${Object.entries(product.value.specs).map(([key, val]) =>
-            `<span>${key}: ${val}</span>`
+            `<span key="${key}">${key}: ${val}</span>`
           ).join('')}
         </div>
         <div class="tags">
           ${product.value.tags.map(tag =>
-            `<span class="tag">${tag}</span>`
+            `<span key="${tag}" class="tag">${tag}</span>`
           ).join('')}
         </div>
       </div>
@@ -997,7 +997,7 @@ const DataTable = {
           <thead>
             <tr>
               ${config.value.columns.map(col => `
-                <th @click="() => toggleSort('${col}')">
+                <th key="${col}" @click="() => toggleSort('${col}')">
                   ${col.charAt(0).toUpperCase() + col.slice(1)}
                   ${config.value.sortBy === col
                     ? (config.value.sortOrder === 'asc' ? '▲' : '▼')
@@ -1008,9 +1008,9 @@ const DataTable = {
           </thead>
           <tbody>
             ${data.value.map(row => `
-              <tr>
+              <tr key="${row.id}">
                 ${config.value.columns.map(col => `
-                  <td>${row[col]}</td>
+                  <td key="${col}">${row[col]}</td>
                 `).join('')}
               </tr>
             `).join('')}
@@ -1212,7 +1212,7 @@ const CartSummary = {
         ` : `
           <ul class="cart-items">
             ${cart.value.items.map(item => `
-              <li class="cart-item">
+              <li key="${item.product.id}" class="cart-item">
                 <span class="name">${item.product.name}</span>
                 <span class="quantity">
                   <button @click="() => updateQuantity(${item.product.id}, ${item.quantity - 1})">-</button>
@@ -1601,6 +1601,99 @@ console.log("Detected type:", app.props.detectType(someValue));
 
 // Manual parsing test
 console.log("Parsed value:", app.props.parse('{"test": 123}'));
+```
+
+---
+
+## Batching Tips & Gotchas
+
+Eleva uses **render batching** via `queueMicrotask` to optimize performance. This means DOM updates happen asynchronously after prop changes. Here's what you need to know when using the Props plugin:
+
+### 1. Child Component Updates Are Batched with Parent
+
+When a parent signal changes, both parent and child component renders are batched together:
+
+```javascript
+// Parent component
+setup({ signal }) {
+  const user = signal({ name: "John" });
+
+  const updateUser = () => {
+    user.value = { name: "Jane" };
+    // Both parent and child update in ONE render cycle
+  };
+
+  return { user, updateUser };
+}
+```
+
+**Benefit**: No unnecessary intermediate renders between parent and child.
+
+### 2. Prop Changes Don't Update DOM Immediately
+
+After updating a signal that's passed as a prop, the DOM won't reflect the change immediately:
+
+```javascript
+// Parent
+user.value = { name: "Jane" };
+console.log(document.querySelector('.child-name').textContent); // Still "John"!
+
+// Wait for the batched render
+user.value = { name: "Jane" };
+queueMicrotask(() => {
+  console.log(document.querySelector('.child-name').textContent); // Now "Jane"
+});
+```
+
+### 3. Tests May Need Delays
+
+When testing components with props, allow time for batched renders:
+
+```javascript
+test("child receives updated props", async () => {
+  parentSignal.value = { name: "Updated" };
+
+  // Wait for batched render
+  await new Promise(resolve => queueMicrotask(resolve));
+
+  expect(document.querySelector('.child').textContent).toContain("Updated");
+});
+```
+
+### 4. Multiple Prop Updates Are Batched
+
+If you update multiple props in sequence, they're batched into a single render:
+
+```javascript
+// These updates result in ONE child re-render
+user.value = { name: "Jane" };
+role.value = "Admin";
+permissions.value = ["read", "write"];
+// Child updates once with all new props
+```
+
+### 5. Use Immutable Updates for Prop Objects
+
+Create new references for clearer state changes and proper reactivity:
+
+```javascript
+// Good - new object reference triggers update
+user.value = { ...user.value, name: "Jane" };
+
+// Bad - mutation may not trigger child update
+user.value.name = "Jane"; // Child might not re-render!
+```
+
+### 6. Signal Linking and Batching
+
+When parent signals are linked to child components, both share the same batching cycle:
+
+```javascript
+// Child modifies the linked signal
+props.user.value = { name: "Modified by child" };
+
+// Parent's view updates in the same batch cycle
+// No separate render for parent and child
 ```
 
 ---

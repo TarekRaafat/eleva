@@ -47,7 +47,7 @@ export const AttrPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.10",
+  version: "1.0.0-rc.11",
 
   /**
    * Plugin description
@@ -250,3 +250,6 @@ export const AttrPlugin = {
     delete eleva.updateElementAttributes;
   },
 };
+
+// Short name export for convenience
+export { AttrPlugin as Attr };

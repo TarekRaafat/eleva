@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.10 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.11 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -51,7 +51,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.10",
+    version: "1.0.0-rc.11",
     /**
      * Plugin description
      * @type {string}
@@ -591,7 +591,7 @@
 
   /**
    * @class Router
-   * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js.
+   * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.
    * This class manages all routing logic, including state, navigation, and rendering.
    *
    * ## Features
@@ -1857,7 +1857,7 @@
 
   /**
    * @class 🚀 RouterPlugin
-   * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js applications.
+   * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva applications.
    * This plugin provides comprehensive client-side routing functionality including:
    * - Multiple routing modes (hash, history, query)
    * - Navigation guards and lifecycle hooks
@@ -1897,7 +1897,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.10",
+    version: "1.0.0-rc.11",
     /**
      * Plugin description
      * @type {string}
@@ -1919,7 +1919,7 @@
      *
      * @example
      * // main.js
-     * import Eleva from './eleva.js';
+     * import Eleva from 'eleva';
      * import { RouterPlugin } from './plugins/RouterPlugin.js';
      *
      * const app = new Eleva('myApp');
@@ -2249,7 +2249,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.10",
+    version: "1.0.0-rc.11",
     /**
      * Plugin description
      * @type {string}
@@ -2723,7 +2723,7 @@
 
   /**
    * @class 🏪 StorePlugin
-   * @classdesc A powerful reactive state management plugin for Eleva.js that enables sharing
+   * @classdesc A powerful reactive state management plugin for Eleva that enables sharing
    * reactive data across the entire application. The Store plugin provides a centralized,
    * reactive data store that can be accessed from any component's setup function.
    *
@@ -2786,7 +2786,7 @@
      * Plugin version
      * @type {string}
      */
-    version: "1.0.0-rc.10",
+    version: "1.0.0-rc.11",
     /**
      * Plugin description
      * @type {string}

@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.10 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.11 | MIT License | https://elevajs.com */
 'use strict';
 
 // ============================================================================
@@ -1231,6 +1231,27 @@ class Eleva {
       /** @private {boolean} Local mounted state for this component instance */
       let isMounted = false;
 
+      // ========================================================================
+      // Render Batching
+      // ========================================================================
+
+      /** @private {boolean} Flag to prevent multiple queued renders */
+      let renderScheduled = false;
+
+      /**
+       * Schedules a batched render on the next microtask.
+       * Multiple signal changes within the same synchronous block are collapsed into one render.
+       * @private
+       */
+      const scheduleRender = () => {
+        if (renderScheduled) return;
+        renderScheduled = true;
+        queueMicrotask(async () => {
+          renderScheduled = false;
+          await render();
+        });
+      };
+
       /**
        * Renders the component by:
        * 1. Executing lifecycle hooks
@@ -1239,6 +1260,9 @@ class Eleva {
        * 4. Processing events, injecting styles, and mounting child components.
        */
       const render = async () => {
+        const templateResult = typeof template === "function" ? await template(mergedContext) : template;
+        const html = this.templateEngine.parse(templateResult, mergedContext);
+
         // Execute before hooks
         if (!isMounted) {
           await mergedContext.onBeforeMount?.({
@@ -1251,9 +1275,7 @@ class Eleva {
             context: mergedContext
           });
         }
-        const templateResult = typeof template === "function" ? await template(mergedContext) : template;
-        const newHtml = this.templateEngine.parse(templateResult, mergedContext);
-        this.renderer.patchDOM(container, newHtml);
+        this.renderer.patchDOM(container, html);
         this._processEvents(container, mergedContext, listeners);
         if (style) this._injectStyles(container, compId, style, mergedContext);
         if (children) await this._mountComponents(container, children, childInstances);
@@ -1275,11 +1297,12 @@ class Eleva {
 
       /**
        * Sets up reactive watchers for all Signal instances in the component's data.
-       * When a Signal's value changes, the component will re-render to reflect the updates.
+       * When a Signal's value changes, a batched render is scheduled.
+       * Multiple changes within the same frame are collapsed into one render.
        * Stores unsubscribe functions to clean up watchers when component unmounts.
        */
       for (const val of Object.values(data)) {
-        if (val instanceof Signal) watchers.push(val.watch(render));
+        if (val instanceof Signal) watchers.push(val.watch(scheduleRender));
       }
       await render();
       const instance = {

@@ -1,0 +1,31 @@
+{
+  "bundleSize": {
+    "raw": 50389,
+    "minified": 6125,
+    "gzipped": 2423,
+    "formatted": "2.37 KB"
+  },
+  "hydrationTime": {
+    "median": 0.13258399999999426,
+    "min": 0.09566699999999173,
+    "max": 0.23745800000000372,
+    "formatted": "< 1"
+  },
+  "domUpdate": {
+    "median": 0.03012499999999818,
+    "min": 0.020375000000001364,
+    "max": 0.05275000000000318,
+    "formatted": "< 0.1"
+  },
+  "memory": {
+    "baseline": 8.646088600158691,
+    "afterInit": 8.627365112304688,
+    "afterMount": 8.720247268676758,
+    "peak": 8.797715187072754,
+    "formatted": "< 0.5"
+  },
+  "timestamp": "2026-01-05T19:58:30.791Z",
+  "version": "1.0.0-rc.11",
+  "runtime": "Bun 1.3.5",
+  "platform": "darwin arm64"
+}

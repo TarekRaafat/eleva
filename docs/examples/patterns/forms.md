@@ -312,6 +312,7 @@ app.component("CountrySelector", {
         <option value="">-- Choose a country --</option>
         ${ctx.countries.map(country => `
           <option
+            key="${country.code}"
             value="${country.code}"
             ${ctx.selectedCountry.value === country.code ? 'selected' : ''}
           >

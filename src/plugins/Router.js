@@ -362,7 +362,7 @@ const CoreErrorHandler = {
 
 /**
  * @class Router
- * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js.
+ * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.
  * This class manages all routing logic, including state, navigation, and rendering.
  *
  * ## Features
@@ -1738,7 +1738,7 @@ class Router {
 
 /**
  * @class 🚀 RouterPlugin
- * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js applications.
+ * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva applications.
  * This plugin provides comprehensive client-side routing functionality including:
  * - Multiple routing modes (hash, history, query)
  * - Navigation guards and lifecycle hooks
@@ -1779,7 +1779,7 @@ export const RouterPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.10",
+  version: "1.0.0-rc.11",
 
   /**
    * Plugin description
@@ -1803,7 +1803,7 @@ export const RouterPlugin = {
    *
    * @example
    * // main.js
-   * import Eleva from './eleva.js';
+   * import Eleva from 'eleva';
    * import { RouterPlugin } from './plugins/RouterPlugin.js';
    *
    * const app = new Eleva('myApp');
@@ -1917,3 +1917,6 @@ export const RouterPlugin = {
     delete eleva.getRouteQuery;
   },
 };
+
+// Short name export for convenience
+export { RouterPlugin as Router };

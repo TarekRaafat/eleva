@@ -122,8 +122,8 @@ app.component("WeatherDashboard", {
 
       ${ctx.recentSearches.value.length > 0 ? `
         <div class="recent-searches">
-          ${ctx.recentSearches.value.map(c => `
-            <button @click="() => selectCity('${c}')">${c}</button>
+          ${ctx.recentSearches.value.map((c, index) => `
+            <button key="${index}" @click="() => selectCity('${c}')">${c}</button>
           `).join('')}
         </div>
       ` : ''}

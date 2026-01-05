@@ -28,7 +28,7 @@ app.component("Accordion", {
   template: (ctx) => `
     <div class="accordion">
       ${ctx.items.value.map(item => `
-        <div class="accordion-item">
+        <div key="${item.id}" class="accordion-item">
           <button
             class="accordion-header ${item.open ? 'active' : ''}"
             @click="() => toggle(${item.id})"
@@ -90,6 +90,7 @@ app.component("TabPanel", {
       <div class="tab-headers">
         ${ctx.tabs.map(tab => `
           <button
+            key="${tab.id}"
             class="tab-btn ${ctx.activeTab.value === tab.id ? 'active' : ''}"
             @click="() => activeTab.value = '${tab.id}'"
           >
@@ -403,7 +404,7 @@ app.component("EmptyState", {
           </div>
           <ul>
             ${ctx.items.value.map(item => `
-              <li>${item.name}</li>
+              <li key="${item.id}">${item.name}</li>
             `).join('')}
           </ul>
           <button @click="addItem">Add More</button>

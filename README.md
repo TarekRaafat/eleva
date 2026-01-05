@@ -1,8 +1,8 @@
-# eleva.js 🚀
+# Eleva.js 🚀
 
-> **Version:** 1.0.0-rc.10 | **Size:** ~6KB min (~2KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.0-rc.11` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
-Pure JavaScript, Pure Performance, Simply Elegant.
+**Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -18,7 +18,7 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 
 <p align="center">
-  <a href="https://tarekraafat.github.io/eleva/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="eleva.js Full Logo" width="50%"></a>
+  <a href="https://tarekraafat.github.io/eleva/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="Eleva.js - Lightweight JavaScript Framework Logo" width="50%"></a>
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 </p>
 
 <p align="center">
-  <em>Eleva.js is proudly supported by Canonical - the company behind Ubuntu.</em>
+  <em>Eleva is proudly supported by Canonical - the company behind Ubuntu.</em>
 </p>
 
 <p align="center">
@@ -39,12 +39,12 @@ Pure JavaScript, Pure Performance, Simply Elegant.
 <br>
 <br>
 
-**A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**  
-_Built with love for native JavaScript and designed with a minimal core that can be extended through a powerful plugin system-because sometimes, less really is more!_ 😊
+**A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
+_Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.10` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.11` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.10`
+**Version:** `1.0.0-rc.11`
 
 
 
@@ -52,14 +52,30 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ---
 
+## What is Eleva.js?
+
+**Eleva** is a minimalist, lightweight (6KB), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI) without the complexity, bundle size, or build tool requirements of traditional frameworks.
+
+Unlike React, Vue, or Angular, Eleva:
+- **Has zero dependencies** - No node_modules bloat
+- **Requires no build step** - Works directly in browsers via CDN
+- **Uses real DOM** - No virtual DOM overhead for simple apps
+- **Provides signal-based reactivity** - Fine-grained updates like Solid.js
+- **Includes TypeScript support** - Built-in type declarations
+
+Eleva is ideal for developers building lightweight web applications, prototypes, micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+
+---
+
 ## Table of Contents
 
-- [eleva.js 🚀](#elevajs-)
+- [Eleva.js 🚀](#elevajs-)
+  - [What is Eleva.js?](#what-is-elevajs)
   - [Table of Contents](#table-of-contents)
   - [Quick Reference](#quick-reference)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
-  - [Handcrafted \& Developer-Centric Design](#handcrafted--developer-centric-design)
+  - [Best-in-Class Developer Experience (DX)](#best-in-class-developer-experience-dx)
   - [Features](#features)
   - [When to Use Eleva](#when-to-use-eleva)
   - [Version Strategy](#version-strategy)
@@ -67,6 +83,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
   - [Performance](#performance)
   - [Performance Benchmarks](#performance-benchmarks)
   - [Eleva vs. Popular Frameworks](#eleva-vs-popular-frameworks)
+  - [Browser Support](#browser-support)
   - [Installation](#installation)
   - [Usage](#usage)
     - [ES Module Example](#es-module-example)
@@ -163,16 +180,27 @@ This unopinionated approach makes Eleva versatile and ideal for developers who w
 
 ---
 
-## Handcrafted & Developer-Centric Design
+## Best-in-Class Developer Experience (DX)
 
-Eleva is built with meticulous attention to detail and a deep passion for pure vanilla JavaScript. Every aspect of its design and architecture is handcrafted with the developer in mind. This makes Eleva not only innovative but also a solid foundation for your projects.
+Eleva is built on a simple principle: **great DX leads to great UX**. When developers have intuitive tools, they build better interfaces. Every aspect of Eleva's design prioritizes your productivity and enjoyment.
+
+**Why Eleva's DX Stands Out:**
+
+| DX Feature | How It Helps You Build Better UX |
+|------------|----------------------------------|
+| **Zero Config** | Start building immediately — no webpack, no bundlers, no setup |
+| **Intuitive API** | Learn in minutes, master in hours — more time for polishing UI |
+| **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
+| **Instant Feedback** | Signal-based reactivity shows changes immediately |
+| **TypeScript Built-in** | Full autocomplete and type safety out of the box |
+| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
-- **🛠️ Developer-Centric:** Its intuitive API and minimal core mean you spend less time wrestling with the framework and more time building your application.
-- **🌟 Innovative & Fresh:** Stick to pure vanilla JavaScript and avoid unnecessary abstractions.
-- **🏗️ Solid & Reliable:** Focused on performance and modularity, Eleva scales with your project's needs.
+- **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
+- **🌟 No Magic:** Pure vanilla JavaScript with no hidden abstractions — debug easily, ship confidently.
+- **🏗️ Scales With You:** From prototype to production, Eleva grows with your project without added complexity.
 
-This unique, developer-first approach makes Eleva a standout choice for building high-performance frontend applications without compromising on simplicity or control.
+> _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
 ---
 
@@ -214,7 +242,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.10` indicate the API is stable but still gathering community feedback before the final release.
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.11` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
@@ -234,7 +262,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6 KB minified and ~2 KB gzipped.
+- **Lightweight:** Approximately ~6 KB minified and ~2.5 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -245,22 +273,49 @@ Eleva is crafted for performance:
 
 ## Performance Benchmarks
 
-Preliminary benchmarks illustrate Eleva's efficiency compared to popular frameworks:
+Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
 
-| **Framework**                 | **Bundle Size** (KB) | **Initial Load Time** (ms) | **DOM Update Speed** (s) | **Peak Memory Usage** (KB) | **Overall Performance Score** (lower is better) |
-| ----------------------------- | -------------------- | -------------------------- | ------------------------ | -------------------------- | ----------------------------------------------- |
-| **Eleva** (Direct DOM)        | **2**                | **0.05**                   | **0.002**                | **0.25**                   | **0.58 (Best)**                                 |
-| **React** (Virtual DOM)       | 4.1                  | 5.34                       | 0.020                    | 0.25                       | 9.71                                            |
-| **Vue** (Reactive State)      | 45                   | 4.72                       | 0.021                    | 3.10                       | 13.21                                           |
-| **Angular** (Two-way Binding) | 62                   | 5.26                       | 0.021                    | 0.25                       | 16.88 (Slowest)                                 |
+| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
+| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
+| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~37**                 | ~97*                    | ~15             |
+| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
+| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
+| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
 
-Detailed [Benchmark Metrics Report](BENCHMARK.md)
+_*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
-> ⚠️ **Disclaimer:** Benchmarks are based on internal tests and may vary by project and environment.
+**Eleva's Strengths:**
+- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
+- **Competitive initial render** (~37ms for 1K rows)
+- **Zero dependencies** and minimal runtime overhead
+- **Direct DOM diffing** without virtual DOM overhead
+
+**Performance Tips:**
+- Use `key` attribute on list items for optimal diffing
+- Split large lists into smaller components
+- Eleva excels at initial renders and small-to-medium updates
+
+> 💡 **Run benchmarks yourself:** `bun run test:benchmark`
+
+> ⚠️ **Disclaimer:** Benchmarks vary by application complexity, browser, and hardware. Eleva results from internal test suite using Bun runtime. Other framework data from [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/).
 
 ---
 
 ## Eleva vs. Popular Frameworks
+
+How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, and Angular?
+
+| Feature | Eleva | React | Vue | Svelte | Angular |
+|---------|----------|-------|-----|--------|---------|
+| **Bundle Size** | ~6KB | ~42KB | ~34KB | ~2.5KB* | ~130KB |
+| **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
+| **Virtual DOM** | No | Yes | Yes | No | No |
+| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
+| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in |
+| **Build Required** | No | Yes | Optional | Yes | Yes |
+| **Learning Curve** | Low | Medium | Medium | Low | High |
+
+_*Svelte compiles away, so runtime is minimal but build step is required._
 
 Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular:
 
@@ -270,6 +325,26 @@ Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular
 - **Learning Curve:** Familiar syntax and a clear API make it accessible to all developers.
 
 _Note:_ Eleva isn't trying to replace these giants but provides a lightweight option when you want simplicity and speed. 🌟
+
+---
+
+## Browser Support
+
+Eleva targets **modern evergreen browsers** and requires no polyfills.
+
+| Browser | Minimum Version |
+|---------|-----------------|
+| Chrome | 71+ |
+| Firefox | 69+ |
+| Safari | 12.1+ |
+| Edge | 79+ (Chromium) |
+| iOS Safari | 12.2+ |
+
+**Not Supported:** Internet Explorer, Legacy Edge (< 79)
+
+**Why?** Eleva uses modern JavaScript features (`queueMicrotask`, ES6 Classes, async/await) to maintain its tiny footprint. These browsers cover **96%+ of global web traffic**.
+
+> 💡 For legacy browser support, use Babel with appropriate polyfills.
 
 ---
 
@@ -802,10 +877,20 @@ I welcome developers to dive in and experiment with Eleva! Here's how to get sta
 
 ## Testing
 
-I use Jest for testing. Run the test suite with:
+Eleva has a comprehensive test suite with **100% line coverage**:
+
+| Metric | Value |
+|--------|-------|
+| **Total Tests** | 273 |
+| **Line Coverage** | 100% |
+| **Test Runner** | Bun |
+
+Run the test suite:
 
 ```bash
-npm test
+bun test              # Run all tests
+bun test:coverage     # Run with coverage report
+bun test:benchmark    # Run performance benchmarks
 ```
 
 Contributions to tests are very welcome! 🧪

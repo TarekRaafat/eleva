@@ -36,7 +36,7 @@ export namespace RouterPlugin {
      *
      * @example
      * // main.js
-     * import Eleva from './eleva.js';
+     * import Eleva from 'eleva';
      * import { RouterPlugin } from './plugins/RouterPlugin.js';
      *
      * const app = new Eleva('myApp');
@@ -60,6 +60,7 @@ export namespace RouterPlugin {
      */
     function uninstall(eleva: Eleva): Promise<void>;
 }
+export { RouterPlugin as Router };
 export type Eleva = any;
 export type Signal = any;
 export type ComponentDefinition = any;
@@ -504,7 +505,7 @@ export type RouteDefinition = {
  */
 /**
  * @class Router
- * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.js.
+ * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.
  * This class manages all routing logic, including state, navigation, and rendering.
  *
  * ## Features
@@ -996,5 +997,4 @@ declare class Router {
      */
     setErrorHandler(errorHandler: Object): void;
 }
-export {};
 //# sourceMappingURL=Router.d.ts.map

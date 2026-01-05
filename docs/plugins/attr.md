@@ -1,6 +1,6 @@
 # Attr Plugin
 
-> **Version:** 1.0.0-rc.10 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.4KB minified | **Dependencies:** Eleva.js core
+> **Version:** 1.0.0-rc.11 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.4KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
 
@@ -298,6 +298,7 @@ const DynamicList = {
       <ul class="task-list">
         ${items.value.map(item => `
           <li
+            key="${item.id}"
             data-id="${item.id}"
             data-status="${item.status}"
             data-priority="${item.priority}"
@@ -526,7 +527,7 @@ const SelectAllComponent = {
 
         <ul>
           ${items.value.map(item => `
-            <li>
+            <li key="${item.id}">
               <label>
                 <input
                   type="checkbox"
@@ -838,7 +839,7 @@ const Accordion = {
     return `
       <div class="accordion" role="tablist" aria-label="FAQ Accordion">
         ${sections.value.map((section) => `
-          <div class="accordion-item">
+          <div key="${section.id}" class="accordion-item">
             <h3>
               <button
                 type="button"
@@ -916,6 +917,7 @@ const TabContainer = {
         <div role="tablist" aria-label="Content Tabs" class="tab-list">
           ${tabs.value.map((tab, index) => `
             <button
+              key="${tab.id}"
               role="tab"
               id="${tab.id}"
               aria-selected="${activeTab.value === index}"
@@ -933,6 +935,7 @@ const TabContainer = {
         <!-- Tab Panels -->
         ${tabs.value.map((tab, index) => `
           <div
+            key="${tab.id}"
             role="tabpanel"
             id="panel-${tab.id}"
             aria-labelledby="${tab.id}"
@@ -1014,6 +1017,7 @@ const DataTable = {
             </th>
             ${columns.map(col => `
               <th
+                key="${col.key}"
                 scope="col"
                 aria-sort="${sortColumn.value === col.key
                   ? (sortDirection.value === 'asc' ? 'ascending' : 'descending')
@@ -1035,6 +1039,7 @@ const DataTable = {
         <tbody>
           ${sortedData().map(row => `
             <tr
+              key="${row.id}"
               data-row-id="${row.id}"
               aria-selected="${isSelected(row.id)}"
               class="${isSelected(row.id) ? 'selected' : ''}"
@@ -1361,6 +1366,66 @@ const el = document.querySelector('[data-debug]');
 console.log('Attributes:', el.attributes);
 console.log('Dataset:', el.dataset);
 console.log('ARIA:', el.getAttribute('aria-label'));
+```
+
+---
+
+## Batching Tips & Gotchas
+
+Eleva uses **render batching** via `queueMicrotask` to optimize performance. This means attribute updates happen asynchronously after signal changes. Here's what you need to know when using the Attr plugin:
+
+### 1. Attribute Updates Are Batched
+
+When signals change, attribute updates are batched with template re-renders:
+
+```javascript
+// Both changes result in ONE DOM update
+isDisabled.value = true;
+ariaLabel.value = "Loading...";
+// Attributes update together in next microtask
+```
+
+### 2. DOM Attributes Don't Update Immediately
+
+After changing a signal, attributes won't reflect the change immediately:
+
+```javascript
+isExpanded.value = true;
+console.log(element.getAttribute('aria-expanded')); // Still "false"!
+
+// Wait for batched update
+isExpanded.value = true;
+queueMicrotask(() => {
+  console.log(element.getAttribute('aria-expanded')); // Now "true"
+});
+```
+
+### 3. Tests May Need Delays
+
+When testing attribute bindings, allow time for batched updates:
+
+```javascript
+test("button becomes disabled", async () => {
+  isLoading.value = true;
+
+  // Wait for batched update
+  await new Promise(resolve => queueMicrotask(resolve));
+
+  expect(button.disabled).toBe(true);
+  expect(button.getAttribute('aria-busy')).toBe('true');
+});
+```
+
+### 4. Boolean Attributes and Batching
+
+Boolean attribute toggling follows the same batching rules:
+
+```javascript
+// These are batched together
+disabled.value = true;
+hidden.value = false;
+checked.value = true;
+// All three attributes update in one DOM operation
 ```
 
 ---

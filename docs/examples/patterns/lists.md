@@ -4,6 +4,48 @@ Learn how to search, filter, sort, and reorder lists in Eleva.
 
 ---
 
+## Choosing Keys for List Items
+
+When rendering lists, the `key` attribute helps Eleva's renderer efficiently update the DOM. Choosing the right key strategy is important for performance and correctness.
+
+### Use `object.id` (stable unique identifier) when:
+
+- Items can be **reordered, sorted, or filtered**
+- Items can be **added or removed from the middle** of the list
+- Items have a **natural unique identifier** (database ID, UUID, etc.)
+- You need to **preserve component state** across re-renders
+
+```javascript
+// Good: items with stable IDs
+${ctx.tasks.value.map(task => `
+  <li key="${task.id}">${task.title}</li>
+`).join('')}
+```
+
+### Use `index` when:
+
+- The list is **static and never reorders**
+- Items are **only appended** to the end (never inserted in middle)
+- Items are **simple primitives** without unique identifiers
+- The list is **derived/computed** and doesn't persist
+
+```javascript
+// Acceptable: static list of simple strings
+${ctx.colors.map((color, index) => `
+  <span key="${index}">${color}</span>
+`).join('')}
+```
+
+### Why it matters
+
+With index-based keys, if you insert an item at position 0, every item shifts and gets a new key. The renderer thinks all items changed, causing unnecessary DOM updates and potentially losing input focus or component state.
+
+With stable IDs, the renderer correctly identifies which items moved, were added, or removed—performing minimal DOM operations.
+
+**Rule of thumb:** If items have an `id`, always use it. Only fall back to `index` for truly static, append-only lists.
+
+---
+
 ## Searchable & Filterable List
 
 A product list with search, category filter, stock filter, and sorting.
@@ -77,7 +119,7 @@ app.component("ProductList", {
 
           <select @change="(e) => categoryFilter.value = e.target.value">
             ${ctx.categories.map(cat => `
-              <option value="${cat}" ${ctx.categoryFilter.value === cat ? "selected" : ""}>
+              <option key="${cat}" value="${cat}" ${ctx.categoryFilter.value === cat ? "selected" : ""}>
                 ${cat === "all" ? "All Categories" : cat.charAt(0).toUpperCase() + cat.slice(1)}
               </option>
             `).join("")}
@@ -100,7 +142,7 @@ app.component("ProductList", {
 
         <div class="products">
           ${filtered.length > 0 ? filtered.map(product => `
-            <div class="product-card ${!product.inStock ? 'out-of-stock' : ''}">
+            <div key="${product.id}" class="product-card ${!product.inStock ? 'out-of-stock' : ''}">
               <h3>${product.name}</h3>
               <span class="category">${product.category}</span>
               <p class="price">$${product.price}</p>
@@ -194,6 +236,7 @@ app.component("SortableList", {
     <ul class="sortable-list">
       ${ctx.items.value.map((item, index) => `
         <li
+          key="${item.id}"
           class="sortable-item"
           draggable="true"
           @dragstart="() => handleDragStart(${index})"
@@ -339,7 +382,7 @@ app.component("TodoList", {
 
       <ul class="todo-list">
         ${ctx.getFilteredTodos().map(todo => `
-          <li class="${todo.completed ? 'completed' : ''}">
+          <li key="${todo.id}" class="${todo.completed ? 'completed' : ''}">
             ${ctx.editingId.value === todo.id ? `
               <input
                 type="text"
@@ -437,7 +480,7 @@ app.component("GroupedList", {
     return `
       <div class="grouped-list">
         ${Object.entries(groups).map(([category, items]) => `
-          <div class="group">
+          <div key="${category}" class="group">
             <button
               class="group-header ${ctx.isExpanded(category) ? 'expanded' : ''}"
               @click="() => toggleGroup('${category}')"
@@ -448,7 +491,7 @@ app.component("GroupedList", {
             ${ctx.isExpanded(category) ? `
               <ul class="group-items">
                 ${items.map(item => `
-                  <li>${item.name}</li>
+                  <li key="${item.id}">${item.name}</li>
                 `).join('')}
               </ul>
             ` : ''}
@@ -525,7 +568,7 @@ app.component("VirtualList", {
         <div class="virtual-list-spacer" style="height: ${totalHeight}px;">
           <div class="virtual-list-items" style="transform: translateY(${offsetY}px);">
             ${items.map(item => `
-              <div class="virtual-list-item" style="height: ${ctx.itemHeight}px;">
+              <div key="${item.id}" class="virtual-list-item" style="height: ${ctx.itemHeight}px;">
                 <strong>${item.name}</strong>
                 <span>${item.description}</span>
               </div>

@@ -1,8 +1,8 @@
 # Router Plugin
 
-> **Version:** 1.0.0-rc.10 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva.js core
+> **Version:** 1.0.0-rc.11 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
 
-The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva.js. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
+The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
 
 ---
 
@@ -107,6 +107,7 @@ await router.stop();
 19. [Examples](#examples)
 20. [Migration Guide](#migration-from-other-routers)
 21. [Troubleshooting](#troubleshooting)
+22. [Batching Tips \& Gotchas](#batching-tips--gotchas)
 
 ---
 
@@ -130,7 +131,7 @@ await router.stop();
 ## Installation
 
 ### Prerequisites
-- Eleva.js core (`eleva`)
+- Eleva core (`eleva`)
 - Modern browser with ES6+ support
 
 ### Package Installation
@@ -1782,7 +1783,7 @@ The Router plugin includes comprehensive JSDoc type definitions for excellent ID
 /** @typedef {import('eleva/plugins').NavigationGuard} NavigationGuard */
 /** @typedef {import('eleva/plugins').NavigationTarget} NavigationTarget */
 /** @typedef {import('eleva/plugins').RouterOptions} RouterOptions */
-/** @typedef {import('eleva/plugins').RouterPlugin} RouterPlugin */
+/** @typedef {import('eleva/plugins').Router} Router */
 ```
 
 ### Type Definitions Reference
@@ -1883,7 +1884,7 @@ const authGuard = (to, from) => {
   }
 };
 
-/** @type {import('eleva/plugins').RouterPlugin} */
+/** @type {import('eleva/plugins').Router} */
 const myPlugin = {
   name: "my-plugin",
   install(router) {
@@ -1934,8 +1935,8 @@ const myPlugin = {
 | `getRoutes` | `() => RouteDefinition[]` | Get all routes |
 | `getRoute` | `(path) => RouteDefinition \| undefined` | Get route by path |
 | `use` | `(plugin, options?) => void` | Install plugin |
-| `getPlugins` | `() => RouterPlugin[]` | Get all plugins |
-| `getPlugin` | `(name) => RouterPlugin \| undefined` | Get plugin by name |
+| `getPlugins` | `() => Router[]` | Get all plugins |
+| `getPlugin` | `(name) => Router \| undefined` | Get plugin by name |
 | `removePlugin` | `(name) => boolean` | Remove plugin |
 | `setErrorHandler` | `(handler) => void` | Set error handler |
 
@@ -2167,6 +2168,99 @@ events.forEach(event => {
   router.emitter.on(event, (...args) => {
     console.log(`[${event}]`, ...args);
   });
+});
+```
+
+---
+
+## Batching Tips & Gotchas
+
+Eleva uses **render batching** via `queueMicrotask` to optimize performance. This means DOM updates happen asynchronously after navigation. Here's what you need to know when using the Router plugin:
+
+### 1. DOM Updates After Navigation Are Async
+
+After calling `navigate()`, the DOM won't update immediately:
+
+```javascript
+await router.navigate("/users/123");
+console.log(document.querySelector('h1').textContent); // May show OLD content!
+
+// To read updated DOM, wait for the next microtask:
+await router.navigate("/users/123");
+queueMicrotask(() => {
+  console.log(document.querySelector('h1').textContent); // Now shows NEW content
+});
+```
+
+### 2. Route Component Mounting Is Batched
+
+When the router mounts a new component, the component's template rendering follows the same batching rules:
+
+```javascript
+// In your page component
+setup({ router }) {
+  const data = signal(null);
+
+  // Fetch data based on route params
+  fetchUser(router.currentParams.value.id).then(user => {
+    data.value = user;
+    // DOM update happens in next microtask, not immediately
+  });
+
+  return { data };
+}
+```
+
+### 3. Tests May Need Delays
+
+When testing router navigation, allow time for batched renders:
+
+```javascript
+test("navigates to user page", async () => {
+  await router.navigate("/users/123");
+
+  // Wait for batched render
+  await new Promise(resolve => queueMicrotask(resolve));
+
+  expect(document.querySelector('.user-page')).not.toBeNull();
+});
+```
+
+### 4. Guards and Hooks Are Synchronous
+
+Navigation guards run synchronously before rendering, but the actual DOM update is still batched:
+
+```javascript
+router.onAfterEach((to, from) => {
+  // Navigation completed, but DOM may not have updated yet
+  console.log("Navigated to:", to.path);
+
+  // Use queueMicrotask if you need to access the new DOM
+  queueMicrotask(() => {
+    document.querySelector('.page').focus();
+  });
+});
+```
+
+### 5. Multiple Navigations Are Debounced
+
+If you trigger multiple navigations rapidly, only the final one will complete:
+
+```javascript
+// Only the last navigation will take effect
+router.navigate("/page1");
+router.navigate("/page2");
+router.navigate("/page3");  // This one wins
+```
+
+### 6. Combine with Store Updates
+
+When navigation triggers store updates, both are batched together:
+
+```javascript
+router.onAfterEach((to) => {
+  // Store update + route component render = single batch
+  store.dispatch("setCurrentPage", to.meta.title);
 });
 ```
 

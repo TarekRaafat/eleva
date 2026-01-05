@@ -107,7 +107,7 @@ app.component("NotesApp", {
           ${ctx.notes.value.length === 0 ? `
             <p class="no-notes">No notes yet. Create your first note!</p>
           ` : ctx.notes.value.map(note => `
-            <div class="note-card">
+            <div key="${note.id}" class="note-card">
               <h3>${note.title}</h3>
               <p>${note.content.substring(0, 100)}${note.content.length > 100 ? "..." : ""}</p>
               <div class="note-meta">
@@ -317,8 +317,8 @@ app.component("SearchWithHistory", {
             <button @click="clearHistory">Clear All</button>
           </div>
           <ul>
-            ${ctx.searchHistory.value.map(term => `
-              <li>
+            ${ctx.searchHistory.value.map((term, index) => `
+              <li key="${index}">
                 <span @click="() => selectFromHistory('${term.replace(/'/g, "\\'")}')">${term}</span>
                 <button @click="() => removeFromHistory('${term.replace(/'/g, "\\'")}')">×</button>
               </li>
@@ -427,7 +427,7 @@ app.component("SessionForm", {
         <select @change="(e) => updateField('category', e.target.value)">
           <option value="">Select a category</option>
           ${['Technology', 'Design', 'Business', 'Other'].map(cat => `
-            <option value="${cat}" ${ctx.formData.value.category === cat ? 'selected' : ''}>
+            <option key="${cat}" value="${cat}" ${ctx.formData.value.category === cat ? 'selected' : ''}>
               ${cat}
             </option>
           `).join('')}
@@ -562,7 +562,7 @@ app.component("StorageInfo", {
         ` : `
           <ul>
             ${ctx.storageInfo.value.items.map(item => `
-              <li>
+              <li key="${item.key}">
                 <span class="key">${item.key}</span>
                 <span class="size">${ctx.formatBytes(item.size)}</span>
                 <button @click="() => removeItem('${item.key.replace(/'/g, "\\'")}')">×</button>

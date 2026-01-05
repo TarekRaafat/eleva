@@ -2,7 +2,7 @@
 
 /**
  * @class 🏪 StorePlugin
- * @classdesc A powerful reactive state management plugin for Eleva.js that enables sharing
+ * @classdesc A powerful reactive state management plugin for Eleva that enables sharing
  * reactive data across the entire application. The Store plugin provides a centralized,
  * reactive data store that can be accessed from any component's setup function.
  *
@@ -66,7 +66,7 @@ export const StorePlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.10",
+  version: "1.0.0-rc.11",
 
   /**
    * Plugin description
@@ -739,3 +739,6 @@ export const StorePlugin = {
     }
   },
 };
+
+// Short name export for convenience
+export { StorePlugin as Store };
