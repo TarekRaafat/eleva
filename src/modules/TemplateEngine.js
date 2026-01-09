@@ -77,6 +77,16 @@ export class TemplateEngine {
   static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
 
   /**
+   * Cache for compiled expression functions.
+   * Stores compiled Function objects keyed by expression string for O(1) lookup.
+   *
+   * @static
+   * @private
+   * @type {Map<string, Function>}
+   */
+  static _functionCache = new Map();
+
+  /**
    * Parses a template string, replacing expressions with their evaluated values.
    * Expressions are evaluated in the provided data context.
    *
@@ -132,7 +142,7 @@ export class TemplateEngine {
    * @static
    * @param {Expression|unknown} expression - The expression to evaluate.
    * @param {TemplateData} data - The data context for evaluation.
-   * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+   * @returns {EvaluationResult} The result of the evaluation, or undefined if evaluation fails.
    *
    * @example
    * // Property access
@@ -158,16 +168,25 @@ export class TemplateEngine {
    * // Result: "2024-01-01T00:00:00.000Z"
    *
    * @example
-   * // Failed evaluation returns empty string
+   * // Failed evaluation returns undefined
    * TemplateEngine.evaluate("nonexistent.property", {});
-   * // Result: ""
+   * // Result: undefined
    */
   static evaluate(expression, data) {
     if (typeof expression !== "string") return expression;
+    let fn = this._functionCache.get(expression);
+    if (!fn) {
+      try {
+        fn = new Function("data", `with(data) { return ${expression}; }`);
+        this._functionCache.set(expression, fn);
+      } catch {
+        return undefined;
+      }
+    }
     try {
-      return new Function("data", `with(data) { return ${expression}; }`)(data);
+      return fn(data);
     } catch {
-      return "";
+      return undefined;
     }
   }
 }

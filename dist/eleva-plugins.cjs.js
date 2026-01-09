@@ -1,13 +1,11 @@
-/*! Eleva Plugins v1.0.0-rc.11 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.12 | MIT License | https://elevajs.com */
 'use strict';
 
 /**
  * A regular expression to match hyphenated lowercase letters.
  * @private
  * @type {RegExp}
- */
-const CAMEL_RE = /-([a-z])/g;
-
+ */ const CAMEL_RE = /-([a-z])/g;
 /**
  * @class 🎯 AttrPlugin
  * @classdesc A plugin that provides advanced attribute handling for Eleva components.
@@ -36,24 +34,20 @@ const CAMEL_RE = /-([a-z])/g;
  *     </button>
  *   `
  * });
- */
-const AttrPlugin = {
-  /**
+ */ const AttrPlugin = {
+    /**
    * Unique identifier for the plugin
    * @type {string}
-   */
-  name: "attr",
-  /**
+   */ name: "attr",
+    /**
    * Plugin version
    * @type {string}
-   */
-  version: "1.0.0-rc.11",
-  /**
+   */ version: "1.0.0-rc.12",
+    /**
    * Plugin description
    * @type {string}
-   */
-  description: "Advanced attribute handling for Eleva components",
-  /**
+   */ description: "Advanced attribute handling for Eleva components",
+    /**
    * Installs the plugin into the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
@@ -62,16 +56,9 @@ const AttrPlugin = {
    * @param {boolean} [options.enableData=true] - Enable data attribute handling
    * @param {boolean} [options.enableBoolean=true] - Enable boolean attribute handling
    * @param {boolean} [options.enableDynamic=true] - Enable dynamic property detection
-   */
-  install(eleva, options = {}) {
-    const {
-      enableAria = true,
-      enableData = true,
-      enableBoolean = true,
-      enableDynamic = true
-    } = options;
-
-    /**
+   */ install (eleva, options = {}) {
+        const { enableAria = true, enableData = true, enableBoolean = true, enableDynamic = true } = options;
+        /**
      * Updates the attributes of an element to match a new element's attributes.
      * This method provides sophisticated attribute processing including:
      * - ARIA attribute handling with proper property mapping
@@ -83,142 +70,119 @@ const AttrPlugin = {
      * @param {HTMLElement} oldEl - The original element to update
      * @param {HTMLElement} newEl - The new element to update
      * @returns {void}
-     */
-    const updateAttributes = (oldEl, newEl) => {
-      const oldAttrs = oldEl.attributes;
-      const newAttrs = newEl.attributes;
-
-      // Process new attributes
-      for (let i = 0; i < newAttrs.length; i++) {
-        const {
-          name,
-          value
-        } = newAttrs[i];
-
-        // Skip event attributes (handled by event system)
-        if (name.startsWith("@")) continue;
-
-        // Skip if attribute hasn't changed
-        if (oldEl.getAttribute(name) === value) continue;
-
-        // Handle ARIA attributes
-        if (enableAria && name.startsWith("aria-")) {
-          const prop = "aria" + name.slice(5).replace(CAMEL_RE, (_, l) => l.toUpperCase());
-          oldEl[prop] = value;
-          oldEl.setAttribute(name, value);
-        }
-        // Handle data attributes
-        else if (enableData && name.startsWith("data-")) {
-          oldEl.dataset[name.slice(5)] = value;
-          oldEl.setAttribute(name, value);
-        }
-        // Handle other attributes
-        else {
-          let prop = name.replace(CAMEL_RE, (_, l) => l.toUpperCase());
-
-          // Dynamic property detection
-          if (enableDynamic && !(prop in oldEl) && !Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop)) {
-            const elementProps = Object.getOwnPropertyNames(Object.getPrototypeOf(oldEl));
-            const matchingProp = elementProps.find(p => p.toLowerCase() === name.toLowerCase() || p.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(p.toLowerCase()));
-            if (matchingProp) {
-              prop = matchingProp;
-            }
-          }
-          const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop);
-          const hasProperty = prop in oldEl || descriptor;
-          if (hasProperty) {
-            // Boolean attribute handling
-            if (enableBoolean) {
-              const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
-              if (isBoolean) {
-                const boolValue = value !== "false" && (value === "" || value === prop || value === "true");
-                oldEl[prop] = boolValue;
-                if (boolValue) {
-                  oldEl.setAttribute(name, "");
+     */ const updateAttributes = (oldEl, newEl)=>{
+            const oldAttrs = oldEl.attributes;
+            const newAttrs = newEl.attributes;
+            // Process new attributes
+            for(let i = 0; i < newAttrs.length; i++){
+                const { name, value } = newAttrs[i];
+                // Skip event attributes (handled by event system)
+                if (name.startsWith("@")) continue;
+                // Skip if attribute hasn't changed
+                if (oldEl.getAttribute(name) === value) continue;
+                // Handle ARIA attributes
+                if (enableAria && name.startsWith("aria-")) {
+                    const prop = "aria" + name.slice(5).replace(CAMEL_RE, (_, l)=>l.toUpperCase());
+                    oldEl[prop] = value;
+                    oldEl.setAttribute(name, value);
+                } else if (enableData && name.startsWith("data-")) {
+                    oldEl.dataset[name.slice(5)] = value;
+                    oldEl.setAttribute(name, value);
                 } else {
-                  oldEl.removeAttribute(name);
+                    let prop = name.replace(CAMEL_RE, (_, l)=>l.toUpperCase());
+                    // Dynamic property detection
+                    if (enableDynamic && !(prop in oldEl) && !Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop)) {
+                        const elementProps = Object.getOwnPropertyNames(Object.getPrototypeOf(oldEl));
+                        const matchingProp = elementProps.find((p)=>p.toLowerCase() === name.toLowerCase() || p.toLowerCase().includes(name.toLowerCase()) || name.toLowerCase().includes(p.toLowerCase()));
+                        if (matchingProp) {
+                            prop = matchingProp;
+                        }
+                    }
+                    const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(oldEl), prop);
+                    const hasProperty = prop in oldEl || descriptor;
+                    if (hasProperty) {
+                        // Boolean attribute handling
+                        if (enableBoolean) {
+                            const isBoolean = typeof oldEl[prop] === "boolean" || descriptor?.get && typeof descriptor.get.call(oldEl) === "boolean";
+                            if (isBoolean) {
+                                const boolValue = value !== "false" && (value === "" || value === prop || value === "true");
+                                oldEl[prop] = boolValue;
+                                if (boolValue) {
+                                    oldEl.setAttribute(name, "");
+                                } else {
+                                    oldEl.removeAttribute(name);
+                                }
+                            } else {
+                                oldEl[prop] = value;
+                                oldEl.setAttribute(name, value);
+                            }
+                        } else {
+                            oldEl[prop] = value;
+                            oldEl.setAttribute(name, value);
+                        }
+                    } else {
+                        oldEl.setAttribute(name, value);
+                    }
                 }
-              } else {
-                oldEl[prop] = value;
-                oldEl.setAttribute(name, value);
-              }
-            } else {
-              oldEl[prop] = value;
-              oldEl.setAttribute(name, value);
             }
-          } else {
-            oldEl.setAttribute(name, value);
-          }
+            // Remove old attributes that are no longer present
+            for(let i = oldAttrs.length - 1; i >= 0; i--){
+                const name = oldAttrs[i].name;
+                if (!newEl.hasAttribute(name)) {
+                    oldEl.removeAttribute(name);
+                }
+            }
+        };
+        // Extend the renderer with the advanced attribute handler
+        if (eleva.renderer) {
+            eleva.renderer.updateAttributes = updateAttributes;
+            // Store the original _patchNode method
+            const originalPatchNode = eleva.renderer._patchNode;
+            eleva.renderer._originalPatchNode = originalPatchNode;
+            // Override the _patchNode method to use our attribute handler
+            eleva.renderer._patchNode = function(oldNode, newNode) {
+                if (oldNode?._eleva_instance) return;
+                if (oldNode.nodeType === 3) {
+                    if (oldNode.nodeValue !== newNode.nodeValue) {
+                        oldNode.nodeValue = newNode.nodeValue;
+                    }
+                } else if (oldNode.nodeType === 1) {
+                    // Use advanced attribute handler instead of basic _updateAttributes
+                    updateAttributes(oldNode, newNode);
+                    this._diff(oldNode, newNode);
+                }
+            };
         }
-      }
-
-      // Remove old attributes that are no longer present
-      for (let i = oldAttrs.length - 1; i >= 0; i--) {
-        const name = oldAttrs[i].name;
-        if (!newEl.hasAttribute(name)) {
-          oldEl.removeAttribute(name);
+        // Add plugin metadata to the Eleva instance
+        if (!eleva.plugins) {
+            eleva.plugins = new Map();
         }
-      }
-    };
-
-    // Extend the renderer with the advanced attribute handler
-    if (eleva.renderer) {
-      eleva.renderer.updateAttributes = updateAttributes;
-
-      // Store the original _patchNode method
-      const originalPatchNode = eleva.renderer._patchNode;
-      eleva.renderer._originalPatchNode = originalPatchNode;
-
-      // Override the _patchNode method to use our attribute handler
-      eleva.renderer._patchNode = function (oldNode, newNode) {
-        if (oldNode?._eleva_instance) return;
-        if (!this._isSameNode(oldNode, newNode)) {
-          oldNode.replaceWith(newNode.cloneNode(true));
-          return;
-        }
-        if (oldNode.nodeType === Node.ELEMENT_NODE) {
-          updateAttributes(oldNode, newNode);
-          this._diff(oldNode, newNode);
-        } else if (oldNode.nodeType === Node.TEXT_NODE && oldNode.nodeValue !== newNode.nodeValue) {
-          oldNode.nodeValue = newNode.nodeValue;
-        }
-      };
-    }
-
-    // Add plugin metadata to the Eleva instance
-    if (!eleva.plugins) {
-      eleva.plugins = new Map();
-    }
-    eleva.plugins.set(this.name, {
-      name: this.name,
-      version: this.version,
-      description: this.description,
-      options
-    });
-
-    // Add utility methods for manual attribute updates
-    eleva.updateElementAttributes = updateAttributes;
-  },
-  /**
+        eleva.plugins.set(this.name, {
+            name: this.name,
+            version: this.version,
+            description: this.description,
+            options
+        });
+        // Add utility methods for manual attribute updates
+        eleva.updateElementAttributes = updateAttributes;
+    },
+    /**
    * Uninstalls the plugin from the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
-   */
-  uninstall(eleva) {
-    // Restore original _patchNode method if it exists
-    if (eleva.renderer && eleva.renderer._originalPatchNode) {
-      eleva.renderer._patchNode = eleva.renderer._originalPatchNode;
-      delete eleva.renderer._originalPatchNode;
+   */ uninstall (eleva) {
+        // Restore original _patchNode method if it exists
+        if (eleva.renderer && eleva.renderer._originalPatchNode) {
+            eleva.renderer._patchNode = eleva.renderer._originalPatchNode;
+            delete eleva.renderer._originalPatchNode;
+        }
+        // Remove plugin metadata
+        if (eleva.plugins) {
+            eleva.plugins.delete(this.name);
+        }
+        // Remove utility methods
+        delete eleva.updateElementAttributes;
     }
-
-    // Remove plugin metadata
-    if (eleva.plugins) {
-      eleva.plugins.delete(this.name);
-    }
-
-    // Remove utility methods
-    delete eleva.updateElementAttributes;
-  }
 };
 
 /**
@@ -227,21 +191,16 @@ const AttrPlugin = {
  * @typedef {import('eleva').ComponentDefinition} ComponentDefinition
  * @typedef {import('eleva').Emitter} Emitter
  * @typedef {import('eleva').MountResult} MountResult
- */
-
-// ============================================
+ */ // ============================================
 // Core Type Definitions
 // ============================================
-
 /**
  * @typedef {'hash' | 'history' | 'query'} RouterMode
  * The routing mode determines how the router manages URL state.
  * - `hash`: Uses URL hash (e.g., `/#/path`) - works without server config
  * - `history`: Uses HTML5 History API (e.g., `/path`) - requires server config
  * - `query`: Uses query parameters (e.g., `?view=/path`) - useful for embedded apps
- */
-
-/**
+ */ /**
  * @typedef {Object} RouterOptions
  * @property {RouterMode} [mode='hash'] - The routing mode to use.
  * @property {string} [queryParam='view'] - Query parameter name for 'query' mode.
@@ -251,9 +210,7 @@ const AttrPlugin = {
  * @property {string | ComponentDefinition} [globalLayout] - Default layout for all routes.
  * @property {NavigationGuard} [onBeforeEach] - Global navigation guard.
  * @description Configuration options for the Router plugin.
- */
-
-/**
+ */ /**
  * @typedef {Object} NavigationTarget
  * @property {string} path - The target path (can include params like '/users/:id').
  * @property {Record<string, string>} [params] - Route parameters to inject into the path.
@@ -261,33 +218,25 @@ const AttrPlugin = {
  * @property {boolean} [replace=false] - Whether to replace current history entry.
  * @property {Record<string, any>} [state] - State object to pass to history.
  * @description Object describing a navigation target for `router.navigate()`.
- */
-
-/**
+ */ /**
  * @typedef {Object} ScrollPosition
  * @property {number} x - Horizontal scroll position.
  * @property {number} y - Vertical scroll position.
  * @description Represents a saved scroll position.
- */
-
-/**
+ */ /**
  * @typedef {Object} RouteSegment
  * @property {'static' | 'param'} type - The segment type.
  * @property {string} value - The segment value (for static) or empty string (for param).
  * @property {string} [name] - The parameter name (for param segments).
  * @description Internal representation of a parsed route path segment.
  * @private
- */
-
-/**
+ */ /**
  * @typedef {Object} RouteMatch
  * @property {RouteDefinition} route - The matched route definition.
  * @property {Record<string, string>} params - The extracted route parameters.
  * @description Result of matching a path against route definitions.
  * @private
- */
-
-/**
+ */ /**
  * @typedef {Record<string, any>} RouteMeta
  * @description Arbitrary metadata attached to routes for use in guards and components.
  * Common properties include:
@@ -300,141 +249,111 @@ const AttrPlugin = {
  *   component: AdminPage,
  *   meta: { requiresAuth: true, roles: ['admin'], title: 'Admin Dashboard' }
  * }
- */
-
-/**
+ */ /**
  * @typedef {Object} RouterErrorHandler
  * @property {(error: Error, context: string, details?: Record<string, any>) => void} handle - Throws a formatted error.
  * @property {(message: string, details?: Record<string, any>) => void} warn - Logs a warning.
  * @property {(message: string, error: Error, details?: Record<string, any>) => void} log - Logs an error without throwing.
  * @description Interface for the router's error handling system.
- */
-
-// ============================================
+ */ // ============================================
 // Event Callback Type Definitions
 // ============================================
-
 /**
  * @callback NavigationContextCallback
  * @param {NavigationContext} context - The navigation context (can be modified to block/redirect).
  * @returns {void | Promise<void>}
  * @description Callback for `router:beforeEach` event. Modify context to control navigation.
- */
-
-/**
+ */ /**
  * @callback ResolveContextCallback
  * @param {ResolveContext} context - The resolve context (can be modified to block/redirect).
  * @returns {void | Promise<void>}
  * @description Callback for `router:beforeResolve` and `router:afterResolve` events.
- */
-
-/**
+ */ /**
  * @callback RenderContextCallback
  * @param {RenderContext} context - The render context.
  * @returns {void | Promise<void>}
  * @description Callback for `router:beforeRender` and `router:afterRender` events.
- */
-
-/**
+ */ /**
  * @callback ScrollContextCallback
  * @param {ScrollContext} context - The scroll context with saved position info.
  * @returns {void | Promise<void>}
  * @description Callback for `router:scroll` event. Use to implement scroll behavior.
- */
-
-/**
+ */ /**
  * @callback RouteChangeCallback
  * @param {RouteLocation} to - The target route location.
  * @param {RouteLocation | null} from - The source route location.
  * @returns {void | Promise<void>}
  * @description Callback for `router:afterEnter`, `router:afterLeave`, `router:afterEach` events.
- */
-
-/**
+ */ /**
  * @callback RouterErrorCallback
  * @param {Error} error - The error that occurred.
  * @param {RouteLocation} [to] - The target route (if available).
  * @param {RouteLocation | null} [from] - The source route (if available).
  * @returns {void | Promise<void>}
  * @description Callback for `router:onError` event.
- */
-
-/**
+ */ /**
  * @callback RouterReadyCallback
  * @param {Router} router - The router instance.
  * @returns {void | Promise<void>}
  * @description Callback for `router:ready` event.
- */
-
-/**
+ */ /**
  * @callback RouteAddedCallback
  * @param {RouteDefinition} route - The added route definition.
  * @returns {void | Promise<void>}
  * @description Callback for `router:routeAdded` event.
- */
-
-/**
+ */ /**
  * @callback RouteRemovedCallback
  * @param {RouteDefinition} route - The removed route definition.
  * @returns {void | Promise<void>}
  * @description Callback for `router:routeRemoved` event.
- */
-
-// ============================================
+ */ // ============================================
 // Core Type Definitions (continued)
 // ============================================
-
 /**
  * Simple error handler for the core router.
  * Can be overridden by error handling plugins.
  * Provides consistent error formatting and logging for router operations.
  * @private
- */
-const CoreErrorHandler = {
-  /**
+ */ const CoreErrorHandler = {
+    /**
    * Handles router errors with basic formatting.
    * @param {Error} error - The error to handle.
    * @param {string} context - The context where the error occurred.
    * @param {Object} details - Additional error details.
    * @throws {Error} The formatted error.
-   */
-  handle(error, context, details = {}) {
-    const message = `[ElevaRouter] ${context}: ${error.message}`;
-    const formattedError = new Error(message);
-
-    // Preserve original error details
-    formattedError.originalError = error;
-    formattedError.context = context;
-    formattedError.details = details;
-    console.error(message, {
-      error,
-      context,
-      details
-    });
-    throw formattedError;
-  },
-  /**
+   */ handle (error, context, details = {}) {
+        const message = `[ElevaRouter] ${context}: ${error.message}`;
+        const formattedError = new Error(message);
+        // Preserve original error details
+        formattedError.originalError = error;
+        formattedError.context = context;
+        formattedError.details = details;
+        console.error(message, {
+            error,
+            context,
+            details
+        });
+        throw formattedError;
+    },
+    /**
    * Logs a warning without throwing an error.
    * @param {string} message - The warning message.
    * @param {Object} details - Additional warning details.
-   */
-  warn(message, details = {}) {
-    console.warn(`[ElevaRouter] ${message}`, details);
-  },
-  /**
+   */ warn (message, details = {}) {
+        console.warn(`[ElevaRouter] ${message}`, details);
+    },
+    /**
    * Logs an error without throwing.
    * @param {string} message - The error message.
    * @param {Error} error - The original error.
    * @param {Object} details - Additional error details.
-   */
-  log(message, error, details = {}) {
-    console.error(`[ElevaRouter] ${message}`, {
-      error,
-      details
-    });
-  }
+   */ log (message, error, details = {}) {
+        console.error(`[ElevaRouter] ${message}`, {
+            error,
+            details
+        });
+    }
 };
-
 /**
  * @typedef {Object} RouteLocation
  * @property {string} path - The path of the route (e.g., '/users/123').
@@ -445,18 +364,14 @@ const CoreErrorHandler = {
  * @property {string} [name] - The optional name of the matched route.
  * @property {RouteDefinition} matched - The raw route definition object that was matched.
  * @description Represents the current or target location in the router.
- */
-
-/**
+ */ /**
  * @typedef {boolean | string | NavigationTarget | void} NavigationGuardResult
  * The return value of a navigation guard.
  * - `true` or `undefined/void`: Allow navigation
  * - `false`: Abort navigation
  * - `string`: Redirect to path
  * - `NavigationTarget`: Redirect with options
- */
-
-/**
+ */ /**
  * @callback NavigationGuard
  * @param {RouteLocation} to - The target route location.
  * @param {RouteLocation | null} from - The source route location (null on initial navigation).
@@ -470,9 +385,7 @@ const CoreErrorHandler = {
  *   }
  *   // Allow navigation (implicit return undefined)
  * };
- */
-
-/**
+ */ /**
  * @callback NavigationHook
  * @param {RouteLocation} to - The target route location.
  * @param {RouteLocation | null} from - The source route location.
@@ -483,9 +396,7 @@ const CoreErrorHandler = {
  * const analyticsHook = (to, from) => {
  *   analytics.trackPageView(to.path);
  * };
- */
-
-/**
+ */ /**
  * @typedef {Object} RouterPlugin
  * @property {string} name - Unique plugin identifier.
  * @property {string} [version] - Plugin version (recommended to match router version).
@@ -502,18 +413,14 @@ const CoreErrorHandler = {
  *     });
  *   }
  * };
- */
-
-/**
+ */ /**
  * @typedef {Object} NavigationContext
  * @property {RouteLocation} to - The target route location.
  * @property {RouteLocation | null} from - The source route location.
  * @property {boolean} cancelled - Whether navigation has been cancelled.
  * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
  * @description A context object passed to navigation events that plugins can modify to control navigation flow.
- */
-
-/**
+ */ /**
  * @typedef {Object} ResolveContext
  * @property {RouteLocation} to - The target route location.
  * @property {RouteLocation | null} from - The source route location.
@@ -523,34 +430,26 @@ const CoreErrorHandler = {
  * @property {boolean} cancelled - Whether navigation has been cancelled.
  * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
  * @description A context object passed to component resolution events.
- */
-
-/**
+ */ /**
  * @typedef {Object} RenderContext
  * @property {RouteLocation} to - The target route location.
  * @property {RouteLocation | null} from - The source route location.
  * @property {ComponentDefinition | null} layoutComponent - The layout component being rendered.
  * @property {ComponentDefinition} pageComponent - The page component being rendered.
  * @description A context object passed to render events.
- */
-
-/**
+ */ /**
  * @typedef {Object} ScrollContext
  * @property {RouteLocation} to - The target route location.
  * @property {RouteLocation | null} from - The source route location.
  * @property {{x: number, y: number} | null} savedPosition - The saved scroll position (if navigating via back/forward).
  * @description A context object passed to scroll events for plugins to handle scroll behavior.
- */
-
-/**
+ */ /**
  * @typedef {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} RouteComponent
  * A component that can be rendered for a route.
  * - `string`: Name of a registered component
  * - `ComponentDefinition`: Inline component definition
  * - `() => Promise<{default: ComponentDefinition}>`: Lazy-loaded component (e.g., `() => import('./Page.js')`)
- */
-
-/**
+ */ /**
  * @typedef {Object} RouteDefinition
  * @property {string} path - URL path pattern. Supports:
  *   - Static: `'/about'`
@@ -583,9 +482,7 @@ const CoreErrorHandler = {
  *
  * // Catch-all 404 route (must be last)
  * { path: '*', component: NotFoundPage }
- */
-
-/**
+ */ /**
  * @class Router
  * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.
  * This class manages all routing logic, including state, navigation, and rendering.
@@ -655,168 +552,88 @@ const CoreErrorHandler = {
  * });
  *
  * @private
- */
-class Router {
-  /**
-   * Creates an instance of the Router.
-   * @param {Eleva} eleva - The Eleva framework instance.
-   * @param {RouterOptions} options - The configuration options for the router.
-   */
-  constructor(eleva, options = {}) {
-    /** @type {Eleva} The Eleva framework instance. */
-    this.eleva = eleva;
-
-    /** @type {RouterOptions} The merged router options. */
-    this.options = {
-      mode: "hash",
-      queryParam: "view",
-      viewSelector: "root",
-      ...options
-    };
-
-    /** @private @type {RouteDefinition[]} The processed list of route definitions. */
-    this.routes = this._processRoutes(options.routes || []);
-
-    /** @private @type {import('eleva').Emitter} The shared Eleva event emitter for global hooks. */
-    this.emitter = this.eleva.emitter;
-
-    /** @private @type {boolean} A flag indicating if the router has been started. */
-    this.isStarted = false;
-
-    /** @private @type {boolean} A flag to prevent navigation loops from history events. */
-    this._isNavigating = false;
-
-    /** @private @type {number} Counter for tracking navigation operations to prevent race conditions. */
-    this._navigationId = 0;
-
-    /** @private @type {Array<() => void>} A collection of cleanup functions for event listeners. */
-    this.eventListeners = [];
-
-    /** @type {Signal<RouteLocation | null>} A reactive signal holding the current route's information. */
-    this.currentRoute = new this.eleva.signal(null);
-
-    /** @type {Signal<RouteLocation | null>} A reactive signal holding the previous route's information. */
-    this.previousRoute = new this.eleva.signal(null);
-
-    /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's parameters. */
-    this.currentParams = new this.eleva.signal({});
-
-    /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's query parameters. */
-    this.currentQuery = new this.eleva.signal({});
-
-    /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted layout instance. */
-    this.currentLayout = new this.eleva.signal(null);
-
-    /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted view (page) instance. */
-    this.currentView = new this.eleva.signal(null);
-
-    /** @type {Signal<boolean>} A reactive signal indicating if the router is ready (started and initial navigation complete). */
-    this.isReady = new this.eleva.signal(false);
-
-    /** @private @type {Map<string, RouterPlugin>} Map of registered plugins by name. */
-    this.plugins = new Map();
-
-    /** @private @type {Array<NavigationGuard>} Array of global before-each navigation guards. */
-    this._beforeEachGuards = [];
-
-    // If onBeforeEach was provided in options, add it to the guards array
-    if (options.onBeforeEach) {
-      this._beforeEachGuards.push(options.onBeforeEach);
-    }
-
-    /** @type {Object} The error handler instance. Can be overridden by plugins. */
-    this.errorHandler = CoreErrorHandler;
-
-    /** @private @type {Map<string, {x: number, y: number}>} Saved scroll positions by route path. */
-    this._scrollPositions = new Map();
-    this._validateOptions();
-  }
-
-  /**
+ */ class Router {
+    /**
    * Validates the provided router options.
    * @private
    * @throws {Error} If the routing mode is invalid.
-   */
-  _validateOptions() {
-    if (!["hash", "query", "history"].includes(this.options.mode)) {
-      this.errorHandler.handle(new Error(`Invalid routing mode: ${this.options.mode}. Must be "hash", "query", or "history".`), "Configuration validation failed");
+   */ _validateOptions() {
+        if (![
+            "hash",
+            "query",
+            "history"
+        ].includes(this.options.mode)) {
+            this.errorHandler.handle(new Error(`Invalid routing mode: ${this.options.mode}. Must be "hash", "query", or "history".`), "Configuration validation failed");
+        }
     }
-  }
-
-  /**
+    /**
    * Pre-processes route definitions to parse their path segments for efficient matching.
    * @private
    * @param {RouteDefinition[]} routes - The raw route definitions.
    * @returns {RouteDefinition[]} The processed routes.
-   */
-  _processRoutes(routes) {
-    const processedRoutes = [];
-    for (const route of routes) {
-      try {
-        processedRoutes.push({
-          ...route,
-          segments: this._parsePathIntoSegments(route.path)
-        });
-      } catch (error) {
-        this.errorHandler.warn(`Invalid path in route definition "${route.path || "undefined"}": ${error.message}`, {
-          route,
-          error
-        });
-      }
+   */ _processRoutes(routes) {
+        const processedRoutes = [];
+        for (const route of routes){
+            try {
+                processedRoutes.push({
+                    ...route,
+                    segments: this._parsePathIntoSegments(route.path)
+                });
+            } catch (error) {
+                this.errorHandler.warn(`Invalid path in route definition "${route.path || "undefined"}": ${error.message}`, {
+                    route,
+                    error
+                });
+            }
+        }
+        return processedRoutes;
     }
-    return processedRoutes;
-  }
-
-  /**
+    /**
    * Parses a route path string into an array of static and parameter segments.
    * @private
    * @param {string} path - The path pattern to parse.
    * @returns {Array<{type: 'static' | 'param', value?: string, name?: string}>} An array of segment objects.
    * @throws {Error} If the route path is not a valid string.
-   */
-  _parsePathIntoSegments(path) {
-    if (!path || typeof path !== "string") {
-      this.errorHandler.handle(new Error("Route path must be a non-empty string"), "Path parsing failed", {
-        path
-      });
-    }
-    const normalizedPath = path.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
-    if (normalizedPath === "/") {
-      return [];
-    }
-    return normalizedPath.split("/").filter(Boolean).map(segment => {
-      if (segment.startsWith(":")) {
-        const paramName = segment.substring(1);
-        if (!paramName) {
-          this.errorHandler.handle(new Error(`Invalid parameter segment: ${segment}`), "Path parsing failed", {
-            segment,
-            path
-          });
+   */ _parsePathIntoSegments(path) {
+        if (!path || typeof path !== "string") {
+            this.errorHandler.handle(new Error("Route path must be a non-empty string"), "Path parsing failed", {
+                path
+            });
         }
-        return {
-          type: "param",
-          name: paramName
-        };
-      }
-      return {
-        type: "static",
-        value: segment
-      };
-    });
-  }
-
-  /**
+        const normalizedPath = path.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
+        if (normalizedPath === "/") {
+            return [];
+        }
+        return normalizedPath.split("/").filter(Boolean).map((segment)=>{
+            if (segment.startsWith(":")) {
+                const paramName = segment.substring(1);
+                if (!paramName) {
+                    this.errorHandler.handle(new Error(`Invalid parameter segment: ${segment}`), "Path parsing failed", {
+                        segment,
+                        path
+                    });
+                }
+                return {
+                    type: "param",
+                    name: paramName
+                };
+            }
+            return {
+                type: "static",
+                value: segment
+            };
+        });
+    }
+    /**
    * Finds the view element within a container using multiple selector strategies.
    * @private
    * @param {HTMLElement} container - The parent element to search within.
    * @returns {HTMLElement} The found view element or the container itself as a fallback.
-   */
-  _findViewElement(container) {
-    const selector = this.options.viewSelector;
-    return container.querySelector(`#${selector}`) || container.querySelector(`.${selector}`) || container.querySelector(`[data-${selector}]`) || container.querySelector(selector) || container;
-  }
-
-  /**
+   */ _findViewElement(container) {
+        const selector = this.options.viewSelector;
+        return container.querySelector(`#${selector}`) || container.querySelector(`.${selector}`) || container.querySelector(`[data-${selector}]`) || container.querySelector(selector) || container;
+    }
+    /**
    * Starts the router, initializes event listeners, and performs the initial navigation.
    * @returns {Promise<Router>} The router instance for method chaining.
    *
@@ -831,66 +648,61 @@ class Router {
    * router.isReady.watch((ready) => {
    *   if (ready) console.log('Router is ready!');
    * });
-   */
-  async start() {
-    if (this.isStarted) {
-      this.errorHandler.warn("Router is already started");
-      return this;
+   */ async start() {
+        if (this.isStarted) {
+            this.errorHandler.warn("Router is already started");
+            return this;
+        }
+        if (typeof window === "undefined") {
+            this.errorHandler.warn("Router start skipped: `window` object not available (SSR environment)");
+            return this;
+        }
+        if (typeof document !== "undefined" && !document.querySelector(this.options.mount)) {
+            this.errorHandler.warn(`Mount element "${this.options.mount}" was not found in the DOM. The router will not start.`, {
+                mountSelector: this.options.mount
+            });
+            return this;
+        }
+        const handler = ()=>this._handleRouteChange();
+        if (this.options.mode === "hash") {
+            window.addEventListener("hashchange", handler);
+            this.eventListeners.push(()=>window.removeEventListener("hashchange", handler));
+        } else {
+            window.addEventListener("popstate", handler);
+            this.eventListeners.push(()=>window.removeEventListener("popstate", handler));
+        }
+        this.isStarted = true;
+        // Initial navigation is not a popstate event
+        await this._handleRouteChange(false);
+        // Set isReady to true after initial navigation completes
+        this.isReady.value = true;
+        await this.emitter.emit("router:ready", this);
+        return this;
     }
-    if (typeof window === "undefined") {
-      this.errorHandler.warn("Router start skipped: `window` object not available (SSR environment)");
-      return this;
-    }
-    if (typeof document !== "undefined" && !document.querySelector(this.options.mount)) {
-      this.errorHandler.warn(`Mount element "${this.options.mount}" was not found in the DOM. The router will not start.`, {
-        mountSelector: this.options.mount
-      });
-      return this;
-    }
-    const handler = () => this._handleRouteChange();
-    if (this.options.mode === "hash") {
-      window.addEventListener("hashchange", handler);
-      this.eventListeners.push(() => window.removeEventListener("hashchange", handler));
-    } else {
-      window.addEventListener("popstate", handler);
-      this.eventListeners.push(() => window.removeEventListener("popstate", handler));
-    }
-    this.isStarted = true;
-    // Initial navigation is not a popstate event
-    await this._handleRouteChange(false);
-    // Set isReady to true after initial navigation completes
-    this.isReady.value = true;
-    await this.emitter.emit("router:ready", this);
-    return this;
-  }
-
-  /**
+    /**
    * Stops the router and cleans up all event listeners and mounted components.
    * @returns {Promise<void>}
-   */
-  async destroy() {
-    if (!this.isStarted) return;
-
-    // Clean up plugins
-    for (const plugin of this.plugins.values()) {
-      if (typeof plugin.destroy === "function") {
-        try {
-          await plugin.destroy(this);
-        } catch (error) {
-          this.errorHandler.log(`Plugin ${plugin.name} destroy failed`, error);
+   */ async destroy() {
+        if (!this.isStarted) return;
+        // Clean up plugins
+        for (const plugin of this.plugins.values()){
+            if (typeof plugin.destroy === "function") {
+                try {
+                    await plugin.destroy(this);
+                } catch (error) {
+                    this.errorHandler.log(`Plugin ${plugin.name} destroy failed`, error);
+                }
+            }
         }
-      }
+        this.eventListeners.forEach((cleanup)=>cleanup());
+        this.eventListeners = [];
+        if (this.currentLayout.value) {
+            await this.currentLayout.value.unmount();
+        }
+        this.isStarted = false;
+        this.isReady.value = false;
     }
-    this.eventListeners.forEach(cleanup => cleanup());
-    this.eventListeners = [];
-    if (this.currentLayout.value) {
-      await this.currentLayout.value.unmount();
-    }
-    this.isStarted = false;
-    this.isReady.value = false;
-  }
-
-  /**
+    /**
    * Alias for destroy(). Stops the router and cleans up all resources.
    * Provided for semantic consistency (start/stop pattern).
    * @returns {Promise<void>}
@@ -899,12 +711,10 @@ class Router {
    * await router.start();
    * // ... later
    * await router.stop();
-   */
-  async stop() {
-    return this.destroy();
-  }
-
-  /**
+   */ async stop() {
+        return this.destroy();
+    }
+    /**
    * Programmatically navigates to a new route.
    * @param {string | NavigationTarget} location - The target location as a path string or navigation target object.
    * @param {Record<string, string>} [params] - Route parameters (only used when location is a string).
@@ -927,128 +737,116 @@ class Router {
    *   query: { tab: 'profile' },
    *   replace: true
    * });
-   */
-  async navigate(location, params = {}) {
-    try {
-      const target = typeof location === "string" ? {
-        path: location,
-        params
-      } : location;
-      let path = this._buildPath(target.path, target.params || {});
-      const query = target.query || {};
-      if (Object.keys(query).length > 0) {
-        const queryString = new URLSearchParams(query).toString();
-        if (queryString) path += `?${queryString}`;
-      }
-      if (this._isSameRoute(path, target.params, query)) {
-        return true; // Already at this route, consider it successful
-      }
-      const navigationSuccessful = await this._proceedWithNavigation(path);
-      if (navigationSuccessful) {
-        // Increment navigation ID and capture it for this navigation
-        const currentNavId = ++this._navigationId;
-        this._isNavigating = true;
-        const state = target.state || {};
-        const replace = target.replace || false;
-        const historyMethod = replace ? "replaceState" : "pushState";
-        if (this.options.mode === "hash") {
-          if (replace) {
-            const newUrl = `${window.location.pathname}${window.location.search}#${path}`;
-            window.history.replaceState(state, "", newUrl);
-          } else {
-            window.location.hash = path;
-          }
-        } else {
-          const url = this.options.mode === "query" ? this._buildQueryUrl(path) : path;
-          history[historyMethod](state, "", url);
+   */ async navigate(location, params = {}) {
+        try {
+            const target = typeof location === "string" ? {
+                path: location,
+                params
+            } : location;
+            let path = this._buildPath(target.path, target.params || {});
+            const query = target.query || {};
+            if (Object.keys(query).length > 0) {
+                const queryString = new URLSearchParams(query).toString();
+                if (queryString) path += `?${queryString}`;
+            }
+            if (this._isSameRoute(path, target.params, query)) {
+                return true; // Already at this route, consider it successful
+            }
+            const navigationSuccessful = await this._proceedWithNavigation(path);
+            if (navigationSuccessful) {
+                // Increment navigation ID and capture it for this navigation
+                const currentNavId = ++this._navigationId;
+                this._isNavigating = true;
+                const state = target.state || {};
+                const replace = target.replace || false;
+                const historyMethod = replace ? "replaceState" : "pushState";
+                if (this.options.mode === "hash") {
+                    if (replace) {
+                        const newUrl = `${window.location.pathname}${window.location.search}#${path}`;
+                        window.history.replaceState(state, "", newUrl);
+                    } else {
+                        window.location.hash = path;
+                    }
+                } else {
+                    const url = this.options.mode === "query" ? this._buildQueryUrl(path) : path;
+                    history[historyMethod](state, "", url);
+                }
+                // Only reset the flag if no newer navigation has started
+                queueMicrotask(()=>{
+                    if (this._navigationId === currentNavId) {
+                        this._isNavigating = false;
+                    }
+                });
+            }
+            return navigationSuccessful;
+        } catch (error) {
+            this.errorHandler.log("Navigation failed", error);
+            await this.emitter.emit("router:onError", error);
+            return false;
         }
-
-        // Only reset the flag if no newer navigation has started
-        queueMicrotask(() => {
-          if (this._navigationId === currentNavId) {
-            this._isNavigating = false;
-          }
-        });
-      }
-      return navigationSuccessful;
-    } catch (error) {
-      this.errorHandler.log("Navigation failed", error);
-      await this.emitter.emit("router:onError", error);
-      return false;
     }
-  }
-
-  /**
+    /**
    * Builds a URL for query mode.
    * @private
    * @param {string} path - The path to set as the query parameter.
    * @returns {string} The full URL with the updated query string.
-   */
-  _buildQueryUrl(path) {
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set(this.options.queryParam, path.split("?")[0]);
-    return `${window.location.pathname}?${urlParams.toString()}`;
-  }
-
-  /**
+   */ _buildQueryUrl(path) {
+        const urlParams = new URLSearchParams(window.location.search);
+        urlParams.set(this.options.queryParam, path.split("?")[0]);
+        return `${window.location.pathname}?${urlParams.toString()}`;
+    }
+    /**
    * Checks if the target route is identical to the current route.
    * @private
    * @param {string} path - The target path with query string.
    * @param {object} params - The target params.
    * @param {object} query - The target query.
    * @returns {boolean} - True if the routes are the same.
-   */
-  _isSameRoute(path, params, query) {
-    const current = this.currentRoute.value;
-    if (!current) return false;
-    const [targetPath, queryString] = path.split("?");
-    const targetQuery = query || this._parseQuery(queryString || "");
-    return current.path === targetPath && JSON.stringify(current.params) === JSON.stringify(params || {}) && JSON.stringify(current.query) === JSON.stringify(targetQuery);
-  }
-
-  /**
+   */ _isSameRoute(path, params, query) {
+        const current = this.currentRoute.value;
+        if (!current) return false;
+        const [targetPath, queryString] = path.split("?");
+        const targetQuery = query || this._parseQuery(queryString || "");
+        return current.path === targetPath && JSON.stringify(current.params) === JSON.stringify(params || {}) && JSON.stringify(current.query) === JSON.stringify(targetQuery);
+    }
+    /**
    * Injects dynamic parameters into a path string.
    * @private
-   */
-  _buildPath(path, params) {
-    let result = path;
-    for (const [key, value] of Object.entries(params)) {
-      // Fix: Handle special characters and ensure proper encoding
-      const encodedValue = encodeURIComponent(String(value));
-      result = result.replace(new RegExp(`:${key}\\b`, "g"), encodedValue);
+   */ _buildPath(path, params) {
+        let result = path;
+        for (const [key, value] of Object.entries(params)){
+            // Fix: Handle special characters and ensure proper encoding
+            const encodedValue = encodeURIComponent(String(value));
+            result = result.replace(new RegExp(`:${key}\\b`, "g"), encodedValue);
+        }
+        return result;
     }
-    return result;
-  }
-
-  /**
+    /**
    * The handler for browser-initiated route changes (e.g., back/forward buttons).
    * @private
    * @param {boolean} [isPopState=true] - Whether this is a popstate event (back/forward navigation).
-   */
-  async _handleRouteChange(isPopState = true) {
-    if (this._isNavigating) return;
-    try {
-      const from = this.currentRoute.value;
-      const toLocation = this._getCurrentLocation();
-      const navigationSuccessful = await this._proceedWithNavigation(toLocation.fullUrl, isPopState);
-
-      // If navigation was blocked by a guard, revert the URL change
-      if (!navigationSuccessful && from) {
-        this.navigate({
-          path: from.path,
-          query: from.query,
-          replace: true
-        });
-      }
-    } catch (error) {
-      this.errorHandler.log("Route change handling failed", error, {
-        currentUrl: typeof window !== "undefined" ? window.location.href : ""
-      });
-      await this.emitter.emit("router:onError", error);
+   */ async _handleRouteChange(isPopState = true) {
+        if (this._isNavigating) return;
+        try {
+            const from = this.currentRoute.value;
+            const toLocation = this._getCurrentLocation();
+            const navigationSuccessful = await this._proceedWithNavigation(toLocation.fullUrl, isPopState);
+            // If navigation was blocked by a guard, revert the URL change
+            if (!navigationSuccessful && from) {
+                this.navigate({
+                    path: from.path,
+                    query: from.query,
+                    replace: true
+                });
+            }
+        } catch (error) {
+            this.errorHandler.log("Route change handling failed", error, {
+                currentUrl: typeof window !== "undefined" ? window.location.href : ""
+            });
+            await this.emitter.emit("router:onError", error);
+        }
     }
-  }
-
-  /**
+    /**
    * Manages the core navigation lifecycle. Runs guards before committing changes.
    * Emits lifecycle events that plugins can hook into:
    * - router:beforeEach - Before guards run (can block/redirect via context)
@@ -1065,160 +863,139 @@ class Router {
    * @param {string} fullPath - The full path (e.g., '/users/123?foo=bar') to navigate to.
    * @param {boolean} [isPopState=false] - Whether this navigation was triggered by popstate (back/forward).
    * @returns {Promise<boolean>} - `true` if navigation succeeded, `false` if aborted.
-   */
-  async _proceedWithNavigation(fullPath, isPopState = false) {
-    const from = this.currentRoute.value;
-    const [path, queryString] = (fullPath || "/").split("?");
-    const toLocation = {
-      path: path.startsWith("/") ? path : `/${path}`,
-      query: this._parseQuery(queryString),
-      fullUrl: fullPath
-    };
-    let toMatch = this._matchRoute(toLocation.path);
-    if (!toMatch) {
-      const notFoundRoute = this.routes.find(route => route.path === "*");
-      if (notFoundRoute) {
-        toMatch = {
-          route: notFoundRoute,
-          params: {
-            pathMatch: decodeURIComponent(toLocation.path.substring(1))
-          }
+   */ async _proceedWithNavigation(fullPath, isPopState = false) {
+        const from = this.currentRoute.value;
+        const [path, queryString] = (fullPath || "/").split("?");
+        const toLocation = {
+            path: path.startsWith("/") ? path : `/${path}`,
+            query: this._parseQuery(queryString),
+            fullUrl: fullPath
         };
-      } else {
-        await this.emitter.emit("router:onError", new Error(`Route not found: ${toLocation.path}`), toLocation, from);
-        return false;
-      }
-    }
-    const to = {
-      ...toLocation,
-      params: toMatch.params,
-      meta: toMatch.route.meta || {},
-      name: toMatch.route.name,
-      matched: toMatch.route
-    };
-    try {
-      // 1. Run all *pre-navigation* guards.
-      const canNavigate = await this._runGuards(to, from, toMatch.route);
-      if (!canNavigate) return false;
-
-      // 2. Save current scroll position before navigating away
-      if (from && typeof window !== "undefined") {
-        this._scrollPositions.set(from.path, {
-          x: window.scrollX || window.pageXOffset || 0,
-          y: window.scrollY || window.pageYOffset || 0
-        });
-      }
-
-      // 3. Emit beforeResolve event - plugins can show loading indicators
-      /** @type {ResolveContext} */
-      const resolveContext = {
-        to,
-        from,
-        route: toMatch.route,
-        layoutComponent: null,
-        pageComponent: null,
-        cancelled: false,
-        redirectTo: null
-      };
-      await this.emitter.emit("router:beforeResolve", resolveContext);
-
-      // Check if resolution was cancelled or redirected
-      if (resolveContext.cancelled) return false;
-      if (resolveContext.redirectTo) {
-        this.navigate(resolveContext.redirectTo);
-        return false;
-      }
-
-      // 4. Resolve async components *before* touching the DOM.
-      const {
-        layoutComponent,
-        pageComponent
-      } = await this._resolveComponents(toMatch.route);
-
-      // 5. Emit afterResolve event - plugins can hide loading indicators
-      resolveContext.layoutComponent = layoutComponent;
-      resolveContext.pageComponent = pageComponent;
-      await this.emitter.emit("router:afterResolve", resolveContext);
-
-      // 6. Unmount the previous view/layout.
-      if (from) {
-        const toLayout = toMatch.route.layout || this.options.globalLayout;
-        const fromLayout = from.matched.layout || this.options.globalLayout;
-        const tryUnmount = async instance => {
-          if (!instance) return;
-          try {
-            await instance.unmount();
-          } catch (error) {
-            this.errorHandler.warn("Error during component unmount", {
-              error,
-              instance
+        let toMatch = this._matchRoute(toLocation.path);
+        if (!toMatch) {
+            const notFoundRoute = this.routes.find((route)=>route.path === "*");
+            if (notFoundRoute) {
+                toMatch = {
+                    route: notFoundRoute,
+                    params: {
+                        pathMatch: decodeURIComponent(toLocation.path.substring(1))
+                    }
+                };
+            } else {
+                await this.emitter.emit("router:onError", new Error(`Route not found: ${toLocation.path}`), toLocation, from);
+                return false;
+            }
+        }
+        const to = {
+            ...toLocation,
+            params: toMatch.params,
+            meta: toMatch.route.meta || {},
+            name: toMatch.route.name,
+            matched: toMatch.route
+        };
+        try {
+            // 1. Run all *pre-navigation* guards.
+            const canNavigate = await this._runGuards(to, from, toMatch.route);
+            if (!canNavigate) return false;
+            // 2. Save current scroll position before navigating away
+            if (from && typeof window !== "undefined") {
+                this._scrollPositions.set(from.path, {
+                    x: window.scrollX || window.pageXOffset || 0,
+                    y: window.scrollY || window.pageYOffset || 0
+                });
+            }
+            // 3. Emit beforeResolve event - plugins can show loading indicators
+            /** @type {ResolveContext} */ const resolveContext = {
+                to,
+                from,
+                route: toMatch.route,
+                layoutComponent: null,
+                pageComponent: null,
+                cancelled: false,
+                redirectTo: null
+            };
+            await this.emitter.emit("router:beforeResolve", resolveContext);
+            // Check if resolution was cancelled or redirected
+            if (resolveContext.cancelled) return false;
+            if (resolveContext.redirectTo) {
+                this.navigate(resolveContext.redirectTo);
+                return false;
+            }
+            // 4. Resolve async components *before* touching the DOM.
+            const { layoutComponent, pageComponent } = await this._resolveComponents(toMatch.route);
+            // 5. Emit afterResolve event - plugins can hide loading indicators
+            resolveContext.layoutComponent = layoutComponent;
+            resolveContext.pageComponent = pageComponent;
+            await this.emitter.emit("router:afterResolve", resolveContext);
+            // 6. Unmount the previous view/layout.
+            if (from) {
+                const toLayout = toMatch.route.layout || this.options.globalLayout;
+                const fromLayout = from.matched.layout || this.options.globalLayout;
+                const tryUnmount = async (instance)=>{
+                    if (!instance) return;
+                    try {
+                        await instance.unmount();
+                    } catch (error) {
+                        this.errorHandler.warn("Error during component unmount", {
+                            error,
+                            instance
+                        });
+                    }
+                };
+                if (toLayout !== fromLayout) {
+                    await tryUnmount(this.currentLayout.value);
+                    this.currentLayout.value = null;
+                } else {
+                    await tryUnmount(this.currentView.value);
+                    this.currentView.value = null;
+                }
+                // Call `afterLeave` hook *after* the old component has been unmounted.
+                if (from.matched.afterLeave) {
+                    await from.matched.afterLeave(to, from);
+                }
+                await this.emitter.emit("router:afterLeave", to, from);
+            }
+            // 7. Update reactive state.
+            this.previousRoute.value = from;
+            this.currentRoute.value = to;
+            this.currentParams.value = to.params || {};
+            this.currentQuery.value = to.query || {};
+            // 8. Emit beforeRender event - plugins can add transitions
+            /** @type {RenderContext} */ const renderContext = {
+                to,
+                from,
+                layoutComponent,
+                pageComponent
+            };
+            await this.emitter.emit("router:beforeRender", renderContext);
+            // 9. Render the new components.
+            await this._render(layoutComponent, pageComponent, to);
+            // 10. Emit afterRender event - plugins can trigger animations
+            await this.emitter.emit("router:afterRender", renderContext);
+            // 11. Emit scroll event - plugins can handle scroll restoration
+            /** @type {ScrollContext} */ const scrollContext = {
+                to,
+                from,
+                savedPosition: isPopState ? this._scrollPositions.get(to.path) || null : null
+            };
+            await this.emitter.emit("router:scroll", scrollContext);
+            // 12. Run post-navigation hooks.
+            if (toMatch.route.afterEnter) {
+                await toMatch.route.afterEnter(to, from);
+            }
+            await this.emitter.emit("router:afterEnter", to, from);
+            await this.emitter.emit("router:afterEach", to, from);
+            return true;
+        } catch (error) {
+            this.errorHandler.log("Error during navigation", error, {
+                to,
+                from
             });
-          }
-        };
-        if (toLayout !== fromLayout) {
-          await tryUnmount(this.currentLayout.value);
-          this.currentLayout.value = null;
-        } else {
-          await tryUnmount(this.currentView.value);
-          this.currentView.value = null;
+            await this.emitter.emit("router:onError", error, to, from);
+            return false;
         }
-
-        // Call `afterLeave` hook *after* the old component has been unmounted.
-        if (from.matched.afterLeave) {
-          await from.matched.afterLeave(to, from);
-        }
-        await this.emitter.emit("router:afterLeave", to, from);
-      }
-
-      // 7. Update reactive state.
-      this.previousRoute.value = from;
-      this.currentRoute.value = to;
-      this.currentParams.value = to.params || {};
-      this.currentQuery.value = to.query || {};
-
-      // 8. Emit beforeRender event - plugins can add transitions
-      /** @type {RenderContext} */
-      const renderContext = {
-        to,
-        from,
-        layoutComponent,
-        pageComponent
-      };
-      await this.emitter.emit("router:beforeRender", renderContext);
-
-      // 9. Render the new components.
-      await this._render(layoutComponent, pageComponent, to);
-
-      // 10. Emit afterRender event - plugins can trigger animations
-      await this.emitter.emit("router:afterRender", renderContext);
-
-      // 11. Emit scroll event - plugins can handle scroll restoration
-      /** @type {ScrollContext} */
-      const scrollContext = {
-        to,
-        from,
-        savedPosition: isPopState ? this._scrollPositions.get(to.path) || null : null
-      };
-      await this.emitter.emit("router:scroll", scrollContext);
-
-      // 12. Run post-navigation hooks.
-      if (toMatch.route.afterEnter) {
-        await toMatch.route.afterEnter(to, from);
-      }
-      await this.emitter.emit("router:afterEnter", to, from);
-      await this.emitter.emit("router:afterEach", to, from);
-      return true;
-    } catch (error) {
-      this.errorHandler.log("Error during navigation", error, {
-        to,
-        from
-      });
-      await this.emitter.emit("router:onError", error, to, from);
-      return false;
     }
-  }
-
-  /**
+    /**
    * Executes all applicable navigation guards for a transition in order.
    * Guards are executed in the following order:
    * 1. Global beforeEach event (emitter-based, can block via context)
@@ -1231,41 +1008,43 @@ class Router {
    * @param {RouteLocation | null} from - The current route location (null on initial navigation).
    * @param {RouteDefinition} route - The matched route definition.
    * @returns {Promise<boolean>} - `false` if navigation should be aborted.
-   */
-  async _runGuards(to, from, route) {
-    // Create navigation context that plugins can modify to block navigation
-    /** @type {NavigationContext} */
-    const navContext = {
-      to,
-      from,
-      cancelled: false,
-      redirectTo: null
-    };
-
-    // Emit beforeEach event with context - plugins can block by modifying context
-    await this.emitter.emit("router:beforeEach", navContext);
-
-    // Check if navigation was cancelled or redirected by event listeners
-    if (navContext.cancelled) return false;
-    if (navContext.redirectTo) {
-      this.navigate(navContext.redirectTo);
-      return false;
+   */ async _runGuards(to, from, route) {
+        // Create navigation context that plugins can modify to block navigation
+        /** @type {NavigationContext} */ const navContext = {
+            to,
+            from,
+            cancelled: false,
+            redirectTo: null
+        };
+        // Emit beforeEach event with context - plugins can block by modifying context
+        await this.emitter.emit("router:beforeEach", navContext);
+        // Check if navigation was cancelled or redirected by event listeners
+        if (navContext.cancelled) return false;
+        if (navContext.redirectTo) {
+            this.navigate(navContext.redirectTo);
+            return false;
+        }
+        // Collect all guards in execution order
+        const guards = [
+            ...this._beforeEachGuards,
+            ...from && from.matched.beforeLeave ? [
+                from.matched.beforeLeave
+            ] : [],
+            ...route.beforeEnter ? [
+                route.beforeEnter
+            ] : []
+        ];
+        for (const guard of guards){
+            const result = await guard(to, from);
+            if (result === false) return false;
+            if (typeof result === "string" || typeof result === "object") {
+                this.navigate(result);
+                return false;
+            }
+        }
+        return true;
     }
-
-    // Collect all guards in execution order
-    const guards = [...this._beforeEachGuards, ...(from && from.matched.beforeLeave ? [from.matched.beforeLeave] : []), ...(route.beforeEnter ? [route.beforeEnter] : [])];
-    for (const guard of guards) {
-      const result = await guard(to, from);
-      if (result === false) return false;
-      if (typeof result === "string" || typeof result === "object") {
-        this.navigate(result);
-        return false;
-      }
-    }
-    return true;
-  }
-
-  /**
+    /**
    * Resolves a string component definition to a component object.
    * @private
    * @param {string} def - The component name to resolve.
@@ -1276,309 +1055,284 @@ class Router {
    * directly. This is intentional and stable for official Eleva plugins shipped
    * with the framework. Third-party plugins should use eleva.component() for
    * registration and avoid direct access to internal APIs.
-   */
-  _resolveStringComponent(def) {
-    const componentDef = this.eleva._components.get(def);
-    if (!componentDef) {
-      this.errorHandler.handle(new Error(`Component "${def}" not registered.`), "Component resolution failed", {
-        componentName: def,
-        availableComponents: Array.from(this.eleva._components.keys())
-      });
+   */ _resolveStringComponent(def) {
+        const componentDef = this.eleva._components.get(def);
+        if (!componentDef) {
+            this.errorHandler.handle(new Error(`Component "${def}" not registered.`), "Component resolution failed", {
+                componentName: def,
+                availableComponents: Array.from(this.eleva._components.keys())
+            });
+        }
+        return componentDef;
     }
-    return componentDef;
-  }
-
-  /**
+    /**
    * Resolves a function component definition to a component object.
    * @private
    * @param {Function} def - The function to resolve.
    * @returns {Promise<ComponentDefinition>} The resolved component.
    * @throws {Error} If the function fails to load the component.
-   */
-  async _resolveFunctionComponent(def) {
-    try {
-      const funcStr = def.toString();
-      const isAsyncImport = funcStr.includes("import(") || funcStr.startsWith("() =>");
-      const result = await def();
-      return isAsyncImport ? result.default || result : result;
-    } catch (error) {
-      this.errorHandler.handle(new Error(`Failed to load async component: ${error.message}`), "Component resolution failed", {
-        function: def.toString(),
-        error
-      });
+   */ async _resolveFunctionComponent(def) {
+        try {
+            const funcStr = def.toString();
+            const isAsyncImport = funcStr.includes("import(") || funcStr.startsWith("() =>");
+            const result = await def();
+            return isAsyncImport ? result.default || result : result;
+        } catch (error) {
+            this.errorHandler.handle(new Error(`Failed to load async component: ${error.message}`), "Component resolution failed", {
+                function: def.toString(),
+                error
+            });
+        }
     }
-  }
-
-  /**
+    /**
    * Validates a component definition object.
    * @private
    * @param {any} def - The component definition to validate.
    * @returns {ComponentDefinition} The validated component.
    * @throws {Error} If the component definition is invalid.
-   */
-  _validateComponentDefinition(def) {
-    if (!def || typeof def !== "object") {
-      this.errorHandler.handle(new Error(`Invalid component definition: ${typeof def}`), "Component validation failed", {
-        definition: def
-      });
+   */ _validateComponentDefinition(def) {
+        if (!def || typeof def !== "object") {
+            this.errorHandler.handle(new Error(`Invalid component definition: ${typeof def}`), "Component validation failed", {
+                definition: def
+            });
+        }
+        if (typeof def.template !== "function" && typeof def.template !== "string") {
+            this.errorHandler.handle(new Error("Component missing template property"), "Component validation failed", {
+                definition: def
+            });
+        }
+        return def;
     }
-    if (typeof def.template !== "function" && typeof def.template !== "string") {
-      this.errorHandler.handle(new Error("Component missing template property"), "Component validation failed", {
-        definition: def
-      });
-    }
-    return def;
-  }
-
-  /**
+    /**
    * Resolves a component definition to a component object.
    * @private
    * @param {any} def - The component definition to resolve.
    * @returns {Promise<ComponentDefinition | null>} The resolved component or null.
-   */
-  async _resolveComponent(def) {
-    if (def === null || def === undefined) {
-      return null;
+   */ async _resolveComponent(def) {
+        if (def === null || def === undefined) {
+            return null;
+        }
+        if (typeof def === "string") {
+            return this._resolveStringComponent(def);
+        }
+        if (typeof def === "function") {
+            return await this._resolveFunctionComponent(def);
+        }
+        if (def && typeof def === "object") {
+            return this._validateComponentDefinition(def);
+        }
+        this.errorHandler.handle(new Error(`Invalid component definition: ${typeof def}`), "Component resolution failed", {
+            definition: def
+        });
     }
-    if (typeof def === "string") {
-      return this._resolveStringComponent(def);
-    }
-    if (typeof def === "function") {
-      return await this._resolveFunctionComponent(def);
-    }
-    if (def && typeof def === "object") {
-      return this._validateComponentDefinition(def);
-    }
-    this.errorHandler.handle(new Error(`Invalid component definition: ${typeof def}`), "Component resolution failed", {
-      definition: def
-    });
-  }
-
-  /**
+    /**
    * Asynchronously resolves the layout and page components for a route.
    * @private
    * @param {RouteDefinition} route - The route to resolve components for.
    * @returns {Promise<{layoutComponent: ComponentDefinition | null, pageComponent: ComponentDefinition}>}
-   */
-  async _resolveComponents(route) {
-    const effectiveLayout = route.layout || this.options.globalLayout;
-    try {
-      const [layoutComponent, pageComponent] = await Promise.all([this._resolveComponent(effectiveLayout), this._resolveComponent(route.component)]);
-      if (!pageComponent) {
-        this.errorHandler.handle(new Error(`Page component is null or undefined for route: ${route.path}`), "Component resolution failed", {
-          route: route.path
-        });
-      }
-      return {
-        layoutComponent,
-        pageComponent
-      };
-    } catch (error) {
-      this.errorHandler.log(`Error resolving components for route ${route.path}`, error, {
-        route: route.path
-      });
-      throw error;
+   */ async _resolveComponents(route) {
+        const effectiveLayout = route.layout || this.options.globalLayout;
+        try {
+            const [layoutComponent, pageComponent] = await Promise.all([
+                this._resolveComponent(effectiveLayout),
+                this._resolveComponent(route.component)
+            ]);
+            if (!pageComponent) {
+                this.errorHandler.handle(new Error(`Page component is null or undefined for route: ${route.path}`), "Component resolution failed", {
+                    route: route.path
+                });
+            }
+            return {
+                layoutComponent,
+                pageComponent
+            };
+        } catch (error) {
+            this.errorHandler.log(`Error resolving components for route ${route.path}`, error, {
+                route: route.path
+            });
+            throw error;
+        }
     }
-  }
-
-  /**
+    /**
    * Renders the components for the current route into the DOM.
    * @private
    * @param {ComponentDefinition | null} layoutComponent - The pre-loaded layout component.
    * @param {ComponentDefinition} pageComponent - The pre-loaded page component.
-   */
-  async _render(layoutComponent, pageComponent) {
-    const mountEl = document.querySelector(this.options.mount);
-    if (!mountEl) {
-      this.errorHandler.handle(new Error(`Mount element "${this.options.mount}" not found.`), {
-        mountSelector: this.options.mount
-      });
+   */ async _render(layoutComponent, pageComponent) {
+        const mountEl = document.querySelector(this.options.mount);
+        if (!mountEl) {
+            this.errorHandler.handle(new Error(`Mount element "${this.options.mount}" not found.`), {
+                mountSelector: this.options.mount
+            });
+        }
+        if (layoutComponent) {
+            const layoutInstance = await this.eleva.mount(mountEl, this._wrapComponentWithChildren(layoutComponent));
+            this.currentLayout.value = layoutInstance;
+            const viewEl = this._findViewElement(layoutInstance.container);
+            const viewInstance = await this.eleva.mount(viewEl, this._wrapComponentWithChildren(pageComponent));
+            this.currentView.value = viewInstance;
+        } else {
+            const viewInstance = await this.eleva.mount(mountEl, this._wrapComponentWithChildren(pageComponent));
+            this.currentView.value = viewInstance;
+            this.currentLayout.value = null;
+        }
     }
-    if (layoutComponent) {
-      const layoutInstance = await this.eleva.mount(mountEl, this._wrapComponentWithChildren(layoutComponent));
-      this.currentLayout.value = layoutInstance;
-      const viewEl = this._findViewElement(layoutInstance.container);
-      const viewInstance = await this.eleva.mount(viewEl, this._wrapComponentWithChildren(pageComponent));
-      this.currentView.value = viewInstance;
-    } else {
-      const viewInstance = await this.eleva.mount(mountEl, this._wrapComponentWithChildren(pageComponent));
-      this.currentView.value = viewInstance;
-      this.currentLayout.value = null;
-    }
-  }
-
-  /**
+    /**
    * Creates a getter function for router context properties.
    * @private
    * @param {string} property - The property name to access.
    * @param {any} defaultValue - The default value if property is undefined.
    * @returns {Function} A getter function.
-   */
-  _createRouteGetter(property, defaultValue) {
-    return () => this.currentRoute.value?.[property] ?? defaultValue;
-  }
-
-  /**
+   */ _createRouteGetter(property, defaultValue) {
+        return ()=>this.currentRoute.value?.[property] ?? defaultValue;
+    }
+    /**
    * Wraps a component definition to inject router-specific context into its setup function.
    * @private
    * @param {ComponentDefinition} component - The component to wrap.
    * @returns {ComponentDefinition} The wrapped component definition.
-   */
-  _wrapComponent(component) {
-    const originalSetup = component.setup;
-    const self = this;
-    return {
-      ...component,
-      async setup(ctx) {
-        ctx.router = {
-          navigate: self.navigate.bind(self),
-          current: self.currentRoute,
-          previous: self.previousRoute,
-          // Route property getters
-          get params() {
-            return self._createRouteGetter("params", {})();
-          },
-          get query() {
-            return self._createRouteGetter("query", {})();
-          },
-          get path() {
-            return self._createRouteGetter("path", "/")();
-          },
-          get fullUrl() {
-            return self._createRouteGetter("fullUrl", window.location.href)();
-          },
-          get meta() {
-            return self._createRouteGetter("meta", {})();
-          }
+   */ _wrapComponent(component) {
+        const originalSetup = component.setup;
+        const self = this;
+        return {
+            ...component,
+            async setup (ctx) {
+                ctx.router = {
+                    navigate: self.navigate.bind(self),
+                    current: self.currentRoute,
+                    previous: self.previousRoute,
+                    // Route property getters
+                    get params () {
+                        return self._createRouteGetter("params", {})();
+                    },
+                    get query () {
+                        return self._createRouteGetter("query", {})();
+                    },
+                    get path () {
+                        return self._createRouteGetter("path", "/")();
+                    },
+                    get fullUrl () {
+                        return self._createRouteGetter("fullUrl", window.location.href)();
+                    },
+                    get meta () {
+                        return self._createRouteGetter("meta", {})();
+                    }
+                };
+                return originalSetup ? await originalSetup(ctx) : {};
+            }
         };
-        return originalSetup ? await originalSetup(ctx) : {};
-      }
-    };
-  }
-
-  /**
+    }
+    /**
    * Recursively wraps all child components to ensure they have access to router context.
    * @private
    * @param {ComponentDefinition | string} component - The component to wrap (can be a definition object or a registered component name).
    * @returns {ComponentDefinition | string} The wrapped component definition or the original string reference.
-   */
-  _wrapComponentWithChildren(component) {
-    // If the component is a string (registered component name), return as-is
-    // The router context will be injected when the component is resolved during mounting
-    if (typeof component === "string") {
-      return component;
+   */ _wrapComponentWithChildren(component) {
+        // If the component is a string (registered component name), return as-is
+        // The router context will be injected when the component is resolved during mounting
+        if (typeof component === "string") {
+            return component;
+        }
+        // If not a valid component object, return as-is
+        if (!component || typeof component !== "object") {
+            return component;
+        }
+        const wrappedComponent = this._wrapComponent(component);
+        // If the component has children, wrap them too
+        if (wrappedComponent.children && typeof wrappedComponent.children === "object") {
+            const wrappedChildren = {};
+            for (const [selector, childComponent] of Object.entries(wrappedComponent.children)){
+                wrappedChildren[selector] = this._wrapComponentWithChildren(childComponent);
+            }
+            wrappedComponent.children = wrappedChildren;
+        }
+        return wrappedComponent;
     }
-
-    // If not a valid component object, return as-is
-    if (!component || typeof component !== "object") {
-      return component;
-    }
-    const wrappedComponent = this._wrapComponent(component);
-
-    // If the component has children, wrap them too
-    if (wrappedComponent.children && typeof wrappedComponent.children === "object") {
-      const wrappedChildren = {};
-      for (const [selector, childComponent] of Object.entries(wrappedComponent.children)) {
-        wrappedChildren[selector] = this._wrapComponentWithChildren(childComponent);
-      }
-      wrappedComponent.children = wrappedChildren;
-    }
-    return wrappedComponent;
-  }
-
-  /**
+    /**
    * Gets the current location information from the browser's window object.
    * @private
    * @returns {Omit<RouteLocation, 'params' | 'meta' | 'name' | 'matched'>}
-   */
-  _getCurrentLocation() {
-    if (typeof window === "undefined") return {
-      path: "/",
-      query: {},
-      fullUrl: ""
-    };
-    let path, queryString, fullUrl;
-    switch (this.options.mode) {
-      case "hash":
-        fullUrl = window.location.hash.slice(1) || "/";
-        [path, queryString] = fullUrl.split("?");
-        break;
-      case "query":
-        const urlParams = new URLSearchParams(window.location.search);
-        path = urlParams.get(this.options.queryParam) || "/";
-        queryString = window.location.search.slice(1);
-        fullUrl = path;
-        break;
-      default:
-        // 'history' mode
-        path = window.location.pathname || "/";
-        queryString = window.location.search.slice(1);
-        fullUrl = `${path}${queryString ? "?" + queryString : ""}`;
+   */ _getCurrentLocation() {
+        if (typeof window === "undefined") return {
+            path: "/",
+            query: {},
+            fullUrl: ""
+        };
+        let path, queryString, fullUrl;
+        switch(this.options.mode){
+            case "hash":
+                fullUrl = window.location.hash.slice(1) || "/";
+                [path, queryString] = fullUrl.split("?");
+                break;
+            case "query":
+                const urlParams = new URLSearchParams(window.location.search);
+                path = urlParams.get(this.options.queryParam) || "/";
+                queryString = window.location.search.slice(1);
+                fullUrl = path;
+                break;
+            default:
+                path = window.location.pathname || "/";
+                queryString = window.location.search.slice(1);
+                fullUrl = `${path}${queryString ? "?" + queryString : ""}`;
+        }
+        return {
+            path: path.startsWith("/") ? path : `/${path}`,
+            query: this._parseQuery(queryString),
+            fullUrl
+        };
     }
-    return {
-      path: path.startsWith("/") ? path : `/${path}`,
-      query: this._parseQuery(queryString),
-      fullUrl
-    };
-  }
-
-  /**
+    /**
    * Parses a query string into a key-value object.
    * @private
-   */
-  _parseQuery(queryString) {
-    const query = {};
-    if (queryString) {
-      new URLSearchParams(queryString).forEach((value, key) => {
-        query[key] = value;
-      });
+   */ _parseQuery(queryString) {
+        const query = {};
+        if (queryString) {
+            new URLSearchParams(queryString).forEach((value, key)=>{
+                query[key] = value;
+            });
+        }
+        return query;
     }
-    return query;
-  }
-
-  /**
+    /**
    * Matches a given path against the registered routes.
    * @private
    * @param {string} path - The path to match.
    * @returns {{route: RouteDefinition, params: Object<string, string>} | null} The matched route and its params, or null.
-   */
-  _matchRoute(path) {
-    const pathSegments = path.split("/").filter(Boolean);
-    for (const route of this.routes) {
-      // Handle the root path as a special case.
-      if (route.path === "/") {
-        if (pathSegments.length === 0) return {
-          route,
-          params: {}
-        };
-        continue;
-      }
-      if (route.segments.length !== pathSegments.length) continue;
-      const params = {};
-      let isMatch = true;
-      for (let i = 0; i < route.segments.length; i++) {
-        const routeSegment = route.segments[i];
-        const pathSegment = pathSegments[i];
-        if (routeSegment.type === "param") {
-          params[routeSegment.name] = decodeURIComponent(pathSegment);
-        } else if (routeSegment.value !== pathSegment) {
-          isMatch = false;
-          break;
+   */ _matchRoute(path) {
+        const pathSegments = path.split("/").filter(Boolean);
+        for (const route of this.routes){
+            // Handle the root path as a special case.
+            if (route.path === "/") {
+                if (pathSegments.length === 0) return {
+                    route,
+                    params: {}
+                };
+                continue;
+            }
+            if (route.segments.length !== pathSegments.length) continue;
+            const params = {};
+            let isMatch = true;
+            for(let i = 0; i < route.segments.length; i++){
+                const routeSegment = route.segments[i];
+                const pathSegment = pathSegments[i];
+                if (routeSegment.type === "param") {
+                    params[routeSegment.name] = decodeURIComponent(pathSegment);
+                } else if (routeSegment.value !== pathSegment) {
+                    isMatch = false;
+                    break;
+                }
+            }
+            if (isMatch) return {
+                route,
+                params
+            };
         }
-      }
-      if (isMatch) return {
-        route,
-        params
-      };
+        return null;
     }
-    return null;
-  }
-
-  // ============================================
-  // Dynamic Route Management API
-  // ============================================
-
-  /**
+    // ============================================
+    // Dynamic Route Management API
+    // ============================================
+    /**
    * Adds a new route dynamically at runtime.
    * The route will be processed and available for navigation immediately.
    *
@@ -1596,45 +1350,38 @@ class Router {
    *
    * // Later, remove the route
    * removeRoute();
-   */
-  addRoute(route, parentRoute = null) {
-    if (!route || !route.path) {
-      this.errorHandler.warn("Invalid route definition: missing path", {
-        route
-      });
-      return () => {};
+   */ addRoute(route, parentRoute = null) {
+        if (!route || !route.path) {
+            this.errorHandler.warn("Invalid route definition: missing path", {
+                route
+            });
+            return ()=>{};
+        }
+        // Check if route already exists
+        if (this.hasRoute(route.path)) {
+            this.errorHandler.warn(`Route "${route.path}" already exists`, {
+                route
+            });
+            return ()=>{};
+        }
+        // Process the route (parse segments)
+        const processedRoute = {
+            ...route,
+            segments: this._parsePathIntoSegments(route.path)
+        };
+        // Add to routes array (before wildcard if exists)
+        const wildcardIndex = this.routes.findIndex((r)=>r.path === "*");
+        if (wildcardIndex !== -1) {
+            this.routes.splice(wildcardIndex, 0, processedRoute);
+        } else {
+            this.routes.push(processedRoute);
+        }
+        // Emit event for plugins
+        this.emitter.emit("router:routeAdded", processedRoute);
+        // Return removal function
+        return ()=>this.removeRoute(route.path);
     }
-
-    // Check if route already exists
-    if (this.hasRoute(route.path)) {
-      this.errorHandler.warn(`Route "${route.path}" already exists`, {
-        route
-      });
-      return () => {};
-    }
-
-    // Process the route (parse segments)
-    const processedRoute = {
-      ...route,
-      segments: this._parsePathIntoSegments(route.path)
-    };
-
-    // Add to routes array (before wildcard if exists)
-    const wildcardIndex = this.routes.findIndex(r => r.path === "*");
-    if (wildcardIndex !== -1) {
-      this.routes.splice(wildcardIndex, 0, processedRoute);
-    } else {
-      this.routes.push(processedRoute);
-    }
-
-    // Emit event for plugins
-    this.emitter.emit("router:routeAdded", processedRoute);
-
-    // Return removal function
-    return () => this.removeRoute(route.path);
-  }
-
-  /**
+    /**
    * Removes a route by its path.
    *
    * @param {string} path - The path of the route to remove.
@@ -1642,20 +1389,17 @@ class Router {
    *
    * @example
    * router.removeRoute('/dynamic');
-   */
-  removeRoute(path) {
-    const index = this.routes.findIndex(r => r.path === path);
-    if (index === -1) {
-      return false;
+   */ removeRoute(path) {
+        const index = this.routes.findIndex((r)=>r.path === path);
+        if (index === -1) {
+            return false;
+        }
+        const [removedRoute] = this.routes.splice(index, 1);
+        // Emit event for plugins
+        this.emitter.emit("router:routeRemoved", removedRoute);
+        return true;
     }
-    const [removedRoute] = this.routes.splice(index, 1);
-
-    // Emit event for plugins
-    this.emitter.emit("router:routeRemoved", removedRoute);
-    return true;
-  }
-
-  /**
+    /**
    * Checks if a route with the given path exists.
    *
    * @param {string} path - The path to check.
@@ -1665,12 +1409,10 @@ class Router {
    * if (router.hasRoute('/users/:id')) {
    *   console.log('User route exists');
    * }
-   */
-  hasRoute(path) {
-    return this.routes.some(r => r.path === path);
-  }
-
-  /**
+   */ hasRoute(path) {
+        return this.routes.some((r)=>r.path === path);
+    }
+    /**
    * Gets all registered routes.
    *
    * @returns {RouteDefinition[]} A copy of the routes array.
@@ -1678,12 +1420,12 @@ class Router {
    * @example
    * const routes = router.getRoutes();
    * console.log('Available routes:', routes.map(r => r.path));
-   */
-  getRoutes() {
-    return [...this.routes];
-  }
-
-  /**
+   */ getRoutes() {
+        return [
+            ...this.routes
+        ];
+    }
+    /**
    * Gets a route by its path.
    *
    * @param {string} path - The path of the route to get.
@@ -1694,16 +1436,13 @@ class Router {
    * if (route) {
    *   console.log('Route meta:', route.meta);
    * }
-   */
-  getRoute(path) {
-    return this.routes.find(r => r.path === path);
-  }
-
-  // ============================================
-  // Hook Registration Methods
-  // ============================================
-
-  /**
+   */ getRoute(path) {
+        return this.routes.find((r)=>r.path === path);
+    }
+    // ============================================
+    // Hook Registration Methods
+    // ============================================
+    /**
    * Registers a global pre-navigation guard.
    * Multiple guards can be registered and will be executed in order.
    * Guards can also be registered via the emitter using `router:beforeEach` event.
@@ -1721,124 +1460,138 @@ class Router {
    *
    * // Later, unregister the guard
    * unregister();
-   */
-  onBeforeEach(guard) {
-    this._beforeEachGuards.push(guard);
-    return () => {
-      const index = this._beforeEachGuards.indexOf(guard);
-      if (index > -1) {
-        this._beforeEachGuards.splice(index, 1);
-      }
-    };
-  }
-  /**
+   */ onBeforeEach(guard) {
+        this._beforeEachGuards.push(guard);
+        return ()=>{
+            const index = this._beforeEachGuards.indexOf(guard);
+            if (index > -1) {
+                this._beforeEachGuards.splice(index, 1);
+            }
+        };
+    }
+    /**
    * Registers a global hook that runs after a new route component has been mounted.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
-   */
-  onAfterEnter(hook) {
-    return this.emitter.on("router:afterEnter", hook);
-  }
-
-  /**
+   */ onAfterEnter(hook) {
+        return this.emitter.on("router:afterEnter", hook);
+    }
+    /**
    * Registers a global hook that runs after a route component has been unmounted.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
-   */
-  onAfterLeave(hook) {
-    return this.emitter.on("router:afterLeave", hook);
-  }
-
-  /**
+   */ onAfterLeave(hook) {
+        return this.emitter.on("router:afterLeave", hook);
+    }
+    /**
    * Registers a global hook that runs after a navigation has been confirmed and all hooks have completed.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
-   */
-  onAfterEach(hook) {
-    return this.emitter.on("router:afterEach", hook);
-  }
-
-  /**
+   */ onAfterEach(hook) {
+        return this.emitter.on("router:afterEach", hook);
+    }
+    /**
    * Registers a global error handler for navigation errors.
    * @param {(error: Error, to?: RouteLocation, from?: RouteLocation) => void} handler - The error handler function.
    * @returns {() => void} A function to unregister the handler.
-   */
-  onError(handler) {
-    return this.emitter.on("router:onError", handler);
-  }
-
-  /**
+   */ onError(handler) {
+        return this.emitter.on("router:onError", handler);
+    }
+    /**
    * Registers a plugin with the router.
    * @param {RouterPlugin} plugin - The plugin to register.
-   */
-  use(plugin, options = {}) {
-    if (typeof plugin.install !== "function") {
-      this.errorHandler.handle(new Error("Plugin must have an install method"), "Plugin registration failed", {
-        plugin
-      });
+   */ use(plugin, options = {}) {
+        if (typeof plugin.install !== "function") {
+            this.errorHandler.handle(new Error("Plugin must have an install method"), "Plugin registration failed", {
+                plugin
+            });
+        }
+        // Check if plugin is already registered
+        if (this.plugins.has(plugin.name)) {
+            this.errorHandler.warn(`Plugin "${plugin.name}" is already registered`, {
+                existingPlugin: this.plugins.get(plugin.name)
+            });
+            return;
+        }
+        this.plugins.set(plugin.name, plugin);
+        plugin.install(this, options);
     }
-
-    // Check if plugin is already registered
-    if (this.plugins.has(plugin.name)) {
-      this.errorHandler.warn(`Plugin "${plugin.name}" is already registered`, {
-        existingPlugin: this.plugins.get(plugin.name)
-      });
-      return;
-    }
-    this.plugins.set(plugin.name, plugin);
-    plugin.install(this, options);
-  }
-
-  /**
+    /**
    * Gets all registered plugins.
    * @returns {RouterPlugin[]} Array of registered plugins.
-   */
-  getPlugins() {
-    return Array.from(this.plugins.values());
-  }
-
-  /**
+   */ getPlugins() {
+        return Array.from(this.plugins.values());
+    }
+    /**
    * Gets a plugin by name.
    * @param {string} name - The plugin name.
    * @returns {RouterPlugin | undefined} The plugin or undefined.
-   */
-  getPlugin(name) {
-    return this.plugins.get(name);
-  }
-
-  /**
+   */ getPlugin(name) {
+        return this.plugins.get(name);
+    }
+    /**
    * Removes a plugin from the router.
    * @param {string} name - The plugin name.
    * @returns {boolean} True if the plugin was removed.
-   */
-  removePlugin(name) {
-    const plugin = this.plugins.get(name);
-    if (!plugin) return false;
-
-    // Call destroy if available
-    if (typeof plugin.destroy === "function") {
-      try {
-        plugin.destroy(this);
-      } catch (error) {
-        this.errorHandler.log(`Plugin ${name} destroy failed`, error);
-      }
+   */ removePlugin(name) {
+        const plugin = this.plugins.get(name);
+        if (!plugin) return false;
+        // Call destroy if available
+        if (typeof plugin.destroy === "function") {
+            try {
+                plugin.destroy(this);
+            } catch (error) {
+                this.errorHandler.log(`Plugin ${name} destroy failed`, error);
+            }
+        }
+        return this.plugins.delete(name);
     }
-    return this.plugins.delete(name);
-  }
-
-  /**
+    /**
    * Sets a custom error handler. Used by error handling plugins.
    * @param {Object} errorHandler - The error handler object with handle, warn, and log methods.
-   */
-  setErrorHandler(errorHandler) {
-    if (errorHandler && typeof errorHandler.handle === "function" && typeof errorHandler.warn === "function" && typeof errorHandler.log === "function") {
-      this.errorHandler = errorHandler;
-    } else {
-      console.warn("[ElevaRouter] Invalid error handler provided. Must have handle, warn, and log methods.");
+   */ setErrorHandler(errorHandler) {
+        if (errorHandler && typeof errorHandler.handle === "function" && typeof errorHandler.warn === "function" && typeof errorHandler.log === "function") {
+            this.errorHandler = errorHandler;
+        } else {
+            console.warn("[ElevaRouter] Invalid error handler provided. Must have handle, warn, and log methods.");
+        }
     }
-  }
+    /**
+   * Creates an instance of the Router.
+   * @param {Eleva} eleva - The Eleva framework instance.
+   * @param {RouterOptions} options - The configuration options for the router.
+   */ constructor(eleva, options = {}){
+        /** @type {Eleva} The Eleva framework instance. */ this.eleva = eleva;
+        /** @type {RouterOptions} The merged router options. */ this.options = {
+            mode: "hash",
+            queryParam: "view",
+            viewSelector: "root",
+            ...options
+        };
+        /** @private @type {RouteDefinition[]} The processed list of route definitions. */ this.routes = this._processRoutes(options.routes || []);
+        /** @private @type {import('eleva').Emitter} The shared Eleva event emitter for global hooks. */ this.emitter = this.eleva.emitter;
+        /** @private @type {boolean} A flag indicating if the router has been started. */ this.isStarted = false;
+        /** @private @type {boolean} A flag to prevent navigation loops from history events. */ this._isNavigating = false;
+        /** @private @type {number} Counter for tracking navigation operations to prevent race conditions. */ this._navigationId = 0;
+        /** @private @type {Array<() => void>} A collection of cleanup functions for event listeners. */ this.eventListeners = [];
+        /** @type {Signal<RouteLocation | null>} A reactive signal holding the current route's information. */ this.currentRoute = new this.eleva.signal(null);
+        /** @type {Signal<RouteLocation | null>} A reactive signal holding the previous route's information. */ this.previousRoute = new this.eleva.signal(null);
+        /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's parameters. */ this.currentParams = new this.eleva.signal({});
+        /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's query parameters. */ this.currentQuery = new this.eleva.signal({});
+        /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted layout instance. */ this.currentLayout = new this.eleva.signal(null);
+        /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted view (page) instance. */ this.currentView = new this.eleva.signal(null);
+        /** @type {Signal<boolean>} A reactive signal indicating if the router is ready (started and initial navigation complete). */ this.isReady = new this.eleva.signal(false);
+        /** @private @type {Map<string, RouterPlugin>} Map of registered plugins by name. */ this.plugins = new Map();
+        /** @private @type {Array<NavigationGuard>} Array of global before-each navigation guards. */ this._beforeEachGuards = [];
+        // If onBeforeEach was provided in options, add it to the guards array
+        if (options.onBeforeEach) {
+            this._beforeEachGuards.push(options.onBeforeEach);
+        }
+        /** @type {Object} The error handler instance. Can be overridden by plugins. */ this.errorHandler = CoreErrorHandler;
+        /** @private @type {Map<string, {x: number, y: number}>} Saved scroll positions by route path. */ this._scrollPositions = new Map();
+        this._validateOptions();
+    }
 }
-
 /**
  * @typedef {Object} RouterOptions
  * @property {string} mount - A CSS selector for the main element where the app is mounted.
@@ -1849,9 +1602,7 @@ class Router {
  * @property {boolean} [autoStart=true] - Whether to start the router automatically.
  * @property {NavigationGuard} [onBeforeEach] - A global guard executed before every navigation.
  * @property {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} [globalLayout] - A global layout for all routes. Can be overridden by a route's specific layout.
- */
-
-/**
+ */ /**
  * @class 🚀 RouterPlugin
  * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva applications.
  * This plugin provides comprehensive client-side routing functionality including:
@@ -1882,24 +1633,20 @@ class Router {
  *     { path: '/users/:id', component: UserPage }
  *   ]
  * });
- */
-const RouterPlugin = {
-  /**
+ */ const RouterPlugin = {
+    /**
    * Unique identifier for the plugin
    * @type {string}
-   */
-  name: "router",
-  /**
+   */ name: "router",
+    /**
    * Plugin version
    * @type {string}
-   */
-  version: "1.0.0-rc.11",
-  /**
+   */ version: "1.0.0-rc.12",
+    /**
    * Plugin description
    * @type {string}
-   */
-  description: "Client-side routing for Eleva applications",
-  /**
+   */ description: "Client-side routing for Eleva applications",
+    /**
    * Installs the RouterPlugin into an Eleva instance.
    *
    * @param {Eleva} eleva - The Eleva instance
@@ -1930,118 +1677,101 @@ const RouterPlugin = {
    *    { path: '/about', component: AboutPage }
    *  ]
    * });
-   */
-  install(eleva, options = {}) {
-    if (!options.mount) {
-      throw new Error("[RouterPlugin] 'mount' option is required");
-    }
-    if (!options.routes || !Array.isArray(options.routes)) {
-      throw new Error("[RouterPlugin] 'routes' option must be an array");
-    }
-
-    /**
+   */ install (eleva, options = {}) {
+        if (!options.mount) {
+            throw new Error("[RouterPlugin] 'mount' option is required");
+        }
+        if (!options.routes || !Array.isArray(options.routes)) {
+            throw new Error("[RouterPlugin] 'routes' option must be an array");
+        }
+        /**
      * Registers a component definition with the Eleva instance.
      * This method handles both inline component objects and pre-registered component names.
      *
      * @param {any} def - The component definition to register
      * @param {string} type - The type of component for naming (e.g., "Route", "Layout")
      * @returns {string | null} The registered component name or null if no definition provided
-     */
-    const register = (def, type) => {
-      if (!def) return null;
-      if (typeof def === "object" && def !== null && !def.name) {
-        const name = `Eleva${type}Component_${Math.random().toString(36).slice(2, 11)}`;
-        try {
-          eleva.component(name, def);
-          return name;
-        } catch (error) {
-          throw new Error(`[RouterPlugin] Failed to register ${type} component: ${error.message}`);
+     */ const register = (def, type)=>{
+            if (!def) return null;
+            if (typeof def === "object" && def !== null && !def.name) {
+                const name = `Eleva${type}Component_${Math.random().toString(36).slice(2, 11)}`;
+                try {
+                    eleva.component(name, def);
+                    return name;
+                } catch (error) {
+                    throw new Error(`[RouterPlugin] Failed to register ${type} component: ${error.message}`);
+                }
+            }
+            return def;
+        };
+        if (options.globalLayout) {
+            options.globalLayout = register(options.globalLayout, "GlobalLayout");
         }
-      }
-      return def;
-    };
-    if (options.globalLayout) {
-      options.globalLayout = register(options.globalLayout, "GlobalLayout");
-    }
-    (options.routes || []).forEach(route => {
-      route.component = register(route.component, "Route");
-      if (route.layout) {
-        route.layout = register(route.layout, "RouteLayout");
-      }
-    });
-    const router = new Router(eleva, options);
-    eleva.router = router;
-    if (options.autoStart !== false) {
-      queueMicrotask(() => router.start());
-    }
-
-    // Add plugin metadata to the Eleva instance
-    if (!eleva.plugins) {
-      eleva.plugins = new Map();
-    }
-    eleva.plugins.set(this.name, {
-      name: this.name,
-      version: this.version,
-      description: this.description,
-      options
-    });
-
-    // Add utility methods for manual router access
-    eleva.navigate = router.navigate.bind(router);
-    eleva.getCurrentRoute = () => router.currentRoute.value;
-    eleva.getRouteParams = () => router.currentParams.value;
-    eleva.getRouteQuery = () => router.currentQuery.value;
-    return router;
-  },
-  /**
+        (options.routes || []).forEach((route)=>{
+            route.component = register(route.component, "Route");
+            if (route.layout) {
+                route.layout = register(route.layout, "RouteLayout");
+            }
+        });
+        const router = new Router(eleva, options);
+        eleva.router = router;
+        if (options.autoStart !== false) {
+            queueMicrotask(()=>router.start());
+        }
+        // Add plugin metadata to the Eleva instance
+        if (!eleva.plugins) {
+            eleva.plugins = new Map();
+        }
+        eleva.plugins.set(this.name, {
+            name: this.name,
+            version: this.version,
+            description: this.description,
+            options
+        });
+        // Add utility methods for manual router access
+        eleva.navigate = router.navigate.bind(router);
+        eleva.getCurrentRoute = ()=>router.currentRoute.value;
+        eleva.getRouteParams = ()=>router.currentParams.value;
+        eleva.getRouteQuery = ()=>router.currentQuery.value;
+        return router;
+    },
+    /**
    * Uninstalls the plugin from the Eleva instance
    *
    * @param {Eleva} eleva - The Eleva instance
-   */
-  async uninstall(eleva) {
-    if (eleva.router) {
-      await eleva.router.destroy();
-      delete eleva.router;
+   */ async uninstall (eleva) {
+        if (eleva.router) {
+            await eleva.router.destroy();
+            delete eleva.router;
+        }
+        // Remove plugin metadata
+        if (eleva.plugins) {
+            eleva.plugins.delete(this.name);
+        }
+        // Remove utility methods
+        delete eleva.navigate;
+        delete eleva.getCurrentRoute;
+        delete eleva.getRouteParams;
+        delete eleva.getRouteQuery;
     }
-
-    // Remove plugin metadata
-    if (eleva.plugins) {
-      eleva.plugins.delete(this.name);
-    }
-
-    // Remove utility methods
-    delete eleva.navigate;
-    delete eleva.getCurrentRoute;
-    delete eleva.getRouteParams;
-    delete eleva.getRouteQuery;
-  }
 };
 
 // ============================================================================
 // TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
 // ============================================================================
-
 /**
  * @typedef {Record<string, unknown>} TemplateData
  *           Data context for template interpolation
- */
-
-/**
+ */ /**
  * @typedef {string} TemplateString
  *           A string containing {{ expression }} interpolation markers
- */
-
-/**
+ */ /**
  * @typedef {string} Expression
  *           A JavaScript expression to be evaluated in the data context
- */
-
-/**
+ */ /**
  * @typedef {unknown} EvaluationResult
  *           The result of evaluating an expression (string, number, boolean, object, etc.)
- */
-
-/**
+ */ /**
  * @class 🔒 TemplateEngine
  * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
  * Provides a way to evaluate expressions in templates.
@@ -2081,19 +1811,8 @@ const RouterPlugin = {
  * const data = { count: { value: 42 } };
  * const result = TemplateEngine.parse(template, data);
  * // Result: "Count: 42"
- */
-class TemplateEngine {
-  /**
-   * Regular expression for matching template expressions in the format {{ expression }}
-   * Matches: {{ anything }} with optional whitespace inside braces
-   *
-   * @static
-   * @private
-   * @type {RegExp}
-   */
-  static expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
-
-  /**
+ */ class TemplateEngine {
+    /**
    * Parses a template string, replacing expressions with their evaluated values.
    * Expressions are evaluated in the provided data context.
    *
@@ -2130,13 +1849,11 @@ class TemplateEngine {
    *   online: true
    * });
    * // Result: "Status: Active"
-   */
-  static parse(template, data) {
-    if (typeof template !== "string") return template;
-    return template.replace(this.expressionPattern, (_, expression) => this.evaluate(expression, data));
-  }
-
-  /**
+   */ static parse(template, data) {
+        if (typeof template !== "string") return template;
+        return template.replace(this.expressionPattern, (_, expression)=>this.evaluate(expression, data));
+    }
+    /**
    * Evaluates an expression in the context of the provided data object.
    *
    * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
@@ -2147,7 +1864,7 @@ class TemplateEngine {
    * @static
    * @param {Expression|unknown} expression - The expression to evaluate.
    * @param {TemplateData} data - The data context for evaluation.
-   * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+   * @returns {EvaluationResult} The result of the evaluation, or undefined if evaluation fails.
    *
    * @example
    * // Property access
@@ -2173,19 +1890,43 @@ class TemplateEngine {
    * // Result: "2024-01-01T00:00:00.000Z"
    *
    * @example
-   * // Failed evaluation returns empty string
+   * // Failed evaluation returns undefined
    * TemplateEngine.evaluate("nonexistent.property", {});
-   * // Result: ""
-   */
-  static evaluate(expression, data) {
-    if (typeof expression !== "string") return expression;
-    try {
-      return new Function("data", `with(data) { return ${expression}; }`)(data);
-    } catch {
-      return "";
+   * // Result: undefined
+   */ static evaluate(expression, data) {
+        if (typeof expression !== "string") return expression;
+        let fn = this._functionCache.get(expression);
+        if (!fn) {
+            try {
+                fn = new Function("data", `with(data) { return ${expression}; }`);
+                this._functionCache.set(expression, fn);
+            } catch  {
+                return undefined;
+            }
+        }
+        try {
+            return fn(data);
+        } catch  {
+            return undefined;
+        }
     }
-  }
 }
+/**
+   * Regular expression for matching template expressions in the format {{ expression }}
+   * Matches: {{ anything }} with optional whitespace inside braces
+   *
+   * @static
+   * @private
+   * @type {RegExp}
+   */ TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
+/**
+   * Cache for compiled expression functions.
+   * Stores compiled Function objects keyed by expression string for O(1) lookup.
+   *
+   * @static
+   * @private
+   * @type {Map<string, Function>}
+   */ TemplateEngine._functionCache = new Map();
 
 /**
  * @class 🎯 PropsPlugin
@@ -2234,24 +1975,20 @@ class TemplateEngine {
  *     };
  *   }
  * });
- */
-const PropsPlugin = {
-  /**
+ */ const PropsPlugin = {
+    /**
    * Unique identifier for the plugin
    * @type {string}
-   */
-  name: "props",
-  /**
+   */ name: "props",
+    /**
    * Plugin version
    * @type {string}
-   */
-  version: "1.0.0-rc.11",
-  /**
+   */ version: "1.0.0-rc.12",
+    /**
    * Plugin description
    * @type {string}
-   */
-  description: "Advanced props data handling for complex data structures with automatic type detection and reactivity",
-  /**
+   */ description: "Advanced props data handling for complex data structures with automatic type detection and reactivity",
+    /**
    * Installs the plugin into the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
@@ -2272,15 +2009,9 @@ const PropsPlugin = {
    *     console.error('Props parsing error:', error, value);
    *   }
    * });
-   */
-  install(eleva, options = {}) {
-    const {
-      enableAutoParsing = true,
-      enableReactivity = true,
-      onError = null
-    } = options;
-
-    /**
+   */ install (eleva, options = {}) {
+        const { enableAutoParsing = true, enableReactivity = true, onError = null } = options;
+        /**
      * Detects the type of a given value
      * @private
      * @param {any} value - The value to detect type for
@@ -2294,23 +2025,21 @@ const PropsPlugin = {
      * detectType({})          // → "object"
      * detectType(new Date())  // → "date"
      * detectType(null)        // → "null"
-     */
-    const detectType = value => {
-      if (value === null) return "null";
-      if (value === undefined) return "undefined";
-      if (typeof value === "boolean") return "boolean";
-      if (typeof value === "number") return "number";
-      if (typeof value === "string") return "string";
-      if (typeof value === "function") return "function";
-      if (value instanceof Date) return "date";
-      if (value instanceof Map) return "map";
-      if (value instanceof Set) return "set";
-      if (Array.isArray(value)) return "array";
-      if (typeof value === "object") return "object";
-      return "unknown";
-    };
-
-    /**
+     */ const detectType = (value)=>{
+            if (value === null) return "null";
+            if (value === undefined) return "undefined";
+            if (typeof value === "boolean") return "boolean";
+            if (typeof value === "number") return "number";
+            if (typeof value === "string") return "string";
+            if (typeof value === "function") return "function";
+            if (value instanceof Date) return "date";
+            if (value instanceof Map) return "map";
+            if (value instanceof Set) return "set";
+            if (Array.isArray(value)) return "array";
+            if (typeof value === "object") return "object";
+            return "unknown";
+        };
+        /**
      * Parses a prop value with automatic type detection
      * @private
      * @param {any} value - The value to parse
@@ -2331,66 +2060,58 @@ const PropsPlugin = {
      * parsePropValue('{"key": "val"}') // → {key: "val"}
      * parsePropValue('[1, 2, 3]')      // → [1, 2, 3]
      * parsePropValue("hello")          // → "hello"
-     */
-    const parsePropValue = value => {
-      try {
-        // Handle non-string values - return as-is
-        if (typeof value !== "string") {
-          return value;
-        }
-
-        // Handle special string patterns first
-        if (value === "true") return true;
-        if (value === "false") return false;
-        if (value === "null") return null;
-        if (value === "undefined") return undefined;
-
-        // Try to parse as JSON (for objects and arrays)
-        // This handles complex data structures like objects and arrays
-        if (value.startsWith("{") || value.startsWith("[")) {
-          try {
-            return JSON.parse(value);
-          } catch (e) {
-            // Not valid JSON, throw error to trigger error handler
-            throw new Error(`Invalid JSON: ${value}`);
-          }
-        }
-
-        // Handle boolean-like strings (including "1" and "0")
-        // These are common in HTML attributes and should be treated as booleans
-        if (value === "1") return true;
-        if (value === "0") return false;
-        if (value === "") return true; // Empty string is truthy in HTML attributes
-
-        // Handle numeric strings (after boolean check to avoid conflicts)
-        // This ensures "0" is treated as boolean false, not number 0
-        if (!isNaN(value) && value !== "" && !isNaN(parseFloat(value))) {
-          return Number(value);
-        }
-
-        // Handle date strings (ISO format)
-        // Recognizes standard ISO date format and converts to Date object
-        if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
-          const date = new Date(value);
-          if (!isNaN(date.getTime())) {
-            return date;
-          }
-        }
-
-        // Return as string if no other parsing applies
-        // This is the fallback for regular text strings
-        return value;
-      } catch (error) {
-        // Call error handler if provided
-        if (onError) {
-          onError(error, value);
-        }
-        // Fallback to original value to prevent breaking the application
-        return value;
-      }
-    };
-
-    /**
+     */ const parsePropValue = (value)=>{
+            try {
+                // Handle non-string values - return as-is
+                if (typeof value !== "string") {
+                    return value;
+                }
+                // Handle special string patterns first
+                if (value === "true") return true;
+                if (value === "false") return false;
+                if (value === "null") return null;
+                if (value === "undefined") return undefined;
+                // Try to parse as JSON (for objects and arrays)
+                // This handles complex data structures like objects and arrays
+                if (value.startsWith("{") || value.startsWith("[")) {
+                    try {
+                        return JSON.parse(value);
+                    } catch (e) {
+                        // Not valid JSON, throw error to trigger error handler
+                        throw new Error(`Invalid JSON: ${value}`);
+                    }
+                }
+                // Handle boolean-like strings (including "1" and "0")
+                // These are common in HTML attributes and should be treated as booleans
+                if (value === "1") return true;
+                if (value === "0") return false;
+                if (value === "") return true; // Empty string is truthy in HTML attributes
+                // Handle numeric strings (after boolean check to avoid conflicts)
+                // This ensures "0" is treated as boolean false, not number 0
+                if (!isNaN(value) && value !== "" && !isNaN(parseFloat(value))) {
+                    return Number(value);
+                }
+                // Handle date strings (ISO format)
+                // Recognizes standard ISO date format and converts to Date object
+                if (value.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)) {
+                    const date = new Date(value);
+                    if (!isNaN(date.getTime())) {
+                        return date;
+                    }
+                }
+                // Return as string if no other parsing applies
+                // This is the fallback for regular text strings
+                return value;
+            } catch (error) {
+                // Call error handler if provided
+                if (onError) {
+                    onError(error, value);
+                }
+                // Fallback to original value to prevent breaking the application
+                return value;
+            }
+        };
+        /**
      * Enhanced props extraction with automatic type detection
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
@@ -2405,28 +2126,25 @@ const PropsPlugin = {
      * // HTML: <div :name="John" :age="30" :active="true" :data='{"key": "value"}'></div>
      * const props = extractProps(element);
      * // Result: { name: "John", age: 30, active: true, data: {key: "value"} }
-     */
-    const extractProps = element => {
-      const props = {};
-      const attrs = element.attributes;
-
-      // Iterate through attributes in reverse order to handle removal correctly
-      for (let i = attrs.length - 1; i >= 0; i--) {
-        const attr = attrs[i];
-        // Only process attributes that start with ":" (prop attributes)
-        if (attr.name.startsWith(":")) {
-          const propName = attr.name.slice(1); // Remove the ":" prefix
-          // Parse the value if auto-parsing is enabled, otherwise use as-is
-          const parsedValue = enableAutoParsing ? parsePropValue(attr.value) : attr.value;
-          props[propName] = parsedValue;
-          // Remove the attribute from the DOM element after extraction
-          element.removeAttribute(attr.name);
-        }
-      }
-      return props;
-    };
-
-    /**
+     */ const extractProps = (element)=>{
+            const props = {};
+            const attrs = element.attributes;
+            // Iterate through attributes in reverse order to handle removal correctly
+            for(let i = attrs.length - 1; i >= 0; i--){
+                const attr = attrs[i];
+                // Only process attributes that start with ":" (prop attributes)
+                if (attr.name.startsWith(":")) {
+                    const propName = attr.name.slice(1); // Remove the ":" prefix
+                    // Parse the value if auto-parsing is enabled, otherwise use as-is
+                    const parsedValue = enableAutoParsing ? parsePropValue(attr.value) : attr.value;
+                    props[propName] = parsedValue;
+                    // Remove the attribute from the DOM element after extraction
+                    element.removeAttribute(attr.name);
+                }
+            }
+            return props;
+        };
+        /**
      * Creates reactive props using Eleva's signal system
      * @private
      * @param {Object} props - The props object to make reactive
@@ -2444,204 +2162,180 @@ const PropsPlugin = {
      * //   age: Signal(30),
      * //   active: Signal(true)
      * // }
-     */
-    const createReactiveProps = props => {
-      const reactiveProps = {};
-
-      // Convert each prop value to a reactive signal
-      Object.entries(props).forEach(([key, value]) => {
-        // Check if value is already a signal (has 'value' and 'watch' properties)
-        if (value && typeof value === "object" && "value" in value && "watch" in value) {
-          // Value is already a signal, use it as-is
-          reactiveProps[key] = value;
-        } else {
-          // Create new signal for the prop value to make it reactive
-          reactiveProps[key] = new eleva.signal(value);
-        }
-      });
-      return reactiveProps;
-    };
-
-    // Override Eleva's internal _extractProps method with our enhanced version
-    eleva._extractProps = extractProps;
-
-    // Override Eleva's mount method to apply enhanced prop handling
-    const originalMount = eleva.mount;
-    eleva.mount = async (container, compName, props = {}) => {
-      // Create reactive props if reactivity is enabled
-      const enhancedProps = enableReactivity ? createReactiveProps(props) : props;
-
-      // Call the original mount method with enhanced props
-      return await originalMount.call(eleva, container, compName, enhancedProps);
-    };
-
-    // Override Eleva's _mountComponents method to enable signal reference passing
-    const originalMountComponents = eleva._mountComponents;
-
-    // Cache to store parent contexts by container element
-    const parentContextCache = new WeakMap();
-    // Store child instances that need signal linking
-    const pendingSignalLinks = new Set();
-    eleva._mountComponents = async (container, children, childInstances) => {
-      for (const [selector, component] of Object.entries(children)) {
-        if (!selector) continue;
-        for (const el of container.querySelectorAll(selector)) {
-          if (!(el instanceof HTMLElement)) continue;
-
-          // Extract props from DOM attributes
-          const extractedProps = eleva._extractProps(el);
-
-          // Get parent context to check for signal references
-          let enhancedProps = extractedProps;
-
-          // Try to find parent context by looking up the DOM tree
-          let parentContext = parentContextCache.get(container);
-          if (!parentContext) {
-            let currentElement = container;
-            while (currentElement && !parentContext) {
-              if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
-                parentContext = currentElement._eleva_instance.data;
-                // Cache the parent context for future use
-                parentContextCache.set(container, parentContext);
-                break;
-              }
-              currentElement = currentElement.parentElement;
-            }
-          }
-          if (enableReactivity && parentContext) {
-            const signalProps = {};
-
-            // Check each extracted prop to see if there's a matching signal in parent context
-            Object.keys(extractedProps).forEach(propName => {
-              if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
-                // Found a signal in parent context with the same name as the prop
-                // Pass the signal reference instead of creating a new one
-                signalProps[propName] = parentContext[propName];
-              }
-            });
-
-            // Merge signal props with regular props (signal props take precedence)
-            enhancedProps = {
-              ...extractedProps,
-              ...signalProps
-            };
-          }
-
-          // Create reactive props for non-signal props only
-          let finalProps = enhancedProps;
-          if (enableReactivity) {
-            // Only create reactive props for values that aren't already signals
-            const nonSignalProps = {};
-            Object.entries(enhancedProps).forEach(([key, value]) => {
-              if (!(value && typeof value === "object" && "value" in value && "watch" in value)) {
-                // This is not a signal, create a reactive prop for it
-                nonSignalProps[key] = value;
-              }
-            });
-
-            // Create reactive props only for non-signal values
-            const reactiveNonSignalProps = createReactiveProps(nonSignalProps);
-
-            // Merge signal props with reactive non-signal props
-            finalProps = {
-              ...reactiveNonSignalProps,
-              ...enhancedProps // Signal props take precedence
-            };
-          }
-
-          /** @type {MountResult} */
-          const instance = await eleva.mount(el, component, finalProps);
-          if (instance && !childInstances.includes(instance)) {
-            childInstances.push(instance);
-
-            // If we have extracted props but no parent context yet, mark for later signal linking
-            if (enableReactivity && Object.keys(extractedProps).length > 0 && !parentContext) {
-              pendingSignalLinks.add({
-                instance,
-                extractedProps,
-                container,
-                component
-              });
-            }
-          }
-        }
-      }
-
-      // After mounting all children, try to link signals for pending instances
-      if (enableReactivity && pendingSignalLinks.size > 0) {
-        for (const pending of pendingSignalLinks) {
-          const {
-            instance,
-            extractedProps,
-            container,
-            component
-          } = pending;
-
-          // Try to find parent context again
-          let parentContext = parentContextCache.get(container);
-          if (!parentContext) {
-            let currentElement = container;
-            while (currentElement && !parentContext) {
-              if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
-                parentContext = currentElement._eleva_instance.data;
-                parentContextCache.set(container, parentContext);
-                break;
-              }
-              currentElement = currentElement.parentElement;
-            }
-          }
-          if (parentContext) {
-            const signalProps = {};
-
-            // Check each extracted prop to see if there's a matching signal in parent context
-            Object.keys(extractedProps).forEach(propName => {
-              if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
-                signalProps[propName] = parentContext[propName];
-              }
-            });
-
-            // Update the child instance's data with signal references
-            if (Object.keys(signalProps).length > 0) {
-              Object.assign(instance.data, signalProps);
-
-              // Set up signal watchers for the newly linked signals
-              Object.keys(signalProps).forEach(propName => {
-                const signal = signalProps[propName];
-                if (signal && typeof signal.watch === "function") {
-                  signal.watch(newValue => {
-                    // Trigger a re-render of the child component when the signal changes
-                    const childComponent = eleva._components.get(component) || component;
-                    if (childComponent && childComponent.template) {
-                      const templateResult = typeof childComponent.template === "function" ? childComponent.template(instance.data) : childComponent.template;
-                      const newHtml = TemplateEngine.parse(templateResult, instance.data);
-                      eleva.renderer.patchDOM(instance.container, newHtml);
-                    }
-                  });
+     */ const createReactiveProps = (props)=>{
+            const reactiveProps = {};
+            // Convert each prop value to a reactive signal
+            Object.entries(props).forEach(([key, value])=>{
+                // Check if value is already a signal (has 'value' and 'watch' properties)
+                if (value && typeof value === "object" && "value" in value && "watch" in value) {
+                    // Value is already a signal, use it as-is
+                    reactiveProps[key] = value;
+                } else {
+                    // Create new signal for the prop value to make it reactive
+                    reactiveProps[key] = new eleva.signal(value);
                 }
-              });
-
-              // Initial re-render to show the correct signal values
-              const childComponent = eleva._components.get(component) || component;
-              if (childComponent && childComponent.template) {
-                const templateResult = typeof childComponent.template === "function" ? childComponent.template(instance.data) : childComponent.template;
-                const newHtml = TemplateEngine.parse(templateResult, instance.data);
-                eleva.renderer.patchDOM(instance.container, newHtml);
-              }
+            });
+            return reactiveProps;
+        };
+        // Override Eleva's internal _extractProps method with our enhanced version
+        eleva._extractProps = extractProps;
+        // Override Eleva's mount method to apply enhanced prop handling
+        const originalMount = eleva.mount;
+        eleva.mount = async (container, compName, props = {})=>{
+            // Create reactive props if reactivity is enabled
+            const enhancedProps = enableReactivity ? createReactiveProps(props) : props;
+            // Call the original mount method with enhanced props
+            return await originalMount.call(eleva, container, compName, enhancedProps);
+        };
+        // Override Eleva's _mountComponents method to enable signal reference passing
+        const originalMountComponents = eleva._mountComponents;
+        // Cache to store parent contexts by container element
+        const parentContextCache = new WeakMap();
+        // Store child instances that need signal linking
+        const pendingSignalLinks = new Set();
+        eleva._mountComponents = async (container, children, childInstances)=>{
+            for (const [selector, component] of Object.entries(children)){
+                if (!selector) continue;
+                for (const el of container.querySelectorAll(selector)){
+                    if (!(el instanceof HTMLElement)) continue;
+                    // Extract props from DOM attributes
+                    const extractedProps = eleva._extractProps(el);
+                    // Get parent context to check for signal references
+                    let enhancedProps = extractedProps;
+                    // Try to find parent context by looking up the DOM tree
+                    let parentContext = parentContextCache.get(container);
+                    if (!parentContext) {
+                        let currentElement = container;
+                        while(currentElement && !parentContext){
+                            if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
+                                parentContext = currentElement._eleva_instance.data;
+                                // Cache the parent context for future use
+                                parentContextCache.set(container, parentContext);
+                                break;
+                            }
+                            currentElement = currentElement.parentElement;
+                        }
+                    }
+                    if (enableReactivity && parentContext) {
+                        const signalProps = {};
+                        // Check each extracted prop to see if there's a matching signal in parent context
+                        Object.keys(extractedProps).forEach((propName)=>{
+                            if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
+                                // Found a signal in parent context with the same name as the prop
+                                // Pass the signal reference instead of creating a new one
+                                signalProps[propName] = parentContext[propName];
+                            }
+                        });
+                        // Merge signal props with regular props (signal props take precedence)
+                        enhancedProps = {
+                            ...extractedProps,
+                            ...signalProps
+                        };
+                    }
+                    // Create reactive props for non-signal props only
+                    let finalProps = enhancedProps;
+                    if (enableReactivity) {
+                        // Only create reactive props for values that aren't already signals
+                        const nonSignalProps = {};
+                        Object.entries(enhancedProps).forEach(([key, value])=>{
+                            if (!(value && typeof value === "object" && "value" in value && "watch" in value)) {
+                                // This is not a signal, create a reactive prop for it
+                                nonSignalProps[key] = value;
+                            }
+                        });
+                        // Create reactive props only for non-signal values
+                        const reactiveNonSignalProps = createReactiveProps(nonSignalProps);
+                        // Merge signal props with reactive non-signal props
+                        finalProps = {
+                            ...reactiveNonSignalProps,
+                            ...enhancedProps
+                        };
+                    }
+                    /** @type {MountResult} */ const instance = await eleva.mount(el, component, finalProps);
+                    if (instance && !childInstances.includes(instance)) {
+                        childInstances.push(instance);
+                        // If we have extracted props but no parent context yet, mark for later signal linking
+                        if (enableReactivity && Object.keys(extractedProps).length > 0 && !parentContext) {
+                            pendingSignalLinks.add({
+                                instance,
+                                extractedProps,
+                                container,
+                                component
+                            });
+                        }
+                    }
+                }
             }
-
-            // Remove from pending list
-            pendingSignalLinks.delete(pending);
-          }
-        }
-      }
-    };
-
-    /**
+            // After mounting all children, try to link signals for pending instances
+            if (enableReactivity && pendingSignalLinks.size > 0) {
+                for (const pending of pendingSignalLinks){
+                    const { instance, extractedProps, container, component } = pending;
+                    // Try to find parent context again
+                    let parentContext = parentContextCache.get(container);
+                    if (!parentContext) {
+                        let currentElement = container;
+                        while(currentElement && !parentContext){
+                            if (currentElement._eleva_instance && currentElement._eleva_instance.data) {
+                                parentContext = currentElement._eleva_instance.data;
+                                parentContextCache.set(container, parentContext);
+                                break;
+                            }
+                            currentElement = currentElement.parentElement;
+                        }
+                    }
+                    if (parentContext) {
+                        const signalProps = {};
+                        // Check each extracted prop to see if there's a matching signal in parent context
+                        Object.keys(extractedProps).forEach((propName)=>{
+                            if (parentContext[propName] && parentContext[propName] instanceof eleva.signal) {
+                                signalProps[propName] = parentContext[propName];
+                            }
+                        });
+                        // Update the child instance's data with signal references
+                        if (Object.keys(signalProps).length > 0) {
+                            Object.assign(instance.data, signalProps);
+                            // Create a batched render function for this child instance
+                            // This ensures multiple signal changes result in a single render
+                            let renderScheduled = false;
+                            const childComponent = eleva._components.get(component) || component;
+                            const scheduleChildRender = ()=>{
+                                if (renderScheduled) return;
+                                renderScheduled = true;
+                                queueMicrotask(()=>{
+                                    renderScheduled = false;
+                                    if (childComponent && childComponent.template) {
+                                        const templateResult = typeof childComponent.template === "function" ? childComponent.template(instance.data) : childComponent.template;
+                                        const newHtml = TemplateEngine.parse(templateResult, instance.data);
+                                        eleva.renderer.patchDOM(instance.container, newHtml);
+                                    }
+                                });
+                            };
+                            // Set up signal watchers for the newly linked signals
+                            Object.keys(signalProps).forEach((propName)=>{
+                                const signal = signalProps[propName];
+                                if (signal && typeof signal.watch === "function") {
+                                    // Use batched render instead of direct patchDOM
+                                    signal.watch(scheduleChildRender);
+                                }
+                            });
+                            // Initial render to show the correct signal values
+                            if (childComponent && childComponent.template) {
+                                const templateResult = typeof childComponent.template === "function" ? childComponent.template(instance.data) : childComponent.template;
+                                const newHtml = TemplateEngine.parse(templateResult, instance.data);
+                                eleva.renderer.patchDOM(instance.container, newHtml);
+                            }
+                        }
+                        // Remove from pending list
+                        pendingSignalLinks.delete(pending);
+                    }
+                }
+            }
+        };
+        /**
      * Expose utility methods on the Eleva instance
      * @namespace eleva.props
-     */
-    eleva.props = {
-      /**
+     */ eleva.props = {
+            /**
        * Parse a single value with automatic type detection
        * @param {any} value - The value to parse
        * @returns {any} The parsed value with appropriate type
@@ -2650,16 +2344,15 @@ const PropsPlugin = {
        * app.props.parse("42")             // → 42
        * app.props.parse("true")           // → true
        * app.props.parse('{"key": "val"}') // → {key: "val"}
-       */
-      parse: value => {
-        // Return value as-is if auto parsing is disabled
-        if (!enableAutoParsing) {
-          return value;
-        }
-        // Use our enhanced parsing function
-        return parsePropValue(value);
-      },
-      /**
+       */ parse: (value)=>{
+                // Return value as-is if auto parsing is disabled
+                if (!enableAutoParsing) {
+                    return value;
+                }
+                // Use our enhanced parsing function
+                return parsePropValue(value);
+            },
+            /**
        * Detect the type of a value
        * @param {any} value - The value to detect type for
        * @returns {string} The detected type
@@ -2668,16 +2361,14 @@ const PropsPlugin = {
        * app.props.detectType("hello")     // → "string"
        * app.props.detectType(42)          // → "number"
        * app.props.detectType([1, 2, 3])   // → "array"
-       */
-      detectType
-    };
-
-    // Store original methods for uninstall
-    eleva._originalExtractProps = eleva._extractProps;
-    eleva._originalMount = originalMount;
-    eleva._originalMountComponents = originalMountComponents;
-  },
-  /**
+       */ detectType
+        };
+        // Store original methods for uninstall
+        eleva._originalExtractProps = eleva._extractProps;
+        eleva._originalMount = originalMount;
+        eleva._originalMountComponents = originalMountComponents;
+    },
+    /**
    * Uninstalls the plugin from the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
@@ -2690,31 +2381,27 @@ const PropsPlugin = {
    * @example
    * // Uninstall the plugin
    * PropsPlugin.uninstall(app);
-   */
-  uninstall(eleva) {
-    // Restore original _extractProps method
-    if (eleva._originalExtractProps) {
-      eleva._extractProps = eleva._originalExtractProps;
-      delete eleva._originalExtractProps;
+   */ uninstall (eleva) {
+        // Restore original _extractProps method
+        if (eleva._originalExtractProps) {
+            eleva._extractProps = eleva._originalExtractProps;
+            delete eleva._originalExtractProps;
+        }
+        // Restore original mount method
+        if (eleva._originalMount) {
+            eleva.mount = eleva._originalMount;
+            delete eleva._originalMount;
+        }
+        // Restore original _mountComponents method
+        if (eleva._originalMountComponents) {
+            eleva._mountComponents = eleva._originalMountComponents;
+            delete eleva._originalMountComponents;
+        }
+        // Remove plugin utility methods
+        if (eleva.props) {
+            delete eleva.props;
+        }
     }
-
-    // Restore original mount method
-    if (eleva._originalMount) {
-      eleva.mount = eleva._originalMount;
-      delete eleva._originalMount;
-    }
-
-    // Restore original _mountComponents method
-    if (eleva._originalMountComponents) {
-      eleva._mountComponents = eleva._originalMountComponents;
-      delete eleva._originalMountComponents;
-    }
-
-    // Remove plugin utility methods
-    if (eleva.props) {
-      delete eleva.props;
-    }
-  }
 };
 
 /**
@@ -2771,24 +2458,20 @@ const PropsPlugin = {
  *     </div>
  *   `
  * });
- */
-const StorePlugin = {
-  /**
+ */ const StorePlugin = {
+    /**
    * Unique identifier for the plugin
    * @type {string}
-   */
-  name: "store",
-  /**
+   */ name: "store",
+    /**
    * Plugin version
    * @type {string}
-   */
-  version: "1.0.0-rc.11",
-  /**
+   */ version: "1.0.0-rc.12",
+    /**
    * Plugin description
    * @type {string}
-   */
-  description: "Reactive state management for sharing data across the entire Eleva application",
-  /**
+   */ description: "Reactive state management for sharing data across the entire Eleva application",
+    /**
    * Installs the plugin into the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
@@ -2838,513 +2521,436 @@ const StorePlugin = {
    *     include: ["theme", "auth.user"]
    *   }
    * });
-   */
-  install(eleva, options = {}) {
-    const {
-      state = {},
-      actions = {},
-      namespaces = {},
-      persistence = {},
-      devTools = false,
-      onError = null
-    } = options;
-
-    /**
+   */ install (eleva, options = {}) {
+        const { state = {}, actions = {}, namespaces = {}, persistence = {}, devTools = false, onError = null } = options;
+        /**
      * Store instance that manages all state and provides the API
      * @private
-     */
-    class Store {
-      constructor() {
-        this.state = {};
-        this.actions = {};
-        this.subscribers = new Set();
-        this.mutations = [];
-        this.persistence = {
-          enabled: false,
-          key: "eleva-store",
-          storage: "localStorage",
-          include: null,
-          exclude: null,
-          ...persistence
-        };
-        this.devTools = devTools;
-        this.onError = onError;
-        this._initializeState(state, actions);
-        this._initializeNamespaces(namespaces);
-        this._loadPersistedState();
-        this._setupDevTools();
-      }
-
-      /**
+     */ class Store {
+            /**
        * Initializes the root state and actions
        * @private
-       */
-      _initializeState(initialState, initialActions) {
-        // Create reactive signals for each state property
-        Object.entries(initialState).forEach(([key, value]) => {
-          this.state[key] = new eleva.signal(value);
-        });
-
-        // Set up actions
-        this.actions = {
-          ...initialActions
-        };
-      }
-
-      /**
+       */ _initializeState(initialState, initialActions) {
+                // Create reactive signals for each state property
+                Object.entries(initialState).forEach(([key, value])=>{
+                    this.state[key] = new eleva.signal(value);
+                });
+                // Set up actions
+                this.actions = {
+                    ...initialActions
+                };
+            }
+            /**
        * Initializes namespaced modules
        * @private
-       */
-      _initializeNamespaces(namespaces) {
-        Object.entries(namespaces).forEach(([namespace, module]) => {
-          const {
-            state: moduleState = {},
-            actions: moduleActions = {}
-          } = module;
-
-          // Create namespace object if it doesn't exist
-          if (!this.state[namespace]) {
-            this.state[namespace] = {};
-          }
-          if (!this.actions[namespace]) {
-            this.actions[namespace] = {};
-          }
-
-          // Initialize namespaced state
-          Object.entries(moduleState).forEach(([key, value]) => {
-            this.state[namespace][key] = new eleva.signal(value);
-          });
-
-          // Set up namespaced actions
-          this.actions[namespace] = {
-            ...moduleActions
-          };
-        });
-      }
-
-      /**
+       */ _initializeNamespaces(namespaces) {
+                Object.entries(namespaces).forEach(([namespace, module])=>{
+                    const { state: moduleState = {}, actions: moduleActions = {} } = module;
+                    // Create namespace object if it doesn't exist
+                    if (!this.state[namespace]) {
+                        this.state[namespace] = {};
+                    }
+                    if (!this.actions[namespace]) {
+                        this.actions[namespace] = {};
+                    }
+                    // Initialize namespaced state
+                    Object.entries(moduleState).forEach(([key, value])=>{
+                        this.state[namespace][key] = new eleva.signal(value);
+                    });
+                    // Set up namespaced actions
+                    this.actions[namespace] = {
+                        ...moduleActions
+                    };
+                });
+            }
+            /**
        * Loads persisted state from storage
        * @private
-       */
-      _loadPersistedState() {
-        if (!this.persistence.enabled || typeof window === "undefined") {
-          return;
-        }
-        try {
-          const storage = window[this.persistence.storage];
-          const persistedData = storage.getItem(this.persistence.key);
-          if (persistedData) {
-            const data = JSON.parse(persistedData);
-            this._applyPersistedData(data);
-          }
-        } catch (error) {
-          if (this.onError) {
-            this.onError(error, "Failed to load persisted state");
-          } else {
-            console.warn("[StorePlugin] Failed to load persisted state:", error);
-          }
-        }
-      }
-
-      /**
+       */ _loadPersistedState() {
+                if (!this.persistence.enabled || typeof window === "undefined") {
+                    return;
+                }
+                try {
+                    const storage = window[this.persistence.storage];
+                    const persistedData = storage.getItem(this.persistence.key);
+                    if (persistedData) {
+                        const data = JSON.parse(persistedData);
+                        this._applyPersistedData(data);
+                    }
+                } catch (error) {
+                    if (this.onError) {
+                        this.onError(error, "Failed to load persisted state");
+                    } else {
+                        console.warn("[StorePlugin] Failed to load persisted state:", error);
+                    }
+                }
+            }
+            /**
        * Applies persisted data to the current state
        * @private
-       */
-      _applyPersistedData(data, currentState = this.state, path = "") {
-        Object.entries(data).forEach(([key, value]) => {
-          const fullPath = path ? `${path}.${key}` : key;
-          if (this._shouldPersist(fullPath)) {
-            if (currentState[key] && typeof currentState[key] === "object" && "value" in currentState[key]) {
-              // This is a signal, update its value
-              currentState[key].value = value;
-            } else if (typeof value === "object" && value !== null && currentState[key]) {
-              // This is a nested object, recurse
-              this._applyPersistedData(value, currentState[key], fullPath);
+       */ _applyPersistedData(data, currentState = this.state, path = "") {
+                Object.entries(data).forEach(([key, value])=>{
+                    const fullPath = path ? `${path}.${key}` : key;
+                    if (this._shouldPersist(fullPath)) {
+                        if (currentState[key] && typeof currentState[key] === "object" && "value" in currentState[key]) {
+                            // This is a signal, update its value
+                            currentState[key].value = value;
+                        } else if (typeof value === "object" && value !== null && currentState[key]) {
+                            // This is a nested object, recurse
+                            this._applyPersistedData(value, currentState[key], fullPath);
+                        }
+                    }
+                });
             }
-          }
-        });
-      }
-
-      /**
+            /**
        * Determines if a state path should be persisted
        * @private
-       */
-      _shouldPersist(path) {
-        const {
-          include,
-          exclude
-        } = this.persistence;
-        if (include && include.length > 0) {
-          return include.some(includePath => path.startsWith(includePath));
-        }
-        if (exclude && exclude.length > 0) {
-          return !exclude.some(excludePath => path.startsWith(excludePath));
-        }
-        return true;
-      }
-
-      /**
+       */ _shouldPersist(path) {
+                const { include, exclude } = this.persistence;
+                if (include && include.length > 0) {
+                    return include.some((includePath)=>path.startsWith(includePath));
+                }
+                if (exclude && exclude.length > 0) {
+                    return !exclude.some((excludePath)=>path.startsWith(excludePath));
+                }
+                return true;
+            }
+            /**
        * Saves current state to storage
        * @private
-       */
-      _saveState() {
-        if (!this.persistence.enabled || typeof window === "undefined") {
-          return;
-        }
-        try {
-          const storage = window[this.persistence.storage];
-          const dataToSave = this._extractPersistedData();
-          storage.setItem(this.persistence.key, JSON.stringify(dataToSave));
-        } catch (error) {
-          if (this.onError) {
-            this.onError(error, "Failed to save state");
-          } else {
-            console.warn("[StorePlugin] Failed to save state:", error);
-          }
-        }
-      }
-
-      /**
+       */ _saveState() {
+                if (!this.persistence.enabled || typeof window === "undefined") {
+                    return;
+                }
+                try {
+                    const storage = window[this.persistence.storage];
+                    const dataToSave = this._extractPersistedData();
+                    storage.setItem(this.persistence.key, JSON.stringify(dataToSave));
+                } catch (error) {
+                    if (this.onError) {
+                        this.onError(error, "Failed to save state");
+                    } else {
+                        console.warn("[StorePlugin] Failed to save state:", error);
+                    }
+                }
+            }
+            /**
        * Extracts data that should be persisted
        * @private
-       */
-      _extractPersistedData(currentState = this.state, path = "") {
-        const result = {};
-        Object.entries(currentState).forEach(([key, value]) => {
-          const fullPath = path ? `${path}.${key}` : key;
-          if (this._shouldPersist(fullPath)) {
-            if (value && typeof value === "object" && "value" in value) {
-              // This is a signal, extract its value
-              result[key] = value.value;
-            } else if (typeof value === "object" && value !== null) {
-              // This is a nested object, recurse
-              const nestedData = this._extractPersistedData(value, fullPath);
-              if (Object.keys(nestedData).length > 0) {
-                result[key] = nestedData;
-              }
+       */ _extractPersistedData(currentState = this.state, path = "") {
+                const result = {};
+                Object.entries(currentState).forEach(([key, value])=>{
+                    const fullPath = path ? `${path}.${key}` : key;
+                    if (this._shouldPersist(fullPath)) {
+                        if (value && typeof value === "object" && "value" in value) {
+                            // This is a signal, extract its value
+                            result[key] = value.value;
+                        } else if (typeof value === "object" && value !== null) {
+                            // This is a nested object, recurse
+                            const nestedData = this._extractPersistedData(value, fullPath);
+                            if (Object.keys(nestedData).length > 0) {
+                                result[key] = nestedData;
+                            }
+                        }
+                    }
+                });
+                return result;
             }
-          }
-        });
-        return result;
-      }
-
-      /**
+            /**
        * Sets up development tools integration
        * @private
-       */
-      _setupDevTools() {
-        if (!this.devTools || typeof window === "undefined" || !window.__ELEVA_DEVTOOLS__) {
-          return;
-        }
-        window.__ELEVA_DEVTOOLS__.registerStore(this);
-      }
-
-      /**
+       */ _setupDevTools() {
+                if (!this.devTools || typeof window === "undefined" || !window.__ELEVA_DEVTOOLS__) {
+                    return;
+                }
+                window.__ELEVA_DEVTOOLS__.registerStore(this);
+            }
+            /**
        * Dispatches an action to mutate the state
        * @param {string} actionName - The name of the action to dispatch (supports namespaced actions like "auth.login")
        * @param {any} payload - The payload to pass to the action
        * @returns {Promise<any>} The result of the action
-       */
-      async dispatch(actionName, payload) {
-        try {
-          const action = this._getAction(actionName);
-          if (!action) {
-            const error = new Error(`Action "${actionName}" not found`);
-            if (this.onError) {
-              this.onError(error, actionName);
+       */ async dispatch(actionName, payload) {
+                try {
+                    const action = this._getAction(actionName);
+                    if (!action) {
+                        const error = new Error(`Action "${actionName}" not found`);
+                        if (this.onError) {
+                            this.onError(error, actionName);
+                        }
+                        throw error;
+                    }
+                    const mutation = {
+                        type: actionName,
+                        payload,
+                        timestamp: Date.now()
+                    };
+                    // Record mutation for devtools
+                    this.mutations.push(mutation);
+                    if (this.mutations.length > 100) {
+                        this.mutations.shift(); // Keep only last 100 mutations
+                    }
+                    // Execute the action
+                    const result = await action.call(null, this.state, payload);
+                    // Save state if persistence is enabled
+                    this._saveState();
+                    // Notify subscribers
+                    this.subscribers.forEach((callback)=>{
+                        try {
+                            callback(mutation, this.state);
+                        } catch (error) {
+                            if (this.onError) {
+                                this.onError(error, "Subscriber callback failed");
+                            }
+                        }
+                    });
+                    // Notify devtools
+                    if (this.devTools && typeof window !== "undefined" && window.__ELEVA_DEVTOOLS__) {
+                        window.__ELEVA_DEVTOOLS__.notifyMutation(mutation, this.state);
+                    }
+                    return result;
+                } catch (error) {
+                    if (this.onError) {
+                        this.onError(error, `Action dispatch failed: ${actionName}`);
+                    }
+                    throw error;
+                }
             }
-            throw error;
-          }
-          const mutation = {
-            type: actionName,
-            payload,
-            timestamp: Date.now()
-          };
-
-          // Record mutation for devtools
-          this.mutations.push(mutation);
-          if (this.mutations.length > 100) {
-            this.mutations.shift(); // Keep only last 100 mutations
-          }
-
-          // Execute the action
-          const result = await action.call(null, this.state, payload);
-
-          // Save state if persistence is enabled
-          this._saveState();
-
-          // Notify subscribers
-          this.subscribers.forEach(callback => {
-            try {
-              callback(mutation, this.state);
-            } catch (error) {
-              if (this.onError) {
-                this.onError(error, "Subscriber callback failed");
-              }
-            }
-          });
-
-          // Notify devtools
-          if (this.devTools && typeof window !== "undefined" && window.__ELEVA_DEVTOOLS__) {
-            window.__ELEVA_DEVTOOLS__.notifyMutation(mutation, this.state);
-          }
-          return result;
-        } catch (error) {
-          if (this.onError) {
-            this.onError(error, `Action dispatch failed: ${actionName}`);
-          }
-          throw error;
-        }
-      }
-
-      /**
+            /**
        * Gets an action by name (supports namespaced actions)
        * @private
-       */
-      _getAction(actionName) {
-        const parts = actionName.split(".");
-        let current = this.actions;
-        for (const part of parts) {
-          if (current[part] === undefined) {
-            return null;
-          }
-          current = current[part];
-        }
-        return typeof current === "function" ? current : null;
-      }
-
-      /**
+       */ _getAction(actionName) {
+                const parts = actionName.split(".");
+                let current = this.actions;
+                for (const part of parts){
+                    if (current[part] === undefined) {
+                        return null;
+                    }
+                    current = current[part];
+                }
+                return typeof current === "function" ? current : null;
+            }
+            /**
        * Subscribes to store mutations
        * @param {Function} callback - Callback function to call on mutations
        * @returns {Function} Unsubscribe function
-       */
-      subscribe(callback) {
-        if (typeof callback !== "function") {
-          throw new Error("Subscribe callback must be a function");
-        }
-        this.subscribers.add(callback);
-
-        // Return unsubscribe function
-        return () => {
-          this.subscribers.delete(callback);
-        };
-      }
-
-      /**
+       */ subscribe(callback) {
+                if (typeof callback !== "function") {
+                    throw new Error("Subscribe callback must be a function");
+                }
+                this.subscribers.add(callback);
+                // Return unsubscribe function
+                return ()=>{
+                    this.subscribers.delete(callback);
+                };
+            }
+            /**
        * Gets a deep copy of the current state values (not signals)
        * @returns {Object} The current state values
-       */
-      getState() {
-        return this._extractPersistedData();
-      }
-
-      /**
+       */ getState() {
+                return this._extractPersistedData();
+            }
+            /**
        * Replaces the entire state (useful for testing or state hydration)
        * @param {Object} newState - The new state object
-       */
-      replaceState(newState) {
-        this._applyPersistedData(newState);
-        this._saveState();
-      }
-
-      /**
+       */ replaceState(newState) {
+                this._applyPersistedData(newState);
+                this._saveState();
+            }
+            /**
        * Clears persisted state from storage
-       */
-      clearPersistedState() {
-        if (!this.persistence.enabled || typeof window === "undefined") {
-          return;
-        }
-        try {
-          const storage = window[this.persistence.storage];
-          storage.removeItem(this.persistence.key);
-        } catch (error) {
-          if (this.onError) {
-            this.onError(error, "Failed to clear persisted state");
-          }
-        }
-      }
-
-      /**
+       */ clearPersistedState() {
+                if (!this.persistence.enabled || typeof window === "undefined") {
+                    return;
+                }
+                try {
+                    const storage = window[this.persistence.storage];
+                    storage.removeItem(this.persistence.key);
+                } catch (error) {
+                    if (this.onError) {
+                        this.onError(error, "Failed to clear persisted state");
+                    }
+                }
+            }
+            /**
        * Registers a new namespaced module at runtime
        * @param {string} namespace - The namespace for the module
        * @param {Object} module - The module definition
        * @param {Object} module.state - The module's initial state
        * @param {Object} module.actions - The module's actions
-       */
-      registerModule(namespace, module) {
-        if (this.state[namespace] || this.actions[namespace]) {
-          console.warn(`[StorePlugin] Module "${namespace}" already exists`);
-          return;
-        }
-
-        // Initialize the module
-        this.state[namespace] = {};
-        this.actions[namespace] = {};
-        const namespaces = {
-          [namespace]: module
-        };
-        this._initializeNamespaces(namespaces);
-        this._saveState();
-      }
-
-      /**
+       */ registerModule(namespace, module) {
+                if (this.state[namespace] || this.actions[namespace]) {
+                    console.warn(`[StorePlugin] Module "${namespace}" already exists`);
+                    return;
+                }
+                // Initialize the module
+                this.state[namespace] = {};
+                this.actions[namespace] = {};
+                const namespaces = {
+                    [namespace]: module
+                };
+                this._initializeNamespaces(namespaces);
+                this._saveState();
+            }
+            /**
        * Unregisters a namespaced module
        * @param {string} namespace - The namespace to unregister
-       */
-      unregisterModule(namespace) {
-        if (!this.state[namespace] && !this.actions[namespace]) {
-          console.warn(`[StorePlugin] Module "${namespace}" does not exist`);
-          return;
-        }
-        delete this.state[namespace];
-        delete this.actions[namespace];
-        this._saveState();
-      }
-
-      /**
+       */ unregisterModule(namespace) {
+                if (!this.state[namespace] && !this.actions[namespace]) {
+                    console.warn(`[StorePlugin] Module "${namespace}" does not exist`);
+                    return;
+                }
+                delete this.state[namespace];
+                delete this.actions[namespace];
+                this._saveState();
+            }
+            /**
        * Creates a new reactive state property at runtime
        * @param {string} key - The state key
        * @param {*} initialValue - The initial value
        * @returns {Object} The created signal
-       */
-      createState(key, initialValue) {
-        if (this.state[key]) {
-          return this.state[key]; // Return existing state
-        }
-        this.state[key] = new eleva.signal(initialValue);
-        this._saveState();
-        return this.state[key];
-      }
-
-      /**
+       */ createState(key, initialValue) {
+                if (this.state[key]) {
+                    return this.state[key]; // Return existing state
+                }
+                this.state[key] = new eleva.signal(initialValue);
+                this._saveState();
+                return this.state[key];
+            }
+            /**
        * Creates a new action at runtime
        * @param {string} name - The action name
        * @param {Function} actionFn - The action function
-       */
-      createAction(name, actionFn) {
-        if (typeof actionFn !== "function") {
-          throw new Error("Action must be a function");
-        }
-        this.actions[name] = actionFn;
-      }
-    }
-
-    // Create the store instance
-    const store = new Store();
-
-    // Store the original mount method to override it
-    const originalMount = eleva.mount;
-
-    /**
-     * Override the mount method to inject store context into components
-     */
-    eleva.mount = async (container, compName, props = {}) => {
-      // Get the component definition
-      const componentDef = typeof compName === "string" ? eleva._components.get(compName) || compName : compName;
-      if (!componentDef) {
-        return await originalMount.call(eleva, container, compName, props);
-      }
-
-      // Create a wrapped component that injects store into setup
-      const wrappedComponent = {
-        ...componentDef,
-        async setup(ctx) {
-          // Inject store into the context with enhanced API
-          ctx.store = {
-            // Core store functionality
-            state: store.state,
-            dispatch: store.dispatch.bind(store),
-            subscribe: store.subscribe.bind(store),
-            getState: store.getState.bind(store),
-            // Module management
-            registerModule: store.registerModule.bind(store),
-            unregisterModule: store.unregisterModule.bind(store),
-            // Utilities for dynamic state/action creation
-            createState: store.createState.bind(store),
-            createAction: store.createAction.bind(store),
-            // Access to signal constructor for manual state creation
-            signal: eleva.signal
-          };
-
-          // Call original setup if it exists
-          const originalSetup = componentDef.setup;
-          const result = originalSetup ? await originalSetup(ctx) : {};
-          return result;
-        }
-      };
-
-      // Call original mount with wrapped component
-      return await originalMount.call(eleva, container, wrappedComponent, props);
-    };
-
-    // Override _mountComponents to ensure child components also get store context
-    const originalMountComponents = eleva._mountComponents;
-    eleva._mountComponents = async (container, children, childInstances) => {
-      // Create wrapped children with store injection
-      const wrappedChildren = {};
-      for (const [selector, childComponent] of Object.entries(children)) {
-        const componentDef = typeof childComponent === "string" ? eleva._components.get(childComponent) || childComponent : childComponent;
-        if (componentDef && typeof componentDef === "object") {
-          wrappedChildren[selector] = {
-            ...componentDef,
-            async setup(ctx) {
-              // Inject store into the context with enhanced API
-              ctx.store = {
-                // Core store functionality
-                state: store.state,
-                dispatch: store.dispatch.bind(store),
-                subscribe: store.subscribe.bind(store),
-                getState: store.getState.bind(store),
-                // Module management
-                registerModule: store.registerModule.bind(store),
-                unregisterModule: store.unregisterModule.bind(store),
-                // Utilities for dynamic state/action creation
-                createState: store.createState.bind(store),
-                createAction: store.createAction.bind(store),
-                // Access to signal constructor for manual state creation
-                signal: eleva.signal
-              };
-
-              // Call original setup if it exists
-              const originalSetup = componentDef.setup;
-              const result = originalSetup ? await originalSetup(ctx) : {};
-              return result;
+       */ createAction(name, actionFn) {
+                if (typeof actionFn !== "function") {
+                    throw new Error("Action must be a function");
+                }
+                this.actions[name] = actionFn;
             }
-          };
-        } else {
-          wrappedChildren[selector] = childComponent;
+            constructor(){
+                this.state = {};
+                this.actions = {};
+                this.subscribers = new Set();
+                this.mutations = [];
+                this.persistence = {
+                    enabled: false,
+                    key: "eleva-store",
+                    storage: "localStorage",
+                    include: null,
+                    exclude: null,
+                    ...persistence
+                };
+                this.devTools = devTools;
+                this.onError = onError;
+                this._initializeState(state, actions);
+                this._initializeNamespaces(namespaces);
+                this._loadPersistedState();
+                this._setupDevTools();
+            }
         }
-      }
-
-      // Call original _mountComponents with wrapped children
-      return await originalMountComponents.call(eleva, container, wrappedChildren, childInstances);
-    };
-
-    // Expose store instance and utilities on the Eleva instance
-    eleva.store = store;
-
-    /**
+        // Create the store instance
+        const store = new Store();
+        // Store the original mount method to override it
+        const originalMount = eleva.mount;
+        /**
+     * Override the mount method to inject store context into components
+     */ eleva.mount = async (container, compName, props = {})=>{
+            // Get the component definition
+            const componentDef = typeof compName === "string" ? eleva._components.get(compName) || compName : compName;
+            if (!componentDef) {
+                return await originalMount.call(eleva, container, compName, props);
+            }
+            // Create a wrapped component that injects store into setup
+            const wrappedComponent = {
+                ...componentDef,
+                async setup (ctx) {
+                    // Inject store into the context with enhanced API
+                    ctx.store = {
+                        // Core store functionality
+                        state: store.state,
+                        dispatch: store.dispatch.bind(store),
+                        subscribe: store.subscribe.bind(store),
+                        getState: store.getState.bind(store),
+                        // Module management
+                        registerModule: store.registerModule.bind(store),
+                        unregisterModule: store.unregisterModule.bind(store),
+                        // Utilities for dynamic state/action creation
+                        createState: store.createState.bind(store),
+                        createAction: store.createAction.bind(store),
+                        // Access to signal constructor for manual state creation
+                        signal: eleva.signal
+                    };
+                    // Call original setup if it exists
+                    const originalSetup = componentDef.setup;
+                    const result = originalSetup ? await originalSetup(ctx) : {};
+                    return result;
+                }
+            };
+            // Call original mount with wrapped component
+            return await originalMount.call(eleva, container, wrappedComponent, props);
+        };
+        // Override _mountComponents to ensure child components also get store context
+        const originalMountComponents = eleva._mountComponents;
+        eleva._mountComponents = async (container, children, childInstances)=>{
+            // Create wrapped children with store injection
+            const wrappedChildren = {};
+            for (const [selector, childComponent] of Object.entries(children)){
+                const componentDef = typeof childComponent === "string" ? eleva._components.get(childComponent) || childComponent : childComponent;
+                if (componentDef && typeof componentDef === "object") {
+                    wrappedChildren[selector] = {
+                        ...componentDef,
+                        async setup (ctx) {
+                            // Inject store into the context with enhanced API
+                            ctx.store = {
+                                // Core store functionality
+                                state: store.state,
+                                dispatch: store.dispatch.bind(store),
+                                subscribe: store.subscribe.bind(store),
+                                getState: store.getState.bind(store),
+                                // Module management
+                                registerModule: store.registerModule.bind(store),
+                                unregisterModule: store.unregisterModule.bind(store),
+                                // Utilities for dynamic state/action creation
+                                createState: store.createState.bind(store),
+                                createAction: store.createAction.bind(store),
+                                // Access to signal constructor for manual state creation
+                                signal: eleva.signal
+                            };
+                            // Call original setup if it exists
+                            const originalSetup = componentDef.setup;
+                            const result = originalSetup ? await originalSetup(ctx) : {};
+                            return result;
+                        }
+                    };
+                } else {
+                    wrappedChildren[selector] = childComponent;
+                }
+            }
+            // Call original _mountComponents with wrapped children
+            return await originalMountComponents.call(eleva, container, wrappedChildren, childInstances);
+        };
+        // Expose store instance and utilities on the Eleva instance
+        eleva.store = store;
+        /**
      * Expose utility methods on the Eleva instance
      * @namespace eleva.store
-     */
-    eleva.createAction = (name, actionFn) => {
-      store.actions[name] = actionFn;
-    };
-    eleva.dispatch = (actionName, payload) => {
-      return store.dispatch(actionName, payload);
-    };
-    eleva.getState = () => {
-      return store.getState();
-    };
-    eleva.subscribe = callback => {
-      return store.subscribe(callback);
-    };
-
-    // Store original methods for cleanup
-    eleva._originalMount = originalMount;
-    eleva._originalMountComponents = originalMountComponents;
-  },
-  /**
+     */ eleva.createAction = (name, actionFn)=>{
+            store.actions[name] = actionFn;
+        };
+        eleva.dispatch = (actionName, payload)=>{
+            return store.dispatch(actionName, payload);
+        };
+        eleva.getState = ()=>{
+            return store.getState();
+        };
+        eleva.subscribe = (callback)=>{
+            return store.subscribe(callback);
+        };
+        // Store original methods for cleanup
+        eleva._originalMount = originalMount;
+        eleva._originalMountComponents = originalMountComponents;
+    },
+    /**
    * Uninstalls the plugin from the Eleva instance
    *
    * @param {Object} eleva - The Eleva instance
@@ -3357,37 +2963,34 @@ const StorePlugin = {
    * @example
    * // Uninstall the plugin
    * StorePlugin.uninstall(app);
-   */
-  uninstall(eleva) {
-    // Restore original mount method
-    if (eleva._originalMount) {
-      eleva.mount = eleva._originalMount;
-      delete eleva._originalMount;
+   */ uninstall (eleva) {
+        // Restore original mount method
+        if (eleva._originalMount) {
+            eleva.mount = eleva._originalMount;
+            delete eleva._originalMount;
+        }
+        // Restore original _mountComponents method
+        if (eleva._originalMountComponents) {
+            eleva._mountComponents = eleva._originalMountComponents;
+            delete eleva._originalMountComponents;
+        }
+        // Remove store instance and utility methods
+        if (eleva.store) {
+            delete eleva.store;
+        }
+        if (eleva.createAction) {
+            delete eleva.createAction;
+        }
+        if (eleva.dispatch) {
+            delete eleva.dispatch;
+        }
+        if (eleva.getState) {
+            delete eleva.getState;
+        }
+        if (eleva.subscribe) {
+            delete eleva.subscribe;
+        }
     }
-
-    // Restore original _mountComponents method
-    if (eleva._originalMountComponents) {
-      eleva._mountComponents = eleva._originalMountComponents;
-      delete eleva._originalMountComponents;
-    }
-
-    // Remove store instance and utility methods
-    if (eleva.store) {
-      delete eleva.store;
-    }
-    if (eleva.createAction) {
-      delete eleva.createAction;
-    }
-    if (eleva.dispatch) {
-      delete eleva.dispatch;
-    }
-    if (eleva.getState) {
-      delete eleva.getState;
-    }
-    if (eleva.subscribe) {
-      delete eleva.subscribe;
-    }
-  }
 };
 
 exports.Attr = AttrPlugin;

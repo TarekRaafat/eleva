@@ -1,6 +1,6 @@
 # Props Plugin
 
-> **Version:** 1.0.0-rc.11 | **Type:** Props Handling Plugin | **Bundle Size:** ~4.2KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.0-rc.12 | **Type:** Props Handling Plugin | **Bundle Size:** ~4.2KB minified | **Dependencies:** Eleva core
 
 The Props plugin supercharges Eleva's component system by enabling automatic type detection, parsing, and reactivity for component props. It allows you to pass complex data structures (objects, arrays, dates) directly via HTML attributes and ensures they stay in sync with parent state.
 

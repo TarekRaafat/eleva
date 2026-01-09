@@ -1674,6 +1674,119 @@
         }
       },
       "methodology": "standard"
+    },
+    "1.0.0-rc.12": {
+      "version": "1.0.0-rc.12",
+      "timestamp": "2026-01-09T00:10:20.520Z",
+      "runtime": "Bun 1.3.5",
+      "platform": "darwin arm64",
+      "results": {
+        "Framework Instantiation": {
+          "name": "Framework Instantiation",
+          "median": 0.002687500000320142,
+          "mean": 0.0025582000002032147,
+          "stdDev": 0.0009714889394150954,
+          "min": 0.0010419999998703133,
+          "max": 0.0037080000001878943,
+          "runs": 10,
+          "cv": 0.37975488208033914,
+          "opsPerRun": 1,
+          "budget": 10,
+          "passed": true
+        },
+        "Component Registration (×10)": {
+          "name": "Component Registration (×10)",
+          "median": 0.003875000000334694,
+          "mean": 0.004083444444404449,
+          "stdDev": 0.001077047312209766,
+          "min": 0.0030000000006111804,
+          "max": 0.006874999999126885,
+          "runs": 9,
+          "cv": 0.26375951157744926,
+          "opsPerRun": 10,
+          "budget": 20,
+          "passed": true
+        },
+        "Component Mount": {
+          "name": "Component Mount",
+          "median": 0.03366699999969569,
+          "mean": 0.036259111111171985,
+          "stdDev": 0.008624167546925748,
+          "min": 0.025916000000506756,
+          "max": 0.05175000000053842,
+          "runs": 9,
+          "cv": 0.23784828923366824,
+          "opsPerRun": 1,
+          "budget": 20,
+          "passed": true
+        },
+        "Reactive Updates (×100)": {
+          "name": "Reactive Updates (×100)",
+          "median": 0.006979499999943073,
+          "mean": 0.010450099999616214,
+          "stdDev": 0.005930909533066474,
+          "min": 0.005624999999781721,
+          "max": 0.022124999999505235,
+          "runs": 10,
+          "cv": 0.5675457204509325,
+          "opsPerRun": 100,
+          "budget": 50,
+          "passed": true
+        },
+        "Lifecycle Cycles (×10)": {
+          "name": "Lifecycle Cycles (×10)",
+          "median": 0.2120840000006865,
+          "mean": 0.21632422222218237,
+          "stdDev": 0.011220414617002433,
+          "min": 0.20524999999906868,
+          "max": 0.24200000000018917,
+          "runs": 9,
+          "cv": 0.05186850784318626,
+          "opsPerRun": 10,
+          "budget": 100,
+          "passed": true
+        },
+        "Event Handling (×50)": {
+          "name": "Event Handling (×50)",
+          "median": 0.14287500000136788,
+          "mean": 0.19027355555570263,
+          "stdDev": 0.08591476559294572,
+          "min": 0.10779200000069977,
+          "max": 0.35533399999985704,
+          "runs": 9,
+          "cv": 0.45153287508622897,
+          "opsPerRun": 50,
+          "budget": 50,
+          "passed": true
+        },
+        "Large List Update (500 items)": {
+          "name": "Large List Update (500 items)",
+          "median": 0.0155414999999266,
+          "mean": 0.020300000000133878,
+          "stdDev": 0.006830387588031483,
+          "min": 0.01445899999998801,
+          "max": 0.03241700000035053,
+          "runs": 10,
+          "cv": 0.3364722949747013,
+          "opsPerRun": 500,
+          "budget": 100,
+          "passed": true
+        },
+        "Complex Template (50×5)": {
+          "name": "Complex Template (50×5)",
+          "median": 0.012146000000029744,
+          "mean": 0.012258400000428082,
+          "stdDev": 0.001509963787497319,
+          "min": 0.010417000001325505,
+          "max": 0.0147080000006099,
+          "runs": 10,
+          "cv": 0.1231778851599384,
+          "opsPerRun": 250,
+          "budget": 50,
+          "passed": true
+        }
+      },
+      "methodology": "standard"
     }
   }
 }

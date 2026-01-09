@@ -116,9 +116,9 @@ export class Emitter {
    * unsubscribe(); // Stops listening for the event
    */
   on(event, handler) {
-    if (!this._events.has(event)) this._events.set(event, new Set());
-
-    this._events.get(event).add(handler);
+    let h = this._events.get(event);
+    if (!h) this._events.set(event, (h = new Set()));
+    h.add(handler);
     return () => this.off(event, handler);
   }
 
@@ -148,7 +148,6 @@ export class Emitter {
     if (handler) {
       const handlers = this._events.get(event);
       handlers.delete(handler);
-      // Remove the event if there are no handlers left
       if (handlers.size === 0) this._events.delete(event);
     } else {
       this._events.delete(event);
@@ -179,7 +178,7 @@ export class Emitter {
    * emitter.emit('app:ready');
    */
   emit(event, ...args) {
-    if (!this._events.has(event)) return;
-    this._events.get(event).forEach((handler) => handler(...args));
+    const handlers = this._events.get(event);
+    if (handlers) for (const handler of handlers) handler(...args);
   }
 }

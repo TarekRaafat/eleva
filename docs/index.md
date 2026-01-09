@@ -27,7 +27,7 @@ head:
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.0-rc.11` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.0.0-rc.12` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -73,7 +73,7 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.11. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.12. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -81,9 +81,9 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
 
 How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, and Angular?
 
-| Feature | Eleva | React | Vue | Svelte | Angular |
-|---------|----------|-------|-----|--------|---------|
-| **Bundle Size** | ~6KB | ~42KB | ~34KB | ~2.5KB* | ~130KB |
+| Feature | Eleva 1.0 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
+|---------|-----------|----------|---------|----------|------------|
+| **Bundle Size** | ~6KB | ~44KB | ~45KB | ~3KB* | ~90KB |
 | **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
 | **Virtual DOM** | No | Yes | Yes | No | No |
 | **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
@@ -92,7 +92,7 @@ How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte,
 | **Learning Curve** | Low | Medium | Medium | Low | High |
 | **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | Decorators |
 
-_*Svelte compiles away, so runtime is minimal but build step is required._
+_*Svelte 5 compiles away with a ~3KB signals runtime, so bundle is minimal but build step is required._
 
 ### When to Use Eleva
 
@@ -125,7 +125,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
 | **No Hidden Magic** | Debug easily with transparent, predictable behavior |
 | **Sync & Async Hooks** | Lifecycle hooks that work the way you expect |
 
@@ -275,7 +275,7 @@ setup: ({ signal }) => ({
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| `Attr` | ARIA, data-*, boolean attributes | ~2.4KB | [→](./plugins/attr.md) |
+| `Attr` | ARIA, data-*, boolean attributes | ~2.2KB | [→](./plugins/attr.md) |
 | `Props` | Complex prop parsing & reactivity | ~4.2KB | [→](./plugins/props.md) |
 | `Router` | Client-side routing & guards | ~15KB | [→](./plugins/router.md) |
 | `Store` | Global state management | ~6KB | [→](./plugins/store.md) |
@@ -442,17 +442,17 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~37**                 | ~97*                    | ~15             |
+| **Eleva 1.0** (Direct DOM)    | **~2.3 KB**                | **~30**                 | ~105*                   | ~15             |
 | **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
+| **Vue 3.5** (Reactive)        | ~45 KB                     | 25-45                   | 5-15                    | 2-4             |
 | **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
 
 _*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
 **Eleva's Strengths:**
 - **240fps+ capable** - Framework never limits frame rate
-- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
-- **Competitive initial render** (~37ms for 1K rows)
+- **Smallest bundle size** (~2.3 KB vs 44-90 KB)
+- **Competitive initial render** (~30ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render
 
@@ -486,7 +486,7 @@ const app = new Eleva("MyApp");
 **With Individual Plugins (Optional):**
 ```javascript
 import Eleva from 'eleva';
-import { Attr } from 'eleva/plugins/attr';      // ~2.4KB
+import { Attr } from 'eleva/plugins/attr';      // ~2.2KB
 import { Props } from 'eleva/plugins/props';    // ~4.2KB
 import { Router } from 'eleva/plugins/router';  // ~15KB
 import { Store } from 'eleva/plugins/store';    // ~6KB
@@ -2130,7 +2130,7 @@ app.use(Store, {
 - **Core + All plugins**: ~25KB (minified)
 
 **Individual Plugin Sizes:**
-- **Attr plugin only**: ~2.4KB (minified)
+- **Attr plugin only**: ~2.2KB (minified)
 - **Props plugin only**: ~4.2KB (minified)
 - **Router plugin only**: ~15KB (minified)
 - **Store plugin only**: ~6KB (minified)
@@ -4369,7 +4369,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 
 | Metric | Value |
 |--------|-------|
-| **Bundle Size** | ~6KB minified, ~2.5KB gzipped |
+| **Bundle Size** | ~6KB minified, ~2.3KB gzipped |
 | **Dependencies** | Zero |
 | **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
 | **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |

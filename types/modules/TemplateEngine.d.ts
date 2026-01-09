@@ -66,6 +66,15 @@ export class TemplateEngine {
      */
     private static expressionPattern;
     /**
+     * Cache for compiled expression functions.
+     * Stores compiled Function objects keyed by expression string for O(1) lookup.
+     *
+     * @static
+     * @private
+     * @type {Map<string, Function>}
+     */
+    private static _functionCache;
+    /**
      * Parses a template string, replacing expressions with their evaluated values.
      * Expressions are evaluated in the provided data context.
      *
@@ -115,7 +124,7 @@ export class TemplateEngine {
      * @static
      * @param {Expression|unknown} expression - The expression to evaluate.
      * @param {TemplateData} data - The data context for evaluation.
-     * @returns {EvaluationResult} The result of the evaluation, or an empty string if evaluation fails.
+     * @returns {EvaluationResult} The result of the evaluation, or undefined if evaluation fails.
      *
      * @example
      * // Property access
@@ -141,9 +150,9 @@ export class TemplateEngine {
      * // Result: "2024-01-01T00:00:00.000Z"
      *
      * @example
-     * // Failed evaluation returns empty string
+     * // Failed evaluation returns undefined
      * TemplateEngine.evaluate("nonexistent.property", {});
-     * // Result: ""
+     * // Result: undefined
      */
     public static evaluate(expression: Expression | unknown, data: TemplateData): EvaluationResult;
 }

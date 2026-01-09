@@ -1,6 +1,5 @@
-import { babel } from "@rollup/plugin-babel";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
-import terser from "@rollup/plugin-terser";
+import { swc, minify } from "rollup-plugin-swc3";
 import { codecovRollupPlugin } from "@codecov/rollup-plugin";
 import pkg from "./package.json" with { type: "json" };
 
@@ -23,54 +22,54 @@ const routerPluginBanner = createBanner("Eleva Router Plugin", RouterPlugin.vers
 const propsPluginBanner = createBanner("Eleva Props Plugin", PropsPlugin.version);
 const storePluginBanner = createBanner("Eleva Store Plugin", StorePlugin.version);
 
-
-
-const terserConfig = {
+// SWC minify configuration - optimized for smallest output
+const swcMinifyConfig = {
+  sourceMap: true,
   compress: {
-    passes: 2,
+    passes: 3,
     drop_console: true,
     drop_debugger: true,
-    pure_funcs: ["console.log", "console.warn"],
+    pure_funcs: ["console.log", "console.warn", "console.info"],
     unsafe_arrows: true,
     unsafe_methods: true,
-    unsafe_proto: true,
     keep_fargs: false,
     toplevel: true,
     pure_getters: true,
     reduce_vars: true,
     collapse_vars: true,
+    dead_code: true,
+    inline: 3,
+    evaluate: true,
+    hoist_funs: true,
+    sequences: true,
+    conditionals: true,
   },
   mangle: {
     toplevel: true,
   },
   format: {
-    comments: /^!/,
+    comments: false,
   },
+};
+
+// SWC transform configuration
+const swcConfig = {
+  jsc: {
+    parser: {
+      syntax: "ecmascript",
+    },
+    target: "es2020",
+    loose: true,
+  },
+  minify: false,
+  sourceMaps: true,
 };
 
 const commonPlugins = [
   nodeResolve({
     browser: true,
   }),
-  babel({
-    babelHelpers: "bundled",
-    exclude: "node_modules/**",
-    presets: [
-      [
-        "@babel/preset-env",
-        {
-          targets: pkg.browserslist,
-          bugfixes: true,
-          loose: true,
-          modules: false,
-          useBuiltIns: false,
-          corejs: false,
-          spec: false,
-          forceAllTransforms: false,
-        },
-      ],
-    ],
-  }),
+  swc(swcConfig),
 ];
 
 // Core framework configuration
@@ -106,7 +105,7 @@ const coreConfig = {
       banner: coreBanner,
       file: "./dist/eleva.umd.min.js",
       format: "umd",
-      plugins: [terser(terserConfig)],
+      plugins: [minify(swcMinifyConfig)],
     },
   ],
   treeshake: {
@@ -159,7 +158,7 @@ const pluginConfig = {
       banner: pluginsBanner,
       file: "./dist/eleva-plugins.umd.min.js",
       format: "umd",
-      plugins: [terser(terserConfig)],
+      plugins: [minify(swcMinifyConfig)],
     },
   ],
   treeshake: {
@@ -198,7 +197,7 @@ const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
       banner: banner,
       file: `./dist/plugins/${pluginName.toLowerCase()}.umd.min.js`,
       format: "umd",
-      plugins: [terser(terserConfig)],
+      plugins: [minify(swcMinifyConfig)],
     },
   ],
   treeshake: {

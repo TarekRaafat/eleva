@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.0-rc.11` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.0-rc.12` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -42,9 +42,9 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.11` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.12` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.11`
+**Version:** `1.0.0-rc.12`
 
 
 
@@ -193,7 +193,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
@@ -242,7 +242,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.11` indicate the API is stable but still gathering community feedback before the final release.
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.12` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
@@ -262,7 +262,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6 KB minified and ~2.5 KB gzipped.
+- **Lightweight:** Approximately ~6 KB minified and ~2.3 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -277,16 +277,16 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~37**                 | ~97*                    | ~15             |
+| **Eleva 1.0** (Direct DOM)    | **~2.3 KB**                | **~30**                 | ~105*                   | ~15             |
 | **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
+| **Vue 3.5** (Reactive)        | ~45 KB                     | 25-45                   | 5-15                    | 2-4             |
 | **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
 
 _*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
 **Eleva's Strengths:**
-- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
-- **Competitive initial render** (~37ms for 1K rows)
+- **Smallest bundle size** (~2.3 KB vs 44-90 KB)
+- **Competitive initial render** (~30ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead
 
@@ -305,9 +305,9 @@ _*Eleva uses DOM diffing & patching, but templates generate HTML strings that re
 
 How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, and Angular?
 
-| Feature | Eleva | React | Vue | Svelte | Angular |
-|---------|----------|-------|-----|--------|---------|
-| **Bundle Size** | ~6KB | ~42KB | ~34KB | ~2.5KB* | ~130KB |
+| Feature | Eleva 1.0 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
+|---------|-----------|----------|---------|----------|------------|
+| **Bundle Size** | ~6KB | ~44KB | ~45KB | ~3KB* | ~90KB |
 | **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
 | **Virtual DOM** | No | Yes | Yes | No | No |
 | **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
@@ -315,7 +315,7 @@ How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte,
 | **Build Required** | No | Yes | Optional | Yes | Yes |
 | **Learning Curve** | Low | Medium | Medium | Low | High |
 
-_*Svelte compiles away, so runtime is minimal but build step is required._
+_*Svelte 5 compiles away with a ~3KB signals runtime, so bundle is minimal but build step is required._
 
 Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular:
 
@@ -799,7 +799,7 @@ app.dispatch("increment");          // Dispatch actions globally
 - Core + All plugins: ~25KB (minified)
 
 **Individual Plugin Sizes:**
-- Attr: ~2.4KB (minified)
+- Attr: ~2.2KB (minified)
 - Props: ~4.2KB (minified)
 - Router: ~15KB (minified)
 - Store: ~6KB (minified)

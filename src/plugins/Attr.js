@@ -47,7 +47,7 @@ export const AttrPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.11",
+  version: "1.0.0-rc.12",
 
   /**
    * Plugin description
@@ -197,19 +197,14 @@ export const AttrPlugin = {
       eleva.renderer._patchNode = function (oldNode, newNode) {
         if (oldNode?._eleva_instance) return;
 
-        if (!this._isSameNode(oldNode, newNode)) {
-          oldNode.replaceWith(newNode.cloneNode(true));
-          return;
-        }
-
-        if (oldNode.nodeType === Node.ELEMENT_NODE) {
+        if (oldNode.nodeType === 3) {
+          if (oldNode.nodeValue !== newNode.nodeValue) {
+            oldNode.nodeValue = newNode.nodeValue;
+          }
+        } else if (oldNode.nodeType === 1) {
+          // Use advanced attribute handler instead of basic _updateAttributes
           updateAttributes(oldNode, newNode);
           this._diff(oldNode, newNode);
-        } else if (
-          oldNode.nodeType === Node.TEXT_NODE &&
-          oldNode.nodeValue !== newNode.nodeValue
-        ) {
-          oldNode.nodeValue = newNode.nodeValue;
         }
       };
     }

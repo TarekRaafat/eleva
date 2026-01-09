@@ -26,9 +26,10 @@
 /**
  * @class ⚡ Signal
  * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
- * Signals notify registered watchers when their value changes, enabling efficient DOM updates
- * through targeted patching rather than full re-renders.
- * Updates are batched using microtasks to prevent multiple synchronous notifications.
+ * Signals notify registered watchers synchronously when their value changes, enabling efficient
+ * DOM updates through targeted patching rather than full re-renders.
+ * Synchronous notification preserves stack traces and allows immediate value inspection.
+ * Render batching is handled at the component level, not the signal level.
  * The class is generic, allowing type-safe handling of any value type T.
  *
  * @template T The type of value held by this signal
@@ -78,23 +79,17 @@ export class Signal {
    */
   constructor(value) {
     /**
-     * Internal storage for the signal's current value
+     * Internal storage for the signal's current value.
      * @private
      * @type {T}
      */
     this._value = value;
     /**
-     * Collection of callback functions to be notified when value changes
+     * Collection of callback functions to be notified when value changes.
      * @private
      * @type {Set<SignalWatcher<T>>}
      */
     this._watchers = new Set();
-    /**
-     * Flag to prevent multiple synchronous watcher notifications
-     * @private
-     * @type {boolean}
-     */
-    this._pending = false;
   }
 
   /**
@@ -108,18 +103,18 @@ export class Signal {
   }
 
   /**
-   * Sets a new value for the signal and notifies all registered watchers if the value has changed.
-   * The notification is batched using microtasks to prevent multiple synchronous updates.
+   * Sets a new value for the signal and synchronously notifies all registered watchers if the value has changed.
+   * Synchronous notification preserves stack traces and ensures immediate value consistency.
    *
    * @public
    * @param {T} newVal - The new value to set.
    * @returns {void}
    */
   set value(newVal) {
-    if (this._value === newVal) return;
-
-    this._value = newVal;
-    this._notify();
+    if (this._value !== newVal) {
+      this._value = newVal;
+      this._notify();
+    }
   }
 
   /**
@@ -150,21 +145,14 @@ export class Signal {
   }
 
   /**
-   * Notifies all registered watchers of a value change using microtask scheduling.
-   * Uses a pending flag to batch multiple synchronous updates into a single notification.
-   * All watcher callbacks receive the current value when executed.
+   * Synchronously notifies all registered watchers of the value change.
+   * This preserves stack traces for debugging and ensures immediate
+   * value consistency. Render batching is handled at the component level.
    *
    * @private
    * @returns {void}
    */
   _notify() {
-    if (this._pending) return;
-
-    this._pending = true;
-    queueMicrotask(() => {
-      /** @type {(fn: (value: T) => void) => void} */
-      this._watchers.forEach((fn) => fn(this._value));
-      this._pending = false;
-    });
+    for (const fn of this._watchers) fn(this._value);
   }
 }

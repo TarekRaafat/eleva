@@ -1,6 +1,6 @@
 # Attr Plugin
 
-> **Version:** 1.0.0-rc.11 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.4KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.0-rc.12 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
 
@@ -1486,7 +1486,7 @@ checked.value = true;
 
 ### Plugin Statistics
 
-- **Size**: ~2.4KB minified
+- **Size**: ~2.2KB minified
 - **Dependencies**: None (uses core Eleva only)
 - **Browser Support**: All modern browsers
 - **Configuration Options**: 4

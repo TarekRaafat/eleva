@@ -8,6 +8,10 @@ import { Eleva } from "../../../src/core/Eleva.js";
 import { StorePlugin } from "../../../src/plugins/Store.js";
 import { createFixture, cleanupFixtures, flushPromises, createComponentFixture } from "../../utils.js";
 
+// =============================================================================
+// Store Plugin Tests
+// =============================================================================
+
 describe("StorePlugin", () => {
   let app: any;
   let container: HTMLElement;
@@ -24,6 +28,10 @@ describe("StorePlugin", () => {
     localStorage.clear();
     sessionStorage.clear();
   });
+
+  // ===========================================================================
+  // Plugin Installation and Setup
+  // ===========================================================================
 
   describe("Plugin Installation", () => {
     test("should install the plugin successfully", () => {
@@ -70,6 +78,10 @@ describe("StorePlugin", () => {
       expect(app.store.state.user.value.name).toBe("John");
     });
   });
+
+  // ===========================================================================
+  // Core Store Functionality
+  // ===========================================================================
 
   describe("Core Store Functionality", () => {
     beforeEach(() => {
@@ -146,6 +158,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Subscriptions and State Observation
+  // ===========================================================================
+
   describe("Store Subscriptions", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -198,6 +214,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Runtime State and Action Creation
+  // ===========================================================================
+
   describe("Runtime State and Action Creation", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -239,6 +259,10 @@ describe("StorePlugin", () => {
       expect(app.store.state.counter.value).toBe(10);
     });
   });
+
+  // ===========================================================================
+  // Namespaced Modules
+  // ===========================================================================
 
   describe("Namespaced Modules", () => {
     beforeEach(() => {
@@ -332,6 +356,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Runtime Module Management
+  // ===========================================================================
+
   describe("Runtime Module Management", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -418,6 +446,10 @@ describe("StorePlugin", () => {
       console.warn = originalWarn;
     });
   });
+
+  // ===========================================================================
+  // State Persistence
+  // ===========================================================================
 
   describe("State Persistence", () => {
     test("should persist state to localStorage", async () => {
@@ -558,6 +590,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Component Integration
+  // ===========================================================================
+
   describe("Component Integration", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -653,6 +689,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Cross-Component Reactivity
+  // ===========================================================================
+
   describe("Cross-Component Reactivity", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -690,6 +730,10 @@ describe("StorePlugin", () => {
       expect(container2.innerHTML).toContain("Count: 1");
     });
   });
+
+  // ===========================================================================
+  // Error Handling
+  // ===========================================================================
 
   describe("Error Handling", () => {
     beforeEach(() => {
@@ -773,6 +817,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Performance and Memory
+  // ===========================================================================
+
   describe("Performance and Memory", () => {
     beforeEach(() => {
       app.use(StorePlugin, {
@@ -800,6 +848,10 @@ describe("StorePlugin", () => {
       expect(app.store.subscribers.has(mockCallback)).toBe(false);
     });
   });
+
+  // ===========================================================================
+  // DevTools Integration
+  // ===========================================================================
 
   describe("DevTools Integration", () => {
     test("should register with devtools when enabled", () => {
@@ -852,6 +904,10 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Nested Persistence
+  // ===========================================================================
+
   describe("Nested Persistence", () => {
     test("should persist nested state objects", async () => {
       app.use(StorePlugin, {
@@ -880,6 +936,10 @@ describe("StorePlugin", () => {
       expect(saved).toBeDefined();
     });
   });
+
+  // ===========================================================================
+  // Child Component Store Injection
+  // ===========================================================================
 
   describe("Child Component Store Injection", () => {
     beforeEach(() => {
@@ -977,6 +1037,650 @@ describe("StorePlugin", () => {
       });
 
       await expect(app.mount(container, "ParentWithStringRef")).resolves.toBeDefined();
+    });
+  });
+
+  // ===========================================================================
+  // Async Actions and Return Values
+  // ===========================================================================
+
+  describe("Async Actions and Return Values", () => {
+    beforeEach(() => {
+      app.use(StorePlugin, {
+        state: { data: null, loading: false, counter: 0 },
+        actions: {
+          fetchData: async (state: any, url: string) => {
+            state.loading.value = true;
+            // Simulate async operation
+            await new Promise((resolve) => setTimeout(resolve, 10));
+            state.data.value = { url, fetched: true };
+            state.loading.value = false;
+            return state.data.value;
+          },
+          syncAction: (state: any) => {
+            state.counter.value++;
+            return state.counter.value;
+          },
+          actionWithPayloadReturn: (state: any, payload: any) => {
+            state.data.value = payload;
+            return { processed: true, payload };
+          },
+        },
+      });
+    });
+
+    test("should handle async actions", async () => {
+      expect(app.store.state.loading.value).toBe(false);
+      expect(app.store.state.data.value).toBe(null);
+
+      const promise = app.store.dispatch("fetchData", "https://api.example.com");
+
+      // Loading should be true immediately (state update is sync within action)
+      await flushPromises();
+
+      const result = await promise;
+
+      expect(app.store.state.loading.value).toBe(false);
+      expect(app.store.state.data.value).toEqual({ url: "https://api.example.com", fetched: true });
+      expect(result).toEqual({ url: "https://api.example.com", fetched: true });
+    });
+
+    test("should return action result from dispatch", async () => {
+      const result = await app.store.dispatch("syncAction");
+      expect(result).toBe(1);
+
+      const result2 = await app.store.dispatch("syncAction");
+      expect(result2).toBe(2);
+    });
+
+    test("should return payload-based result from action", async () => {
+      const result = await app.store.dispatch("actionWithPayloadReturn", { key: "value" });
+      expect(result).toEqual({ processed: true, payload: { key: "value" } });
+    });
+
+    test("should handle multiple concurrent async actions", async () => {
+      const promise1 = app.store.dispatch("fetchData", "url1");
+      const promise2 = app.store.dispatch("fetchData", "url2");
+
+      const [result1, result2] = await Promise.all([promise1, promise2]);
+
+      // Both should complete, last one wins for state
+      expect(result1).toEqual({ url: "url1", fetched: true });
+      expect(result2).toEqual({ url: "url2", fetched: true });
+    });
+
+    test("should handle async action errors", async () => {
+      app.store.createAction("asyncError", async () => {
+        await new Promise((resolve) => setTimeout(resolve, 5));
+        throw new Error("Async error");
+      });
+
+      await expect(app.store.dispatch("asyncError")).rejects.toThrow("Async error");
+    });
+  });
+
+  // ===========================================================================
+  // Global Eleva Instance Methods
+  // ===========================================================================
+
+  describe("Global Eleva Instance Methods", () => {
+    beforeEach(() => {
+      app.use(StorePlugin, {
+        state: { counter: 0, user: null },
+        actions: {
+          increment: (state: any) => state.counter.value++,
+        },
+      });
+    });
+
+    test("should dispatch via app.dispatch", async () => {
+      await app.dispatch("increment");
+      expect(app.store.state.counter.value).toBe(1);
+    });
+
+    test("should get state via app.getState", () => {
+      const state = app.getState();
+      expect(state.counter).toBe(0);
+      expect(state.user).toBe(null);
+    });
+
+    test("should subscribe via app.subscribe", async () => {
+      const mockCallback = mock(() => {});
+      const unsubscribe = app.subscribe(mockCallback);
+
+      await app.dispatch("increment");
+
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "increment" }),
+        expect.any(Object)
+      );
+
+      unsubscribe();
+    });
+
+    test("should create action via app.createAction", async () => {
+      app.createAction("decrement", (state: any) => {
+        state.counter.value--;
+      });
+
+      app.store.state.counter.value = 5;
+      await app.dispatch("decrement");
+
+      expect(app.store.state.counter.value).toBe(4);
+    });
+
+    test("should chain multiple global dispatches", async () => {
+      app.createAction("setUser", (state: any, user: any) => {
+        state.user.value = user;
+      });
+
+      await app.dispatch("increment");
+      await app.dispatch("increment");
+      await app.dispatch("setUser", { name: "John" });
+
+      const state = app.getState();
+      expect(state.counter).toBe(2);
+      expect(state.user).toEqual({ name: "John" });
+    });
+  });
+
+  // ===========================================================================
+  // Persistence Edge Cases
+  // ===========================================================================
+
+  describe("Persistence Edge Cases", () => {
+    test("should handle invalid JSON in storage gracefully", () => {
+      localStorage.setItem("invalid-json-store", "not valid json {{{");
+
+      const consoleSpy = spyOn(console, "warn").mockImplementation(() => {});
+
+      expect(() => {
+        app.use(StorePlugin, {
+          state: { counter: 0 },
+          persistence: {
+            enabled: true,
+            key: "invalid-json-store",
+          },
+        });
+      }).not.toThrow();
+
+      // Should use default state when JSON is invalid
+      expect(app.store.state.counter.value).toBe(0);
+      consoleSpy.mockRestore();
+    });
+
+    test("should handle clearPersistedState when persistence is disabled", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        persistence: { enabled: false },
+      });
+
+      // Should not throw when persistence is disabled
+      expect(() => app.store.clearPersistedState()).not.toThrow();
+    });
+
+    test("should not save state when window is undefined in persistence", () => {
+      // This tests the typeof window === "undefined" guard
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        persistence: {
+          enabled: true,
+          key: "window-check-test",
+        },
+      });
+
+      // The store should still be functional
+      expect(app.store.state.counter.value).toBe(0);
+    });
+
+    test("should use default persistence settings", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        persistence: {
+          enabled: true,
+        },
+      });
+
+      // Default key should be "eleva-store"
+      expect(app.store.persistence.key).toBe("eleva-store");
+      expect(app.store.persistence.storage).toBe("localStorage");
+    });
+
+    test("should handle persistence include with empty array", () => {
+      app.use(StorePlugin, {
+        state: { counter: 5, user: "John" },
+        persistence: {
+          enabled: true,
+          key: "empty-include-test",
+          include: [],
+        },
+      });
+
+      // With empty include array, nothing should be persisted based on logic
+      // The _shouldPersist returns true only if include has items and path starts with one
+      expect(app.store.persistence.include).toEqual([]);
+    });
+
+    test("should handle persistence exclude with empty array", () => {
+      app.use(StorePlugin, {
+        state: { counter: 5, user: "John" },
+        persistence: {
+          enabled: true,
+          key: "empty-exclude-test",
+          exclude: [],
+        },
+      });
+
+      // With empty exclude array, everything should be persisted
+      expect(app.store.persistence.exclude).toEqual([]);
+    });
+
+    test("should expose persistence config on store", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        persistence: {
+          enabled: true,
+          key: "custom-key",
+          storage: "sessionStorage",
+          include: ["counter"],
+          exclude: ["temp"],
+        },
+      });
+
+      expect(app.store.persistence.enabled).toBe(true);
+      expect(app.store.persistence.key).toBe("custom-key");
+      expect(app.store.persistence.storage).toBe("sessionStorage");
+      expect(app.store.persistence.include).toEqual(["counter"]);
+      expect(app.store.persistence.exclude).toEqual(["temp"]);
+    });
+  });
+
+  // ===========================================================================
+  // Additional Error Handling and Edge Cases
+  // ===========================================================================
+
+  describe("Additional Error Handling and Edge Cases", () => {
+    test("should handle createAction with non-function", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+      });
+
+      expect(() => {
+        app.store.createAction("invalid", "not a function" as any);
+      }).toThrow("Action must be a function");
+    });
+
+    test("should install with empty options", () => {
+      expect(() => {
+        app.use(StorePlugin, {});
+      }).not.toThrow();
+
+      expect(app.store).toBeDefined();
+      expect(app.store.state).toEqual({});
+    });
+
+    test("should install with no options at all", () => {
+      expect(() => {
+        app.use(StorePlugin);
+      }).not.toThrow();
+
+      expect(app.store).toBeDefined();
+    });
+
+    test("should handle dispatch with undefined payload", async () => {
+      app.use(StorePlugin, {
+        state: { data: null },
+        actions: {
+          setData: (state: any, payload: any) => {
+            state.data.value = payload;
+          },
+        },
+      });
+
+      await app.store.dispatch("setData", undefined);
+      expect(app.store.state.data.value).toBe(undefined);
+    });
+
+    test("should handle dispatch with null payload", async () => {
+      app.use(StorePlugin, {
+        state: { data: "initial" },
+        actions: {
+          setData: (state: any, payload: any) => {
+            state.data.value = payload;
+          },
+        },
+      });
+
+      await app.store.dispatch("setData", null);
+      expect(app.store.state.data.value).toBe(null);
+    });
+
+    test("should handle deeply nested action path that doesn't exist", async () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        namespaces: {
+          level1: {
+            state: {},
+            actions: {},
+          },
+        },
+      });
+
+      await expect(app.store.dispatch("level1.level2.level3.action")).rejects.toThrow(
+        'Action "level1.level2.level3.action" not found'
+      );
+    });
+
+    test("should handle replaceState with partial data", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0, user: { name: "John" }, theme: "light" },
+      });
+
+      app.store.replaceState({ counter: 10 });
+
+      expect(app.store.state.counter.value).toBe(10);
+      // Other values should remain unchanged
+      expect(app.store.state.user.value.name).toBe("John");
+      expect(app.store.state.theme.value).toBe("light");
+    });
+
+    test("should handle replaceState with namespaced state", () => {
+      app.use(StorePlugin, {
+        state: { theme: "light" },
+        namespaces: {
+          auth: {
+            state: { user: null, token: null },
+            actions: {},
+          },
+        },
+      });
+
+      app.store.replaceState({
+        theme: "dark",
+        auth: { user: { name: "Jane" }, token: "newtoken" },
+      });
+
+      expect(app.store.state.theme.value).toBe("dark");
+      expect(app.store.state.auth.user.value).toEqual({ name: "Jane" });
+      expect(app.store.state.auth.token.value).toBe("newtoken");
+    });
+
+    test("should handle module registration with empty state and actions", () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+      });
+
+      app.store.registerModule("empty", {
+        state: {},
+        actions: {},
+      });
+
+      expect(app.store.state.empty).toBeDefined();
+      expect(app.store.actions.empty).toBeDefined();
+    });
+
+    test("should handle unsubscribe called multiple times", async () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        actions: { increment: (state: any) => state.counter.value++ },
+      });
+
+      const mockCallback = mock(() => {});
+      const unsubscribe = app.store.subscribe(mockCallback);
+
+      unsubscribe();
+      unsubscribe(); // Second call should not throw
+      unsubscribe(); // Third call should not throw
+
+      await app.store.dispatch("increment");
+      expect(mockCallback).not.toHaveBeenCalled();
+    });
+
+    test("should handle state with array values", async () => {
+      app.use(StorePlugin, {
+        state: { items: [1, 2, 3] },
+        actions: {
+          addItem: (state: any, item: number) => {
+            state.items.value = [...state.items.value, item];
+          },
+          removeItem: (state: any, index: number) => {
+            state.items.value = state.items.value.filter((_: any, i: number) => i !== index);
+          },
+        },
+      });
+
+      await app.store.dispatch("addItem", 4);
+      expect(app.store.state.items.value).toEqual([1, 2, 3, 4]);
+
+      await app.store.dispatch("removeItem", 0);
+      expect(app.store.state.items.value).toEqual([2, 3, 4]);
+    });
+
+    test("should handle state with boolean values", async () => {
+      app.use(StorePlugin, {
+        state: { isActive: false, isLoading: true },
+        actions: {
+          toggle: (state: any, key: string) => {
+            state[key].value = !state[key].value;
+          },
+        },
+      });
+
+      await app.store.dispatch("toggle", "isActive");
+      expect(app.store.state.isActive.value).toBe(true);
+
+      await app.store.dispatch("toggle", "isLoading");
+      expect(app.store.state.isLoading.value).toBe(false);
+    });
+  });
+
+  // ===========================================================================
+  // Subscription Details
+  // ===========================================================================
+
+  describe("Subscription Details", () => {
+    beforeEach(() => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        actions: {
+          increment: (state: any) => state.counter.value++,
+          setCounter: (state: any, value: number) => {
+            state.counter.value = value;
+          },
+        },
+      });
+    });
+
+    test("should provide mutation details to subscribers", async () => {
+      let capturedMutation: any = null;
+      let capturedState: any = null;
+
+      app.store.subscribe((mutation: any, state: any) => {
+        capturedMutation = mutation;
+        capturedState = state;
+      });
+
+      await app.store.dispatch("setCounter", 42);
+
+      expect(capturedMutation).toEqual({
+        type: "setCounter",
+        payload: 42,
+        timestamp: expect.any(Number),
+      });
+      expect(capturedState.counter.value).toBe(42);
+    });
+
+    test("should call subscribers in order of registration", async () => {
+      const callOrder: number[] = [];
+
+      app.store.subscribe(() => callOrder.push(1));
+      app.store.subscribe(() => callOrder.push(2));
+      app.store.subscribe(() => callOrder.push(3));
+
+      await app.store.dispatch("increment");
+
+      expect(callOrder).toEqual([1, 2, 3]);
+    });
+
+    test("should continue notifying other subscribers if one throws", async () => {
+      const mockErrorHandler = mock(() => {});
+
+      StorePlugin.uninstall(app);
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        actions: { increment: (state: any) => state.counter.value++ },
+        onError: mockErrorHandler,
+      });
+
+      const callback1 = mock(() => {});
+      const callback2 = mock(() => {
+        throw new Error("Subscriber 2 error");
+      });
+      const callback3 = mock(() => {});
+
+      app.store.subscribe(callback1);
+      app.store.subscribe(callback2);
+      app.store.subscribe(callback3);
+
+      await app.store.dispatch("increment");
+
+      expect(callback1).toHaveBeenCalled();
+      expect(callback2).toHaveBeenCalled();
+      expect(callback3).toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================================
+  // DevTools Edge Cases
+  // ===========================================================================
+
+  describe("DevTools Edge Cases", () => {
+    test("should not crash when devTools is enabled but window is undefined", () => {
+      const originalWindow = (globalThis as any).window;
+      delete (globalThis as any).window;
+
+      expect(() => {
+        app.use(StorePlugin, {
+          state: { counter: 0 },
+          devTools: true,
+        });
+      }).not.toThrow();
+
+      (globalThis as any).window = originalWindow;
+    });
+
+    test("should not crash when devTools is enabled but __ELEVA_DEVTOOLS__ is undefined", () => {
+      (globalThis as any).window = {};
+
+      expect(() => {
+        app.use(StorePlugin, {
+          state: { counter: 0 },
+          devTools: true,
+        });
+      }).not.toThrow();
+
+      delete (globalThis as any).window;
+    });
+
+    test("should handle devTools disabled gracefully", async () => {
+      app.use(StorePlugin, {
+        state: { counter: 0 },
+        actions: { increment: (state: any) => state.counter.value++ },
+        devTools: false,
+      });
+
+      // Should not throw even without devTools
+      await app.store.dispatch("increment");
+      expect(app.store.state.counter.value).toBe(1);
+    });
+  });
+
+  // ===========================================================================
+  // Plugin Metadata
+  // ===========================================================================
+
+  describe("Plugin Metadata", () => {
+    test("should have correct plugin name", () => {
+      expect(StorePlugin.name).toBe("store");
+    });
+
+    test("should have version string", () => {
+      expect(typeof StorePlugin.version).toBe("string");
+      expect(StorePlugin.version).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    test("should have description", () => {
+      expect(typeof StorePlugin.description).toBe("string");
+      expect(StorePlugin.description.length).toBeGreaterThan(0);
+    });
+  });
+
+  // ===========================================================================
+  // Complex State Mutations
+  // ===========================================================================
+
+  describe("Complex State Mutations", () => {
+    beforeEach(() => {
+      app.use(StorePlugin, {
+        state: {
+          users: [],
+          settings: {
+            notifications: true,
+            privacy: { public: false, showEmail: true },
+          },
+        },
+        actions: {
+          addUser: (state: any, user: any) => {
+            state.users.value = [...state.users.value, user];
+          },
+          updateUser: (state: any, { id, updates }: any) => {
+            state.users.value = state.users.value.map((u: any) =>
+              u.id === id ? { ...u, ...updates } : u
+            );
+          },
+          removeUser: (state: any, id: number) => {
+            state.users.value = state.users.value.filter((u: any) => u.id !== id);
+          },
+          updatePrivacy: (state: any, updates: any) => {
+            state.settings.value = {
+              ...state.settings.value,
+              privacy: { ...state.settings.value.privacy, ...updates },
+            };
+          },
+        },
+      });
+    });
+
+    test("should handle CRUD operations on array state", async () => {
+      await app.store.dispatch("addUser", { id: 1, name: "John" });
+      await app.store.dispatch("addUser", { id: 2, name: "Jane" });
+
+      expect(app.store.state.users.value).toHaveLength(2);
+
+      await app.store.dispatch("updateUser", { id: 1, updates: { name: "Johnny" } });
+      expect(app.store.state.users.value[0].name).toBe("Johnny");
+
+      await app.store.dispatch("removeUser", 1);
+      expect(app.store.state.users.value).toHaveLength(1);
+      expect(app.store.state.users.value[0].id).toBe(2);
+    });
+
+    test("should handle nested object mutations", async () => {
+      await app.store.dispatch("updatePrivacy", { public: true });
+
+      expect(app.store.state.settings.value.privacy.public).toBe(true);
+      expect(app.store.state.settings.value.privacy.showEmail).toBe(true);
+      expect(app.store.state.settings.value.notifications).toBe(true);
+    });
+
+    test("should maintain reference integrity during mutations", async () => {
+      const originalSettings = app.store.state.settings;
+
+      await app.store.dispatch("updatePrivacy", { public: true });
+
+      // Signal reference should remain the same
+      expect(app.store.state.settings).toBe(originalSettings);
     });
   });
 

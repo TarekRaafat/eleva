@@ -271,6 +271,9 @@ export class Eleva {
    *
    */
   constructor(name, config = {}) {
+    if (!name || typeof name !== "string") {
+      throw new Error("Eleva: name must be a non-empty string");
+    }
     /** @public {string} The unique identifier name for this Eleva instance */
     this.name = name;
     /** @public {Object<string, unknown>} Optional configuration object for the Eleva instance */
@@ -304,6 +307,7 @@ export class Eleva {
    * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
    * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
    * @returns {Eleva} The Eleva instance (for method chaining).
+   * @throws {Error} If plugin does not have an install function.
    * @example
    * app.use(myPlugin, { option1: "value1" });
    *
@@ -316,6 +320,9 @@ export class Eleva {
    * PluginA.uninstall(app);
    */
   use(plugin, options = {}) {
+    if (!plugin?.install || typeof plugin.install !== "function") {
+      throw new Error("Eleva: plugin must have an install function");
+    }
     this._plugins.set(plugin.name, plugin);
     const result = plugin.install(this, options);
 
@@ -330,7 +337,7 @@ export class Eleva {
    * @param {string} name - The unique name of the component to register.
    * @param {ComponentDefinition} definition - The component definition including setup, template, style, and children.
    * @returns {Eleva} The Eleva instance (for method chaining).
-   * @throws {Error} If the component name is already registered.
+   * @throws {Error} If name is not a non-empty string or definition has no template.
    * @example
    * app.component("myButton", {
    *   template: (ctx) => `<button>${ctx.props.text}</button>`,
@@ -338,6 +345,12 @@ export class Eleva {
    * });
    */
   component(name, definition) {
+    if (!name || typeof name !== "string") {
+      throw new Error("Eleva: component name must be a non-empty string");
+    }
+    if (!definition?.template) {
+      throw new Error(`Eleva: component "${name}" must have a template`);
+    }
     /** @type {Map<string, ComponentDefinition>} */
     this._components.set(name, definition);
     return this;
@@ -356,14 +369,16 @@ export class Eleva {
    *          - container: The mounted component's container element
    *          - data: The component's reactive state and context
    *          - unmount: Function to clean up and unmount the component
-   * @throws {Error} If the container is not found, or component is not registered.
+   * @throws {Error} If container is not a DOM element or component is not registered.
    * @example
    * const instance = await app.mount(document.getElementById("app"), "myComponent", { text: "Click me" });
    * // Later...
    * instance.unmount();
    */
   async mount(container, compName, props = {}) {
-    if (!container) throw new Error(`Container not found: ${container}`);
+    if (!container?.nodeType) {
+      throw new Error("Eleva: container must be a DOM element");
+    }
 
     if (container._eleva_instance) return container._eleva_instance;
 
@@ -422,20 +437,24 @@ export class Eleva {
       // Render Batching
       // ========================================================================
 
-      /** @private {boolean} Flag to prevent multiple queued renders */
+      /** @private {boolean} Flag to prevent concurrent renders */
       let renderScheduled = false;
 
       /**
-       * Schedules a batched render on the next microtask.
-       * Multiple signal changes within the same synchronous block are collapsed into one render.
+       * Schedules a render using microtask batching.
+       * Since signals now notify watchers synchronously, multiple signal
+       * changes in the same synchronous block will each call this function,
+       * but only one render will be scheduled via queueMicrotask.
+       * This separates concerns: signals handle state, components handle scheduling.
        * @private
        */
       const scheduleRender = () => {
         if (renderScheduled) return;
         renderScheduled = true;
-        queueMicrotask(async () => {
-          renderScheduled = false;
-          await render();
+        queueMicrotask(() => {
+          render().finally(() => {
+            renderScheduled = false;
+          });
         });
       };
 

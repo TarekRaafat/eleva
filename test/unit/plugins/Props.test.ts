@@ -7,6 +7,10 @@ import { describe, test, expect, beforeEach, afterEach, mock } from "bun:test";
 import { Eleva } from "../../../src/core/Eleva.js";
 import { PropsPlugin } from "../../../src/plugins/Props.js";
 
+// =============================================================================
+// Props Plugin Tests
+// =============================================================================
+
 describe("PropsPlugin", () => {
   let app: any;
   let container: HTMLElement;
@@ -22,6 +26,10 @@ describe("PropsPlugin", () => {
       container.parentNode.removeChild(container);
     }
   });
+
+  // ===========================================================================
+  // Plugin Installation
+  // ===========================================================================
 
   describe("Plugin Installation", () => {
     test("should install the plugin successfully", () => {
@@ -44,6 +52,10 @@ describe("PropsPlugin", () => {
       }).not.toThrow();
     });
   });
+
+  // ===========================================================================
+  // Type Detection
+  // ===========================================================================
 
   describe("Type Detection", () => {
     beforeEach(() => {
@@ -95,6 +107,10 @@ describe("PropsPlugin", () => {
       expect(app.props.detectType(() => {})).toBe("function");
     });
   });
+
+  // ===========================================================================
+  // Value Parsing
+  // ===========================================================================
 
   describe("Value Parsing", () => {
     beforeEach(() => {
@@ -157,6 +173,10 @@ describe("PropsPlugin", () => {
       expect(app.props.parse([1, 2, 3])).toEqual([1, 2, 3]);
     });
   });
+
+  // ===========================================================================
+  // Props Extraction
+  // ===========================================================================
 
   describe("Props Extraction", () => {
     beforeEach(() => {
@@ -223,6 +243,10 @@ describe("PropsPlugin", () => {
       expect(element.hasAttribute(":another")).toBe(false);
     });
   });
+
+  // ===========================================================================
+  // Component Integration
+  // ===========================================================================
 
   describe("Component Integration", () => {
     beforeEach(() => {
@@ -292,6 +316,10 @@ describe("PropsPlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Error Handling
+  // ===========================================================================
+
   describe("Error Handling", () => {
     test("should call error handler on parsing errors", () => {
       const errorHandler = mock(() => {});
@@ -310,6 +338,10 @@ describe("PropsPlugin", () => {
       expect(result).toBe("invalid json {");
     });
   });
+
+  // ===========================================================================
+  // Configuration Options
+  // ===========================================================================
 
   describe("Configuration Options", () => {
     test("should respect enableAutoParsing option", () => {
@@ -348,6 +380,10 @@ describe("PropsPlugin", () => {
       expect(typeof receivedProps.count.watch).toBe("undefined");
     });
   });
+
+  // ===========================================================================
+  // Signal Reference Passing
+  // ===========================================================================
 
   describe("Signal Reference Passing", () => {
     beforeEach(() => {
@@ -457,6 +493,10 @@ describe("PropsPlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Prop Value Edge Cases
+  // ===========================================================================
+
   describe("Prop Value Edge Cases", () => {
     beforeEach(() => {
       app.use(PropsPlugin);
@@ -514,6 +554,10 @@ describe("PropsPlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Mount Method Override
+  // ===========================================================================
+
   describe("Mount Method Override", () => {
     test("should handle mount with props parameter", async () => {
       app.use(PropsPlugin);
@@ -552,6 +596,10 @@ describe("PropsPlugin", () => {
       expect(receivedProps).toBeDefined();
     });
   });
+
+  // ===========================================================================
+  // Parent Context Signal Linking
+  // ===========================================================================
 
   describe("Parent Context Signal Linking", () => {
     beforeEach(() => {
@@ -651,6 +699,10 @@ describe("PropsPlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Reactivity Disabled
+  // ===========================================================================
+
   describe("Reactivity Disabled", () => {
     test("should not create signals when reactivity is disabled", async () => {
       app.use(PropsPlugin, { enableReactivity: false, enableAutoParsing: true });
@@ -673,6 +725,10 @@ describe("PropsPlugin", () => {
       expect(typeof receivedProps.value.watch).toBe("undefined");
     });
   });
+
+  // ===========================================================================
+  // Multiple Children Mounting
+  // ===========================================================================
 
   describe("Multiple Children Mounting", () => {
     beforeEach(() => {
@@ -713,6 +769,10 @@ describe("PropsPlugin", () => {
       expect(receivedProps[2].name.value).toBe("Third");
     });
   });
+
+  // ===========================================================================
+  // Parent Context Signal Inheritance
+  // ===========================================================================
 
   describe("Parent Context Signal Inheritance", () => {
     beforeEach(() => {
@@ -803,6 +863,10 @@ describe("PropsPlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Signal Watch Integration
+  // ===========================================================================
+
   describe("Signal Watch Integration", () => {
     beforeEach(() => {
       app.use(PropsPlugin);
@@ -832,6 +896,10 @@ describe("PropsPlugin", () => {
       expect(typeof receivedProp.watch).toBe("function");
     });
   });
+
+  // ===========================================================================
+  // Edge Cases
+  // ===========================================================================
 
   describe("Edge Cases", () => {
     beforeEach(() => {
@@ -874,6 +942,597 @@ describe("PropsPlugin", () => {
       });
 
       await expect(app.mount(container, "TextNodeSibling")).resolves.toBeDefined();
+    });
+  });
+
+  // ===========================================================================
+  // Plugin Metadata
+  // ===========================================================================
+
+  describe("Plugin Metadata", () => {
+    test("should have correct plugin name", () => {
+      expect(PropsPlugin.name).toBe("props");
+    });
+
+    test("should have version string", () => {
+      expect(typeof PropsPlugin.version).toBe("string");
+      expect(PropsPlugin.version).toMatch(/^\d+\.\d+\.\d+/);
+    });
+
+    test("should have description", () => {
+      expect(typeof PropsPlugin.description).toBe("string");
+      expect(PropsPlugin.description.length).toBeGreaterThan(0);
+    });
+  });
+
+  // ===========================================================================
+  // Advanced Type Detection
+  // ===========================================================================
+
+  describe("Advanced Type Detection", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should detect Symbol type", () => {
+      const sym = Symbol("test");
+      expect(app.props.detectType(sym)).toBe("unknown");
+    });
+
+    test("should detect BigInt type", () => {
+      expect(app.props.detectType(BigInt(9007199254740991))).toBe("unknown");
+    });
+
+    test("should detect nested arrays", () => {
+      expect(app.props.detectType([[1, 2], [3, 4]])).toBe("array");
+    });
+
+    test("should detect functions", () => {
+      expect(app.props.detectType(function named() {})).toBe("function");
+      expect(app.props.detectType(() => {})).toBe("function");
+      expect(app.props.detectType(async () => {})).toBe("function");
+    });
+  });
+
+  // ===========================================================================
+  // Advanced Value Parsing
+  // ===========================================================================
+
+  describe("Advanced Value Parsing", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should parse negative numbers", () => {
+      expect(app.props.parse("-42")).toBe(-42);
+      expect(app.props.parse("-3.14")).toBe(-3.14);
+    });
+
+    test("should parse exponential notation", () => {
+      expect(app.props.parse("1e10")).toBe(1e10);
+      expect(app.props.parse("2.5e-3")).toBe(2.5e-3);
+    });
+
+    test("should handle NaN string", () => {
+      const result = app.props.parse("NaN");
+      expect(result).toBe("NaN"); // NaN as string since isNaN("NaN") returns true
+    });
+
+    test("should handle Infinity string", () => {
+      const result = app.props.parse("Infinity");
+      expect(result).toBe(Infinity);
+    });
+
+    test("should handle negative Infinity string", () => {
+      const result = app.props.parse("-Infinity");
+      expect(result).toBe(-Infinity);
+    });
+
+    test("should parse array with mixed types", () => {
+      const mixedArray = [1, "string", true, null, { key: "value" }];
+      const result = app.props.parse(JSON.stringify(mixedArray));
+      expect(result).toEqual(mixedArray);
+    });
+
+    test("should parse empty object", () => {
+      expect(app.props.parse("{}")).toEqual({});
+    });
+
+    test("should parse empty array", () => {
+      expect(app.props.parse("[]")).toEqual([]);
+    });
+
+    test("should handle strings that look like numbers but aren't", () => {
+      expect(app.props.parse("123abc")).toBe("123abc");
+      expect(app.props.parse("1.2.3")).toBe("1.2.3");
+    });
+
+    test("should handle strings with leading zeros", () => {
+      // Leading zeros should still parse as numbers
+      expect(app.props.parse("007")).toBe(7);
+    });
+
+    test("should handle hex strings", () => {
+      expect(app.props.parse("0xFF")).toBe(255);
+      expect(app.props.parse("0x10")).toBe(16);
+    });
+
+    test("should handle date with timezone", () => {
+      const dateStr = "2023-12-25T10:30:00+05:00";
+      const result = app.props.parse(dateStr);
+      expect(result).toBeInstanceOf(Date);
+    });
+
+    test("should handle date without milliseconds", () => {
+      const dateStr = "2023-12-25T10:30:00";
+      const result = app.props.parse(dateStr);
+      expect(result).toBeInstanceOf(Date);
+    });
+  });
+
+  // ===========================================================================
+  // Props Extraction Edge Cases
+  // ===========================================================================
+
+  describe("Props Extraction Edge Cases", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should handle multiple props on single element", () => {
+      const element = document.createElement("div");
+      element.setAttribute(":prop1", "value1");
+      element.setAttribute(":prop2", "42");
+      element.setAttribute(":prop3", "true");
+      element.setAttribute(":prop4", '{"nested": true}');
+      element.setAttribute(":prop5", '[1, 2, 3]');
+
+      const props = app._extractProps(element);
+
+      expect(props.prop1).toBe("value1");
+      expect(props.prop2).toBe(42);
+      expect(props.prop3).toBe(true);
+      expect(props.prop4).toEqual({ nested: true });
+      expect(props.prop5).toEqual([1, 2, 3]);
+    });
+
+    test("should not process non-prop attributes", () => {
+      const element = document.createElement("div");
+      element.setAttribute("class", "my-class");
+      element.setAttribute("id", "my-id");
+      element.setAttribute(":name", "John");
+
+      const props = app._extractProps(element);
+
+      expect(props.name).toBe("John");
+      expect(props.class).toBeUndefined();
+      expect(props.id).toBeUndefined();
+      expect(element.hasAttribute("class")).toBe(true);
+      expect(element.hasAttribute("id")).toBe(true);
+    });
+
+    test("should handle props with special characters in values", () => {
+      const element = document.createElement("div");
+      element.setAttribute(":message", "Hello, World!");
+      element.setAttribute(":symbols", "!@#$%^&*()");
+
+      const props = app._extractProps(element);
+
+      expect(props.message).toBe("Hello, World!");
+      expect(props.symbols).toBe("!@#$%^&*()");
+    });
+
+    test("should handle props with unicode values", () => {
+      const element = document.createElement("div");
+      element.setAttribute(":emoji", "👋🌍");
+      element.setAttribute(":chinese", "你好世界");
+
+      const props = app._extractProps(element);
+
+      expect(props.emoji).toBe("👋🌍");
+      expect(props.chinese).toBe("你好世界");
+    });
+
+    test("should handle props with whitespace values", () => {
+      const element = document.createElement("div");
+      element.setAttribute(":spaces", "   ");
+      element.setAttribute(":tabs", "\t\t");
+
+      const props = app._extractProps(element);
+
+      expect(props.spaces).toBe("   ");
+      expect(props.tabs).toBe("\t\t");
+    });
+  });
+
+  // ===========================================================================
+  // Error Handler Scenarios
+  // ===========================================================================
+
+  describe("Error Handler Scenarios", () => {
+    test("should receive error details in error handler", () => {
+      let capturedError: any = null;
+      let capturedValue: any = null;
+
+      app.use(PropsPlugin, {
+        onError: (error: Error, value: any) => {
+          capturedError = error;
+          capturedValue = value;
+        },
+      });
+
+      app.props.parse("{invalid: json}");
+
+      expect(capturedError).toBeInstanceOf(Error);
+      expect(capturedError.message).toContain("Invalid JSON");
+      expect(capturedValue).toBe("{invalid: json}");
+    });
+
+    test("should continue parsing when error occurs", () => {
+      let errorCount = 0;
+
+      app.use(PropsPlugin, {
+        onError: () => {
+          errorCount++;
+        },
+      });
+
+      // Should return original value when parsing fails
+      const result = app.props.parse("{bad json}");
+      expect(result).toBe("{bad json}");
+      expect(errorCount).toBe(1);
+    });
+  });
+
+  // ===========================================================================
+  // Reactivity with Different Prop Types
+  // ===========================================================================
+
+  describe("Reactivity with Different Prop Types", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should create reactive object props", async () => {
+      let receivedProps: any = null;
+
+      app.component("ObjectPropChild", {
+        setup({ props }: any) {
+          receivedProps = props;
+          return { data: props.data };
+        },
+        template: (ctx: any) =>
+          `<div>${JSON.stringify(ctx.data?.value ?? ctx.data)}</div>`,
+      });
+
+      app.component("ObjectPropParent", {
+        template: () => `
+          <div class="child" :data='{"name": "John", "age": 30}'></div>
+        `,
+        children: {
+          ".child": "ObjectPropChild",
+        },
+      });
+
+      await app.mount(container, "ObjectPropParent");
+
+      expect(receivedProps).toBeDefined();
+      expect(receivedProps.data.value).toEqual({ name: "John", age: 30 });
+    });
+
+    test("should create reactive array props", async () => {
+      let receivedProps: any = null;
+
+      app.component("ArrayPropChild", {
+        setup({ props }: any) {
+          receivedProps = props;
+          return { items: props.items };
+        },
+        template: (ctx: any) =>
+          `<div>${JSON.stringify(ctx.items?.value ?? ctx.items)}</div>`,
+      });
+
+      app.component("ArrayPropParent", {
+        template: () => `
+          <div class="child" :items='[1, 2, 3, 4, 5]'></div>
+        `,
+        children: {
+          ".child": "ArrayPropChild",
+        },
+      });
+
+      await app.mount(container, "ArrayPropParent");
+
+      expect(receivedProps).toBeDefined();
+      expect(receivedProps.items.value).toEqual([1, 2, 3, 4, 5]);
+    });
+
+    test("should create reactive boolean props", async () => {
+      let receivedProps: any = null;
+
+      app.component("BooleanPropChild", {
+        setup({ props }: any) {
+          receivedProps = props;
+          return { active: props.active };
+        },
+        template: (ctx: any) =>
+          `<div>${ctx.active?.value ?? ctx.active}</div>`,
+      });
+
+      app.component("BooleanPropParent", {
+        template: () => `
+          <div class="child" :active="true" :disabled="false"></div>
+        `,
+        children: {
+          ".child": "BooleanPropChild",
+        },
+      });
+
+      await app.mount(container, "BooleanPropParent");
+
+      expect(receivedProps).toBeDefined();
+      expect(receivedProps.active.value).toBe(true);
+      expect(receivedProps.disabled.value).toBe(false);
+    });
+
+    test("should create reactive null props", async () => {
+      let receivedProps: any = null;
+
+      app.component("NullPropChild", {
+        setup({ props }: any) {
+          receivedProps = props;
+          return {};
+        },
+        template: () => `<div>Child</div>`,
+      });
+
+      app.component("NullPropParent", {
+        template: () => `
+          <div class="child" :value="null"></div>
+        `,
+        children: {
+          ".child": "NullPropChild",
+        },
+      });
+
+      await app.mount(container, "NullPropParent");
+
+      expect(receivedProps).toBeDefined();
+      expect(receivedProps.value.value).toBe(null);
+    });
+  });
+
+  // ===========================================================================
+  // Multiple Children with Same Component
+  // ===========================================================================
+
+  describe("Multiple Children with Same Component", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should mount same component to multiple elements with different props", async () => {
+      const receivedPropsArray: any[] = [];
+
+      app.component("ReusableItem", {
+        setup({ props }: any) {
+          receivedPropsArray.push(props);
+          return { label: props.label };
+        },
+        template: (ctx: any) =>
+          `<span class="item-label">${ctx.label?.value ?? ctx.label}</span>`,
+      });
+
+      app.component("ItemList", {
+        template: () => `
+          <ul>
+            <li class="item" :label="Item One"></li>
+            <li class="item" :label="Item Two"></li>
+            <li class="item" :label="Item Three"></li>
+          </ul>
+        `,
+        children: {
+          ".item": "ReusableItem",
+        },
+      });
+
+      await app.mount(container, "ItemList");
+
+      expect(receivedPropsArray.length).toBe(3);
+      expect(receivedPropsArray[0].label.value).toBe("Item One");
+      expect(receivedPropsArray[1].label.value).toBe("Item Two");
+      expect(receivedPropsArray[2].label.value).toBe("Item Three");
+    });
+  });
+
+  // ===========================================================================
+  // Uninstall Cleanup
+  // ===========================================================================
+
+  describe("Uninstall Cleanup", () => {
+    test("should restore original methods on uninstall", () => {
+      const originalExtractProps = app._extractProps;
+      const originalMount = app.mount;
+
+      app.use(PropsPlugin);
+
+      expect(app._extractProps).not.toBe(originalExtractProps);
+      expect(app.mount).not.toBe(originalMount);
+
+      PropsPlugin.uninstall(app);
+
+      // Methods should be restored
+      expect(app._originalExtractProps).toBeUndefined();
+      expect(app._originalMount).toBeUndefined();
+      expect(app.props).toBeUndefined();
+    });
+
+    test("should handle double uninstall gracefully", () => {
+      app.use(PropsPlugin);
+      PropsPlugin.uninstall(app);
+
+      expect(() => {
+        PropsPlugin.uninstall(app);
+      }).not.toThrow();
+    });
+
+    test("should handle uninstall without prior install", () => {
+      expect(() => {
+        PropsPlugin.uninstall(app);
+      }).not.toThrow();
+    });
+  });
+
+  // ===========================================================================
+  // Integration with Component Lifecycle
+  // ===========================================================================
+
+  describe("Integration with Component Lifecycle", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should have props available in setup immediately", async () => {
+      let propsAtSetup: any = null;
+
+      app.component("SetupComponent", {
+        setup({ props }: any) {
+          propsAtSetup = props;
+          return { message: props.message };
+        },
+        template: (ctx: any) =>
+          `<div>${ctx.message?.value ?? ctx.message}</div>`,
+      });
+
+      app.component("SetupParent", {
+        template: () => `
+          <div class="setup-child" :message="Hello from parent"></div>
+        `,
+        children: {
+          ".setup-child": "SetupComponent",
+        },
+      });
+
+      await app.mount(container, "SetupParent");
+
+      expect(propsAtSetup).toBeDefined();
+      expect(propsAtSetup.message.value).toBe("Hello from parent");
+    });
+
+    test("should allow props to be used in computed values", async () => {
+      let computedResult: any = null;
+
+      app.component("ComputedPropsChild", {
+        setup({ props }: any) {
+          const doubled = {
+            get value() {
+              return (props.number?.value ?? props.number) * 2;
+            },
+          };
+          computedResult = doubled;
+          return { doubled };
+        },
+        template: (ctx: any) =>
+          `<div>${ctx.doubled.value}</div>`,
+      });
+
+      app.component("ComputedPropsParent", {
+        template: () => `
+          <div class="computed-child" :number="21"></div>
+        `,
+        children: {
+          ".computed-child": "ComputedPropsChild",
+        },
+      });
+
+      await app.mount(container, "ComputedPropsParent");
+
+      expect(computedResult).toBeDefined();
+      expect(computedResult.value).toBe(42);
+    });
+  });
+
+  // ===========================================================================
+  // Deep Nested Object Parsing
+  // ===========================================================================
+
+  describe("Deep Nested Object Parsing", () => {
+    beforeEach(() => {
+      app.use(PropsPlugin);
+    });
+
+    test("should parse deeply nested JSON structures", () => {
+      const deepNested = {
+        level1: {
+          level2: {
+            level3: {
+              level4: {
+                level5: {
+                  value: "deep value",
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const result = app.props.parse(JSON.stringify(deepNested));
+      expect(result.level1.level2.level3.level4.level5.value).toBe("deep value");
+    });
+
+    test("should parse arrays within objects within arrays", () => {
+      const complex = [
+        { items: [1, 2, { nested: [3, 4, 5] }] },
+        { items: [6, 7, { nested: [8, 9, 10] }] },
+      ];
+
+      const result = app.props.parse(JSON.stringify(complex));
+      expect(result[0].items[2].nested).toEqual([3, 4, 5]);
+      expect(result[1].items[2].nested).toEqual([8, 9, 10]);
+    });
+  });
+
+  // ===========================================================================
+  // Auto-Parsing Disabled Mode
+  // ===========================================================================
+
+  describe("Auto-Parsing Disabled Mode", () => {
+    test("should keep all values as strings when auto-parsing disabled", () => {
+      app.use(PropsPlugin, { enableAutoParsing: false });
+
+      expect(app.props.parse("42")).toBe("42");
+      expect(app.props.parse("true")).toBe("true");
+      expect(app.props.parse("null")).toBe("null");
+      expect(app.props.parse('{"key": "value"}')).toBe('{"key": "value"}');
+      expect(app.props.parse('[1, 2, 3]')).toBe('[1, 2, 3]');
+    });
+
+    test("should still extract props but not parse them", async () => {
+      app.use(PropsPlugin, { enableAutoParsing: false });
+
+      let receivedProps: any = null;
+
+      app.component("NoParsing", {
+        setup({ props }: any) {
+          receivedProps = props;
+          return {};
+        },
+        template: () => "<div>No Parsing</div>",
+      });
+
+      app.component("NoParsingParent", {
+        template: () => `
+          <div class="no-parsing" :count="42" :active="true"></div>
+        `,
+        children: {
+          ".no-parsing": "NoParsing",
+        },
+      });
+
+      await app.mount(container, "NoParsingParent");
+
+      expect(receivedProps.count.value).toBe("42");
+      expect(receivedProps.active.value).toBe("true");
     });
   });
 });

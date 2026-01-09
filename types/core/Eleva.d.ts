@@ -237,6 +237,7 @@ export class Eleva {
      * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
      * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
      * @returns {Eleva} The Eleva instance (for method chaining).
+     * @throws {Error} If plugin does not have an install function.
      * @example
      * app.use(myPlugin, { option1: "value1" });
      *
@@ -259,7 +260,7 @@ export class Eleva {
      * @param {string} name - The unique name of the component to register.
      * @param {ComponentDefinition} definition - The component definition including setup, template, style, and children.
      * @returns {Eleva} The Eleva instance (for method chaining).
-     * @throws {Error} If the component name is already registered.
+     * @throws {Error} If name is not a non-empty string or definition has no template.
      * @example
      * app.component("myButton", {
      *   template: (ctx) => `<button>${ctx.props.text}</button>`,
@@ -280,7 +281,7 @@ export class Eleva {
      *          - container: The mounted component's container element
      *          - data: The component's reactive state and context
      *          - unmount: Function to clean up and unmount the component
-     * @throws {Error} If the container is not found, or component is not registered.
+     * @throws {Error} If container is not a DOM element or component is not registered.
      * @example
      * const instance = await app.mount(document.getElementById("app"), "myComponent", { text: "Click me" });
      * // Later...

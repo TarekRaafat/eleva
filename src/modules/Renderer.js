@@ -5,60 +5,45 @@
 // ============================================================================
 
 /**
- * @typedef {Object} PatchOptions
- * @property {boolean} [preserveStyles=true]
- *           Whether to preserve style elements with data-e-style attribute
- * @property {boolean} [preserveInstances=true]
- *           Whether to preserve elements with _eleva_instance property
- */
-
-/**
  * @typedef {Map<string, Node>} KeyMap
- *           Map of key attribute values to their corresponding DOM nodes
+ *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
  */
 
 /**
- * @typedef {'ELEMENT_NODE'|'TEXT_NODE'|'COMMENT_NODE'|'DOCUMENT_FRAGMENT_NODE'} NodeTypeName
- *           Common DOM node type names
+ * @typedef {Object} RendererLike
+ * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
  */
 
 /**
  * @class 🎨 Renderer
- * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
+ * @classdesc A high-performance DOM renderer that implements an optimized two-pointer diffing
+ * algorithm with key-based node reconciliation. The renderer efficiently updates the DOM by
+ * computing the minimal set of operations needed to transform the current state to the desired state.
  *
  * Key features:
- * - Single-pass diffing algorithm for efficient DOM updates
- * - Key-based node reconciliation for optimal performance
- * - Intelligent attribute handling for ARIA, data attributes, and boolean properties
- * - Preservation of special Eleva-managed instances and style elements
- * - Memory-efficient with reusable temporary containers
- *
- * The renderer is designed to minimize DOM operations while maintaining
- * exact attribute synchronization and proper node identity preservation.
- * It's particularly optimized for frequent updates and complex DOM structures.
+ * - Two-pointer diffing algorithm for efficient DOM updates
+ * - Key-based node reconciliation for optimal list performance (O(1) lookup)
+ * - Preserves DOM node identity during reordering (maintains event listeners, focus, animations)
+ * - Intelligent attribute synchronization (skips Eleva event attributes)
+ * - Preservation of Eleva-managed component instances and style elements
  *
  * @example
  * // Basic usage
  * const renderer = new Renderer();
- * const container = document.getElementById("app");
- * const newHtml = "<div>Updated content</div>";
- * renderer.patchDOM(container, newHtml);
+ * renderer.patchDOM(container, '<div>Updated content</div>');
  *
  * @example
  * // With keyed elements for optimal list updates
- * const listHtml = `
- *   <ul>
- *     <li key="item-1">First</li>
- *     <li key="item-2">Second</li>
- *     <li key="item-3">Third</li>
- *   </ul>
- * `;
- * renderer.patchDOM(container, listHtml);
+ * const html = items.map(item => `<li key="${item.id}">${item.name}</li>`).join('');
+ * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
  *
  * @example
- * // The renderer preserves Eleva-managed elements
- * // Elements with _eleva_instance are not replaced during diffing
- * // Style elements with data-e-style are preserved
+ * // Keyed elements preserve DOM identity during reordering
+ * // Before: [A, B, C] -> After: [C, A, B]
+ * // The actual DOM nodes are moved, not recreated
+ * renderer.patchDOM(container, '<div key="C">C</div><div key="A">A</div><div key="B">B</div>');
+ *
+ * @implements {RendererLike}
  */
 export class Renderer {
   /**
@@ -71,7 +56,7 @@ export class Renderer {
    */
   constructor() {
     /**
-     * A temporary container to hold the new HTML content while diffing.
+     * Temporary container for parsing new HTML content.
      * Reused across patch operations to minimize memory allocation.
      * @private
      * @type {HTMLDivElement}
@@ -81,203 +66,214 @@ export class Renderer {
 
   /**
    * Patches the DOM of the given container with the provided HTML string.
-   * Uses an optimized diffing algorithm to minimize DOM operations.
+   * Uses an optimized two-pointer diffing algorithm to minimize DOM operations.
+   * The algorithm computes the minimal set of insertions, deletions, and updates
+   * needed to transform the current DOM state to match the new HTML.
    *
    * @public
    * @param {HTMLElement} container - The container element to patch.
-   * @param {string} newHtml - The new HTML string.
+   * @param {string} newHtml - The new HTML string to render.
    * @returns {void}
-   * @throws {TypeError} If container is not an HTMLElement or newHtml is not a string.
-   * @throws {Error} If DOM patching fails.
    *
    * @example
-   * // Update container content
+   * // Simple content update
    * renderer.patchDOM(container, '<div class="updated">New content</div>');
    *
    * @example
-   * // Update list with keys for optimal diffing
-   * const items = ['a', 'b', 'c'];
-   * const html = items.map(item =>
-   *   `<li key="${item}">${item}</li>`
-   * ).join('');
-   * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
+   * // List with keyed items (optimal for reordering)
+   * renderer.patchDOM(container, '<ul><li key="1">First</li><li key="2">Second</li></ul>');
+   *
+   * @example
+   * // Empty the container
+   * renderer.patchDOM(container, '');
    */
   patchDOM(container, newHtml) {
-    if (!(container instanceof HTMLElement)) {
-      throw new TypeError("Container must be an HTMLElement");
-    }
-    if (typeof newHtml !== "string") {
-      throw new TypeError("newHtml must be a string");
-    }
-
-    try {
-      this._tempContainer.innerHTML = newHtml;
-      this._diff(container, this._tempContainer);
-    } catch (error) {
-      throw new Error(`Failed to patch DOM: ${error.message}`);
-    }
+    this._tempContainer.innerHTML = newHtml;
+    this._diff(container, this._tempContainer);
   }
 
   /**
    * Performs a diff between two DOM nodes and patches the old node to match the new node.
+   * Uses a two-pointer algorithm with key-based reconciliation for optimal performance.
+   *
+   * Algorithm overview:
+   * 1. Compare children from start using two pointers
+   * 2. For mismatches, build a key map lazily for O(1) lookup
+   * 3. Move or insert nodes as needed
+   * 4. Clean up remaining nodes at the end
    *
    * @private
-   * @param {HTMLElement} oldParent - The original DOM element.
-   * @param {HTMLElement} newParent - The new DOM element.
+   * @param {HTMLElement} oldParent - The original DOM element to update.
+   * @param {HTMLElement} newParent - The new DOM element with desired state.
    * @returns {void}
    */
   _diff(oldParent, newParent) {
-    if (oldParent === newParent || oldParent.isEqualNode?.(newParent)) return;
+    // Early exit for leaf nodes (no children)
+    if (!oldParent.firstChild && !newParent.firstChild) return;
 
     const oldChildren = Array.from(oldParent.childNodes);
     const newChildren = Array.from(newParent.childNodes);
-    let oldStartIdx = 0,
-      newStartIdx = 0;
-    let oldEndIdx = oldChildren.length - 1;
-    let newEndIdx = newChildren.length - 1;
-    let oldKeyMap = null;
+    let oldStart = 0,
+      newStart = 0;
+    let oldEnd = oldChildren.length - 1;
+    let newEnd = newChildren.length - 1;
+    let keyMap = null;
 
-    while (oldStartIdx <= oldEndIdx && newStartIdx <= newEndIdx) {
-      let oldStartNode = oldChildren[oldStartIdx];
-      let newStartNode = newChildren[newStartIdx];
+    // Two-pointer algorithm with key-based reconciliation
+    while (oldStart <= oldEnd && newStart <= newEnd) {
+      const oldNode = oldChildren[oldStart];
+      const newNode = newChildren[newStart];
 
-      if (!oldStartNode) {
-        oldStartNode = oldChildren[++oldStartIdx];
-      } else if (this._isSameNode(oldStartNode, newStartNode)) {
-        this._patchNode(oldStartNode, newStartNode);
-        oldStartIdx++;
-        newStartIdx++;
+      if (!oldNode) {
+        oldStart++;
+        continue;
+      }
+
+      if (this._isSameNode(oldNode, newNode)) {
+        this._patchNode(oldNode, newNode);
+        oldStart++;
+        newStart++;
       } else {
-        if (!oldKeyMap) {
-          oldKeyMap = this._createKeyMap(oldChildren, oldStartIdx, oldEndIdx);
+        // Build key map lazily for O(1) lookup
+        if (!keyMap) {
+          keyMap = this._createKeyMap(oldChildren, oldStart, oldEnd);
         }
-        const key = this._getNodeKey(newStartNode);
-        const oldNodeToMove = key ? oldKeyMap.get(key) : null;
 
-        if (oldNodeToMove) {
-          this._patchNode(oldNodeToMove, newStartNode);
-          oldParent.insertBefore(oldNodeToMove, oldStartNode);
-          oldChildren[oldChildren.indexOf(oldNodeToMove)] = null;
+        const key = this._getNodeKey(newNode);
+        const matchedNode = key ? keyMap.get(key) : null;
+
+        // Only use matched node if tag also matches
+        if (matchedNode && matchedNode.nodeName === newNode.nodeName) {
+          // Move existing keyed node (preserves DOM identity)
+          this._patchNode(matchedNode, newNode);
+          oldParent.insertBefore(matchedNode, oldNode);
+          oldChildren[oldChildren.indexOf(matchedNode)] = null;
         } else {
-          oldParent.insertBefore(newStartNode.cloneNode(true), oldStartNode);
+          // Insert new node
+          oldParent.insertBefore(newNode.cloneNode(true), oldNode);
         }
-        newStartIdx++;
+        newStart++;
       }
     }
 
-    if (oldStartIdx > oldEndIdx) {
-      const refNode = newChildren[newEndIdx + 1]
-        ? oldChildren[oldStartIdx]
-        : null;
-      for (let i = newStartIdx; i <= newEndIdx; i++) {
-        if (newChildren[i])
+    // Add remaining new nodes
+    if (oldStart > oldEnd) {
+      const refNode = newChildren[newEnd + 1] ? oldChildren[oldStart] : null;
+      for (let i = newStart; i <= newEnd; i++) {
+        if (newChildren[i]) {
           oldParent.insertBefore(newChildren[i].cloneNode(true), refNode);
+        }
       }
-    } else if (newStartIdx > newEndIdx) {
-      for (let i = oldStartIdx; i <= oldEndIdx; i++) {
+    }
+    // Remove remaining old nodes
+    else if (newStart > newEnd) {
+      for (let i = oldStart; i <= oldEnd; i++) {
         if (oldChildren[i]) this._removeNode(oldParent, oldChildren[i]);
       }
     }
   }
 
   /**
-   * Patches a single node.
+   * Patches a single node, updating its content and attributes to match the new node.
+   * Handles text nodes by updating nodeValue, and element nodes by updating attributes
+   * and recursively diffing children.
+   *
+   * Skips nodes that are managed by Eleva component instances to prevent interference
+   * with nested component state.
    *
    * @private
-   * @param {Node} oldNode - The original DOM node.
-   * @param {Node} newNode - The new DOM node.
+   * @param {Node} oldNode - The original DOM node to update.
+   * @param {Node} newNode - The new DOM node with desired state.
    * @returns {void}
    */
   _patchNode(oldNode, newNode) {
-    if (oldNode?._eleva_instance) return;
+    // Skip nodes managed by Eleva component instances
+    if (oldNode._eleva_instance) return;
 
-    if (!this._isSameNode(oldNode, newNode)) {
-      oldNode.replaceWith(newNode.cloneNode(true));
-      return;
-    }
-
-    if (oldNode.nodeType === Node.ELEMENT_NODE) {
+    if (oldNode.nodeType === 3) {
+      if (oldNode.nodeValue !== newNode.nodeValue) {
+        oldNode.nodeValue = newNode.nodeValue;
+      }
+    } else if (oldNode.nodeType === 1) {
       this._updateAttributes(oldNode, newNode);
       this._diff(oldNode, newNode);
-    } else if (
-      oldNode.nodeType === Node.TEXT_NODE &&
-      oldNode.nodeValue !== newNode.nodeValue
-    ) {
-      oldNode.nodeValue = newNode.nodeValue;
     }
   }
 
   /**
-   * Removes a node from its parent.
+   * Removes a node from its parent, with special handling for Eleva-managed elements.
+   * Style elements with the `data-e-style` attribute are preserved to maintain
+   * component-scoped styles across re-renders.
    *
    * @private
-   * @param {HTMLElement} parent - The parent element containing the node to remove.
+   * @param {HTMLElement} parent - The parent element containing the node.
    * @param {Node} node - The node to remove.
    * @returns {void}
    */
   _removeNode(parent, node) {
+    // Preserve Eleva-managed style elements
     if (node.nodeName === "STYLE" && node.hasAttribute("data-e-style")) return;
-
     parent.removeChild(node);
   }
 
   /**
    * Updates the attributes of an element to match a new element's attributes.
+   * Adds new attributes, updates changed values, and removes attributes no longer present.
+   *
+   * Event attributes (prefixed with `@`) are skipped as they are handled separately
+   * by Eleva's event binding system.
    *
    * @private
    * @param {HTMLElement} oldEl - The original element to update.
-   * @param {HTMLElement} newEl - The new element to update.
+   * @param {HTMLElement} newEl - The new element with target attributes.
    * @returns {void}
    */
   _updateAttributes(oldEl, newEl) {
-    const oldAttrs = oldEl.attributes;
-    const newAttrs = newEl.attributes;
-
-    // Process new attributes
-    for (let i = 0; i < newAttrs.length; i++) {
-      const { name, value } = newAttrs[i];
-
-      // Skip event attributes (handled by event system)
-      if (name.startsWith("@")) continue;
-
-      // Skip if attribute hasn't changed
-      if (oldEl.getAttribute(name) === value) continue;
-
-      // Basic attribute setting
-      oldEl.setAttribute(name, value);
+    // Add/update attributes from new element
+    for (const attr of newEl.attributes) {
+      // Skip event attributes (handled by Eleva's event system)
+      if (
+        attr.name[0] !== "@" &&
+        oldEl.getAttribute(attr.name) !== attr.value
+      ) {
+        oldEl.setAttribute(attr.name, attr.value);
+      }
     }
-
-    // Remove old attributes that are no longer present
-    for (let i = oldAttrs.length - 1; i >= 0; i--) {
-      const name = oldAttrs[i].name;
-      if (!newEl.hasAttribute(name)) {
-        oldEl.removeAttribute(name);
+    // Remove attributes no longer present
+    for (let i = oldEl.attributes.length - 1; i >= 0; i--) {
+      if (!newEl.hasAttribute(oldEl.attributes[i].name)) {
+        oldEl.removeAttribute(oldEl.attributes[i].name);
       }
     }
   }
 
   /**
-   * Determines if two nodes are the same based on their type, name, and key attributes.
+   * Determines if two nodes are the same for reconciliation purposes.
+   * Two nodes are considered the same if:
+   * - Both have keys: keys match AND tag names match
+   * - Neither has keys: node types match AND node names match
+   * - One has key, other doesn't: not the same
+   *
+   * This ensures keyed elements are only reused when both key and tag match,
+   * preventing bugs like `<div key="a">` incorrectly matching `<span key="a">`.
    *
    * @private
    * @param {Node} oldNode - The first node to compare.
    * @param {Node} newNode - The second node to compare.
-   * @returns {boolean} True if the nodes are considered the same, false otherwise.
+   * @returns {boolean} True if the nodes are considered the same for reconciliation.
    */
   _isSameNode(oldNode, newNode) {
     if (!oldNode || !newNode) return false;
 
-    const oldKey =
-      oldNode.nodeType === Node.ELEMENT_NODE
-        ? oldNode.getAttribute("key")
-        : null;
-    const newKey =
-      newNode.nodeType === Node.ELEMENT_NODE
-        ? newNode.getAttribute("key")
-        : null;
+    const oldKey = this._getNodeKey(oldNode);
+    const newKey = this._getNodeKey(newNode);
 
-    if (oldKey && newKey) return oldKey === newKey;
+    // If both have keys, compare by key AND tag name
+    if (oldKey && newKey) {
+      return oldKey === newKey && oldNode.nodeName === newNode.nodeName;
+    }
 
+    // Otherwise, compare by type and name
     return (
       !oldKey &&
       !newKey &&
@@ -287,35 +283,33 @@ export class Renderer {
   }
 
   /**
-   * Creates a key map for the children of a parent node.
-   * Used for efficient O(1) lookup of keyed elements during diffing.
+   * Extracts the key attribute from a node if it exists.
+   * Only element nodes (nodeType === 1) can have key attributes.
    *
    * @private
-   * @param {Array<ChildNode>} children - The children of the parent node.
-   * @param {number} start - The start index of the children.
-   * @param {number} end - The end index of the children.
-   * @returns {KeyMap} A key map for the children.
+   * @param {Node|null|undefined} node - The node to extract the key from.
+   * @returns {string|null} The key attribute value, or null if not an element or no key.
+   */
+  _getNodeKey(node) {
+    return node?.nodeType === 1 ? node.getAttribute("key") : null;
+  }
+
+  /**
+   * Creates a key map for efficient O(1) lookup of keyed elements during diffing.
+   * The map is built lazily only when needed (when a mismatch occurs during diffing).
+   *
+   * @private
+   * @param {Array<ChildNode>} children - The array of child nodes to map.
+   * @param {number} start - The start index (inclusive) for mapping.
+   * @param {number} end - The end index (inclusive) for mapping.
+   * @returns {KeyMap} A Map of key strings to their corresponding DOM nodes.
    */
   _createKeyMap(children, start, end) {
     const map = new Map();
     for (let i = start; i <= end; i++) {
-      const child = children[i];
-      const key = this._getNodeKey(child);
-      if (key) map.set(key, child);
+      const key = this._getNodeKey(children[i]);
+      if (key) map.set(key, children[i]);
     }
     return map;
-  }
-
-  /**
-   * Extracts the key attribute from a node if it exists.
-   *
-   * @private
-   * @param {Node} node - The node to extract the key from.
-   * @returns {string|null} The key attribute value or null if not found.
-   */
-  _getNodeKey(node) {
-    return node?.nodeType === Node.ELEMENT_NODE
-      ? node.getAttribute("key")
-      : null;
   }
 }

@@ -1,59 +1,45 @@
 /**
- * @typedef {Object} PatchOptions
- * @property {boolean} [preserveStyles=true]
- *           Whether to preserve style elements with data-e-style attribute
- * @property {boolean} [preserveInstances=true]
- *           Whether to preserve elements with _eleva_instance property
- */
-/**
  * @typedef {Map<string, Node>} KeyMap
- *           Map of key attribute values to their corresponding DOM nodes
+ *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
  */
 /**
- * @typedef {'ELEMENT_NODE'|'TEXT_NODE'|'COMMENT_NODE'|'DOCUMENT_FRAGMENT_NODE'} NodeTypeName
- *           Common DOM node type names
+ * @typedef {Object} RendererLike
+ * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
  */
 /**
  * @class 🎨 Renderer
- * @classdesc A high-performance DOM renderer that implements an optimized direct DOM diffing algorithm.
+ * @classdesc A high-performance DOM renderer that implements an optimized two-pointer diffing
+ * algorithm with key-based node reconciliation. The renderer efficiently updates the DOM by
+ * computing the minimal set of operations needed to transform the current state to the desired state.
  *
  * Key features:
- * - Single-pass diffing algorithm for efficient DOM updates
- * - Key-based node reconciliation for optimal performance
- * - Intelligent attribute handling for ARIA, data attributes, and boolean properties
- * - Preservation of special Eleva-managed instances and style elements
- * - Memory-efficient with reusable temporary containers
- *
- * The renderer is designed to minimize DOM operations while maintaining
- * exact attribute synchronization and proper node identity preservation.
- * It's particularly optimized for frequent updates and complex DOM structures.
+ * - Two-pointer diffing algorithm for efficient DOM updates
+ * - Key-based node reconciliation for optimal list performance (O(1) lookup)
+ * - Preserves DOM node identity during reordering (maintains event listeners, focus, animations)
+ * - Intelligent attribute synchronization (skips Eleva event attributes)
+ * - Preservation of Eleva-managed component instances and style elements
  *
  * @example
  * // Basic usage
  * const renderer = new Renderer();
- * const container = document.getElementById("app");
- * const newHtml = "<div>Updated content</div>";
- * renderer.patchDOM(container, newHtml);
+ * renderer.patchDOM(container, '<div>Updated content</div>');
  *
  * @example
  * // With keyed elements for optimal list updates
- * const listHtml = `
- *   <ul>
- *     <li key="item-1">First</li>
- *     <li key="item-2">Second</li>
- *     <li key="item-3">Third</li>
- *   </ul>
- * `;
- * renderer.patchDOM(container, listHtml);
+ * const html = items.map(item => `<li key="${item.id}">${item.name}</li>`).join('');
+ * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
  *
  * @example
- * // The renderer preserves Eleva-managed elements
- * // Elements with _eleva_instance are not replaced during diffing
- * // Style elements with data-e-style are preserved
+ * // Keyed elements preserve DOM identity during reordering
+ * // Before: [A, B, C] -> After: [C, A, B]
+ * // The actual DOM nodes are moved, not recreated
+ * renderer.patchDOM(container, '<div key="C">C</div><div key="A">A</div><div key="B">B</div>');
+ *
+ * @implements {RendererLike}
  */
-export class Renderer {
+export class Renderer implements RendererLike {
     /**
-     * A temporary container to hold the new HTML content while diffing.
+     * Temporary container for parsing new HTML content.
      * Reused across patch operations to minimize memory allocation.
      * @private
      * @type {HTMLDivElement}
@@ -61,109 +47,127 @@ export class Renderer {
     private _tempContainer;
     /**
      * Patches the DOM of the given container with the provided HTML string.
-     * Uses an optimized diffing algorithm to minimize DOM operations.
+     * Uses an optimized two-pointer diffing algorithm to minimize DOM operations.
+     * The algorithm computes the minimal set of insertions, deletions, and updates
+     * needed to transform the current DOM state to match the new HTML.
      *
      * @public
      * @param {HTMLElement} container - The container element to patch.
-     * @param {string} newHtml - The new HTML string.
+     * @param {string} newHtml - The new HTML string to render.
      * @returns {void}
-     * @throws {TypeError} If container is not an HTMLElement or newHtml is not a string.
-     * @throws {Error} If DOM patching fails.
      *
      * @example
-     * // Update container content
+     * // Simple content update
      * renderer.patchDOM(container, '<div class="updated">New content</div>');
      *
      * @example
-     * // Update list with keys for optimal diffing
-     * const items = ['a', 'b', 'c'];
-     * const html = items.map(item =>
-     *   `<li key="${item}">${item}</li>`
-     * ).join('');
-     * renderer.patchDOM(listContainer, `<ul>${html}</ul>`);
+     * // List with keyed items (optimal for reordering)
+     * renderer.patchDOM(container, '<ul><li key="1">First</li><li key="2">Second</li></ul>');
+     *
+     * @example
+     * // Empty the container
+     * renderer.patchDOM(container, '');
      */
     public patchDOM(container: HTMLElement, newHtml: string): void;
     /**
      * Performs a diff between two DOM nodes and patches the old node to match the new node.
+     * Uses a two-pointer algorithm with key-based reconciliation for optimal performance.
+     *
+     * Algorithm overview:
+     * 1. Compare children from start using two pointers
+     * 2. For mismatches, build a key map lazily for O(1) lookup
+     * 3. Move or insert nodes as needed
+     * 4. Clean up remaining nodes at the end
      *
      * @private
-     * @param {HTMLElement} oldParent - The original DOM element.
-     * @param {HTMLElement} newParent - The new DOM element.
+     * @param {HTMLElement} oldParent - The original DOM element to update.
+     * @param {HTMLElement} newParent - The new DOM element with desired state.
      * @returns {void}
      */
     private _diff;
     /**
-     * Patches a single node.
+     * Patches a single node, updating its content and attributes to match the new node.
+     * Handles text nodes by updating nodeValue, and element nodes by updating attributes
+     * and recursively diffing children.
+     *
+     * Skips nodes that are managed by Eleva component instances to prevent interference
+     * with nested component state.
      *
      * @private
-     * @param {Node} oldNode - The original DOM node.
-     * @param {Node} newNode - The new DOM node.
+     * @param {Node} oldNode - The original DOM node to update.
+     * @param {Node} newNode - The new DOM node with desired state.
      * @returns {void}
      */
     private _patchNode;
     /**
-     * Removes a node from its parent.
+     * Removes a node from its parent, with special handling for Eleva-managed elements.
+     * Style elements with the `data-e-style` attribute are preserved to maintain
+     * component-scoped styles across re-renders.
      *
      * @private
-     * @param {HTMLElement} parent - The parent element containing the node to remove.
+     * @param {HTMLElement} parent - The parent element containing the node.
      * @param {Node} node - The node to remove.
      * @returns {void}
      */
     private _removeNode;
     /**
      * Updates the attributes of an element to match a new element's attributes.
+     * Adds new attributes, updates changed values, and removes attributes no longer present.
+     *
+     * Event attributes (prefixed with `@`) are skipped as they are handled separately
+     * by Eleva's event binding system.
      *
      * @private
      * @param {HTMLElement} oldEl - The original element to update.
-     * @param {HTMLElement} newEl - The new element to update.
+     * @param {HTMLElement} newEl - The new element with target attributes.
      * @returns {void}
      */
     private _updateAttributes;
     /**
-     * Determines if two nodes are the same based on their type, name, and key attributes.
+     * Determines if two nodes are the same for reconciliation purposes.
+     * Two nodes are considered the same if:
+     * - Both have keys: keys match AND tag names match
+     * - Neither has keys: node types match AND node names match
+     * - One has key, other doesn't: not the same
+     *
+     * This ensures keyed elements are only reused when both key and tag match,
+     * preventing bugs like `<div key="a">` incorrectly matching `<span key="a">`.
      *
      * @private
      * @param {Node} oldNode - The first node to compare.
      * @param {Node} newNode - The second node to compare.
-     * @returns {boolean} True if the nodes are considered the same, false otherwise.
+     * @returns {boolean} True if the nodes are considered the same for reconciliation.
      */
     private _isSameNode;
     /**
-     * Creates a key map for the children of a parent node.
-     * Used for efficient O(1) lookup of keyed elements during diffing.
-     *
-     * @private
-     * @param {Array<ChildNode>} children - The children of the parent node.
-     * @param {number} start - The start index of the children.
-     * @param {number} end - The end index of the children.
-     * @returns {KeyMap} A key map for the children.
-     */
-    private _createKeyMap;
-    /**
      * Extracts the key attribute from a node if it exists.
+     * Only element nodes (nodeType === 1) can have key attributes.
      *
      * @private
-     * @param {Node} node - The node to extract the key from.
-     * @returns {string|null} The key attribute value or null if not found.
+     * @param {Node|null|undefined} node - The node to extract the key from.
+     * @returns {string|null} The key attribute value, or null if not an element or no key.
      */
     private _getNodeKey;
+    /**
+     * Creates a key map for efficient O(1) lookup of keyed elements during diffing.
+     * The map is built lazily only when needed (when a mismatch occurs during diffing).
+     *
+     * @private
+     * @param {Array<ChildNode>} children - The array of child nodes to map.
+     * @param {number} start - The start index (inclusive) for mapping.
+     * @param {number} end - The end index (inclusive) for mapping.
+     * @returns {KeyMap} A Map of key strings to their corresponding DOM nodes.
+     */
+    private _createKeyMap;
 }
-export type PatchOptions = {
-    /**
-     * Whether to preserve style elements with data-e-style attribute
-     */
-    preserveStyles?: boolean | undefined;
-    /**
-     * Whether to preserve elements with _eleva_instance property
-     */
-    preserveInstances?: boolean | undefined;
-};
 /**
- * Map of key attribute values to their corresponding DOM nodes
+ * Map of key attribute values to their corresponding DOM nodes for O(1) lookup
  */
 export type KeyMap = Map<string, Node>;
-/**
- * Common DOM node type names
- */
-export type NodeTypeName = "ELEMENT_NODE" | "TEXT_NODE" | "COMMENT_NODE" | "DOCUMENT_FRAGMENT_NODE";
+export type RendererLike = {
+    /**
+     * - Patches the DOM with new HTML
+     */
+    patchDOM: (arg0: HTMLElement, arg1: string) => void;
+};
 //# sourceMappingURL=Renderer.d.ts.map

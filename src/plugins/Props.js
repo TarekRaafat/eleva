@@ -61,7 +61,7 @@ export const PropsPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.11",
+  version: "1.0.0-rc.12",
 
   /**
    * Plugin description
@@ -460,32 +460,41 @@ export const PropsPlugin = {
             if (Object.keys(signalProps).length > 0) {
               Object.assign(instance.data, signalProps);
 
+              // Create a batched render function for this child instance
+              // This ensures multiple signal changes result in a single render
+              let renderScheduled = false;
+              const childComponent =
+                eleva._components.get(component) || component;
+
+              const scheduleChildRender = () => {
+                if (renderScheduled) return;
+                renderScheduled = true;
+                queueMicrotask(() => {
+                  renderScheduled = false;
+                  if (childComponent && childComponent.template) {
+                    const templateResult =
+                      typeof childComponent.template === "function"
+                        ? childComponent.template(instance.data)
+                        : childComponent.template;
+                    const newHtml = TemplateEngine.parse(
+                      templateResult,
+                      instance.data
+                    );
+                    eleva.renderer.patchDOM(instance.container, newHtml);
+                  }
+                });
+              };
+
               // Set up signal watchers for the newly linked signals
               Object.keys(signalProps).forEach((propName) => {
                 const signal = signalProps[propName];
                 if (signal && typeof signal.watch === "function") {
-                  signal.watch((newValue) => {
-                    // Trigger a re-render of the child component when the signal changes
-                    const childComponent =
-                      eleva._components.get(component) || component;
-                    if (childComponent && childComponent.template) {
-                      const templateResult =
-                        typeof childComponent.template === "function"
-                          ? childComponent.template(instance.data)
-                          : childComponent.template;
-                      const newHtml = TemplateEngine.parse(
-                        templateResult,
-                        instance.data
-                      );
-                      eleva.renderer.patchDOM(instance.container, newHtml);
-                    }
-                  });
+                  // Use batched render instead of direct patchDOM
+                  signal.watch(scheduleChildRender);
                 }
               });
 
-              // Initial re-render to show the correct signal values
-              const childComponent =
-                eleva._components.get(component) || component;
+              // Initial render to show the correct signal values
               if (childComponent && childComponent.template) {
                 const templateResult =
                   typeof childComponent.template === "function"

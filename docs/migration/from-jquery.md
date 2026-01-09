@@ -1,6 +1,6 @@
 # Migrating from jQuery
 
-> **Version:** 1.0.0-rc.11 | A comprehensive guide for jQuery developers transitioning to Eleva
+> **Version:** 1.0.0-rc.12 | A comprehensive guide for jQuery developers transitioning to Eleva
 
 This guide helps jQuery developers understand Eleva by mapping familiar jQuery patterns to their Eleva equivalents. Eleva offers modern component architecture while maintaining the simplicity you love about jQuery.
 
@@ -38,7 +38,7 @@ This guide helps jQuery developers understand Eleva by mapping familiar jQuery p
 - **Automatic updates** - Change state, DOM updates automatically
 - **Reactive state** - Signals track and propagate changes
 - **No build step** - Still works with a simple `<script>` tag
-- **Small size** - ~2.5KB vs jQuery's ~87KB
+- **Small size** - ~2.3KB vs jQuery's ~87KB
 
 ---
 
@@ -875,7 +875,7 @@ Eleva can run alongside jQuery:
 - Declarative templates
 
 ### Smaller Footprint
-- ~2.5KB vs jQuery's ~87KB
+- ~2.3KB vs jQuery's ~87KB
 - No build step required
 - Works with CDN
 
