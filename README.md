@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.0-rc.12` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.0-rc.13` | **Size:** ~6KB min (~2.4KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -42,9 +42,9 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.12` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.13` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.12`
+**Version:** `1.0.0-rc.13`
 
 
 
@@ -193,7 +193,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.4KB gzipped means instant page loads for your users |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
@@ -217,7 +217,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 - **🎯 Built-in Plugins:** Attr for advanced attributes, Props for complex data handling, Router for client-side routing, and Store for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6KB minified with built-in TypeScript declarations
 
 ---
 
@@ -242,7 +242,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.12` indicate the API is stable but still gathering community feedback before the final release.
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.13` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
@@ -262,7 +262,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6 KB minified and ~2.3 KB gzipped.
+- **Lightweight:** Approximately ~6KB minified and ~2.4KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -277,15 +277,15 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** (Direct DOM)    | **~2.3 KB**                | **~30**                 | ~105*                   | ~15             |
-| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~45 KB                     | 25-45                   | 5-15                    | 2-4             |
-| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
+| **Eleva 1.0** (Direct DOM)    | **~2.4KB**                 | **~30**                 | ~105*                   | ~15             |
+| **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5             |
+| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4             |
+| **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6             |
 
 _*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
 **Eleva's Strengths:**
-- **Smallest bundle size** (~2.3 KB vs 44-90 KB)
+- **Smallest bundle size** (~2.4KB vs 44-90 KB)
 - **Competitive initial render** (~30ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead

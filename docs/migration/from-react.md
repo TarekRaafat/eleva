@@ -1,6 +1,6 @@
 # Migrating from React
 
-> **Version:** 1.0.0-rc.12 | A comprehensive guide for React developers transitioning to Eleva
+> **Version:** 1.0.0-rc.13 | A comprehensive guide for React developers transitioning to Eleva
 
 This guide helps React developers understand Eleva by mapping familiar React concepts to their Eleva equivalents.
 
@@ -671,7 +671,7 @@ setup({ signal }) {
 - No useCallback/useMemo optimization dance
 
 ### Smaller Bundle
-- ~2.3KB vs React 19's ~44KB
+- ~2.4KB vs React 19's ~44KB
 - No virtual DOM overhead
 - No reconciler complexity
 

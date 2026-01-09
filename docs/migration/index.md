@@ -1,6 +1,6 @@
 # Migration Guides
 
-> **Version:** 1.0.0-rc.12 | Comprehensive guides for migrating to Eleva from other frameworks
+> **Version:** 1.0.0-rc.13 | Comprehensive guides for migrating to Eleva from other frameworks
 
 Welcome to the Eleva migration guides. These guides help you transition from popular frameworks to Eleva while leveraging your existing knowledge.
 
@@ -229,7 +229,7 @@ template: (ctx) => `
 ## What You Gain
 
 ### Simplicity
-- ~2.3KB gzipped core
+- ~2.4KB gzipped core
 - No build step required
 - No virtual DOM overhead
 - No hooks rules to remember

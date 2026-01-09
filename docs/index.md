@@ -27,7 +27,7 @@ head:
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.0-rc.12` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.0.0-rc.13` | **Bundle Size:** ~6KB minified (~2.4KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -73,7 +73,7 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.12. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.13. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -125,7 +125,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.4KB gzipped means instant page loads for your users |
 | **No Hidden Magic** | Debug easily with transparent, predictable behavior |
 | **Sync & Async Hooks** | Lifecycle hooks that work the way you expect |
 
@@ -442,16 +442,16 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** (Direct DOM)    | **~2.3 KB**                | **~30**                 | ~105*                   | ~15             |
-| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~45 KB                     | 25-45                   | 5-15                    | 2-4             |
-| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
+| **Eleva 1.0** (Direct DOM)    | **~2.4KB**                 | **~30**                 | ~105*                   | ~15             |
+| **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5             |
+| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4             |
+| **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6             |
 
 _*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
 **Eleva's Strengths:**
 - **240fps+ capable** - Framework never limits frame rate
-- **Smallest bundle size** (~2.3 KB vs 44-90 KB)
+- **Smallest bundle size** (~2.4KB vs 44-90 KB)
 - **Competitive initial render** (~30ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render
@@ -4369,7 +4369,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 
 | Metric | Value |
 |--------|-------|
-| **Bundle Size** | ~6KB minified, ~2.3KB gzipped |
+| **Bundle Size** | ~6KB minified, ~2.4KB gzipped |
 | **Dependencies** | Zero |
 | **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
 | **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |

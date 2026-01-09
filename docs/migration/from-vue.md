@@ -1,6 +1,6 @@
 # Migrating from Vue
 
-> **Version:** 1.0.0-rc.12 | A comprehensive guide for Vue developers transitioning to Eleva
+> **Version:** 1.0.0-rc.13 | A comprehensive guide for Vue developers transitioning to Eleva
 
 This guide helps Vue developers understand Eleva by mapping familiar Vue concepts to their Eleva equivalents.
 
@@ -805,7 +805,7 @@ template: (ctx) => `
 ## What You Gain
 
 ### Smaller Bundle
-- ~2.3KB vs Vue 3.5's ~45KB
+- ~2.4KB vs Vue 3.5's ~45KB
 - No virtual DOM overhead
 - No template compiler in production
 

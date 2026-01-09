@@ -1,6 +1,6 @@
 # Migrating from Alpine.js
 
-> **Version:** 1.0.0-rc.12 | A guide for Alpine.js developers transitioning to Eleva
+> **Version:** 1.0.0-rc.13 | A guide for Alpine.js developers transitioning to Eleva
 
 This guide helps Alpine.js developers understand Eleva by mapping familiar Alpine concepts to their Eleva equivalents. Both frameworks share a similar philosophy—lightweight, no build step, progressive enhancement—but take different approaches: Alpine is HTML-first with directives, while Eleva is JS-first with template functions.
 
