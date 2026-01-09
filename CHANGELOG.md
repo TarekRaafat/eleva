@@ -6,6 +6,136 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.0-rc.13 🔧 (09-01-2026)
+
+### 🔄 Property Sync Fix, Render Scheduling & Error Handling Refinements
+
+This release addresses a critical form element bug where input values weren't syncing properly after user interaction, refines render scheduling behavior based on user control principles, and reverts error handling to be more template-friendly. Several changes are intentional rollbacks from rc.12 based on real-world usage feedback.
+
+### 📝 Release Notes
+
+#### ⚠️ Breaking Changes (Reverts from rc.12)
+
+- **TemplateEngine Error Handling (Reverted)**
+  - `evaluate()` now returns `""` (empty string) instead of `undefined` on evaluation errors.
+  - **Rationale:** Returning `undefined` caused literal `"undefined"` text to appear in templates, which is never desirable. Empty string is more user-friendly for optional values that may not exist.
+  - **Migration:** If you updated code in rc.12 to check `=== undefined`, revert to checking `=== ""`.
+  ```javascript
+  // rc.12 (reverted)
+  if (TemplateEngine.evaluate(expr, data) === undefined) { /* error */ }
+
+  // rc.13 (current)
+  if (TemplateEngine.evaluate(expr, data) === "") { /* error */ }
+  ```
+
+- **Render Scheduling Timing (Reverted to rc.11)**
+  - `renderScheduled` flag is now reset **before** render starts (rc.11 behavior), not after.
+  - **Rationale:** The rc.12 approach silently skipped updates triggered during render (e.g., in `onMount` hooks), breaking watcher integrity. Users should have full control over their app behavior - if circular dependencies cause infinite loops, that's a bug for users to fix, not something the framework should silently mask.
+  - **Impact:** Signal changes during render now correctly trigger a follow-up render.
+
+  | Scenario | rc.12 (after) | rc.13/rc.11 (before) |
+  |----------|---------------|----------------------|
+  | Signal change in `onMount` | Ignored ✗ | Triggers re-render ✓ |
+  | Circular dependency | Safe (masked) | Infinite loop (user's bug) |
+
+#### 🔧 Fixed
+
+- **Form Element Property Sync Bug**
+  - Fixed critical bug where form element properties (value, checked, selected) weren't syncing after user interaction when the attribute value stayed the same.
+  - **Symptom:** In a todo app, after adding a todo, the input field value wouldn't clear even though the signal was set to `""`.
+  - **Root Cause:** The renderer only synced properties when attributes changed, but user interaction changes properties without changing attributes.
+  - **Solution:** Added explicit property synchronization for form elements that handles the attribute/property divergence.
+
+  ```javascript
+  // Example: This now works correctly
+  const title = signal("");
+
+  const submitTodo = () => {
+    addTodo(title.value);
+    title.value = "";  // Input now properly clears ✓
+  };
+  ```
+
+#### 🎛️ Changed
+
+- **Renderer Property Sync Implementation**
+  - Added `SYNC_PROPS` constant defining properties that can diverge from attributes via user interaction: `['value', 'checked', 'selected']`.
+  - Added loop-based property synchronization at the end of `_updateAttributes()`.
+  - Property existence is checked dynamically (`prop in element`) for extensibility.
+
+  ```javascript
+  // rc.12 - No explicit form element sync (bug)
+  // Properties only synced when attributes changed, missing user interaction cases
+
+  // rc.13 - Explicit property sync added
+  const SYNC_PROPS = ['value', 'checked', 'selected'];
+
+  // In _updateAttributes():
+  for (const p of SYNC_PROPS) {
+    if (p in newEl && oldEl[p] !== newEl[p]) oldEl[p] = newEl[p];
+  }
+  ```
+
+- **TemplateEngine Function Caching Retained**
+  - The `_functionCache` optimization from rc.12 is preserved - only the error return value changed.
+  - Expressions are still compiled once and cached for 17x faster repeated evaluation.
+
+#### 🧪 Test Updates
+
+- Updated TemplateEngine tests to expect `""` instead of `undefined` for error cases.
+- All 329 TemplateEngine tests pass.
+- All 292 Renderer tests pass.
+- Property sync verified for: input value, checkbox checked, radio button checked, select option selected.
+
+### 💻 Developer Notes
+
+#### 🔍 Why These Changes?
+
+| Change | rc.12 Behavior | rc.13 Behavior | Rationale |
+|--------|----------------|----------------|-----------|
+| Failed eval return | `undefined` | `""` (reverted) | `"undefined"` in templates is never desirable |
+| Render scheduling | Reset after | Reset before (reverted) | Watcher integrity > loop protection |
+| Property sync | None (bug) | Explicit sync (fix) | Form elements need special handling |
+
+#### 🎯 Design Principles Applied
+
+1. **User Control > Framework Protection**
+   - If users create circular signal dependencies, they should see the infinite loop and fix it.
+   - The framework shouldn't silently mask bugs by skipping updates.
+
+2. **Watcher Integrity**
+   - Watchers should always fire and trigger re-renders when signals change.
+   - Silently skipping updates breaks the reactive contract.
+
+3. **Template-Friendly Errors**
+   - Failed expressions should render as nothing, not as literal `"undefined"` text.
+   - This is especially important for optional values: `{{ user.middleName }}` should be empty if undefined.
+
+#### ⚡ Render Scheduling Comparison
+
+```
+USE CASE: Signal change during render (e.g., onMount sets data)
+
+rc.12 (reset after):
+  [initial] scheduleRender, flag=false
+  [render] #1 started
+  [onMount] Setting data signal...
+  [onMount] scheduleRender, flag=true  ← Still true, SKIPPED
+  [render] #1 complete
+  Result: 1 render - data change MISSED ✗
+
+rc.13 (reset before):
+  [initial] scheduleRender, flag=false
+  [render] #1 started
+  [onMount] Setting data signal...
+  [onMount] scheduleRender, flag=false  ← Reset, schedules new render
+  [render] #2 started
+  [render] #2 complete
+  Result: 2 renders - data change captured ✓
+```
+
+---
+
 ## v1.0.0-rc.12 ⚡ (07-01-2026)
 
 ### 🚀 Synchronous Signals, Async Render Batching & Core Optimizations

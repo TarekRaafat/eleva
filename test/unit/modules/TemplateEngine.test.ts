@@ -75,7 +75,7 @@ describe("TemplateEngine", () => {
     const data = { a: 1 };
     const result = TemplateEngine.evaluate("a +* b", data);
 
-    expect(result).toBeUndefined();
+    expect(result).toBe("");
   });
 
   test("should handle template syntax errors", () => {
@@ -118,9 +118,9 @@ describe("TemplateEngine Error Handling", () => {
   test("should handle undefined data gracefully", () => {
     const template = "Hello, {{ name }}!";
 
-    // When evaluation fails, undefined is returned and converted to string in parse()
-    expect(TemplateEngine.parse(template, undefined)).toBe("Hello, undefined!");
-    expect(TemplateEngine.parse(template, null)).toBe("Hello, undefined!");
+    // When evaluation fails, empty string is returned
+    expect(TemplateEngine.parse(template, undefined)).toBe("Hello, !");
+    expect(TemplateEngine.parse(template, null)).toBe("Hello, !");
   });
 });
 
@@ -795,16 +795,16 @@ describe("TemplateEngine Complex Expression Handling", () => {
   // 16. Edge Cases and Error Handling
   // ==========================================================================
   describe("Edge Cases and Error Handling", () => {
-    test("undefined property returns undefined", () => {
-      expect(TemplateEngine.evaluate("nonexistent", {})).toBeUndefined();
+    test("undefined property returns empty string", () => {
+      expect(TemplateEngine.evaluate("nonexistent", {})).toBe("");
     });
 
-    test("null property access returns undefined", () => {
-      expect(TemplateEngine.evaluate("obj.prop", { obj: null })).toBeUndefined();
+    test("null property access returns empty string", () => {
+      expect(TemplateEngine.evaluate("obj.prop", { obj: null })).toBe("");
     });
 
-    test("syntax error returns undefined", () => {
-      expect(TemplateEngine.evaluate("this is not valid js", {})).toBeUndefined();
+    test("syntax error returns empty string", () => {
+      expect(TemplateEngine.evaluate("this is not valid js", {})).toBe("");
     });
 
     test("division by zero", () => {
@@ -1367,7 +1367,7 @@ describe("TemplateEngine Corner Cases", () => {
     test("await is syntax error outside async", () => {
       // await outside async function is a syntax error
       const result = TemplateEngine.evaluate("await Promise.resolve(42)", {});
-      expect(result).toBeUndefined(); // Should fail and return undefined
+      expect(result).toBe(""); // Should fail and return empty string
     });
   });
 
@@ -1375,25 +1375,25 @@ describe("TemplateEngine Corner Cases", () => {
   // 10. Error Recovery
   // ==========================================================================
   describe("Error Recovery", () => {
-    test("runtime error returns undefined", () => {
-      expect(TemplateEngine.evaluate("obj.method()", { obj: {} })).toBeUndefined();
+    test("runtime error returns empty string", () => {
+      expect(TemplateEngine.evaluate("obj.method()", { obj: {} })).toBe("");
     });
 
-    test("type error returns undefined", () => {
-      expect(TemplateEngine.evaluate("null.property", {})).toBeUndefined();
+    test("type error returns empty string", () => {
+      expect(TemplateEngine.evaluate("null.property", {})).toBe("");
     });
 
-    test("reference error returns undefined", () => {
-      expect(TemplateEngine.evaluate("undefinedVariable", {})).toBeUndefined();
+    test("reference error returns empty string", () => {
+      expect(TemplateEngine.evaluate("undefinedVariable", {})).toBe("");
     });
 
-    test("syntax error returns undefined", () => {
-      expect(TemplateEngine.evaluate("function {}", {})).toBeUndefined();
+    test("syntax error returns empty string", () => {
+      expect(TemplateEngine.evaluate("function {}", {})).toBe("");
     });
 
     test("error in one expression doesn't affect others in template", () => {
       const result = TemplateEngine.parse("{{a}} {{invalid.prop}} {{b}}", { a: "A", b: "B" });
-      expect(result).toBe("A undefined B");
+      expect(result).toBe("A  B");
     });
   });
 });

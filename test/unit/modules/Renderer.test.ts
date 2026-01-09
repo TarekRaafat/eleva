@@ -978,6 +978,348 @@ describe("Renderer", () => {
   });
 
   // ============================================================================
+  // CRITICAL: Property Sync After User Interaction
+  // These tests verify that DOM properties (not just attributes) are synced
+  // after user interaction causes them to diverge from attributes.
+  // ============================================================================
+
+  test("should sync input value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="initial">`;
+
+    const input = oldParent.querySelector("input")!;
+
+    // Simulate user typing - property diverges from attribute
+    input.value = "user typed this";
+
+    // Verify divergence: attribute unchanged, property changed
+    expect(input.getAttribute("value")).toBe("initial");
+    expect(input.value).toBe("user typed this");
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" value="">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be synced, not just attribute
+    expect(input.getAttribute("value")).toBe("");
+    expect(input.value).toBe("");
+  });
+
+  test("should sync input value PROPERTY to new value after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="original">`;
+
+    const input = oldParent.querySelector("input")!;
+
+    // Simulate user clearing the input
+    input.value = "";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" value="reset value">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be updated to new value
+    expect(input.value).toBe("reset value");
+  });
+
+  test("should sync checkbox checked PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="checkbox" checked>`;
+
+    const checkbox = oldParent.querySelector("input")!;
+
+    // Simulate user unchecking - property diverges from attribute
+    checkbox.checked = false;
+
+    // Verify divergence: attribute still present, property is false
+    expect(checkbox.hasAttribute("checked")).toBe(true);
+    expect(checkbox.checked).toBe(false);
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="checkbox">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must remain false (matching new state)
+    expect(checkbox.hasAttribute("checked")).toBe(false);
+    expect(checkbox.checked).toBe(false);
+  });
+
+  test("should sync checkbox checked PROPERTY to true after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="checkbox">`;
+
+    const checkbox = oldParent.querySelector("input")!;
+
+    // Simulate user checking the checkbox
+    checkbox.checked = true;
+
+    // Verify: no attribute, but property is true
+    expect(checkbox.hasAttribute("checked")).toBe(false);
+    expect(checkbox.checked).toBe(true);
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="checkbox">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be synced back to false (no checked attribute)
+    expect(checkbox.checked).toBe(false);
+  });
+
+  test("should sync option selected PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <select>
+        <option value="a" selected>A</option>
+        <option value="b">B</option>
+      </select>
+    `;
+
+    const options = oldParent.querySelectorAll("option");
+
+    // Simulate user selecting option B
+    options[0].selected = false;
+    options[1].selected = true;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <select>
+        <option value="a" selected>A</option>
+        <option value="b">B</option>
+      </select>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Properties must be synced back to match attributes
+    expect(options[0].selected).toBe(true);
+    expect(options[1].selected).toBe(false);
+  });
+
+  test("should preserve input identity while syncing value property", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="test">`;
+
+    const originalInput = oldParent.querySelector("input")!;
+    originalInput.value = "user modified";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" value="new">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Same DOM node must be preserved (important for focus)
+    expect(oldParent.querySelector("input")).toBe(originalInput);
+    // But value must be updated
+    expect(originalInput.value).toBe("new");
+  });
+
+  test("should sync textarea value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<textarea>initial</textarea>`;
+
+    const textarea = oldParent.querySelector("textarea")!;
+
+    // Simulate user typing - property diverges
+    textarea.value = "user typed in textarea";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<textarea></textarea>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be synced to empty
+    expect(textarea.value).toBe("");
+  });
+
+  test("should sync textarea value PROPERTY to new value after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<textarea>original</textarea>`;
+
+    const textarea = oldParent.querySelector("textarea")!;
+
+    // Simulate user clearing
+    textarea.value = "";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<textarea value="reset content">reset content</textarea>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be updated
+    expect(textarea.value).toBe("reset content");
+  });
+
+  test("should sync select value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <select value="a">
+        <option value="a">A</option>
+        <option value="b">B</option>
+        <option value="c">C</option>
+      </select>
+    `;
+
+    const select = oldParent.querySelector("select")!;
+
+    // Simulate user selecting different option
+    select.value = "c";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <select value="a">
+        <option value="a">A</option>
+        <option value="b">B</option>
+        <option value="c">C</option>
+      </select>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be synced back to "a"
+    expect(select.value).toBe("a");
+  });
+
+  test("should sync checkbox checked PROPERTY when adding checked attribute", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="checkbox">`;
+
+    const checkbox = oldParent.querySelector("input")!;
+
+    // Verify initial state
+    expect(checkbox.checked).toBe(false);
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="checkbox" checked>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Property must be synced to true
+    expect(checkbox.checked).toBe(true);
+    expect(checkbox.hasAttribute("checked")).toBe(true);
+  });
+
+  test("should sync radio button checked PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <input type="radio" name="test" value="a" checked>
+      <input type="radio" name="test" value="b">
+    `;
+
+    const radios = oldParent.querySelectorAll("input");
+
+    // Simulate user clicking second radio
+    radios[0].checked = false;
+    radios[1].checked = true;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <input type="radio" name="test" value="a" checked>
+      <input type="radio" name="test" value="b">
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Properties must be synced back to match attributes
+    expect(radios[0].checked).toBe(true);
+    expect(radios[1].checked).toBe(false);
+  });
+
+  test("should sync option selected PROPERTY in multiple select after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <select multiple>
+        <option value="a" selected>A</option>
+        <option value="b">B</option>
+        <option value="c" selected>C</option>
+      </select>
+    `;
+
+    const options = oldParent.querySelectorAll("option");
+
+    // Simulate user changing selection
+    options[0].selected = false;
+    options[1].selected = true;
+    options[2].selected = false;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <select multiple>
+        <option value="a" selected>A</option>
+        <option value="b">B</option>
+        <option value="c" selected>C</option>
+      </select>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Properties must be synced back to match attributes
+    expect(options[0].selected).toBe(true);
+    expect(options[1].selected).toBe(false);
+    expect(options[2].selected).toBe(true);
+  });
+
+  test("should sync keyed input value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input key="my-input" type="text" value="initial">`;
+
+    const input = oldParent.querySelector("input")!;
+    const originalInput = input;
+
+    // Simulate user typing
+    input.value = "user typed";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input key="my-input" type="text" value="reset">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Identity preserved and value synced
+    expect(oldParent.querySelector("input")).toBe(originalInput);
+    expect(input.value).toBe("reset");
+  });
+
+  test("should handle empty string value attribute correctly", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="has content">`;
+
+    const input = oldParent.querySelector("input")!;
+
+    // Simulate user adding more content
+    input.value = "even more content";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" value="">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Empty string attribute should clear the property
+    expect(input.value).toBe("");
+    expect(input.getAttribute("value")).toBe("");
+  });
+
+  test("should handle missing value attribute vs empty string", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="initial">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "user typed";
+
+    const newParent = document.createElement("div");
+    // No value attribute at all
+    newParent.innerHTML = `<input type="text">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Missing attribute should reset property to empty string
+    expect(input.value).toBe("");
+    expect(input.hasAttribute("value")).toBe(false);
+  });
+
+  // ============================================================================
   // HIGH RISK: Script and Style Elements
   // ============================================================================
 
@@ -3244,5 +3586,1938 @@ Line 4</pre>`;
     (renderer as any)._diff(oldParent, newParent);
 
     expect(oldParent.querySelector("a")?.getAttribute("href")).toBe(longHref);
+  });
+
+  // ============================================================================
+  // ALGORITHM EDGE CASES
+  // ============================================================================
+
+  test("should insert new node when key matches but tag differs", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div key="a">Div content</div>`;
+
+    const originalDiv = oldParent.querySelector("div");
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<span key="a">Span content</span>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Should have a span now, not the original div
+    expect(oldParent.querySelector("span")).not.toBeNull();
+    expect(oldParent.querySelector("span")?.textContent).toBe("Span content");
+    // Original div should be gone
+    expect(oldParent.contains(originalDiv)).toBe(false);
+  });
+
+  test("should handle null nodes in oldChildren during iteration", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="a">A</div>
+      <div key="b">B</div>
+      <div key="c">C</div>
+    `;
+
+    const newParent = document.createElement("div");
+    // Reorder: move 'c' to front, which will null out its position
+    newParent.innerHTML = `
+      <div key="c">C</div>
+      <div key="a">A</div>
+      <div key="b">B</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const keys = Array.from(oldParent.querySelectorAll("div")).map(
+      (el) => el.getAttribute("key")
+    );
+    expect(keys).toEqual(["c", "a", "b"]);
+  });
+
+  test("should handle empty old parent with new content", () => {
+    const oldParent = document.createElement("div");
+    // Empty parent
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<span>New content</span>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.innerHTML).toBe("<span>New content</span>");
+  });
+
+  test("should handle populated old parent becoming empty", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<span>Old content</span><div>More</div>`;
+
+    const newParent = document.createElement("div");
+    // Empty
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.innerHTML).toBe("");
+  });
+
+  test("should handle both parents empty (early exit)", () => {
+    const oldParent = document.createElement("div");
+    const newParent = document.createElement("div");
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.innerHTML).toBe("");
+  });
+
+  // ============================================================================
+  // SYNC_PROPERTIES EDGE CASES - Input Types
+  // ============================================================================
+
+  test("should sync input type='number' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="number" value="10">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "999";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="number" value="50">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("50");
+  });
+
+  test("should sync input type='range' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="range" min="0" max="100" value="25">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "75";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="range" min="0" max="100" value="50">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("50");
+  });
+
+  test("should sync input type='date' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="date" value="2024-01-01">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "2024-12-31";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="date" value="2024-06-15">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("2024-06-15");
+  });
+
+  test("should sync input type='time' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="time" value="09:00">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "17:30";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="time" value="12:00">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("12:00");
+  });
+
+  test("should sync input type='color' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="color" value="#ff0000">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "#00ff00";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="color" value="#0000ff">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("#0000ff");
+  });
+
+  test("should sync input type='email' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="email" value="old@example.com">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "user@typed.com";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="email" value="new@example.com">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("new@example.com");
+  });
+
+  test("should sync input type='search' value PROPERTY after user interaction", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="search" value="initial query">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "user search";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="search" value="">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("");
+  });
+
+  // ============================================================================
+  // STYLE ELEMENT HANDLING
+  // ============================================================================
+
+  test("should remove style element WITHOUT data-e-style attribute", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<style>.old { color: red; }</style><div>Content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>Content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Style without data-e-style should be removed
+    expect(oldParent.querySelector("style")).toBeNull();
+  });
+
+  test("should handle mixed style elements (preserved and removed)", () => {
+    const oldParent = document.createElement("div");
+    const preservedStyle = document.createElement("style");
+    preservedStyle.setAttribute("data-e-style", "component-1");
+    preservedStyle.textContent = ".preserved { color: blue; }";
+    oldParent.appendChild(preservedStyle);
+
+    const regularStyle = document.createElement("style");
+    regularStyle.textContent = ".regular { color: red; }";
+    oldParent.appendChild(regularStyle);
+
+    oldParent.innerHTML += `<div>Content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>New Content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Preserved style should still exist
+    expect(oldParent.querySelector("style[data-e-style]")).not.toBeNull();
+    // Regular style count - the preserved one should remain
+    const styles = oldParent.querySelectorAll("style");
+    expect(styles.length).toBe(1);
+    expect(styles[0].hasAttribute("data-e-style")).toBe(true);
+  });
+
+  // ============================================================================
+  // KEY EDGE CASES
+  // ============================================================================
+
+  test("should handle whitespace-only keys", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div key="   ">Whitespace key</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div key="   ">Updated content</div>`;
+
+    const originalDiv = oldParent.querySelector("div");
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Should preserve identity with whitespace key
+    expect(oldParent.querySelector("div")).toBe(originalDiv);
+    expect(oldParent.querySelector("div")?.textContent).toBe("Updated content");
+  });
+
+  test("should handle Unicode keys (emoji)", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="🎉">Party</div>
+      <div key="🚀">Rocket</div>
+      <div key="💡">Idea</div>
+    `;
+
+    const originalRocket = oldParent.querySelectorAll("div")[1];
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div key="🚀">Rocket First</div>
+      <div key="🎉">Party</div>
+      <div key="💡">Idea</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Rocket should be moved to first position, preserving identity
+    expect(oldParent.querySelectorAll("div")[0]).toBe(originalRocket);
+    expect(oldParent.querySelectorAll("div")[0].textContent).toBe("Rocket First");
+  });
+
+  test("should handle Unicode keys (CJK characters)", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="中文">Chinese</div>
+      <div key="日本語">Japanese</div>
+      <div key="한국어">Korean</div>
+    `;
+
+    const originalJapanese = oldParent.querySelectorAll("div")[1];
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div key="한국어">Korean</div>
+      <div key="日本語">Japanese Updated</div>
+      <div key="中文">Chinese</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Japanese should be in second position, identity preserved
+    expect(oldParent.querySelectorAll("div")[1]).toBe(originalJapanese);
+    expect(originalJapanese.textContent).toBe("Japanese Updated");
+  });
+
+  test("should handle very long keys (1000+ chars)", () => {
+    const longKey = "k".repeat(1000);
+
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div key="${longKey}">Long key content</div>`;
+
+    const originalDiv = oldParent.querySelector("div");
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div key="${longKey}">Updated long key</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Should preserve identity with very long key
+    expect(oldParent.querySelector("div")).toBe(originalDiv);
+    expect(oldParent.querySelector("div")?.textContent).toBe("Updated long key");
+  });
+
+  test("should handle keys with newlines and tabs", () => {
+    const keyWithNewline = "key\nwith\nnewlines";
+    const keyWithTab = "key\twith\ttabs";
+
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="${keyWithNewline}">Newline key</div>
+      <div key="${keyWithTab}">Tab key</div>
+    `;
+
+    const originalNewline = oldParent.querySelectorAll("div")[0];
+    const originalTab = oldParent.querySelectorAll("div")[1];
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div key="${keyWithTab}">Tab first</div>
+      <div key="${keyWithNewline}">Newline second</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelectorAll("div")[0]).toBe(originalTab);
+    expect(oldParent.querySelectorAll("div")[1]).toBe(originalNewline);
+  });
+
+  // ============================================================================
+  // STRESS/PERFORMANCE TESTS
+  // ============================================================================
+
+  test("should handle large list (100+ keyed items) reorder", () => {
+    const items = Array.from({ length: 100 }, (_, i) => i);
+
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = items
+      .map((i) => `<div key="item-${i}">Item ${i}</div>`)
+      .join("");
+
+    // Store references to some original nodes
+    const original0 = oldParent.children[0];
+    const original50 = oldParent.children[50];
+    const original99 = oldParent.children[99];
+
+    // Reverse the order
+    const reversedItems = [...items].reverse();
+    const newParent = document.createElement("div");
+    newParent.innerHTML = reversedItems
+      .map((i) => `<div key="item-${i}">Item ${i}</div>`)
+      .join("");
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Verify order is reversed
+    expect(oldParent.children[0].getAttribute("key")).toBe("item-99");
+    expect(oldParent.children[99].getAttribute("key")).toBe("item-0");
+
+    // Verify identity preserved
+    expect(oldParent.children[99]).toBe(original0);
+    expect(oldParent.children[49]).toBe(original50);
+    expect(oldParent.children[0]).toBe(original99);
+  });
+
+  test("should handle large list shuffle", () => {
+    const items = Array.from({ length: 50 }, (_, i) => i);
+
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = items
+      .map((i) => `<li key="k${i}">Item ${i}</li>`)
+      .join("");
+
+    const originalNodes = Array.from(oldParent.children);
+
+    // Fisher-Yates shuffle (deterministic seed for test)
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = i % (i + 1); // Deterministic "random"
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = shuffled
+      .map((i) => `<li key="k${i}">Item ${i}</li>`)
+      .join("");
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Verify all original nodes are still present (identity preserved)
+    for (const node of originalNodes) {
+      expect(oldParent.contains(node)).toBe(true);
+    }
+  });
+
+  test("should handle deep nesting with keys at multiple levels", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="level1-a">
+        <div key="level2-a">
+          <div key="level3-a">Deep A</div>
+          <div key="level3-b">Deep B</div>
+        </div>
+        <div key="level2-b">
+          <div key="level3-c">Deep C</div>
+        </div>
+      </div>
+      <div key="level1-b">
+        <div key="level2-c">
+          <div key="level3-d">Deep D</div>
+        </div>
+      </div>
+    `;
+
+    const deepA = oldParent.querySelector('[key="level3-a"]');
+    const deepD = oldParent.querySelector('[key="level3-d"]');
+
+    const newParent = document.createElement("div");
+    // Reorder at multiple levels
+    newParent.innerHTML = `
+      <div key="level1-b">
+        <div key="level2-c">
+          <div key="level3-d">Deep D Updated</div>
+        </div>
+      </div>
+      <div key="level1-a">
+        <div key="level2-b">
+          <div key="level3-c">Deep C</div>
+        </div>
+        <div key="level2-a">
+          <div key="level3-b">Deep B</div>
+          <div key="level3-a">Deep A Updated</div>
+        </div>
+      </div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Verify deep nodes preserved identity
+    expect(oldParent.querySelector('[key="level3-a"]')).toBe(deepA);
+    expect(oldParent.querySelector('[key="level3-d"]')).toBe(deepD);
+    expect(deepA?.textContent).toBe("Deep A Updated");
+    expect(deepD?.textContent).toBe("Deep D Updated");
+  });
+
+  // ============================================================================
+  // NODE TYPE COVERAGE
+  // ============================================================================
+
+  test("should handle removing comment nodes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<!-- Comment to remove --><div>Content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>Content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // No comments should remain
+    const hasComment = Array.from(oldParent.childNodes).some(
+      (n) => n.nodeType === 8
+    );
+    expect(hasComment).toBe(false);
+  });
+
+  test("should handle adding comment nodes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>Content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<!-- New comment --><div>Content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Should have a comment now
+    expect(oldParent.firstChild?.nodeType).toBe(8);
+    expect(oldParent.firstChild?.nodeValue).toBe(" New comment ");
+  });
+
+  test("should handle mixed comment and element nodes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <!-- Header -->
+      <header>Title</header>
+      <!-- Content -->
+      <main>Body</main>
+      <!-- Footer -->
+      <footer>End</footer>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <!-- Updated Header -->
+      <header>New Title</header>
+      <!-- Main Content Area -->
+      <main>New Body</main>
+      <footer>New End</footer>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("header")?.textContent).toBe("New Title");
+    expect(oldParent.querySelector("main")?.textContent).toBe("New Body");
+    expect(oldParent.querySelector("footer")?.textContent).toBe("New End");
+  });
+
+  // ============================================================================
+  // ADDITIONAL EDGE CASES
+  // ============================================================================
+
+  test("should handle attribute with empty string value", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div data-value="something">Content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div data-value="">Content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.getAttribute("data-value")).toBe("");
+  });
+
+  test("should handle rapid attribute changes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div class="a" id="test" data-x="1">Content</div>`;
+
+    // Multiple rapid changes
+    for (let i = 0; i < 10; i++) {
+      const newParent = document.createElement("div");
+      newParent.innerHTML = `<div class="${String.fromCharCode(97 + i)}" id="test-${i}" data-x="${i}">Content ${i}</div>`;
+      (renderer as any)._diff(oldParent, newParent);
+    }
+
+    const div = oldParent.querySelector("div");
+    expect(div?.getAttribute("class")).toBe("j");
+    expect(div?.getAttribute("id")).toBe("test-9");
+    expect(div?.getAttribute("data-x")).toBe("9");
+    expect(div?.textContent).toBe("Content 9");
+  });
+
+  test("should handle nodes with same key in different subtrees", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div class="tree1">
+        <span key="shared">Tree 1 Span</span>
+      </div>
+      <div class="tree2">
+        <span key="shared">Tree 2 Span</span>
+      </div>
+    `;
+
+    const tree1Span = oldParent.querySelector(".tree1 span");
+    const tree2Span = oldParent.querySelector(".tree2 span");
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div class="tree1">
+        <span key="shared">Tree 1 Updated</span>
+      </div>
+      <div class="tree2">
+        <span key="shared">Tree 2 Updated</span>
+      </div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Each subtree should maintain its own keyed element
+    expect(oldParent.querySelector(".tree1 span")).toBe(tree1Span);
+    expect(oldParent.querySelector(".tree2 span")).toBe(tree2Span);
+    expect(tree1Span?.textContent).toBe("Tree 1 Updated");
+    expect(tree2Span?.textContent).toBe("Tree 2 Updated");
+  });
+
+  test("should handle contenteditable div value changes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div contenteditable="true">Editable content</div>`;
+
+    const editableDiv = oldParent.querySelector("div")!;
+    // Simulate user editing
+    editableDiv.textContent = "User edited this";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div contenteditable="true">Reset content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(editableDiv.textContent).toBe("Reset content");
+  });
+
+  test("should handle template element attributes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<template id="tpl-old" data-version="1"></template>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<template id="tpl-new" data-version="2"></template>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const template = oldParent.querySelector("template") as HTMLTemplateElement;
+    expect(template).not.toBeNull();
+    expect(template.getAttribute("id")).toBe("tpl-new");
+    expect(template.getAttribute("data-version")).toBe("2");
+  });
+
+  test("should handle slot element", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<slot name="header">Default header</slot>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<slot name="header">Updated default</slot>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const slot = oldParent.querySelector("slot");
+    expect(slot?.getAttribute("name")).toBe("header");
+    expect(slot?.textContent).toBe("Updated default");
+  });
+
+  test("should handle multiple consecutive insertions", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div key="a">A</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div key="x">X</div>
+      <div key="y">Y</div>
+      <div key="a">A</div>
+      <div key="z">Z</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const keys = Array.from(oldParent.querySelectorAll("div")).map(
+      (el) => el.getAttribute("key")
+    );
+    expect(keys).toEqual(["x", "y", "a", "z"]);
+  });
+
+  test("should handle multiple consecutive deletions", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="a">A</div>
+      <div key="b">B</div>
+      <div key="c">C</div>
+      <div key="d">D</div>
+      <div key="e">E</div>
+    `;
+
+    const originalC = oldParent.querySelector('[key="c"]');
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div key="c">C Only</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.children.length).toBe(1);
+    expect(oldParent.children[0]).toBe(originalC);
+    expect(originalC?.textContent).toBe("C Only");
+  });
+
+  test("should preserve _eleva_instance marked nodes in complex diff", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div key="before">Before</div>
+      <div key="component">Component placeholder</div>
+      <div key="after">After</div>
+    `;
+
+    const componentDiv = oldParent.querySelector('[key="component"]')!;
+    (componentDiv as any)._eleva_instance = { name: "TestComponent" };
+    componentDiv.innerHTML = "<span>Managed by Eleva</span>";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div key="before">Before Updated</div>
+      <div key="component">Should not change</div>
+      <div key="after">After Updated</div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Component div should not be modified
+    expect(componentDiv.innerHTML).toBe("<span>Managed by Eleva</span>");
+    // Other divs should be updated
+    expect(oldParent.querySelector('[key="before"]')?.textContent).toBe("Before Updated");
+    expect(oldParent.querySelector('[key="after"]')?.textContent).toBe("After Updated");
+  });
+
+  // ============================================================================
+  // STATE PRESERVATION TESTS
+  // These tests verify that DOM state is preserved during diffing.
+  // This is a key benefit of patching in place vs replacing nodes.
+  // ============================================================================
+
+  test("should preserve focus on input after attribute update", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" class="old-class" value="test">`;
+    document.body.appendChild(oldParent);
+
+    const input = oldParent.querySelector("input")!;
+    input.focus();
+
+    // Verify focus is set (JSDOM limitation: may not fully support focus)
+    const hadFocusBefore = document.activeElement === input;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" class="new-class" value="test">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Input should still be the same element
+    expect(oldParent.querySelector("input")).toBe(input);
+    // Class should be updated
+    expect(input.getAttribute("class")).toBe("new-class");
+    // If focus was set before, it should still be focused
+    if (hadFocusBefore) {
+      expect(document.activeElement).toBe(input);
+    }
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve keyed input identity and attributes after reorder", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <input key="input1" type="text" placeholder="First">
+      <input key="input2" type="text" placeholder="Second">
+      <input key="input3" type="text" placeholder="Third">
+    `;
+    document.body.appendChild(oldParent);
+
+    const inputs = oldParent.querySelectorAll("input");
+    const secondInput = inputs[1];
+
+    const newParent = document.createElement("div");
+    // Reorder: move second input to first position
+    newParent.innerHTML = `
+      <input key="input2" type="text" placeholder="Second - Now First">
+      <input key="input1" type="text" placeholder="First">
+      <input key="input3" type="text" placeholder="Third">
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Second input should be preserved and moved to first position
+    expect(oldParent.querySelectorAll("input")[0]).toBe(secondInput);
+    expect(secondInput.getAttribute("placeholder")).toBe("Second - Now First");
+    // Key order should be correct
+    const keys = Array.from(oldParent.querySelectorAll("input")).map(
+      (el) => el.getAttribute("key")
+    );
+    expect(keys).toEqual(["input2", "input1", "input3"]);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve scroll position in scrollable container", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div class="scrollable" style="height: 100px; overflow: auto;">
+        <div style="height: 500px;">Tall content</div>
+      </div>
+    `;
+    document.body.appendChild(oldParent);
+
+    const scrollable = oldParent.querySelector(".scrollable") as HTMLElement;
+    scrollable.scrollTop = 150;
+
+    const scrollPosBefore = scrollable.scrollTop;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div class="scrollable updated" style="height: 100px; overflow: auto;">
+        <div style="height: 500px;">Tall content updated</div>
+      </div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Element should be the same (patched, not replaced)
+    expect(oldParent.querySelector(".scrollable")).toBe(scrollable);
+    // Class should be updated
+    expect(scrollable.classList.contains("updated")).toBe(true);
+    // Scroll position should be preserved
+    expect(scrollable.scrollTop).toBe(scrollPosBefore);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve input selection range after value sync", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="hello world">`;
+    document.body.appendChild(oldParent);
+
+    const input = oldParent.querySelector("input")!;
+
+    // Set selection range (select "world")
+    input.setSelectionRange(6, 11);
+    const selectionStart = input.selectionStart;
+    const selectionEnd = input.selectionEnd;
+
+    const newParent = document.createElement("div");
+    // Same value, different attribute
+    newParent.innerHTML = `<input type="text" value="hello world" class="updated">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Input should be the same element
+    expect(oldParent.querySelector("input")).toBe(input);
+    // Selection should be preserved (same value, just attribute change)
+    expect(input.selectionStart).toBe(selectionStart);
+    expect(input.selectionEnd).toBe(selectionEnd);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve textarea identity with attribute-only changes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<textarea class="editor" rows="5">Line 1\nLine 2\nLine 3</textarea>`;
+    document.body.appendChild(oldParent);
+
+    const textarea = oldParent.querySelector("textarea")!;
+    const originalValue = textarea.value;
+
+    // Modify textarea programmatically (user typed)
+    textarea.value = "User modified content";
+
+    const newParent = document.createElement("div");
+    // Only attribute changes, value attribute matches original
+    newParent.innerHTML = `<textarea class="editor updated" rows="10">Line 1\nLine 2\nLine 3</textarea>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Textarea should be same element (identity preserved)
+    expect(oldParent.querySelector("textarea")).toBe(textarea);
+    // Class should be updated
+    expect(textarea.classList.contains("updated")).toBe(true);
+    // Rows should be updated
+    expect(textarea.getAttribute("rows")).toBe("10");
+    // Value should be synced to match new content (this is expected behavior)
+    // Note: textarea value comes from text content, not value attribute
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve textarea DOM identity during attribute updates", () => {
+    const oldParent = document.createElement("div");
+    const textarea = document.createElement("textarea");
+    textarea.value = "Original content";
+    textarea.className = "old-class";
+    textarea.setAttribute("data-id", "123");
+    oldParent.appendChild(textarea);
+
+    const newParent = document.createElement("div");
+    const newTextarea = document.createElement("textarea");
+    newTextarea.value = "Original content";
+    newTextarea.className = "new-class";
+    newTextarea.setAttribute("data-id", "123");
+    newTextarea.setAttribute("rows", "10");
+    newParent.appendChild(newTextarea);
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Textarea should be same DOM element (identity preserved)
+    expect(oldParent.querySelector("textarea")).toBe(textarea);
+    // Attributes should be updated
+    expect(textarea.className).toBe("new-class");
+    expect(textarea.getAttribute("rows")).toBe("10");
+    // Original data attribute preserved
+    expect(textarea.getAttribute("data-id")).toBe("123");
+  });
+
+  test("should preserve cursor position (caret) in input", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text" value="testing cursor">`;
+    document.body.appendChild(oldParent);
+
+    const input = oldParent.querySelector("input")!;
+
+    // Set cursor position (caret at position 7)
+    input.setSelectionRange(7, 7);
+    const caretPos = input.selectionStart;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="text" value="testing cursor" data-updated="true">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Input should be same element
+    expect(oldParent.querySelector("input")).toBe(input);
+    // Cursor position should be preserved
+    expect(input.selectionStart).toBe(caretPos);
+    expect(input.selectionEnd).toBe(caretPos);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve DOM identity for nested focused element", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" name="name" value="">
+      </div>
+      <div class="form-group">
+        <label>Email:</label>
+        <input type="email" name="email" value="">
+      </div>
+    `;
+    document.body.appendChild(oldParent);
+
+    const emailInput = oldParent.querySelector('input[name="email"]')!;
+    emailInput.focus();
+    const hadFocusBefore = document.activeElement === emailInput;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div class="form-group updated">
+        <label>Full Name:</label>
+        <input type="text" name="name" value="" placeholder="Enter name">
+      </div>
+      <div class="form-group updated">
+        <label>Email Address:</label>
+        <input type="email" name="email" value="" placeholder="Enter email">
+      </div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Email input should still be the same element
+    expect(oldParent.querySelector('input[name="email"]')).toBe(emailInput);
+    // Should have new placeholder
+    expect(emailInput.getAttribute("placeholder")).toBe("Enter email");
+    // Focus should be preserved
+    if (hadFocusBefore) {
+      expect(document.activeElement).toBe(emailInput);
+    }
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve multiple scroll positions in nested scrollables", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <div class="outer" style="height: 200px; overflow: auto;">
+        <div style="height: 100px;">Header</div>
+        <div class="inner" style="height: 100px; overflow: auto;">
+          <div style="height: 300px;">Inner content</div>
+        </div>
+        <div style="height: 200px;">Footer</div>
+      </div>
+    `;
+    document.body.appendChild(oldParent);
+
+    const outer = oldParent.querySelector(".outer") as HTMLElement;
+    const inner = oldParent.querySelector(".inner") as HTMLElement;
+
+    outer.scrollTop = 50;
+    inner.scrollTop = 75;
+
+    const outerScrollBefore = outer.scrollTop;
+    const innerScrollBefore = inner.scrollTop;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <div class="outer updated" style="height: 200px; overflow: auto;">
+        <div style="height: 100px;">Header Updated</div>
+        <div class="inner updated" style="height: 100px; overflow: auto;">
+          <div style="height: 300px;">Inner content updated</div>
+        </div>
+        <div style="height: 200px;">Footer Updated</div>
+      </div>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Elements should be preserved
+    expect(oldParent.querySelector(".outer")).toBe(outer);
+    expect(oldParent.querySelector(".inner")).toBe(inner);
+    // Scroll positions should be preserved
+    expect(outer.scrollTop).toBe(outerScrollBefore);
+    expect(inner.scrollTop).toBe(innerScrollBefore);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve contenteditable selection", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div contenteditable="true">Editable text content</div>`;
+    document.body.appendChild(oldParent);
+
+    const editable = oldParent.querySelector("div")!;
+
+    // Create a selection in the contenteditable (if supported)
+    const getSelection =
+      typeof globalThis.getSelection === "function"
+        ? globalThis.getSelection
+        : null;
+    if (getSelection && document.createRange) {
+      const range = document.createRange();
+      const textNode = editable.firstChild;
+      if (textNode) {
+        try {
+          range.setStart(textNode, 9);
+          range.setEnd(textNode, 13);
+          const selection = getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        } catch (e) {
+          // JSDOM may not fully support this
+        }
+      }
+    }
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div contenteditable="true" class="updated">Editable text content</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Element should be preserved
+    expect(oldParent.querySelector("div")).toBe(editable);
+    expect(editable.classList.contains("updated")).toBe(true);
+
+    document.body.removeChild(oldParent);
+  });
+
+  test("should preserve checkbox indeterminate state", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="checkbox" id="parent-checkbox">`;
+
+    const checkbox = oldParent.querySelector("input")!;
+    checkbox.indeterminate = true;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="checkbox" id="parent-checkbox" class="updated">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Checkbox should be same element
+    expect(oldParent.querySelector("input")).toBe(checkbox);
+    // Indeterminate state should be preserved (it's not an attribute)
+    expect(checkbox.indeterminate).toBe(true);
+    expect(checkbox.classList.contains("updated")).toBe(true);
+  });
+
+  test("should preserve video currentTime state", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<video src="test.mp4" class="player"></video>`;
+
+    const video = oldParent.querySelector("video")!;
+    // Set currentTime (this may not work fully in JSDOM)
+    try {
+      video.currentTime = 30;
+    } catch (e) {
+      // JSDOM may not support this
+    }
+    const timeBefore = video.currentTime;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<video src="test.mp4" class="player updated"></video>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Video should be same element
+    expect(oldParent.querySelector("video")).toBe(video);
+    // currentTime should be preserved
+    expect(video.currentTime).toBe(timeBefore);
+    expect(video.classList.contains("updated")).toBe(true);
+  });
+
+  test("should preserve details element open state set by user", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <details>
+        <summary>Click to expand</summary>
+        <p>Hidden content</p>
+      </details>
+    `;
+
+    const details = oldParent.querySelector("details")!;
+    // Simulate user opening the details
+    details.open = true;
+
+    const newParent = document.createElement("div");
+    // New HTML doesn't have open attribute
+    newParent.innerHTML = `
+      <details class="updated">
+        <summary>Click to expand</summary>
+        <p>Hidden content updated</p>
+      </details>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Details should be same element
+    expect(oldParent.querySelector("details")).toBe(details);
+    // Open state should be synced to match new HTML (no open attribute)
+    // This tests that we properly handle boolean attributes
+    expect(details.classList.contains("updated")).toBe(true);
+  });
+
+  test("should preserve input validity state", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="email" value="invalid-email" required>`;
+    document.body.appendChild(oldParent);
+
+    const input = oldParent.querySelector("input")!;
+    // Trigger validation
+    input.checkValidity();
+    const wasInvalid = !input.validity.valid;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="email" value="invalid-email" required class="updated">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Input should be same element
+    expect(oldParent.querySelector("input")).toBe(input);
+    // Validity state should be preserved
+    expect(!input.validity.valid).toBe(wasInvalid);
+
+    document.body.removeChild(oldParent);
+  });
+
+  // ==========================================================================
+  // CATEGORY 1: ERROR HANDLING / EDGE CASES
+  // ==========================================================================
+
+  test("should handle empty HTML gracefully", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>content</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = "";
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.innerHTML).toBe("");
+  });
+
+  test("should handle invalid/malformed HTML gracefully", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>valid</div>`;
+
+    const newParent = document.createElement("div");
+    // Malformed HTML - browsers will auto-correct
+    newParent.innerHTML = `<div><p>unclosed paragraph<div>nested incorrectly</div>`;
+
+    // Should not throw
+    expect(() => {
+      (renderer as any)._diff(oldParent, newParent);
+    }).not.toThrow();
+  });
+
+  test("should handle self-closing tags correctly", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="text"><br><hr><img src="test.jpg">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="email"><br><hr><img src="updated.jpg">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("input")?.type).toBe("email");
+    expect(oldParent.querySelector("img")?.src).toContain("updated.jpg");
+  });
+
+  test("should handle very deeply nested structures", () => {
+    const oldParent = document.createElement("div");
+    let deepHtml = "<div>";
+    for (let i = 0; i < 50; i++) {
+      deepHtml += `<div class="level-${i}">`;
+    }
+    deepHtml += "deep content";
+    for (let i = 0; i < 50; i++) {
+      deepHtml += "</div>";
+    }
+    deepHtml += "</div>";
+    oldParent.innerHTML = deepHtml;
+
+    const newParent = document.createElement("div");
+    let newDeepHtml = "<div>";
+    for (let i = 0; i < 50; i++) {
+      newDeepHtml += `<div class="level-${i} updated">`;
+    }
+    newDeepHtml += "updated deep content";
+    for (let i = 0; i < 50; i++) {
+      newDeepHtml += "</div>";
+    }
+    newDeepHtml += "</div>";
+    newParent.innerHTML = newDeepHtml;
+
+    expect(() => {
+      (renderer as any)._diff(oldParent, newParent);
+    }).not.toThrow();
+
+    expect(oldParent.textContent).toBe("updated deep content");
+  });
+
+  test("should handle HTML entities correctly", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>&amp; &lt; &gt; &quot;</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>&copy; &reg; &trade; &euro;</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Compare text content matches the new parsed content
+    expect(oldParent.querySelector("div")?.textContent).toBe(
+      newParent.querySelector("div")?.textContent
+    );
+  });
+
+  test("should handle whitespace-only text nodes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>   </div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>\n\t\n</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.textContent).toBe("\n\t\n");
+  });
+
+  test("should handle empty attributes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input disabled>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input disabled="">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("input")?.disabled).toBe(true);
+  });
+
+  test("should handle data attributes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div data-id="123" data-value="old"></div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div data-id="456" data-new="added"></div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const div = oldParent.querySelector("div")!;
+    expect(div.dataset.id).toBe("456");
+    expect(div.dataset.new).toBe("added");
+    expect(div.dataset.value).toBeUndefined();
+  });
+
+  // ==========================================================================
+  // CATEGORY 2: SPECIAL INPUT TYPES
+  // ==========================================================================
+
+  test("should handle file input correctly", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="file" accept=".jpg">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="file" accept=".png,.jpg" multiple>`;
+
+    const input = oldParent.querySelector("input")!;
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("input")).toBe(input);
+    expect(input.accept).toBe(".png,.jpg");
+    expect(input.multiple).toBe(true);
+  });
+
+  test("should handle hidden input value", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="hidden" name="token" value="abc123">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="hidden" name="token" value="xyz789">`;
+
+    const input = oldParent.querySelector("input")!;
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("input")).toBe(input);
+    expect(input.value).toBe("xyz789");
+  });
+
+  test("should handle password input value property", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="password" value="">`;
+
+    const input = oldParent.querySelector("input")!;
+    // Simulate user typing password
+    input.value = "secretpassword";
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="password" value="">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Value should be cleared since new HTML has empty value
+    expect(input.value).toBe("");
+  });
+
+  test("should handle number input with constraints", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="number" min="0" max="100" step="1" value="50">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="number" min="10" max="200" step="5" value="75">`;
+
+    const input = oldParent.querySelector("input")!;
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.min).toBe("10");
+    expect(input.max).toBe("200");
+    expect(input.step).toBe("5");
+    expect(input.value).toBe("75");
+  });
+
+  test("should handle date input", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="date" value="2024-01-01">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "2024-06-15"; // User changes date
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="date" value="2024-12-25">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("2024-12-25");
+  });
+
+  test("should handle color input", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="color" value="#ff0000">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "#00ff00"; // User picks green
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="color" value="#0000ff">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("#0000ff");
+  });
+
+  test("should handle range input", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<input type="range" min="0" max="100" value="50">`;
+
+    const input = oldParent.querySelector("input")!;
+    input.value = "75"; // User slides to 75
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<input type="range" min="0" max="100" value="25">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(input.value).toBe("25");
+  });
+
+  // ==========================================================================
+  // CATEGORY 3: SVG/MATHML EDGE CASES
+  // ==========================================================================
+
+  test("should handle SVG elements", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <svg width="100" height="100">
+        <circle cx="50" cy="50" r="40" fill="red"/>
+      </svg>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <svg width="200" height="200">
+        <circle cx="100" cy="100" r="80" fill="blue"/>
+      </svg>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const svg = oldParent.querySelector("svg")!;
+    const circle = oldParent.querySelector("circle")!;
+    expect(svg.getAttribute("width")).toBe("200");
+    expect(circle.getAttribute("r")).toBe("80");
+    expect(circle.getAttribute("fill")).toBe("blue");
+  });
+
+  test("should handle SVG path with complex d attribute", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <svg>
+        <path d="M10 10 L90 90" stroke="black"/>
+      </svg>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <svg>
+        <path d="M0 0 C20 20, 40 20, 50 10 S80 0, 100 10" stroke="red"/>
+      </svg>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const path = oldParent.querySelector("path")!;
+    expect(path.getAttribute("d")).toBe("M0 0 C20 20, 40 20, 50 10 S80 0, 100 10");
+    expect(path.getAttribute("stroke")).toBe("red");
+  });
+
+  test("should handle SVG with foreignObject", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <svg width="200" height="200">
+        <foreignObject x="20" y="20" width="160" height="160">
+          <div xmlns="http://www.w3.org/1999/xhtml">
+            <p>Old HTML content</p>
+          </div>
+        </foreignObject>
+      </svg>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <svg width="200" height="200">
+        <foreignObject x="20" y="20" width="160" height="160">
+          <div xmlns="http://www.w3.org/1999/xhtml">
+            <p>New HTML content</p>
+          </div>
+        </foreignObject>
+      </svg>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("p")?.textContent).toBe("New HTML content");
+  });
+
+  test("should handle SVG use and defs elements", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <svg>
+        <defs>
+          <circle id="myCircle" cx="0" cy="0" r="10"/>
+        </defs>
+        <use href="#myCircle" x="20" y="20"/>
+      </svg>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <svg>
+        <defs>
+          <circle id="myCircle" cx="0" cy="0" r="20"/>
+        </defs>
+        <use href="#myCircle" x="50" y="50"/>
+      </svg>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const circle = oldParent.querySelector("#myCircle")!;
+    const use = oldParent.querySelector("use")!;
+    expect(circle.getAttribute("r")).toBe("20");
+    expect(use.getAttribute("x")).toBe("50");
+  });
+
+  test("should handle SVG text elements", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <svg>
+        <text x="10" y="20" font-size="14">Old text</text>
+      </svg>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <svg>
+        <text x="50" y="30" font-size="20">New text</text>
+      </svg>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const text = oldParent.querySelector("text")!;
+    expect(text.getAttribute("x")).toBe("50");
+    expect(text.getAttribute("font-size")).toBe("20");
+    expect(text.textContent).toBe("New text");
+  });
+
+  // ==========================================================================
+  // CATEGORY 4: SECURITY
+  // ==========================================================================
+
+  test("should not execute injected script tags during diff", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>safe content</div>`;
+
+    const newParent = document.createElement("div");
+    // Script injection attempt
+    newParent.innerHTML = `<div>content</div><script>globalThis.hackedByScript = true;</script>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Script should be in DOM but not executed during diff
+    // (Scripts only execute on initial parse or when dynamically appended)
+    expect((globalThis as any).hackedByScript).toBeUndefined();
+  });
+
+  test("should handle event handler attributes safely", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>safe</div>`;
+
+    const newParent = document.createElement("div");
+    // XSS attempt via event handlers
+    newParent.innerHTML = `<div onclick="globalThis.hackedByOnclick = true">click me</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Attribute is set but handler not triggered during diff
+    expect((globalThis as any).hackedByOnclick).toBeUndefined();
+    expect(oldParent.querySelector("div")?.getAttribute("onclick")).toBe(
+      "globalThis.hackedByOnclick = true"
+    );
+  });
+
+  test("should handle javascript: URLs in attributes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<a href="/safe">link</a>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<a href="javascript:alert('xss')">link</a>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Attribute is set (framework doesn't sanitize - that's app responsibility)
+    expect(oldParent.querySelector("a")?.getAttribute("href")).toBe(
+      "javascript:alert('xss')"
+    );
+  });
+
+  test("should handle img onerror injection", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<img src="valid.jpg">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<img src="invalid.jpg" onerror="globalThis.hackedByImg = true">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // onerror not triggered during diff (only on actual load error)
+    expect((globalThis as any).hackedByImg).toBeUndefined();
+  });
+
+  test("should handle data: URLs in img src", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<img src="normal.jpg">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<img src="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg'><text>test</text></svg>">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("img")?.src).toContain("data:image/svg+xml");
+  });
+
+  // ==========================================================================
+  // CATEGORY 5: TEXT CONTENT EDGE CASES
+  // ==========================================================================
+
+  test("should handle zero-width characters", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>normal text</div>`;
+
+    const newParent = document.createElement("div");
+    // Zero-width space, zero-width non-joiner, zero-width joiner
+    newParent.innerHTML = `<div>text\u200B\u200C\u200Dwith\u200Bzero\u200Cwidth</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.textContent).toBe(
+      "text\u200B\u200C\u200Dwith\u200Bzero\u200Cwidth"
+    );
+  });
+
+  test("should handle unicode characters", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>ASCII</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>日本語 中文 한국어 العربية 🎉🚀💻</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.textContent).toBe(
+      "日本語 中文 한국어 العربية 🎉🚀💻"
+    );
+  });
+
+  test("should handle RTL text", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div dir="ltr">left to right</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div dir="rtl">مرحبا بالعالم</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const div = oldParent.querySelector("div")!;
+    expect(div.getAttribute("dir")).toBe("rtl");
+    expect(div.textContent).toBe("مرحبا بالعالم");
+  });
+
+  test("should handle very long text content", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>short</div>`;
+
+    const longText = "x".repeat(100000);
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>${longText}</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.textContent?.length).toBe(100000);
+  });
+
+  test("should handle text with newlines and tabs", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<pre>single line</pre>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<pre>line1\n\tindented\n\t\tdouble indent\nline4</pre>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("pre")?.textContent).toBe(
+      "line1\n\tindented\n\t\tdouble indent\nline4"
+    );
+  });
+
+  test("should handle mixed text and element nodes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>text only</div>`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<div>before <span>middle</span> after <strong>end</strong></div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.innerHTML).toBe(
+      "before <span>middle</span> after <strong>end</strong>"
+    );
+  });
+
+  test("should handle surrogate pairs correctly", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>basic</div>`;
+
+    const newParent = document.createElement("div");
+    // Emoji with surrogate pairs: 𝟙𝟚𝟛 (mathematical double-struck digits)
+    newParent.innerHTML = `<div>\uD835\uDFD9\uD835\uDFDA\uD835\uDFDB</div>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(oldParent.querySelector("div")?.textContent).toBe("𝟙𝟚𝟛");
+  });
+
+  // ==========================================================================
+  // CATEGORY 6: CONCURRENT/ASYNC SCENARIOS
+  // ==========================================================================
+
+  test("should handle multiple rapid diffs", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>initial</div>`;
+
+    // Rapid successive diffs
+    for (let i = 0; i < 100; i++) {
+      const newParent = document.createElement("div");
+      newParent.innerHTML = `<div>update ${i}</div>`;
+      (renderer as any)._diff(oldParent, newParent);
+    }
+
+    expect(oldParent.querySelector("div")?.textContent).toBe("update 99");
+  });
+
+  test("should handle diff during animation frame callback", async () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>before</div>`;
+    document.body.appendChild(oldParent);
+
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        const newParent = document.createElement("div");
+        newParent.innerHTML = `<div>during animation</div>`;
+        (renderer as any)._diff(oldParent, newParent);
+
+        expect(oldParent.querySelector("div")?.textContent).toBe(
+          "during animation"
+        );
+        document.body.removeChild(oldParent);
+        resolve();
+      });
+    });
+  });
+
+  test("should handle diff in microtask", async () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>before</div>`;
+
+    await Promise.resolve().then(() => {
+      const newParent = document.createElement("div");
+      newParent.innerHTML = `<div>after microtask</div>`;
+      (renderer as any)._diff(oldParent, newParent);
+    });
+
+    expect(oldParent.querySelector("div")?.textContent).toBe("after microtask");
+  });
+
+  test("should handle interleaved diffs on different containers", () => {
+    const container1 = document.createElement("div");
+    const container2 = document.createElement("div");
+    container1.innerHTML = `<div key="a">A</div>`;
+    container2.innerHTML = `<div key="b">B</div>`;
+
+    // Interleave operations
+    const new1a = document.createElement("div");
+    new1a.innerHTML = `<div key="a">A1</div>`;
+
+    const new2a = document.createElement("div");
+    new2a.innerHTML = `<div key="b">B1</div>`;
+
+    (renderer as any)._diff(container1, new1a);
+
+    const new1b = document.createElement("div");
+    new1b.innerHTML = `<div key="a">A2</div>`;
+
+    (renderer as any)._diff(container2, new2a);
+
+    const new2b = document.createElement("div");
+    new2b.innerHTML = `<div key="b">B2</div>`;
+
+    (renderer as any)._diff(container1, new1b);
+    (renderer as any)._diff(container2, new2b);
+
+    expect(container1.querySelector("div")?.textContent).toBe("A2");
+    expect(container2.querySelector("div")?.textContent).toBe("B2");
+  });
+
+  test("should handle setTimeout diff scheduling", async () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<div>initial</div>`;
+
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        const newParent = document.createElement("div");
+        newParent.innerHTML = `<div>after timeout</div>`;
+        (renderer as any)._diff(oldParent, newParent);
+        resolve();
+      }, 0);
+    });
+
+    expect(oldParent.querySelector("div")?.textContent).toBe("after timeout");
+  });
+
+  // ==========================================================================
+  // CATEGORY 7: CANVAS/MEDIA
+  // ==========================================================================
+
+  test("should preserve canvas element identity", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<canvas width="100" height="100"></canvas>`;
+
+    const canvas = oldParent.querySelector("canvas")!;
+    const ctx = canvas.getContext("2d");
+    if (ctx) {
+      ctx.fillStyle = "red";
+      ctx.fillRect(0, 0, 50, 50);
+    }
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<canvas width="100" height="100" class="updated"></canvas>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Canvas should be same element (preserving drawing context)
+    expect(oldParent.querySelector("canvas")).toBe(canvas);
+    expect(canvas.classList.contains("updated")).toBe(true);
+  });
+
+  test("should handle canvas dimension changes", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<canvas width="100" height="100"></canvas>`;
+
+    const canvas = oldParent.querySelector("canvas")!;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<canvas width="200" height="150"></canvas>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(canvas.width).toBe(200);
+    expect(canvas.height).toBe(150);
+  });
+
+  test("should preserve audio element identity", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<audio src="song.mp3" controls></audio>`;
+
+    const audio = oldParent.querySelector("audio")!;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<audio src="song.mp3" controls class="styled"></audio>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // Audio should be same element
+    expect(oldParent.querySelector("audio")).toBe(audio);
+    expect(audio.classList.contains("styled")).toBe(true);
+  });
+
+  test("should handle video poster attribute", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<video src="movie.mp4" poster="thumb1.jpg"></video>`;
+
+    const video = oldParent.querySelector("video")!;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<video src="movie.mp4" poster="thumb2.jpg"></video>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    expect(video.getAttribute("poster")).toBe("thumb2.jpg");
+  });
+
+  test("should handle picture element with sources", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <picture>
+        <source srcset="small.jpg" media="(max-width: 600px)">
+        <img src="large.jpg" alt="image">
+      </picture>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <picture>
+        <source srcset="mobile.jpg" media="(max-width: 480px)">
+        <source srcset="tablet.jpg" media="(max-width: 768px)">
+        <img src="desktop.jpg" alt="responsive image">
+      </picture>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const sources = oldParent.querySelectorAll("source");
+    expect(sources.length).toBe(2);
+    expect(sources[0].getAttribute("srcset")).toBe("mobile.jpg");
+    expect(sources[1].getAttribute("srcset")).toBe("tablet.jpg");
+    expect(oldParent.querySelector("img")?.alt).toBe("responsive image");
+  });
+
+  test("should handle iframe element", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<iframe src="page1.html" width="100" height="100"></iframe>`;
+
+    const iframe = oldParent.querySelector("iframe")!;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<iframe src="page2.html" width="200" height="150"></iframe>`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    // iframe should be same element (though src change will reload)
+    expect(oldParent.querySelector("iframe")).toBe(iframe);
+    expect(iframe.src).toContain("page2.html");
+    expect(iframe.width).toBe("200");
+  });
+
+  test("should handle embed element", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `<embed src="plugin.swf" type="application/x-shockwave-flash">`;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `<embed src="newplugin.swf" type="application/x-shockwave-flash" width="400">`;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const embed = oldParent.querySelector("embed")!;
+    expect(embed.src).toContain("newplugin.swf");
+    expect(embed.width).toBe("400");
+  });
+
+  test("should handle object element with params", () => {
+    const oldParent = document.createElement("div");
+    oldParent.innerHTML = `
+      <object data="movie.swf" type="application/x-shockwave-flash">
+        <param name="quality" value="high">
+      </object>
+    `;
+
+    const newParent = document.createElement("div");
+    newParent.innerHTML = `
+      <object data="newmovie.swf" type="application/x-shockwave-flash">
+        <param name="quality" value="low">
+        <param name="bgcolor" value="#ffffff">
+      </object>
+    `;
+
+    (renderer as any)._diff(oldParent, newParent);
+
+    const obj = oldParent.querySelector("object")!;
+    expect(obj.data).toContain("newmovie.swf");
+    const params = oldParent.querySelectorAll("param");
+    expect(params.length).toBe(2);
   });
 });

@@ -1,6 +1,6 @@
 # Eleva.js Documentation Metrics
 
-> **Version:** 1.0.0-rc.12 | **Generated:** 1/9/2026, 12:10:09 AM | **Platform:** darwin arm64 | **Runtime:** Bun 1.3.5
+> **Version:** 1.0.0-rc.13 | **Generated:** 1/9/2026, 6:03:05 PM | **Platform:** darwin arm64 | **Runtime:** Bun 1.3.5
 
 ## Summary Table (for Documentation)
 
@@ -8,9 +8,9 @@ Use these values in the Performance Benchmarks table:
 
 | **Metric** | **Value** | **For Documentation** |
 |------------|-----------|----------------------|
-| Bundle Size (min+gzip) | 2.31 KB | **~2 KB** |
-| Hydration Time | 0.185 ms | **< 1** |
-| DOM Update | 0.039 ms | **< 0.1** |
+| Bundle Size (min+gzip) | 2.40 KB | **~2 KB** |
+| Hydration Time | 0.157 ms | **< 1** |
+| DOM Update | 0.034 ms | **< 0.1** |
 | Memory | < 0.5 MB | **< 0.5** |
 
 ## Documentation Table Format
@@ -29,18 +29,18 @@ Use these values in the Performance Benchmarks table:
 
 | Build | Size |
 |-------|------|
-| ESM (raw) | 52.80 KB |
-| UMD (minified) | 5.83 KB |
-| UMD (min+gzip) | **2.31 KB** |
+| ESM (raw) | 53.78 KB |
+| UMD (minified) | 6.02 KB |
+| UMD (min+gzip) | **2.40 KB** |
 
 
 ### Hydration Time Details
 
 | Metric | Value |
 |--------|-------|
-| Median | 0.185 ms |
-| Min | 0.124 ms |
-| Max | 0.316 ms |
+| Median | 0.157 ms |
+| Min | 0.102 ms |
+| Max | 0.342 ms |
 | Runs | 50 (after 10 warmup) |
 
 
@@ -48,9 +48,9 @@ Use these values in the Performance Benchmarks table:
 
 | Metric | Value |
 |--------|-------|
-| Median | 0.039 ms |
-| Min | 0.027 ms |
-| Max | 0.072 ms |
+| Median | 0.034 ms |
+| Min | 0.024 ms |
+| Max | 0.057 ms |
 | Runs | 50 (single signal updates) |
 
 
@@ -58,10 +58,10 @@ Use these values in the Performance Benchmarks table:
 
 | Stage | Memory (MB) |
 |-------|-------------|
-| Baseline | 9.41 |
-| After Init | 9.41 |
-| After Mount | 9.48 |
-| Peak (with updates) | 9.52 |
+| Baseline | 8.73 |
+| After Init | 8.73 |
+| After Mount | 8.80 |
+| Peak (with updates) | 8.91 |
 | **Eleva Footprint** | **< 0.5 MB** |
 
 

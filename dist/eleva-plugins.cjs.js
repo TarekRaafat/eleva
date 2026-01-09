@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.0.0-rc.12 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.0.0-rc.13 | MIT License | https://elevajs.com */
 'use strict';
 
 /**
@@ -1890,9 +1890,9 @@
    * // Result: "2024-01-01T00:00:00.000Z"
    *
    * @example
-   * // Failed evaluation returns undefined
+   * // Failed evaluation returns empty string
    * TemplateEngine.evaluate("nonexistent.property", {});
-   * // Result: undefined
+   * // Result: ""
    */ static evaluate(expression, data) {
         if (typeof expression !== "string") return expression;
         let fn = this._functionCache.get(expression);
@@ -1901,13 +1901,13 @@
                 fn = new Function("data", `with(data) { return ${expression}; }`);
                 this._functionCache.set(expression, fn);
             } catch  {
-                return undefined;
+                return "";
             }
         }
         try {
             return fn(data);
         } catch  {
-            return undefined;
+            return "";
         }
     }
 }

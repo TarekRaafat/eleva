@@ -7,13 +7,13 @@
 
 import { beforeAll, afterAll, beforeEach, afterEach, expect } from "bun:test";
 
-// Check if we're in a browser-like environment
-const hasDOM = typeof document !== "undefined";
-
 // Setup happy-dom for Node/Bun environment
-if (!hasDOM) {
-  const { GlobalRegistrator } = await import("@happy-dom/global-registrator");
+// Must register before checking typeof window (registration creates window)
+const { GlobalRegistrator } = await import("@happy-dom/global-registrator");
+try {
   GlobalRegistrator.register();
+} catch (e) {
+  // Already registered, ignore
 }
 
 // Dynamically import Eleva after DOM is available

@@ -1,12 +1,4 @@
 /**
- * @typedef {Map<string, Node>} KeyMap
- *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
- */
-/**
- * @typedef {Object} RendererLike
- * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
- */
-/**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized two-pointer diffing
  * algorithm with key-based node reconciliation. The renderer efficiently updates the DOM by
@@ -113,6 +105,7 @@ export class Renderer implements RendererLike {
     /**
      * Updates the attributes of an element to match a new element's attributes.
      * Adds new attributes, updates changed values, and removes attributes no longer present.
+     * Also syncs DOM properties that can diverge from attributes after user interaction.
      *
      * Event attributes (prefixed with `@`) are skipped as they are handled separately
      * by Eleva's event binding system.

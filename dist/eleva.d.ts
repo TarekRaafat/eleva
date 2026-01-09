@@ -456,9 +456,9 @@ declare class TemplateEngine {
      * // Result: "2024-01-01T00:00:00.000Z"
      *
      * @example
-     * // Failed evaluation returns undefined
+     * // Failed evaluation returns empty string
      * TemplateEngine.evaluate("nonexistent.property", {});
-     * // Result: undefined
+     * // Result: ""
      */
     public static evaluate(expression: Expression | unknown, data: TemplateData): EvaluationResult;
 }
@@ -479,14 +479,6 @@ type Expression = string;
  */
 type EvaluationResult = unknown;
 
-/**
- * @typedef {Map<string, Node>} KeyMap
- *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
- */
-/**
- * @typedef {Object} RendererLike
- * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
- */
 /**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized two-pointer diffing
@@ -594,6 +586,7 @@ declare class Renderer implements RendererLike {
     /**
      * Updates the attributes of an element to match a new element's attributes.
      * Adds new attributes, updates changed values, and removes attributes no longer present.
+     * Also syncs DOM properties that can diverge from attributes after user interaction.
      *
      * Event attributes (prefixed with `@`) are skipped as they are handled separately
      * by Eleva's event binding system.

@@ -15,6 +15,13 @@
  */
 
 /**
+ * Properties that can diverge from attributes via user interaction.
+ * @private
+ * @type {string[]}
+ */
+const SYNC_PROPS = ["value", "checked", "selected"];
+
+/**
  * @class 🎨 Renderer
  * @classdesc A high-performance DOM renderer that implements an optimized two-pointer diffing
  * algorithm with key-based node reconciliation. The renderer efficiently updates the DOM by
@@ -219,6 +226,7 @@ export class Renderer {
   /**
    * Updates the attributes of an element to match a new element's attributes.
    * Adds new attributes, updates changed values, and removes attributes no longer present.
+   * Also syncs DOM properties that can diverge from attributes after user interaction.
    *
    * Event attributes (prefixed with `@`) are skipped as they are handled separately
    * by Eleva's event binding system.
@@ -232,18 +240,38 @@ export class Renderer {
     // Add/update attributes from new element
     for (const attr of newEl.attributes) {
       // Skip event attributes (handled by Eleva's event system)
-      if (
-        attr.name[0] !== "@" &&
-        oldEl.getAttribute(attr.name) !== attr.value
-      ) {
+      if (attr.name[0] === "@") continue;
+
+      if (oldEl.getAttribute(attr.name) !== attr.value) {
         oldEl.setAttribute(attr.name, attr.value);
       }
+
+      // Sync property if it exists and is writable (handles value, checked, selected, disabled, etc.)
+      if (attr.name in oldEl) {
+        try {
+          const newProp =
+            typeof oldEl[attr.name] === "boolean"
+              ? attr.value !== "false" // Attribute presence = true, unless explicitly "false"
+              : attr.value;
+          if (oldEl[attr.name] !== newProp) oldEl[attr.name] = newProp;
+        } catch {
+          continue; // Property is readonly
+        }
+      }
     }
+
     // Remove attributes no longer present
     for (let i = oldEl.attributes.length - 1; i >= 0; i--) {
-      if (!newEl.hasAttribute(oldEl.attributes[i].name)) {
-        oldEl.removeAttribute(oldEl.attributes[i].name);
+      const name = oldEl.attributes[i].name;
+      if (!newEl.hasAttribute(name)) {
+        oldEl.removeAttribute(name);
       }
+    }
+
+    // Sync properties that can diverge from attributes via user interaction
+    for (const prop of SYNC_PROPS) {
+      if (prop in newEl && oldEl[prop] !== newEl[prop])
+        oldEl[prop] = newEl[prop];
     }
   }
 

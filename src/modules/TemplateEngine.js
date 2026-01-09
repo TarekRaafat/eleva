@@ -168,9 +168,9 @@ export class TemplateEngine {
    * // Result: "2024-01-01T00:00:00.000Z"
    *
    * @example
-   * // Failed evaluation returns undefined
+   * // Failed evaluation returns empty string
    * TemplateEngine.evaluate("nonexistent.property", {});
-   * // Result: undefined
+   * // Result: ""
    */
   static evaluate(expression, data) {
     if (typeof expression !== "string") return expression;
@@ -180,13 +180,13 @@ export class TemplateEngine {
         fn = new Function("data", `with(data) { return ${expression}; }`);
         this._functionCache.set(expression, fn);
       } catch {
-        return undefined;
+        return "";
       }
     }
     try {
       return fn(data);
     } catch {
-      return undefined;
+      return "";
     }
   }
 }

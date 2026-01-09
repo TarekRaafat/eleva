@@ -1,8 +1,8 @@
 # Eleva.js - js-framework-benchmark Results
 
-> **Version:** 1.0.0-rc.12 | **Generated:** 1/9/2026, 12:10:20 AM
+> **Version:** 1.0.0-rc.13 | **Generated:** 1/9/2026, 6:03:16 PM
 > **Platform:** darwin arm64 | **Runtime:** Bun 1.3.5
-> **Bundle Size:** 2.31 KB (min+gzip)
+> **Bundle Size:** 2.40 KB (min+gzip)
 
 ## Summary for Documentation
 
@@ -10,10 +10,10 @@ These metrics are comparable to js-framework-benchmark results:
 
 | **Metric** | **Eleva.js Result** | **For Documentation** |
 |------------|---------------------|----------------------|
-| Bundle Size (min+gzip) | 2.31 KB | **~2 KB** |
-| Hydration/Startup (1k rows) | 23.80 ms | **10-50** |
-| DOM Update (partial 1k) | 85.72 ms | **86** |
-| Memory (after 1k rows) | 106.70 MB | **15** |
+| Bundle Size (min+gzip) | 2.40 KB | **~2 KB** |
+| Hydration/Startup (1k rows) | 23.03 ms | **10-50** |
+| DOM Update (partial 1k) | 86.27 ms | **86** |
+| Memory (after 1k rows) | 107.32 MB | **15** |
 
 ### Documentation Table Row
 
@@ -29,32 +29,32 @@ These metrics are comparable to js-framework-benchmark results:
 
 | Operation | Duration | Rows |
 |-----------|----------|------|
-| create 1,000 rows | 23.80 ms | 1,000 |
-| create 10,000 rows | 294.63 ms | 10,000 |
-| append 1,000 rows to 1,000 | 984.54 ms | 1,000 |
+| create 1,000 rows | 23.03 ms | 1,000 |
+| create 10,000 rows | 264.59 ms | 10,000 |
+| append 1,000 rows to 1,000 | 789.88 ms | 1,000 |
 
 ### Update Operations
 
 | Operation | Duration | Rows Affected |
 |-----------|----------|---------------|
-| replace all 1,000 rows | 125.24 ms | 1,000 |
-| partial update (every 10th row) | 85.72 ms | 100 |
+| replace all 1,000 rows | 124.27 ms | 1,000 |
+| partial update (every 10th row) | 86.27 ms | 100 |
 
 ### DOM Manipulation Operations
 
 | Operation | Duration |
 |-----------|----------|
-| select row | 1.18 ms |
-| swap rows (1 ↔ 998) | 104.15 ms |
-| remove row | 95.68 ms |
+| select row | 1.15 ms |
+| swap rows (1 ↔ 998) | 111.28 ms |
+| remove row | 103.16 ms |
 | clear all rows | 1.20 ms |
 
 ### Memory Usage
 
 | Measurement Point | Total Heap (MB) | Delta from Baseline | Est. Eleva Overhead* |
 |-------------------|-----------------|---------------------|----------------------|
-| memory after 1,000 rows | 106.70 | +97.14 MB | ~14.57 MB |
-| memory after 10,000 rows | 306.07 | +296.51 MB | ~44.48 MB |
+| memory after 1,000 rows | 107.32 | +98.37 MB | ~14.76 MB |
+| memory after 10,000 rows | 306.69 | +297.74 MB | ~44.66 MB |
 
 *Note: Total heap includes DOM nodes from happy-dom test environment. Estimated Eleva overhead (signals, component state) is ~15% of total delta. Actual browser memory will differ.
 
@@ -95,74 +95,74 @@ This benchmark follows the [js-framework-benchmark](https://github.com/krausest/
 
 ```json
 {
-  "version": "1.0.0-rc.12",
-  "timestamp": "2026-01-09T00:10:20.435Z",
+  "version": "1.0.0-rc.13",
+  "timestamp": "2026-01-09T18:03:16.029Z",
   "runtime": "Bun 1.3.5",
   "platform": "darwin arm64",
-  "bundleSize": 2367,
+  "bundleSize": 2461,
   "results": [
     {
       "name": "create 1,000 rows",
       "operation": "create",
-      "duration": 23.804750000000013,
+      "duration": 23.025792000000024,
       "rows": 1000
     },
     {
       "name": "create 10,000 rows",
       "operation": "create",
-      "duration": 294.63404200000014,
+      "duration": 264.59062500000005,
       "rows": 10000
     },
     {
       "name": "append 1,000 rows to 1,000",
       "operation": "create",
-      "duration": 984.5422500000004,
+      "duration": 789.879042,
       "rows": 1000
     },
     {
       "name": "replace all 1,000 rows",
       "operation": "update",
-      "duration": 125.24383300000045,
+      "duration": 124.27258299999994,
       "rows": 1000
     },
     {
       "name": "partial update (every 10th row)",
       "operation": "update",
-      "duration": 85.71599999999853,
+      "duration": 86.27445799999987,
       "rows": 100
     },
     {
       "name": "select row",
       "operation": "manipulate",
-      "duration": 1.1803960000006555
+      "duration": 1.1457080000000133
     },
     {
       "name": "swap rows (1 ↔ 998)",
       "operation": "manipulate",
-      "duration": 104.14962500000001
+      "duration": 111.27816600000006
     },
     {
       "name": "remove row",
       "operation": "manipulate",
-      "duration": 95.67995800000062
+      "duration": 103.1562085000005
     },
     {
       "name": "clear all rows",
       "operation": "manipulate",
-      "duration": 1.196750000000975
+      "duration": 1.1975419999998849
     },
     {
       "name": "memory after 1,000 rows",
       "operation": "memory",
       "duration": 0,
-      "memory": 106.7039794921875,
+      "memory": 107.32040405273438,
       "rows": 1000
     },
     {
       "name": "memory after 10,000 rows",
       "operation": "memory",
       "duration": 0,
-      "memory": 306.0738697052002,
+      "memory": 306.68883991241455,
       "rows": 10000
     }
   ],

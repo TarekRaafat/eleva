@@ -451,10 +451,9 @@ export class Eleva {
       const scheduleRender = () => {
         if (renderScheduled) return;
         renderScheduled = true;
-        queueMicrotask(() => {
-          render().finally(() => {
-            renderScheduled = false;
-          });
+        queueMicrotask(async () => {
+          renderScheduled = false;
+          await render();
         });
       };
 
