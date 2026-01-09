@@ -430,7 +430,7 @@ declare class TemplateEngine {
      * @static
      * @param {Expression|unknown} expression - The expression to evaluate.
      * @param {TemplateData} data - The data context for evaluation.
-     * @returns {EvaluationResult} The result of the evaluation, or undefined if evaluation fails.
+     * @returns {EvaluationResult} The result of the evaluation, or empty string if evaluation fails.
      *
      * @example
      * // Property access

@@ -256,9 +256,9 @@ This release refactors the reactive system to use **synchronous signal notificat
   - `component(name, definition)`: Validates name and template existence.
   - `mount(container)`: Validates container is a DOM element.
 
-#### 🚨 Upcoming Breaking Changes (v1.0.0-rc.13)
+#### 🚨 Upcoming Breaking Changes (Future Release)
 
-> **Heads up:** The following features will be removed in the next release as part of ongoing efforts to improve developer experience (DX), reduce framework complexity, improve performance, reduce bundle size, and leverage native JavaScript capabilities.
+> **Heads up:** The following features will be removed in a future release as part of ongoing efforts to improve developer experience (DX), reduce framework complexity, improve performance, reduce bundle size, and leverage native JavaScript capabilities.
 
 - **Mustache Bracket Syntax `{{ }}`**
   - The `{{ expression }}` interpolation syntax will be removed in favor of native JavaScript template literals `${}`.
