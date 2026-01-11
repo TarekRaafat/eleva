@@ -1,79 +1,79 @@
 {
-  "version": "1.0.0-rc.13",
-  "timestamp": "2026-01-09T18:03:16.029Z",
+  "version": "1.0.0-rc.14",
+  "timestamp": "2026-01-11T10:13:48.941Z",
   "runtime": "Bun 1.3.5",
   "platform": "darwin arm64",
-  "bundleSize": 2461,
+  "bundleSize": 2380,
   "results": [
     {
       "name": "create 1,000 rows",
       "operation": "create",
-      "duration": 23.025792000000024,
+      "duration": 23.05033400000002,
       "rows": 1000
     },
     {
       "name": "create 10,000 rows",
       "operation": "create",
-      "duration": 264.59062500000005,
+      "duration": 268.565834,
       "rows": 10000
     },
     {
       "name": "append 1,000 rows to 1,000",
       "operation": "create",
-      "duration": 789.879042,
+      "duration": 773.9043750000001,
       "rows": 1000
     },
     {
       "name": "replace all 1,000 rows",
       "operation": "update",
-      "duration": 124.27258299999994,
+      "duration": 117.61175000000003,
       "rows": 1000
     },
     {
       "name": "partial update (every 10th row)",
       "operation": "update",
-      "duration": 86.27445799999987,
+      "duration": 82.28116649999993,
       "rows": 100
     },
     {
       "name": "select row",
       "operation": "manipulate",
-      "duration": 1.1457080000000133
+      "duration": 1.144458000000668
     },
     {
       "name": "swap rows (1 ↔ 998)",
       "operation": "manipulate",
-      "duration": 111.27816600000006
+      "duration": 103.69845799999985
     },
     {
       "name": "remove row",
       "operation": "manipulate",
-      "duration": 103.1562085000005
+      "duration": 96.10295849999966
     },
     {
       "name": "clear all rows",
       "operation": "manipulate",
-      "duration": 1.1975419999998849
+      "duration": 1.175042000000758
     },
     {
       "name": "memory after 1,000 rows",
       "operation": "memory",
       "duration": 0,
-      "memory": 107.32040405273438,
+      "memory": 106.11176204681396,
       "rows": 1000
     },
     {
       "name": "memory after 10,000 rows",
       "operation": "memory",
       "duration": 0,
-      "memory": 306.68883991241455,
+      "memory": 305.4648132324219,
       "rows": 10000
     }
   ],
   "documentationMetrics": {
     "bundleSize": "~2 KB",
     "hydrationTime": "10-50",
-    "domUpdate": "86",
+    "domUpdate": "82",
     "memory": "15"
   }
 }

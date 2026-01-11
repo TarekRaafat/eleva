@@ -1,6 +1,6 @@
 # Attr Plugin
 
-> **Version:** 1.0.0-rc.13 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.0-rc.14 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
 
@@ -22,14 +22,14 @@ app.use(Attr);  // Enable attribute binding
 
 | Feature | Syntax | Description |
 |---------|--------|-------------|
-| **ARIA Attributes** | `aria-label="{{ label }}"` | Accessibility attributes |
-| **Data Attributes** | `data-id="{{ id }}"` | Custom data storage |
-| **Boolean Attributes** | `disabled="{{ isDisabled }}"` | Presence-based attributes |
-| **Dynamic Properties** | `value="{{ inputValue }}"` | DOM property binding |
+| **ARIA Attributes** | `aria-label="${ctx.label}"` | Accessibility attributes |
+| **Data Attributes** | `data-id="${ctx.id}"` | Custom data storage |
+| **Boolean Attributes** | `disabled="${ctx.isDisabled}"` | Presence-based attributes |
+| **Dynamic Properties** | `value="${ctx.inputValue}"` | DOM property binding |
 | **Update Method** | `app.updateElementAttributes(old, new)` | Manual attribute sync |
 
-> **Context Rule:** Inside `{{ }}`, access properties directly without `ctx.` prefix.
-> Use `{{ isLoading.value }}` not `{{ ctx.isLoading.value }}`.
+> **Context Rule:** Inside `${}`, access properties via `ctx.` prefix.
+> Use `${ctx.isLoading.value}` in templates with `template: (ctx) => \`...\``.
 
 ### Configuration Options
 
@@ -115,12 +115,12 @@ app.component("AccessibleButton", {
   },
   template: (ctx) => `
     <button
-      aria-label="{{ buttonLabel.value }}"
-      aria-busy="{{ isLoading.value }}"
-      disabled="{{ isLoading.value }}"
+      aria-label="${ctx.buttonLabel.value}"
+      aria-busy="${ctx.isLoading.value}"
+      disabled="${ctx.isLoading.value}"
       @click="handleClick"
     >
-      {{ isLoading.value ? 'Loading...' : buttonLabel.value }}
+      ${ctx.isLoading.value ? 'Loading...' : ctx.buttonLabel.value}
     </button>
   `
 });
@@ -153,20 +153,20 @@ const AccessibleComponent = {
       <div>
         <!-- Expandable Section -->
         <button
-          aria-expanded="{{ isExpanded.value }}"
+          aria-expanded="${isExpanded.value}"
           aria-controls="content-panel"
           @click="isExpanded.value = !isExpanded.value"
         >
           Toggle Content
         </button>
-        <div id="content-panel" aria-hidden="{{ !isExpanded.value }}">
+        <div id="content-panel" aria-hidden="${!isExpanded.value}">
           Panel content here...
         </div>
 
         <!-- Selectable Item -->
         <div
           role="option"
-          aria-selected="{{ isSelected.value }}"
+          aria-selected="${isSelected.value}"
           @click="isSelected.value = !isSelected.value"
         >
           Selectable Item
@@ -175,21 +175,21 @@ const AccessibleComponent = {
         <!-- Slider/Progress -->
         <div
           role="slider"
-          aria-valuenow="{{ currentValue.value }}"
+          aria-valuenow="${currentValue.value}"
           aria-valuemin="0"
           aria-valuemax="100"
           aria-label="Volume"
         >
-          Value: {{ currentValue.value }}%
+          Value: ${currentValue.value}%
         </div>
 
         <!-- Form Field with Error -->
         <input
           type="text"
-          aria-invalid="{{ errorMessage.value ? 'true' : 'false' }}"
+          aria-invalid="${errorMessage.value ? 'true' : 'false'}"
           aria-describedby="error-text"
         />
-        <span id="error-text" role="alert">{{ errorMessage.value }}</span>
+        <span id="error-text" role="alert">${errorMessage.value}</span>
       </div>
     `;
   }
@@ -238,15 +238,15 @@ const ProductCard = {
     return `
       <article
         class="product-card"
-        data-product-id="{{ product.value.id }}"
-        data-category="{{ product.value.category }}"
-        data-price="{{ product.value.price }}"
-        data-in-stock="{{ product.value.inStock }}"
+        data-product-id="${product.value.id}"
+        data-category="${product.value.category}"
+        data-price="${product.value.price}"
+        data-in-stock="${product.value.inStock}"
       >
-        <h3>{{ product.value.name }}</h3>
-        <p class="price">\${{ product.value.price }}</p>
+        <h3>${product.value.name}</h3>
+        <p class="price">\$${product.value.price}</p>
         <span class="stock-status">
-          {{ product.value.inStock ? 'In Stock' : 'Out of Stock' }}
+          ${product.value.inStock ? 'In Stock' : 'Out of Stock'}
         </span>
       </article>
     `;
@@ -351,16 +351,16 @@ const FormControls = {
         <!-- Disabled button during submission -->
         <button
           type="submit"
-          disabled="{{ isSubmitting.value || !agreeToTerms.value }}"
+          disabled="${isSubmitting.value || !agreeToTerms.value}"
         >
-          {{ isSubmitting.value ? 'Submitting...' : 'Submit' }}
+          ${isSubmitting.value ? 'Submitting...' : 'Submit'}
         </button>
 
         <!-- Checkbox with checked binding -->
         <label>
           <input
             type="checkbox"
-            checked="{{ agreeToTerms.value }}"
+            checked="${agreeToTerms.value}"
             @change="agreeToTerms.value = $event.target.checked"
           />
           I agree to the terms
@@ -368,19 +368,19 @@ const FormControls = {
 
         <!-- Select with selected option -->
         <select @change="selectedPlan.value = $event.target.value">
-          <option value="basic" selected="{{ selectedPlan.value === 'basic' }}">
+          <option value="basic" selected="${selectedPlan.value === 'basic'}">
             Basic Plan
           </option>
-          <option value="pro" selected="{{ selectedPlan.value === 'pro' }}">
+          <option value="pro" selected="${selectedPlan.value === 'pro'}">
             Pro Plan
           </option>
-          <option value="enterprise" selected="{{ selectedPlan.value === 'enterprise' }}">
+          <option value="enterprise" selected="${selectedPlan.value === 'enterprise'}">
             Enterprise Plan
           </option>
         </select>
 
         <!-- Details element with open state -->
-        <details open="{{ showDetails.value }}">
+        <details open="${showDetails.value}">
           <summary @click="showDetails.value = !showDetails.value">
             More Information
           </summary>
@@ -391,7 +391,7 @@ const FormControls = {
         <input
           type="email"
           placeholder="Email"
-          required="{{ emailRequired.value }}"
+          required="${emailRequired.value}"
         />
       </form>
     `;
@@ -403,16 +403,16 @@ const FormControls = {
 
 ```javascript
 // When signal value is truthy:
-// disabled="{{ true }}" → <button disabled>
-// disabled="{{ 1 }}" → <button disabled>
-// disabled="{{ 'yes' }}" → <button disabled>
+// disabled="${true}" → <button disabled>
+// disabled="${1}" → <button disabled>
+// disabled="${'yes'}" → <button disabled>
 
 // When signal value is falsy:
-// disabled="{{ false }}" → <button>
-// disabled="{{ 0 }}" → <button>
-// disabled="{{ '' }}" → <button>
-// disabled="{{ null }}" → <button>
-// disabled="{{ undefined }}" → <button>
+// disabled="${false}" → <button>
+// disabled="${0}" → <button>
+// disabled="${''}" → <button>
+// disabled="${null}" → <button>
+// disabled="${undefined}" → <button>
 ```
 
 ### 4. Dynamic Properties
@@ -451,32 +451,32 @@ const DynamicInputs = {
         <!-- Text input with value binding -->
         <input
           type="text"
-          value="{{ textValue.value }}"
+          value="${textValue.value}"
           @input="textValue.value = $event.target.value"
         />
-        <p>Text: {{ textValue.value }}</p>
+        <p>Text: ${textValue.value}</p>
 
         <!-- Number input with value binding -->
         <input
           type="number"
-          value="{{ numberValue.value }}"
+          value="${numberValue.value}"
           @input="numberValue.value = parseInt($event.target.value)"
         />
-        <p>Number: {{ numberValue.value }}</p>
+        <p>Number: ${numberValue.value}</p>
 
         <!-- Range slider with value binding -->
         <input
           type="range"
           min="0"
           max="100"
-          value="{{ rangeValue.value }}"
+          value="${rangeValue.value}"
           @input="rangeValue.value = parseInt($event.target.value)"
         />
-        <p>Range: {{ rangeValue.value }}%</p>
+        <p>Range: ${rangeValue.value}%</p>
 
         <!-- Dynamic image source -->
         <img
-          src="{{ imageUrl.value }}"
+          src="${imageUrl.value}"
           alt="Dynamic image"
         />
       </div>
@@ -518,8 +518,8 @@ const SelectAllComponent = {
         <label>
           <input
             type="checkbox"
-            checked="{{ allSelected() }}"
-            indeterminate="{{ someSelected() }}"
+            checked="${allSelected()}"
+            indeterminate="${someSelected()}"
             @change="toggleAll"
           />
           Select All
@@ -719,7 +719,7 @@ const AccessibleForm = {
         <div
           role="alert"
           aria-live="polite"
-          hidden="{{ !submitSuccess.value }}"
+          hidden="${!submitSuccess.value}"
         >
           Form submitted successfully!
         </div>
@@ -731,21 +731,21 @@ const AccessibleForm = {
             type="text"
             id="name"
             name="name"
-            value="{{ formData.value.name }}"
+            value="${formData.value.name}"
             @input="updateField('name', $event.target.value)"
             aria-labelledby="name-label"
             aria-describedby="name-error"
-            aria-invalid="{{ errors.value.name ? 'true' : 'false' }}"
+            aria-invalid="${errors.value.name ? 'true' : 'false'}"
             aria-required="true"
-            required="{{ true }}"
+            required="${true}"
           />
           <span
             id="name-error"
             role="alert"
             class="error"
-            hidden="{{ !errors.value.name }}"
+            hidden="${!errors.value.name}"
           >
-            {{ errors.value.name || '' }}
+            ${errors.value.name || ''}
           </span>
         </div>
 
@@ -756,21 +756,21 @@ const AccessibleForm = {
             type="email"
             id="email"
             name="email"
-            value="{{ formData.value.email }}"
+            value="${formData.value.email}"
             @input="updateField('email', $event.target.value)"
             aria-labelledby="email-label"
             aria-describedby="email-error"
-            aria-invalid="{{ errors.value.email ? 'true' : 'false' }}"
+            aria-invalid="${errors.value.email ? 'true' : 'false'}"
             aria-required="true"
-            required="{{ true }}"
+            required="${true}"
           />
           <span
             id="email-error"
             role="alert"
             class="error"
-            hidden="{{ !errors.value.email }}"
+            hidden="${!errors.value.email}"
           >
-            {{ errors.value.email || '' }}
+            ${errors.value.email || ''}
           </span>
         </div>
 
@@ -780,13 +780,13 @@ const AccessibleForm = {
           <textarea
             id="message"
             name="message"
-            value="{{ formData.value.message }}"
+            value="${formData.value.message}"
             @input="updateField('message', $event.target.value)"
             aria-labelledby="message-label"
             aria-describedby="message-error message-hint"
-            aria-invalid="{{ errors.value.message ? 'true' : 'false' }}"
+            aria-invalid="${errors.value.message ? 'true' : 'false'}"
             aria-required="true"
-            required="{{ true }}"
+            required="${true}"
           ></textarea>
           <span id="message-hint" class="hint">
             Minimum 10 characters
@@ -795,19 +795,19 @@ const AccessibleForm = {
             id="message-error"
             role="alert"
             class="error"
-            hidden="{{ !errors.value.message }}"
+            hidden="${!errors.value.message}"
           >
-            {{ errors.value.message || '' }}
+            ${errors.value.message || ''}
           </span>
         </div>
 
         <!-- Submit Button -->
         <button
           type="submit"
-          disabled="{{ isSubmitting.value }}"
-          aria-busy="{{ isSubmitting.value }}"
+          disabled="${isSubmitting.value}"
+          aria-busy="${isSubmitting.value}"
         >
-          {{ isSubmitting.value ? 'Submitting...' : 'Send Message' }}
+          ${isSubmitting.value ? 'Submitting...' : 'Send Message'}
         </button>
       </form>
     `;
@@ -1109,8 +1109,8 @@ const ModalDialog = {
         <!-- Modal Backdrop -->
         <div
           class="modal-backdrop"
-          hidden="{{ !isOpen.value }}"
-          aria-hidden="{{ !isOpen.value }}"
+          hidden="${!isOpen.value}"
+          aria-hidden="${!isOpen.value}"
           @click="closeModal"
         ></div>
 
@@ -1120,13 +1120,13 @@ const ModalDialog = {
           aria-modal="true"
           aria-labelledby="modal-title"
           aria-describedby="modal-description"
-          aria-hidden="{{ !isOpen.value }}"
-          hidden="{{ !isOpen.value }}"
+          aria-hidden="${!isOpen.value}"
+          hidden="${!isOpen.value}"
           class="modal"
           @keydown="handleKeyDown"
         >
           <header class="modal-header">
-            <h2 id="modal-title">{{ modalTitle.value }}</h2>
+            <h2 id="modal-title">${modalTitle.value}</h2>
             <button
               @click="closeModal"
               aria-label="Close modal"
@@ -1137,7 +1137,7 @@ const ModalDialog = {
           </header>
 
           <div id="modal-description" class="modal-body">
-            <p>{{ modalMessage.value }}</p>
+            <p>${modalMessage.value}</p>
           </div>
 
           <footer class="modal-footer">
@@ -1150,7 +1150,7 @@ const ModalDialog = {
             <button
               @click="handleConfirm"
               class="btn-primary"
-              autofocus="{{ isOpen.value }}"
+              autofocus="${isOpen.value}"
             >
               Confirm
             </button>
@@ -1174,7 +1174,7 @@ Always include appropriate ARIA attributes for interactive elements:
 // Good - Accessible button
 `<button
   aria-label="Close navigation menu"
-  aria-expanded="{{ isMenuOpen.value }}"
+  aria-expanded="${ctx.isMenuOpen.value}"
   @click="toggleMenu"
 >
   <span aria-hidden="true">×</span>
@@ -1212,16 +1212,16 @@ Use consistent, descriptive data attribute names:
 ```javascript
 // Good - Clear, consistent naming
 `<div
-  data-user-id="{{ user.id }}"
-  data-user-role="{{ user.role }}"
-  data-is-active="{{ user.isActive }}"
+  data-user-id="${ctx.user.id}"
+  data-user-role="${ctx.user.role}"
+  data-is-active="${ctx.user.isActive}"
 >`
 
 // Bad - Inconsistent, unclear naming
 `<div
-  data-id="{{ user.id }}"
-  data-r="{{ user.role }}"
-  data-a="{{ user.isActive }}"
+  data-id="${ctx.user.id}"
+  data-r="${ctx.user.role}"
+  data-a="${ctx.user.isActive}"
 >`
 ```
 
@@ -1231,16 +1231,16 @@ Be explicit about boolean attribute conditions:
 
 ```javascript
 // Good - Clear condition
-`<button disabled="{{ isLoading.value || !isValid.value }}">
+`<button disabled="${ctx.isLoading.value || !ctx.isValid.value}">
   Submit
 </button>`
 
 // Good - Computed property
 const canSubmit = () => !isLoading.value && isValid.value;
-`<button disabled="{{ !canSubmit() }}">Submit</button>`
+`<button disabled="${!ctx.canSubmit()}">Submit</button>`
 
 // Avoid - Complex inline logic
-`<button disabled="{{ !(data.value && data.value.name && !errors.value.name) }}">
+`<button disabled="${!(ctx.data.value && ctx.data.value.name && !ctx.errors.value.name)}">
   Submit
 </button>`
 ```
@@ -1278,10 +1278,10 @@ const errorMessage = signal("");
 `<button disabled="false">`  // Still disabled!
 
 // Correct - Use template binding
-`<button disabled="{{ isDisabled.value }}">`
+`<button disabled="${ctx.isDisabled.value}">`
 ```
 
-**Solution**: Always use template binding `{{ }}` for dynamic boolean attributes.
+**Solution**: Always use template binding `${}` for dynamic boolean attributes.
 
 #### ARIA Attributes Not Updating
 
@@ -1289,8 +1289,8 @@ const errorMessage = signal("");
 
 ```javascript
 // Check that you're using .value for signals
-`aria-expanded="{{ isOpen }}"`      // Wrong - missing .value
-`aria-expanded="{{ isOpen.value }}"` // Correct
+`aria-expanded="${ctx.isOpen}"`      // Wrong - missing .value
+`aria-expanded="${ctx.isOpen.value}"` // Correct
 ```
 
 **Solution**: Ensure you're accessing the `.value` property of signals.
@@ -1301,11 +1301,11 @@ const errorMessage = signal("");
 
 ```javascript
 // Problem
-`data-message="{{ message.value }}"`  // message contains quotes
+`data-message="${ctx.message.value}"`  // message contains quotes
 
 // Solution - Encode special characters
 const safeMessage = () => encodeURIComponent(message.value);
-`data-message="{{ safeMessage() }}"`
+`data-message="${ctx.safeMessage()}"`
 ```
 
 #### Dynamic Property Not Binding
@@ -1315,7 +1315,7 @@ const safeMessage = () => encodeURIComponent(message.value);
 ```javascript
 // Ensure two-way binding
 `<input
-  value="{{ inputValue.value }}"
+  value="${ctx.inputValue.value}"
   @input="inputValue.value = $event.target.value"
 />`
 ```
@@ -1357,7 +1357,7 @@ const DebugComponent = {
     return { value };
   },
   template({ value }) {
-    return `<div data-debug="{{ value.value }}">{{ value.value }}</div>`;
+    return `<div data-debug="${value.value}">${value.value}</div>`;
   }
 };
 
@@ -1486,11 +1486,11 @@ checked.value = true;
 
 ### Plugin Statistics
 
-- **Size**: ~2.2KB minified
+- **Size**: ~2.4KB minified
 - **Dependencies**: None (uses core Eleva only)
 - **Browser Support**: All modern browsers
 - **Configuration Options**: 4
 
 ---
 
-[← Back to Plugins](./index.md) | [Back to Main Docs](../index.md) | [Next: Props Plugin →](./props.md)
+[← Back to Plugins](./index.md) | [Back to Main Docs](../index.md) | [Next: Router Plugin →](./router.md)

@@ -276,7 +276,9 @@ describe("Children Components & Passing Props", () => {
       template: (ctx: any) => `<div>${ctx.title}</div>`,
     };
     const ParentComponent = {
-      template: () => `<div><child-comp :title="Hello"></child-comp></div>`,
+      setup: () => ({ greeting: "Hello" }),
+      template: (ctx: any) =>
+        `<div><child-comp :title="greeting"></child-comp></div>`,
       children: {
         "child-comp": ChildComponent,
       },
@@ -301,10 +303,10 @@ describe("Children Components & Passing Props", () => {
       template: (ctx: any) => `<div>Child 2: ${ctx.title}</div>`,
     };
     const ParentComponent = {
-      setup: () => ({}),
-      template: () => `
+      setup: () => ({ message: "Hello from Parent" }),
+      template: (ctx: any) => `
         <div>
-          <child-comp :title="Hello from Parent"></child-comp>
+          <child-comp :title="message"></child-comp>
         </div>
       `,
       children: {
@@ -336,11 +338,11 @@ describe("Children Components & Passing Props", () => {
       template: (ctx: any) => `<div>Child: ${ctx.title}</div>`,
     };
     const ParentComponent = {
-      setup: () => ({}),
-      template: () => `
+      setup: () => ({ message: "Hello from Parent" }),
+      template: (ctx: any) => `
         <div>
           <h1>Parent Component</h1>
-          <child-comp :title="Hello from Parent"></child-comp>
+          <child-comp :title="message"></child-comp>
         </div>
       `,
       children: {
@@ -360,7 +362,7 @@ describe("Children Components & Passing Props", () => {
   test("should handle _extractProps when element has no attributes property", () => {
     // Create a mock element without attributes property
     const mockElement = {} as unknown as HTMLElement;
-    const result = (app as any)._extractProps(mockElement);
+    const result = (app as any)._extractProps(mockElement, {});
     expect(result).toEqual({});
   });
 
@@ -1471,7 +1473,8 @@ describe("Eleva Props Extraction", () => {
       template: (ctx: any) => `<span>${ctx.props.name}</span>`,
     };
     const ParentComponent = {
-      template: () => `<child-comp :name="John"></child-comp>`,
+      setup: () => ({ userName: "John" }),
+      template: (ctx: any) => `<child-comp :name="userName"></child-comp>`,
       children: { "child-comp": ChildComponent },
     };
 
@@ -1481,10 +1484,13 @@ describe("Eleva Props Extraction", () => {
 
   test("should extract multiple props", async () => {
     const ChildComponent = {
-      template: (ctx: any) => `<span>${ctx.props.first} ${ctx.props.last} - ${ctx.props.age}</span>`,
+      template: (ctx: any) =>
+        `<span>${ctx.props.first} ${ctx.props.last} - ${ctx.props.age}</span>`,
     };
     const ParentComponent = {
-      template: () => `<child-comp :first="John" :last="Doe" :age="30"></child-comp>`,
+      setup: () => ({ first: "John", last: "Doe", age: 30 }),
+      template: (ctx: any) =>
+        `<child-comp :first="first" :last="last" :age="age"></child-comp>`,
       children: { "child-comp": ChildComponent },
     };
 
@@ -1497,7 +1503,9 @@ describe("Eleva Props Extraction", () => {
       template: () => `<span>Child</span>`,
     };
     const ParentComponent = {
-      template: () => `<child-comp :name="Test" :value="123"></child-comp>`,
+      setup: () => ({ testName: "Test", testValue: 123 }),
+      template: (ctx: any) =>
+        `<child-comp :name="testName" :value="testValue"></child-comp>`,
       children: { "child-comp": ChildComponent },
     };
 
@@ -1510,7 +1518,8 @@ describe("Eleva Props Extraction", () => {
 
   test("should handle empty prop value", async () => {
     const ChildComponent = {
-      template: (ctx: any) => `<span>${ctx.props.empty === "" ? "empty" : "not empty"}</span>`,
+      template: (ctx: any) =>
+        `<span>${ctx.props.empty === undefined ? "empty" : "not empty"}</span>`,
     };
     const ParentComponent = {
       template: () => `<child-comp :empty=""></child-comp>`,
@@ -1526,16 +1535,17 @@ describe("Eleva Props Extraction", () => {
       template: (ctx: any) => `<span>${ctx.props.message}</span>`,
     };
     const ParentComponent = {
-      template: () => `<child-comp :message="Hello &lt;World&gt;!"></child-comp>`,
+      setup: () => ({ msg: "Hello World!" }),
+      template: (ctx: any) => `<child-comp :message="msg"></child-comp>`,
       children: { "child-comp": ChildComponent },
     };
 
     await app.mount(container, ParentComponent);
-    expect(container.innerHTML).toContain("Hello &lt;World&gt;!");
+    expect(container.innerHTML).toContain("Hello World!");
   });
 
   test("should return empty object for element with no props", async () => {
-    const result = (app as any)._extractProps(document.createElement("div"));
+    const result = (app as any)._extractProps(document.createElement("div"), {});
     expect(result).toEqual({});
   });
 
@@ -1546,9 +1556,11 @@ describe("Eleva Props Extraction", () => {
     element.setAttribute("id", "my-id");
     element.setAttribute(":prop2", "value2");
 
-    const result = (app as any)._extractProps(element);
+    // Provide context with the values
+    const context = { value1: "resolved1", value2: "resolved2" };
+    const result = (app as any)._extractProps(element, context);
 
-    expect(result).toEqual({ prop1: "value1", prop2: "value2" });
+    expect(result).toEqual({ prop1: "resolved1", prop2: "resolved2" });
     expect(element.hasAttribute("class")).toBe(true);
     expect(element.hasAttribute("id")).toBe(true);
   });
@@ -1622,11 +1634,12 @@ describe("Eleva Children Mounting", () => {
       template: (ctx: any) => `<li>${ctx.props.label}</li>`,
     };
     const List = {
-      template: () => `
+      setup: () => ({ one: "One", two: "Two", three: "Three" }),
+      template: (ctx: any) => `
         <ul>
-          <list-item :label="One"></list-item>
-          <list-item :label="Two"></list-item>
-          <list-item :label="Three"></list-item>
+          <list-item :label="one"></list-item>
+          <list-item :label="two"></list-item>
+          <list-item :label="three"></list-item>
         </ul>
       `,
       children: { "list-item": Item },
@@ -1706,11 +1719,13 @@ describe("Eleva Children Mounting", () => {
       template: (ctx: any) => `<span>${ctx.props.message}</span>`,
     };
     const Child = {
-      template: (ctx: any) => `<grand-child :message="${ctx.props.text}"></grand-child>`,
+      setup: ({ props }: any) => ({ text: props.text }),
+      template: (ctx: any) => `<grand-child :message="text"></grand-child>`,
       children: { "grand-child": GrandChild },
     };
     const Parent = {
-      template: () => `<child-comp :text="Hello Deep"></child-comp>`,
+      setup: () => ({ deepMessage: "Hello Deep" }),
+      template: (ctx: any) => `<child-comp :text="deepMessage"></child-comp>`,
       children: { "child-comp": Child },
     };
 

@@ -6,7 +6,6 @@ import pkg from "./package.json" with { type: "json" };
 // Import plugins to get their versions
 import { AttrPlugin } from "./src/plugins/Attr.js";
 import { RouterPlugin } from "./src/plugins/Router.js";
-import { PropsPlugin } from "./src/plugins/Props.js";
 import { StorePlugin } from "./src/plugins/Store.js";
 
 const name = "Eleva";
@@ -19,7 +18,6 @@ const coreBanner = createBanner("Eleva");
 const pluginsBanner = createBanner("Eleva Plugins");
 const attrPluginBanner = createBanner("Eleva Attr Plugin", AttrPlugin.version);
 const routerPluginBanner = createBanner("Eleva Router Plugin", RouterPlugin.version);
-const propsPluginBanner = createBanner("Eleva Props Plugin", PropsPlugin.version);
 const storePluginBanner = createBanner("Eleva Store Plugin", StorePlugin.version);
 
 // SWC minify configuration - optimized for smallest output
@@ -230,12 +228,6 @@ const routerPluginConfig = createIndividualPluginConfig(
   routerPluginBanner
 );
 
-const propsPluginConfig = createIndividualPluginConfig(
-  "Props",
-  "src/plugins/Props.js",
-  propsPluginBanner
-);
-
 const storePluginConfig = createIndividualPluginConfig(
   "Store",
   "src/plugins/Store.js",
@@ -248,6 +240,5 @@ export default [
   pluginConfig,
   attrPluginConfig,
   routerPluginConfig,
-  propsPluginConfig,
   storePluginConfig,
 ];

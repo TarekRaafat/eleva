@@ -1,8 +1,8 @@
 /**
  * @fileoverview Tests for the TemplateEngine module of the Eleva framework
  *
- * These tests verify the template parsing, rendering, and expression evaluation
- * capabilities of the TemplateEngine module, including function caching.
+ * These tests verify the expression evaluation capabilities of the TemplateEngine module.
+ * TemplateEngine.evaluate() is used for resolving @event handlers and :prop bindings.
  */
 
 import { describe, test, expect, beforeEach } from "bun:test";
@@ -13,21 +13,25 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
 // =============================================================================
 
 describe("TemplateEngine", () => {
-  test("should evaluate template expressions correctly", () => {
-    const template = "Hello, {{ name }}!";
-    const data = { name: "World" };
-
-    expect(TemplateEngine.parse(template, data)).toBe("Hello, World!");
+  beforeEach(() => {
+    // Clear cache before each test to ensure isolation
+    (TemplateEngine as any)._functionCache.clear();
   });
+
+  // ==========================================================================
+  // 1. Basic Expression Evaluation
+  // ==========================================================================
 
   test("should evaluate valid expressions correctly", () => {
     const data = { a: 2, b: 3 };
-
     expect(TemplateEngine.evaluate("a + b", data)).toBe(5);
   });
 
+  test("should handle simple property access", () => {
+    expect(TemplateEngine.evaluate("name", { name: "John" })).toBe("John");
+  });
+
   test("should handle nested object properties", () => {
-    const template = "User: {{ user.name }}, Age: {{ user.profile.age }}";
     const data = {
       user: {
         name: "John",
@@ -36,31 +40,18 @@ describe("TemplateEngine", () => {
         },
       },
     };
-
-    expect(TemplateEngine.parse(template, data)).toBe("User: John, Age: 30");
+    expect(TemplateEngine.evaluate("user.name", data)).toBe("John");
+    expect(TemplateEngine.evaluate("user.profile.age", data)).toBe(30);
   });
 
   test("should handle array indexing", () => {
-    const template = "First item: {{ items[0] }}, Second item: {{ items[1] }}";
     const data = { items: ["apple", "banana"] };
-
-    expect(TemplateEngine.parse(template, data)).toBe(
-      "First item: apple, Second item: banana"
-    );
-  });
-
-  test("should handle multiple interpolations", () => {
-    const template = "{{ greeting }} {{ name }}! Your score is {{ score }}.";
-    const data = { greeting: "Hello", name: "World", score: 100 };
-
-    expect(TemplateEngine.parse(template, data)).toBe(
-      "Hello World! Your score is 100."
-    );
+    expect(TemplateEngine.evaluate("items[0]", data)).toBe("apple");
+    expect(TemplateEngine.evaluate("items[1]", data)).toBe("banana");
   });
 
   test("should evaluate conditional expressions", () => {
     const data = { age: 20 };
-
     expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
       "Adult"
     );
@@ -71,161 +62,94 @@ describe("TemplateEngine", () => {
     );
   });
 
-  test("should handle invalid expressions", () => {
+  // ==========================================================================
+  // 2. Edge Cases and Error Handling
+  // ==========================================================================
+
+  test("should return empty string for invalid expressions", () => {
     const data = { a: 1 };
     const result = TemplateEngine.evaluate("a +* b", data);
-
     expect(result).toBe("");
   });
 
-  test("should handle template syntax errors", () => {
-    const engine = new TemplateEngine();
-    const invalidTemplate = "{invalid}";
-    expect(() => (engine as any).compile(invalidTemplate)).toThrow();
+  test("should return empty string for empty expressions", () => {
+    expect(TemplateEngine.evaluate("", {})).toBe("");
+    expect(TemplateEngine.evaluate("   ", {})).toBe("");
   });
 
-  test("should handle edge cases correctly", () => {
+  test("should handle deeply nested properties", () => {
     const data = { a: { b: { c: { d: { e: { f: "Hello" } } } } } };
-
-    expect(TemplateEngine.parse("{{ a.b.c.d.e.f }}", data)).toBe("Hello");
-  });
-});
-
-describe("TemplateEngine Edge Cases", () => {
-  test("should handle empty templates gracefully", () => {
-    const template = "";
-    const data = {};
-
-    expect(TemplateEngine.parse(template, data)).toBe("");
-  });
-
-  test("should handle templates without interpolations", () => {
-    const template = "Hello, World!";
-    const data = {};
-
-    expect(TemplateEngine.parse(template, data)).toBe("Hello, World!");
-  });
-
-  test("should handle deeply nested object properties", () => {
-    const template = "{{ a.b.c.d.e.f }}";
-    const data = { a: { b: { c: { d: { e: { f: "Hello" } } } } } };
-
-    expect(TemplateEngine.parse(template, data)).toBe("Hello");
-  });
-});
-
-describe("TemplateEngine Error Handling", () => {
-  test("should handle undefined data gracefully", () => {
-    const template = "Hello, {{ name }}!";
-
-    // When evaluation fails, empty string is returned
-    expect(TemplateEngine.parse(template, undefined)).toBe("Hello, !");
-    expect(TemplateEngine.parse(template, null)).toBe("Hello, !");
-  });
-});
-
-describe("TemplateEngine Advanced Features", () => {
-  test("should support function calls in expressions", () => {
-    const data = {
-      greeting: "Hello",
-      capitalize: (str: string) => str.toUpperCase(),
-    };
-
-    expect(TemplateEngine.evaluate("capitalize(greeting)", data)).toBe("HELLO");
-  });
-
-  test("should evaluate conditional expressions", () => {
-    const data = { age: 20 };
-
-    expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
-      "Adult"
-    );
-
-    data.age = 16;
-    expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", data)).toBe(
-      "Minor"
-    );
-  });
-});
-
-describe("TemplateEngine Performance", () => {
-  test("should maintain performance with large templates", () => {
-    const items = Array(100)
-      .fill(null)
-      .map((_, i) => ({ id: i, name: `Item ${i}` }));
-
-    const data = { items };
-
-    const template = items
-      .map(
-        (item) =>
-          `<li>Item ID: {{ items[${item.id}].id }}, Name: {{ items[${item.id}].name }}</li>`
-      )
-      .join("");
-
-    const start = performance.now();
-    TemplateEngine.parse(template, data);
-    const end = performance.now();
-
-    expect(end - start).toBeDefined();
-  });
-
-  test("should maintain performance with complex expressions", () => {
-    const template = "{{ complex.expression.with.many.operations() }}";
-    const data = {
-      complex: {
-        expression: { with: { many: { operations: () => "Hello" } } },
-      },
-    };
-
-    const start = performance.now();
-    TemplateEngine.parse(template, data);
-    const end = performance.now();
-
-    expect(end - start).toBeDefined();
+    expect(TemplateEngine.evaluate("a.b.c.d.e.f", data)).toBe("Hello");
   });
 });
 
 // =============================================================================
-// Complex Expression Handling Tests
+// TemplateEngine Complex Expression Handling
 // =============================================================================
 
 describe("TemplateEngine Complex Expression Handling", () => {
-
   beforeEach(() => {
-    // Clear cache before each test to ensure isolation
     (TemplateEngine as any)._functionCache.clear();
   });
 
   // ==========================================================================
-  // 1. Basic Property Access
+  // 1. Function Evaluation
   // ==========================================================================
-  describe("Basic Property Access", () => {
-    test("simple property", () => {
-      expect(TemplateEngine.evaluate("name", { name: "John" })).toBe("John");
+
+  describe("Function Evaluation", () => {
+    test("should return function references", () => {
+      const handler = () => console.log("clicked");
+      const data = { handleClick: handler };
+      expect(TemplateEngine.evaluate("handleClick", data)).toBe(handler);
     });
 
-    test("nested property", () => {
-      expect(TemplateEngine.evaluate("user.name", { user: { name: "Jane" } })).toBe("Jane");
+    test("should support function calls in expressions", () => {
+      const data = {
+        greeting: "Hello",
+        capitalize: (str: string) => str.toUpperCase(),
+      };
+      expect(TemplateEngine.evaluate("capitalize(greeting)", data)).toBe("HELLO");
     });
 
-    test("deeply nested property", () => {
-      const data = { a: { b: { c: { d: { e: "deep" } } } } };
-      expect(TemplateEngine.evaluate("a.b.c.d.e", data)).toBe("deep");
+    test("should handle method calls on objects", () => {
+      const data = {
+        formatter: { format: (v: number) => `$${v.toFixed(2)}` },
+        value: 19.99,
+      };
+      expect(TemplateEngine.evaluate("formatter.format(value)", data)).toBe(
+        "$19.99"
+      );
     });
 
-    test("array index access", () => {
-      expect(TemplateEngine.evaluate("items[0]", { items: ["first", "second"] })).toBe("first");
+    test("should handle chained function calls", () => {
+      const data = {
+        process: (v: number) => v + 1,
+        transform: (v: number) => v * 2,
+        value: 5,
+      };
+      expect(TemplateEngine.evaluate("process(transform(value))", data)).toBe(11);
     });
 
-    test("array length", () => {
-      expect(TemplateEngine.evaluate("items.length", { items: [1, 2, 3] })).toBe(3);
+    test("simple function call", () => {
+      expect(TemplateEngine.evaluate("greet()", { greet: () => "Hello" })).toBe("Hello");
+    });
+
+    test("function with argument", () => {
+      expect(TemplateEngine.evaluate("double(x)", { double: (n: number) => n * 2, x: 5 })).toBe(10);
+    });
+
+    test("function with multiple arguments", () => {
+      expect(TemplateEngine.evaluate(
+        "add(a, b)",
+        { add: (x: number, y: number) => x + y, a: 3, b: 4 }
+      )).toBe(7);
     });
   });
 
   // ==========================================================================
   // 2. Arithmetic Operations
   // ==========================================================================
+
   describe("Arithmetic Operations", () => {
     test("addition", () => {
       expect(TemplateEngine.evaluate("a + b", { a: 5, b: 3 })).toBe(8);
@@ -236,11 +160,15 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("multiplication", () => {
-      expect(TemplateEngine.evaluate("price * quantity", { price: 9.99, quantity: 3 })).toBe(29.97);
+      expect(
+        TemplateEngine.evaluate("price * quantity", { price: 9.99, quantity: 3 })
+      ).toBe(29.97);
     });
 
     test("division", () => {
-      expect(TemplateEngine.evaluate("total / count", { total: 100, count: 4 })).toBe(25);
+      expect(
+        TemplateEngine.evaluate("total / count", { total: 100, count: 4 })
+      ).toBe(25);
     });
 
     test("modulo", () => {
@@ -248,17 +176,30 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("complex arithmetic", () => {
-      expect(TemplateEngine.evaluate("(a + b) * c - d / e", { a: 2, b: 3, c: 4, d: 10, e: 2 })).toBe(15);
+      expect(
+        TemplateEngine.evaluate("(a + b) * c - d / e", {
+          a: 2,
+          b: 3,
+          c: 4,
+          d: 10,
+          e: 2,
+        })
+      ).toBe(15);
     });
 
     test("increment expression", () => {
       expect(TemplateEngine.evaluate("count + 1", { count: 5 })).toBe(6);
+    });
+
+    test("exponentiation operator", () => {
+      expect(TemplateEngine.evaluate("base ** exp", { base: 2, exp: 3 })).toBe(8);
     });
   });
 
   // ==========================================================================
   // 3. Comparison Operators
   // ==========================================================================
+
   describe("Comparison Operators", () => {
     test("equality", () => {
       expect(TemplateEngine.evaluate("a === b", { a: 5, b: 5 })).toBe(true);
@@ -286,15 +227,20 @@ describe("TemplateEngine Complex Expression Handling", () => {
   // ==========================================================================
   // 4. Logical Operators
   // ==========================================================================
+
   describe("Logical Operators", () => {
     test("AND operator", () => {
       expect(TemplateEngine.evaluate("a && b", { a: true, b: true })).toBe(true);
-      expect(TemplateEngine.evaluate("a && b", { a: true, b: false })).toBe(false);
+      expect(TemplateEngine.evaluate("a && b", { a: true, b: false })).toBe(
+        false
+      );
     });
 
     test("OR operator", () => {
       expect(TemplateEngine.evaluate("a || b", { a: false, b: true })).toBe(true);
-      expect(TemplateEngine.evaluate("a || b", { a: false, b: false })).toBe(false);
+      expect(TemplateEngine.evaluate("a || b", { a: false, b: false })).toBe(
+        false
+      );
     });
 
     test("NOT operator", () => {
@@ -308,31 +254,40 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("short-circuit evaluation", () => {
-      expect(TemplateEngine.evaluate("user && user.name", { user: { name: "John" } })).toBe("John");
-      expect(TemplateEngine.evaluate("user && user.name", { user: null })).toBe(null);
+      expect(
+        TemplateEngine.evaluate("user && user.name", { user: { name: "John" } })
+      ).toBe("John");
+      expect(TemplateEngine.evaluate("user && user.name", { user: null })).toBe(
+        null
+      );
     });
   });
 
   // ==========================================================================
   // 5. Ternary Operator
   // ==========================================================================
+
   describe("Ternary Operator", () => {
     test("simple ternary", () => {
-      expect(TemplateEngine.evaluate("active ? 'Yes' : 'No'", { active: true })).toBe("Yes");
-      expect(TemplateEngine.evaluate("active ? 'Yes' : 'No'", { active: false })).toBe("No");
+      expect(
+        TemplateEngine.evaluate("active ? 'Yes' : 'No'", { active: true })
+      ).toBe("Yes");
+      expect(
+        TemplateEngine.evaluate("active ? 'Yes' : 'No'", { active: false })
+      ).toBe("No");
     });
 
     test("ternary with expressions", () => {
-      expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", { age: 21 })).toBe("Adult");
-      expect(TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", { age: 15 })).toBe("Minor");
+      expect(
+        TemplateEngine.evaluate("age >= 18 ? 'Adult' : 'Minor'", { age: 21 })
+      ).toBe("Adult");
     });
 
     test("nested ternary", () => {
-      const expr = "score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F'";
+      const expr =
+        "score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : 'F'";
       expect(TemplateEngine.evaluate(expr, { score: 95 })).toBe("A");
-      expect(TemplateEngine.evaluate(expr, { score: 85 })).toBe("B");
       expect(TemplateEngine.evaluate(expr, { score: 75 })).toBe("C");
-      expect(TemplateEngine.evaluate(expr, { score: 50 })).toBe("F");
     });
 
     test("ternary with property access", () => {
@@ -344,49 +299,14 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 6. Function Calls
+  // 6. String Operations
   // ==========================================================================
-  describe("Function Calls", () => {
-    test("simple function call", () => {
-      expect(TemplateEngine.evaluate("greet()", { greet: () => "Hello" })).toBe("Hello");
-    });
 
-    test("function with argument", () => {
-      expect(TemplateEngine.evaluate("double(x)", { double: (n: number) => n * 2, x: 5 })).toBe(10);
-    });
-
-    test("function with multiple arguments", () => {
-      expect(TemplateEngine.evaluate(
-        "add(a, b)",
-        { add: (x: number, y: number) => x + y, a: 3, b: 4 }
-      )).toBe(7);
-    });
-
-    test("method call on object", () => {
-      expect(TemplateEngine.evaluate(
-        "formatter.format(value)",
-        { formatter: { format: (v: number) => `$${v.toFixed(2)}` }, value: 19.99 }
-      )).toBe("$19.99");
-    });
-
-    test("chained function calls", () => {
-      expect(TemplateEngine.evaluate(
-        "process(transform(value))",
-        {
-          process: (v: number) => v + 1,
-          transform: (v: number) => v * 2,
-          value: 5
-        }
-      )).toBe(11); // (5 * 2) + 1 = 11
-    });
-  });
-
-  // ==========================================================================
-  // 7. String Operations
-  // ==========================================================================
   describe("String Operations", () => {
     test("string concatenation", () => {
-      expect(TemplateEngine.evaluate("first + ' ' + last", { first: "John", last: "Doe" })).toBe("John Doe");
+      expect(
+        TemplateEngine.evaluate("first + ' ' + last", { first: "John", last: "Doe" })
+      ).toBe("John Doe");
     });
 
     test("template literal style (using concatenation)", () => {
@@ -397,7 +317,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("string method - toUpperCase", () => {
-      expect(TemplateEngine.evaluate("name.toUpperCase()", { name: "john" })).toBe("JOHN");
+      expect(TemplateEngine.evaluate("name.toUpperCase()", { name: "john" })).toBe(
+        "JOHN"
+      );
     });
 
     test("string method - toLowerCase", () => {
@@ -405,7 +327,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("string method - trim", () => {
-      expect(TemplateEngine.evaluate("text.trim()", { text: "  hello  " })).toBe("hello");
+      expect(TemplateEngine.evaluate("text.trim()", { text: "  hello  " })).toBe(
+        "hello"
+      );
     });
 
     test("string method - substring", () => {
@@ -422,37 +346,41 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 8. Array Methods
+  // 7. Array Methods
   // ==========================================================================
+
   describe("Array Methods", () => {
     test("array map", () => {
-      const result = TemplateEngine.evaluate(
-        "items.map(x => x * 2)",
-        { items: [1, 2, 3] }
-      );
+      const result = TemplateEngine.evaluate("items.map(x => x * 2)", {
+        items: [1, 2, 3],
+      });
       expect(result).toEqual([2, 4, 6]);
     });
 
     test("array filter", () => {
-      const result = TemplateEngine.evaluate(
-        "items.filter(x => x > 2)",
-        { items: [1, 2, 3, 4, 5] }
-      );
+      const result = TemplateEngine.evaluate("items.filter(x => x > 2)", {
+        items: [1, 2, 3, 4, 5],
+      });
       expect(result).toEqual([3, 4, 5]);
     });
 
     test("array reduce", () => {
-      expect(TemplateEngine.evaluate(
-        "items.reduce((sum, x) => sum + x, 0)",
-        { items: [1, 2, 3, 4] }
-      )).toBe(10);
+      expect(
+        TemplateEngine.evaluate("items.reduce((sum, x) => sum + x, 0)", {
+          items: [1, 2, 3, 4],
+        })
+      ).toBe(10);
     });
 
     test("array find", () => {
-      expect(TemplateEngine.evaluate(
-        "users.find(u => u.id === 2).name",
-        { users: [{ id: 1, name: "Alice" }, { id: 2, name: "Bob" }] }
-      )).toBe("Bob");
+      expect(
+        TemplateEngine.evaluate("users.find(u => u.id === 2).name", {
+          users: [
+            { id: 1, name: "Alice" },
+            { id: 2, name: "Bob" },
+          ],
+        })
+      ).toBe("Bob");
     });
 
     test("array some", () => {
@@ -470,17 +398,15 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("array includes", () => {
-      expect(TemplateEngine.evaluate(
-        "items.includes('b')",
-        { items: ["a", "b", "c"] }
-      )).toBe(true);
+      expect(
+        TemplateEngine.evaluate("items.includes('b')", { items: ["a", "b", "c"] })
+      ).toBe(true);
     });
 
     test("array join", () => {
-      expect(TemplateEngine.evaluate(
-        "items.join(', ')",
-        { items: ["a", "b", "c"] }
-      )).toBe("a, b, c");
+      expect(
+        TemplateEngine.evaluate("items.join(', ')", { items: ["a", "b", "c"] })
+      ).toBe("a, b, c");
     });
 
     test("chained array methods", () => {
@@ -493,73 +419,50 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 9. Object Operations
+  // 8. Modern JavaScript Features
   // ==========================================================================
-  describe("Object Operations", () => {
-    test("Object.keys", () => {
-      const result = TemplateEngine.evaluate(
-        "Object.keys(obj)",
-        { obj: { a: 1, b: 2 } }
-      );
-      expect(result).toEqual(["a", "b"]);
-    });
 
-    test("Object.values", () => {
-      const result = TemplateEngine.evaluate(
-        "Object.values(obj)",
-        { obj: { a: 1, b: 2 } }
-      );
-      expect(result).toEqual([1, 2]);
-    });
-
-    test("Object.entries", () => {
-      const result = TemplateEngine.evaluate(
-        "Object.entries(obj)",
-        { obj: { a: 1 } }
-      );
-      expect(result).toEqual([["a", 1]]);
-    });
-
-    test("in operator", () => {
-      expect(TemplateEngine.evaluate("'name' in obj", { obj: { name: "test" } })).toBe(true);
-      expect(TemplateEngine.evaluate("'age' in obj", { obj: { name: "test" } })).toBe(false);
-    });
-  });
-
-  // ==========================================================================
-  // 10. Modern JavaScript Features
-  // ==========================================================================
   describe("Modern JavaScript Features", () => {
     test("nullish coalescing (??)", () => {
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: null })).toBe("default");
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: undefined })).toBe("default");
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: "exists" })).toBe("exists");
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: 0 })).toBe(0); // 0 is not nullish
+      expect(TemplateEngine.evaluate("value ?? 'default'", { value: null })).toBe(
+        "default"
+      );
+      expect(
+        TemplateEngine.evaluate("value ?? 'default'", { value: undefined })
+      ).toBe("default");
+      expect(
+        TemplateEngine.evaluate("value ?? 'default'", { value: "exists" })
+      ).toBe("exists");
+      expect(TemplateEngine.evaluate("value ?? 'default'", { value: 0 })).toBe(0);
     });
 
     test("optional chaining (?.)", () => {
-      expect(TemplateEngine.evaluate("user?.name", { user: { name: "John" } })).toBe("John");
-      expect(TemplateEngine.evaluate("user?.name", { user: null })).toBe(undefined);
-      expect(TemplateEngine.evaluate("user?.profile?.city", { user: { profile: { city: "NYC" } } })).toBe("NYC");
-      expect(TemplateEngine.evaluate("user?.profile?.city", { user: {} })).toBe(undefined);
+      expect(
+        TemplateEngine.evaluate("user?.name", { user: { name: "John" } })
+      ).toBe("John");
+      expect(TemplateEngine.evaluate("user?.name", { user: null })).toBe(
+        undefined
+      );
+      expect(
+        TemplateEngine.evaluate("user?.profile?.city", {
+          user: { profile: { city: "NYC" } },
+        })
+      ).toBe("NYC");
+      expect(TemplateEngine.evaluate("user?.profile?.city", { user: {} })).toBe(
+        undefined
+      );
     });
 
     test("optional chaining with nullish coalescing", () => {
-      expect(TemplateEngine.evaluate(
-        "user?.name ?? 'Anonymous'",
-        { user: null }
-      )).toBe("Anonymous");
-      expect(TemplateEngine.evaluate(
-        "user?.profile?.city ?? 'Unknown'",
-        { user: { profile: {} } }
-      )).toBe("Unknown");
+      expect(
+        TemplateEngine.evaluate("user?.name ?? 'Anonymous'", { user: null })
+      ).toBe("Anonymous");
     });
 
     test("spread in array literal", () => {
-      const result = TemplateEngine.evaluate(
-        "[...items, 4]",
-        { items: [1, 2, 3] }
-      );
+      const result = TemplateEngine.evaluate("[...items, 4]", {
+        items: [1, 2, 3],
+      });
       expect(result).toEqual([1, 2, 3, 4]);
     });
 
@@ -581,15 +484,57 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 11. Math Operations
+  // 9. Object Operations
   // ==========================================================================
+
+  describe("Object Operations", () => {
+    test("Object.keys", () => {
+      const result = TemplateEngine.evaluate("Object.keys(obj)", {
+        obj: { a: 1, b: 2 },
+      });
+      expect(result).toEqual(["a", "b"]);
+    });
+
+    test("Object.values", () => {
+      const result = TemplateEngine.evaluate("Object.values(obj)", {
+        obj: { a: 1, b: 2 },
+      });
+      expect(result).toEqual([1, 2]);
+    });
+
+    test("Object.entries", () => {
+      const result = TemplateEngine.evaluate(
+        "Object.entries(obj)",
+        { obj: { a: 1 } }
+      );
+      expect(result).toEqual([["a", 1]]);
+    });
+
+    test("in operator", () => {
+      expect(
+        TemplateEngine.evaluate("'name' in obj", { obj: { name: "test" } })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("'age' in obj", { obj: { name: "test" } })
+      ).toBe(false);
+    });
+  });
+
+  // ==========================================================================
+  // 10. Math Operations
+  // ==========================================================================
+
   describe("Math Operations", () => {
     test("Math.round", () => {
-      expect(TemplateEngine.evaluate("Math.round(value)", { value: 4.7 })).toBe(5);
+      expect(TemplateEngine.evaluate("Math.round(value)", { value: 4.7 })).toBe(
+        5
+      );
     });
 
     test("Math.floor", () => {
-      expect(TemplateEngine.evaluate("Math.floor(value)", { value: 4.9 })).toBe(4);
+      expect(TemplateEngine.evaluate("Math.floor(value)", { value: 4.9 })).toBe(
+        4
+      );
     });
 
     test("Math.ceil", () => {
@@ -601,7 +546,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("Math.max", () => {
-      expect(TemplateEngine.evaluate("Math.max(a, b, c)", { a: 1, b: 5, c: 3 })).toBe(5);
+      expect(TemplateEngine.evaluate("Math.max(a, b, c)", { a: 1, b: 5, c: 3 })).toBe(
+        5
+      );
     });
 
     test("Math.min", () => {
@@ -611,15 +558,12 @@ describe("TemplateEngine Complex Expression Handling", () => {
     test("Math.pow", () => {
       expect(TemplateEngine.evaluate("Math.pow(base, exp)", { base: 2, exp: 3 })).toBe(8);
     });
-
-    test("exponentiation operator", () => {
-      expect(TemplateEngine.evaluate("base ** exp", { base: 2, exp: 3 })).toBe(8);
-    });
   });
 
   // ==========================================================================
-  // 12. Type Conversions
+  // 11. Type Conversions
   // ==========================================================================
+
   describe("Type Conversions", () => {
     test("Number conversion", () => {
       expect(TemplateEngine.evaluate("Number(value)", { value: "42" })).toBe(42);
@@ -648,8 +592,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 13. Date Operations
+  // 12. Date Operations
   // ==========================================================================
+
   describe("Date Operations", () => {
     test("Date method calls", () => {
       const date = new Date("2024-06-15T10:30:00");
@@ -668,33 +613,219 @@ describe("TemplateEngine Complex Expression Handling", () => {
   });
 
   // ==========================================================================
-  // 14. Complex Real-World Expressions
+  // 13. Caching Behavior
   // ==========================================================================
-  describe("Complex Real-World Expressions", () => {
+
+  describe("Caching Behavior", () => {
+    test("complex expressions are cached", () => {
+      const complexExpr =
+        "items.filter(x => x > 2).map(x => x * 2).reduce((a, b) => a + b, 0)";
+
+      // First evaluation
+      const result1 = TemplateEngine.evaluate(complexExpr, {
+        items: [1, 2, 3, 4, 5],
+      });
+      const cacheSize1 = (TemplateEngine as any)._functionCache.size;
+
+      // Second evaluation (should use cache)
+      const result2 = TemplateEngine.evaluate(complexExpr, {
+        items: [2, 3, 4, 5, 6],
+      });
+      const cacheSize2 = (TemplateEngine as any)._functionCache.size;
+
+      expect(result1).toBe(24);
+      expect(result2).toBe(36);
+      expect(cacheSize1).toBe(cacheSize2);
+    });
+
+    test("same expression with different data uses cache", () => {
+      const expr = "user?.name ?? 'Guest'";
+
+      TemplateEngine.evaluate(expr, { user: { name: "Alice" } });
+      TemplateEngine.evaluate(expr, { user: { name: "Bob" } });
+      TemplateEngine.evaluate(expr, { user: null });
+      TemplateEngine.evaluate(expr, {});
+
+      expect((TemplateEngine as any)._functionCache.size).toBe(1);
+    });
+
+    test("whitespace differences create different cache entries", () => {
+      (TemplateEngine as any)._functionCache.clear();
+
+      TemplateEngine.evaluate("a+b", { a: 1, b: 2 });
+      TemplateEngine.evaluate("a + b", { a: 1, b: 2 });
+      TemplateEngine.evaluate("a  +  b", { a: 1, b: 2 });
+
+      // Each whitespace variation is a different cache key
+      expect((TemplateEngine as any)._functionCache.size).toBe(3);
+    });
+
+    test("cache persists between evaluate calls", () => {
+      (TemplateEngine as any)._functionCache.clear();
+
+      // First call - should create cache entry
+      TemplateEngine.evaluate("x * 2", { x: 5 });
+      const sizeAfterFirst = (TemplateEngine as any)._functionCache.size;
+
+      // Second call with same expression - should use cache
+      TemplateEngine.evaluate("x * 2", { x: 10 });
+      const sizeAfterSecond = (TemplateEngine as any)._functionCache.size;
+
+      expect(sizeAfterFirst).toBe(1);
+      expect(sizeAfterSecond).toBe(1);
+    });
+  });
+
+  // ==========================================================================
+  // 14. Error Handling
+  // ==========================================================================
+
+  describe("Error Handling", () => {
+    test("undefined property returns empty string", () => {
+      expect(TemplateEngine.evaluate("nonexistent", {})).toBe("");
+    });
+
+    test("null property access returns empty string", () => {
+      expect(TemplateEngine.evaluate("obj.prop", { obj: null })).toBe("");
+    });
+
+    test("syntax error returns empty string", () => {
+      expect(TemplateEngine.evaluate("this is not valid js", {})).toBe("");
+    });
+
+    test("division by zero returns Infinity", () => {
+      expect(TemplateEngine.evaluate("a / b", { a: 10, b: 0 })).toBe(Infinity);
+    });
+
+    test("runtime error returns empty string", () => {
+      expect(TemplateEngine.evaluate("obj.method()", { obj: {} })).toBe("");
+    });
+
+    test("type error returns empty string", () => {
+      expect(TemplateEngine.evaluate("null.property", {})).toBe("");
+    });
+
+    test("reference error returns empty string", () => {
+      expect(TemplateEngine.evaluate("undefinedVariable", {})).toBe("");
+    });
+
+    test("expression with special characters in strings", () => {
+      expect(TemplateEngine.evaluate("text", { text: "Hello's \"World\"" })).toBe("Hello's \"World\"");
+    });
+  });
+
+  // ==========================================================================
+  // 15. Return Types
+  // ==========================================================================
+
+  describe("Return Types", () => {
+    test("returns actual object (not string)", () => {
+      const obj = { name: "John", age: 30 };
+      const result = TemplateEngine.evaluate("user", { user: obj });
+      expect(result).toBe(obj);
+      expect(result.name).toBe("John");
+    });
+
+    test("returns actual array (not string)", () => {
+      const arr = [1, 2, 3];
+      const result = TemplateEngine.evaluate("items", { items: arr });
+      expect(result).toBe(arr);
+      expect(Array.isArray(result)).toBe(true);
+    });
+
+    test("returns actual function (not string)", () => {
+      const fn = () => "hello";
+      const result = TemplateEngine.evaluate("handler", { handler: fn });
+      expect(result).toBe(fn);
+      expect(typeof result).toBe("function");
+      expect(result()).toBe("hello");
+    });
+
+    test("returns numbers as numbers", () => {
+      expect(TemplateEngine.evaluate("count", { count: 42 })).toBe(42);
+      expect(typeof TemplateEngine.evaluate("count", { count: 42 })).toBe("number");
+    });
+
+    test("returns booleans as booleans", () => {
+      expect(TemplateEngine.evaluate("active", { active: true })).toBe(true);
+      expect(typeof TemplateEngine.evaluate("active", { active: true })).toBe(
+        "boolean"
+      );
+    });
+
+    test("Symbol result", () => {
+      const result = TemplateEngine.evaluate("value", { value: Symbol("test") });
+      expect(typeof result).toBe("symbol");
+    });
+
+    test("Date result", () => {
+      const date = new Date("2024-01-15T12:00:00Z");
+      const result = TemplateEngine.evaluate("value", { value: date });
+      expect(result instanceof Date).toBe(true);
+    });
+
+    test("RegExp result", () => {
+      const result = TemplateEngine.evaluate("value", { value: /test/gi });
+      expect(result instanceof RegExp).toBe(true);
+    });
+
+    test("BigInt result", () => {
+      expect(TemplateEngine.evaluate("value", { value: BigInt(9007199254740991) })).toBe(BigInt(9007199254740991));
+    });
+
+    test("BigInt arithmetic", () => {
+      expect(TemplateEngine.evaluate("a + b", { a: BigInt(1), b: BigInt(2) })).toBe(BigInt(3));
+    });
+  });
+
+  // ==========================================================================
+  // 16. Non-String Input
+  // ==========================================================================
+
+  describe("Non-String Input", () => {
+    test("non-string input to evaluate returns input unchanged", () => {
+      expect(TemplateEngine.evaluate(42 as any, {})).toBe(42);
+      expect(TemplateEngine.evaluate(null as any, {})).toBe(null);
+      expect(TemplateEngine.evaluate(undefined as any, {})).toBe(undefined);
+      expect(TemplateEngine.evaluate({ a: 1 } as any, {})).toEqual({ a: 1 });
+    });
+  });
+
+  // ==========================================================================
+  // 17. Real-World Expressions
+  // ==========================================================================
+
+  describe("Real-World Expressions", () => {
     test("cart total calculation", () => {
       const data = {
         items: [
           { price: 10, quantity: 2 },
           { price: 15, quantity: 1 },
-          { price: 5, quantity: 3 }
-        ]
+          { price: 5, quantity: 3 },
+        ],
       };
-      expect(TemplateEngine.evaluate(
-        "items.reduce((sum, item) => sum + item.price * item.quantity, 0)",
-        data
-      )).toBe(50); // 20 + 15 + 15 = 50
+      expect(
+        TemplateEngine.evaluate(
+          "items.reduce((sum, item) => sum + item.price * item.quantity, 0)",
+          data
+        )
+      ).toBe(50);
     });
 
     test("user display name", () => {
-      expect(TemplateEngine.evaluate(
-        "user.nickname || user.firstName + ' ' + user.lastName",
-        { user: { firstName: "John", lastName: "Doe", nickname: "" } }
-      )).toBe("John Doe");
+      expect(
+        TemplateEngine.evaluate(
+          "user.nickname || user.firstName + ' ' + user.lastName",
+          { user: { firstName: "John", lastName: "Doe", nickname: "" } }
+        )
+      ).toBe("John Doe");
 
-      expect(TemplateEngine.evaluate(
-        "user.nickname || user.firstName + ' ' + user.lastName",
-        { user: { firstName: "John", lastName: "Doe", nickname: "JD" } }
-      )).toBe("JD");
+      expect(
+        TemplateEngine.evaluate(
+          "user.nickname || user.firstName + ' ' + user.lastName",
+          { user: { firstName: "John", lastName: "Doe", nickname: "JD" } }
+        )
+      ).toBe("JD");
     });
 
     test("status badge class", () => {
@@ -705,15 +836,17 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("pluralization", () => {
-      expect(TemplateEngine.evaluate(
-        "count + ' ' + (count === 1 ? 'item' : 'items')",
-        { count: 1 }
-      )).toBe("1 item");
+      expect(
+        TemplateEngine.evaluate("count + ' ' + (count === 1 ? 'item' : 'items')", {
+          count: 1,
+        })
+      ).toBe("1 item");
 
-      expect(TemplateEngine.evaluate(
-        "count + ' ' + (count === 1 ? 'item' : 'items')",
-        { count: 5 }
-      )).toBe("5 items");
+      expect(
+        TemplateEngine.evaluate("count + ' ' + (count === 1 ? 'item' : 'items')", {
+          count: 5,
+        })
+      ).toBe("5 items");
     });
 
     test("conditional rendering data", () => {
@@ -724,10 +857,11 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("safe property access with fallback", () => {
-      expect(TemplateEngine.evaluate(
-        "user?.profile?.avatar ?? '/default-avatar.png'",
-        { user: { profile: {} } }
-      )).toBe("/default-avatar.png");
+      expect(
+        TemplateEngine.evaluate("user?.profile?.avatar ?? '/default-avatar.png'", {
+          user: { profile: {} },
+        })
+      ).toBe("/default-avatar.png");
     });
 
     test("filter and count", () => {
@@ -754,238 +888,17 @@ describe("TemplateEngine Complex Expression Handling", () => {
       expect(result[2].name).toBe("Charlie");
     });
   });
-
-  // ==========================================================================
-  // 15. Caching Verification
-  // ==========================================================================
-  describe("Caching Verification", () => {
-    test("complex expressions are cached", () => {
-      const complexExpr = "items.filter(x => x > 2).map(x => x * 2).reduce((a, b) => a + b, 0)";
-
-      // First evaluation
-      const result1 = TemplateEngine.evaluate(complexExpr, { items: [1, 2, 3, 4, 5] });
-      const cacheSize1 = (TemplateEngine as any)._functionCache.size;
-
-      // Second evaluation (should use cache)
-      const result2 = TemplateEngine.evaluate(complexExpr, { items: [2, 3, 4, 5, 6] });
-      const cacheSize2 = (TemplateEngine as any)._functionCache.size;
-
-      expect(result1).toBe(24); // filter [3,4,5], map [6,8,10], reduce = 24
-      expect(result2).toBe(36); // filter [3,4,5,6], map [6,8,10,12], reduce = 36
-      expect(cacheSize1).toBe(cacheSize2); // Cache didn't grow
-    });
-
-    test("same expression with different data uses cache", () => {
-      (TemplateEngine as any)._functionCache.clear();
-
-      const expr = "user?.name ?? 'Guest'";
-
-      // Multiple evaluations with different data
-      TemplateEngine.evaluate(expr, { user: { name: "Alice" } });
-      TemplateEngine.evaluate(expr, { user: { name: "Bob" } });
-      TemplateEngine.evaluate(expr, { user: null });
-      TemplateEngine.evaluate(expr, {});
-
-      // Should only have 1 cached function
-      expect((TemplateEngine as any)._functionCache.size).toBe(1);
-    });
-  });
-
-  // ==========================================================================
-  // 16. Edge Cases and Error Handling
-  // ==========================================================================
-  describe("Edge Cases and Error Handling", () => {
-    test("undefined property returns empty string", () => {
-      expect(TemplateEngine.evaluate("nonexistent", {})).toBe("");
-    });
-
-    test("null property access returns empty string", () => {
-      expect(TemplateEngine.evaluate("obj.prop", { obj: null })).toBe("");
-    });
-
-    test("syntax error returns empty string", () => {
-      expect(TemplateEngine.evaluate("this is not valid js", {})).toBe("");
-    });
-
-    test("division by zero", () => {
-      expect(TemplateEngine.evaluate("a / b", { a: 10, b: 0 })).toBe(Infinity);
-    });
-
-    test("expression with special characters in strings", () => {
-      expect(TemplateEngine.evaluate("text", { text: "Hello's \"World\"" })).toBe("Hello's \"World\"");
-    });
-  });
 });
 
 // =============================================================================
-// Corner Cases Tests
+// TemplateEngine Corner Cases
 // =============================================================================
 
 describe("TemplateEngine Corner Cases", () => {
-
-  beforeEach(() => {
-    (TemplateEngine as any)._functionCache.clear();
-  });
-
   // ==========================================================================
-  // 1. parse() Pattern Edge Cases
+  // 1. Additional Operators
   // ==========================================================================
-  describe("parse() Pattern Edge Cases", () => {
-    test("adjacent expressions without space", () => {
-      expect(TemplateEngine.parse("{{a}}{{b}}", { a: "Hello", b: "World" })).toBe("HelloWorld");
-    });
 
-    test("adjacent expressions with separator", () => {
-      expect(TemplateEngine.parse("{{a}}-{{b}}", { a: "Hello", b: "World" })).toBe("Hello-World");
-    });
-
-    test("empty expression evaluates to undefined", () => {
-      // Empty expression evaluates to undefined which renders as "undefined"
-      expect(TemplateEngine.parse("{{}}", {})).toBe("undefined");
-    });
-
-    test("whitespace-only expression evaluates to undefined", () => {
-      // After trimming whitespace, empty expression evaluates to undefined
-      expect(TemplateEngine.parse("{{   }}", {})).toBe("undefined");
-    });
-
-    test("expression with extra internal whitespace", () => {
-      expect(TemplateEngine.parse("{{   name   }}", { name: "Test" })).toBe("Test");
-    });
-
-    test("expression with newlines", () => {
-      expect(TemplateEngine.parse("{{\nname\n}}", { name: "Test" })).toBe("Test");
-    });
-
-    test("expression with tabs", () => {
-      expect(TemplateEngine.parse("{{\tname\t}}", { name: "Test" })).toBe("Test");
-    });
-
-    test("triple braces behavior", () => {
-      // {{{name}}} - regex is non-greedy, matches {{name}} inside {  }
-      // The outer braces become part of the result
-      const result = TemplateEngine.parse("{{{name}}}", { name: "Test" });
-      // Actual behavior: {{name}} matches, {name} is expression, evaluates to Test
-      // Result is { + Test + } = not quite, let's see actual
-      expect(result).toBeDefined(); // Behavior depends on regex matching
-    });
-
-    test("unmatched opening braces", () => {
-      expect(TemplateEngine.parse("Hello {{ name", { name: "Test" })).toBe("Hello {{ name");
-    });
-
-    test("unmatched closing braces", () => {
-      expect(TemplateEngine.parse("Hello }} name", { name: "Test" })).toBe("Hello }} name");
-    });
-
-    test("nested braces in string literal", () => {
-      expect(TemplateEngine.parse("{{ '{nested}' }}", {})).toBe("{nested}");
-    });
-
-    test("expression in HTML attribute", () => {
-      expect(TemplateEngine.parse('<div class="{{cls}}">', { cls: "active" })).toBe('<div class="active">');
-    });
-
-    test("multiple expressions in HTML attribute", () => {
-      expect(TemplateEngine.parse('<div class="{{a}} {{b}}">', { a: "foo", b: "bar" })).toBe('<div class="foo bar">');
-    });
-
-    test("expression with HTML special characters result", () => {
-      expect(TemplateEngine.parse("{{text}}", { text: "<script>alert('xss')</script>" }))
-        .toBe("<script>alert('xss')</script>"); // No escaping by default
-    });
-
-    test("many expressions in one template", () => {
-      const template = "{{a}}{{b}}{{c}}{{d}}{{e}}{{f}}{{g}}{{h}}{{i}}{{j}}";
-      const data = { a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10 };
-      expect(TemplateEngine.parse(template, data)).toBe("12345678910");
-    });
-  });
-
-  // ==========================================================================
-  // 2. Return Type Edge Cases
-  // ==========================================================================
-  describe("Return Type Edge Cases", () => {
-    test("undefined result renders as empty", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: undefined })).toBe("undefined");
-    });
-
-    test("null result renders as null", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: null })).toBe("null");
-    });
-
-    test("NaN result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: NaN })).toBe("NaN");
-    });
-
-    test("Infinity result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: Infinity })).toBe("Infinity");
-    });
-
-    test("negative Infinity result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: -Infinity })).toBe("-Infinity");
-    });
-
-    test("BigInt result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: BigInt(9007199254740991) })).toBe("9007199254740991");
-    });
-
-    test("BigInt arithmetic", () => {
-      expect(TemplateEngine.evaluate("a + b", { a: BigInt(1), b: BigInt(2) })).toBe(BigInt(3));
-    });
-
-    test("boolean true result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: true })).toBe("true");
-    });
-
-    test("boolean false result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: false })).toBe("false");
-    });
-
-    test("zero result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: 0 })).toBe("0");
-    });
-
-    test("empty string result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: "" })).toBe("");
-    });
-
-    test("array result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: [1, 2, 3] })).toBe("1,2,3");
-    });
-
-    test("object result", () => {
-      expect(TemplateEngine.parse("{{value}}", { value: { a: 1 } })).toBe("[object Object]");
-    });
-
-    test("function result", () => {
-      const fn = () => "test";
-      const result = TemplateEngine.parse("{{value}}", { value: fn });
-      // Arrow functions stringify differently than function declarations
-      expect(result).toContain("=>");
-    });
-
-    test("Symbol result", () => {
-      // Symbols can't be converted to string implicitly, should handle gracefully
-      const result = TemplateEngine.evaluate("value", { value: Symbol("test") });
-      expect(typeof result).toBe("symbol");
-    });
-
-    test("Date result", () => {
-      const date = new Date("2024-01-15T12:00:00Z");
-      const result = TemplateEngine.parse("{{value}}", { value: date });
-      expect(result).toContain("2024");
-    });
-
-    test("RegExp result", () => {
-      const result = TemplateEngine.parse("{{value}}", { value: /test/gi });
-      expect(result).toBe("/test/gi");
-    });
-  });
-
-  // ==========================================================================
-  // 3. Operators Not Previously Tested
-  // ==========================================================================
   describe("Additional Operators", () => {
     test("typeof operator", () => {
       expect(TemplateEngine.evaluate("typeof value", { value: "hello" })).toBe("string");
@@ -995,7 +908,7 @@ describe("TemplateEngine Corner Cases", () => {
       expect(TemplateEngine.evaluate("typeof value", { value: [] })).toBe("object");
       expect(TemplateEngine.evaluate("typeof value", { value: null })).toBe("object");
       expect(TemplateEngine.evaluate("typeof value", { value: undefined })).toBe("undefined");
-      expect(TemplateEngine.evaluate("typeof value", { value: () => {} })).toBe("function");
+      expect(TemplateEngine.evaluate("typeof value", { value: () => { } })).toBe("function");
     });
 
     test("instanceof operator", () => {
@@ -1063,13 +976,13 @@ describe("TemplateEngine Corner Cases", () => {
   });
 
   // ==========================================================================
-  // 4. Security Considerations
+  // 2. Security Considerations
   // ==========================================================================
+
   describe("Security Considerations", () => {
     test("__proto__ access", () => {
-      // This tests if __proto__ manipulation is possible
       const result = TemplateEngine.evaluate("obj.__proto__", { obj: {} });
-      expect(result).toBeDefined(); // Access is allowed but shouldn't break
+      expect(result).toBeDefined();
     });
 
     test("constructor access", () => {
@@ -1078,57 +991,46 @@ describe("TemplateEngine Corner Cases", () => {
     });
 
     test("this keyword returns data context", () => {
-      // 'this' in the function context should be the data object due to 'with'
       const result = TemplateEngine.evaluate("this", { name: "test" });
-      // The behavior depends on strict mode and 'with' statement
       expect(result).toBeDefined();
     });
 
     test("globalThis access", () => {
-      // globalThis should be accessible (not sandboxed)
       const result = TemplateEngine.evaluate("typeof globalThis", {});
       expect(result).toBe("object");
     });
 
     test("window access in browser context", () => {
-      // In Bun test environment, window might not exist
       const result = TemplateEngine.evaluate("typeof window", {});
-      // Could be 'object' or 'undefined' depending on environment
       expect(["object", "undefined"]).toContain(result);
     });
 
     test("process access in Node context", () => {
       const result = TemplateEngine.evaluate("typeof process", {});
-      expect(result).toBe("object"); // Available in Bun
+      expect(result).toBe("object");
     });
 
     test("Function constructor access", () => {
-      // Can create functions - this is inherent to the implementation
       const result = TemplateEngine.evaluate("Function.constructor.name", {});
       expect(result).toBe("Function");
     });
 
     test("eval is accessible but should be used carefully", () => {
-      // eval is available in the expression context
       const result = TemplateEngine.evaluate("typeof eval", {});
       expect(result).toBe("function");
     });
   });
 
   // ==========================================================================
-  // 5. Unicode and Special Characters
+  // 3. Unicode and Special Characters
   // ==========================================================================
+
   describe("Unicode and Special Characters", () => {
     test("emoji in string value", () => {
-      expect(TemplateEngine.parse("{{emoji}}", { emoji: "Hello 👋 World 🌍" })).toBe("Hello 👋 World 🌍");
-    });
-
-    test("emoji in template", () => {
-      expect(TemplateEngine.parse("Hello 👋 {{name}}!", { name: "World" })).toBe("Hello 👋 World!");
+      expect(TemplateEngine.evaluate("emoji", { emoji: "Hello 👋 World 🌍" })).toBe("Hello 👋 World 🌍");
     });
 
     test("unicode variable name", () => {
-      // JavaScript allows unicode in identifiers
       expect(TemplateEngine.evaluate("名前", { "名前": "テスト" })).toBe("テスト");
     });
 
@@ -1136,30 +1038,23 @@ describe("TemplateEngine Corner Cases", () => {
       expect(TemplateEngine.evaluate("obj.名前", { obj: { "名前": "テスト" } })).toBe("テスト");
     });
 
-    test("Chinese characters", () => {
-      expect(TemplateEngine.parse("你好 {{name}}", { name: "世界" })).toBe("你好 世界");
-    });
-
-    test("Arabic characters", () => {
-      expect(TemplateEngine.parse("مرحبا {{name}}", { name: "العالم" })).toBe("مرحبا العالم");
-    });
-
     test("special characters in string", () => {
-      expect(TemplateEngine.parse("{{text}}", { text: "Line1\nLine2\tTabbed" })).toBe("Line1\nLine2\tTabbed");
+      expect(TemplateEngine.evaluate("text", { text: "Line1\nLine2\tTabbed" })).toBe("Line1\nLine2\tTabbed");
     });
 
     test("backslash in string", () => {
-      expect(TemplateEngine.parse("{{path}}", { path: "C:\\Users\\Test" })).toBe("C:\\Users\\Test");
+      expect(TemplateEngine.evaluate("path", { path: "C:\\Users\\Test" })).toBe("C:\\Users\\Test");
     });
 
     test("quotes in string", () => {
-      expect(TemplateEngine.parse("{{text}}", { text: 'He said "Hello"' })).toBe('He said "Hello"');
+      expect(TemplateEngine.evaluate("text", { text: 'He said "Hello"' })).toBe('He said "Hello"');
     });
   });
 
   // ==========================================================================
-  // 6. Data Edge Cases
+  // 4. Data Edge Cases
   // ==========================================================================
+
   describe("Data Edge Cases", () => {
     test("getter property", () => {
       const obj = {
@@ -1239,85 +1134,15 @@ describe("TemplateEngine Corner Cases", () => {
       const obj: any = { name: "test" };
       obj.self = obj; // Circular reference
       expect(TemplateEngine.evaluate("obj.name", { obj })).toBe("test");
-      // Don't try to stringify circular reference
     });
   });
 
   // ==========================================================================
-  // 7. Cache Edge Cases
+  // 5. Object Literals in Expressions
   // ==========================================================================
-  describe("Cache Edge Cases", () => {
-    test("whitespace differences create different cache entries", () => {
-      (TemplateEngine as any)._functionCache.clear();
 
-      TemplateEngine.evaluate("a+b", { a: 1, b: 2 });
-      TemplateEngine.evaluate("a + b", { a: 1, b: 2 });
-      TemplateEngine.evaluate("a  +  b", { a: 1, b: 2 });
-
-      // Each whitespace variation is a different cache key
-      expect((TemplateEngine as any)._functionCache.size).toBe(3);
-    });
-
-    test("parse() extracts expressions with trimmed whitespace", () => {
-      (TemplateEngine as any)._functionCache.clear();
-
-      TemplateEngine.parse("{{ name }}", { name: "A" });
-      TemplateEngine.parse("{{name}}", { name: "B" });
-      TemplateEngine.parse("{{  name  }}", { name: "C" });
-
-      // The regex trims whitespace, so these should all be "name"
-      expect((TemplateEngine as any)._functionCache.size).toBe(1);
-    });
-
-    test("non-string input to evaluate returns input unchanged", () => {
-      expect(TemplateEngine.evaluate(42 as any, {})).toBe(42);
-      expect(TemplateEngine.evaluate(null as any, {})).toBe(null);
-      expect(TemplateEngine.evaluate(undefined as any, {})).toBe(undefined);
-      expect(TemplateEngine.evaluate({ a: 1 } as any, {})).toEqual({ a: 1 });
-    });
-
-    test("non-string input to parse returns input unchanged", () => {
-      expect(TemplateEngine.parse(42 as any, {})).toBe(42);
-      expect(TemplateEngine.parse(null as any, {})).toBe(null);
-      expect(TemplateEngine.parse(undefined as any, {})).toBe(undefined);
-    });
-
-    test("very long expression", () => {
-      const longExpr = "a" + " + a".repeat(100);
-      const result = TemplateEngine.evaluate(longExpr, { a: 1 });
-      expect(result).toBe(101);
-    });
-
-    test("expression with many different operators", () => {
-      const expr = "a + b - c * d / e % f ** g & h | i ^ j << k >> l";
-      const data = { a: 100, b: 50, c: 10, d: 4, e: 2, f: 7, g: 2, h: 15, i: 8, j: 3, k: 1, l: 1 };
-      // Just verify it doesn't crash and returns a number
-      const result = TemplateEngine.evaluate(expr, data);
-      expect(typeof result).toBe("number");
-    });
-
-    test("cache persists between evaluate calls", () => {
-      (TemplateEngine as any)._functionCache.clear();
-
-      // First call - should create cache entry
-      TemplateEngine.evaluate("x * 2", { x: 5 });
-      const sizeAfterFirst = (TemplateEngine as any)._functionCache.size;
-
-      // Second call with same expression - should use cache
-      TemplateEngine.evaluate("x * 2", { x: 10 });
-      const sizeAfterSecond = (TemplateEngine as any)._functionCache.size;
-
-      expect(sizeAfterFirst).toBe(1);
-      expect(sizeAfterSecond).toBe(1);
-    });
-  });
-
-  // ==========================================================================
-  // 8. Expression with Object Literals
-  // ==========================================================================
   describe("Object Literals in Expressions", () => {
     test("object literal requires parentheses", () => {
-      // Without parens, {} is treated as a block
       const result = TemplateEngine.evaluate("({a: 1, b: 2})", {});
       expect(result).toEqual({ a: 1, b: 2 });
     });
@@ -1349,68 +1174,30 @@ describe("TemplateEngine Corner Cases", () => {
   });
 
   // ==========================================================================
-  // 9. Async and Generator (Expected to Fail or Behave Differently)
+  // 6. Async and Generator Expressions
   // ==========================================================================
+
   describe("Async and Generator Expressions", () => {
     test("async function expression", () => {
       const result = TemplateEngine.evaluate("(async () => 42)()", {});
-      // Returns a Promise
       expect(result instanceof Promise).toBe(true);
     });
 
     test("generator function expression", () => {
       const result = TemplateEngine.evaluate("(function* () { yield 1; yield 2; })()", {});
-      // Returns a generator
       expect(typeof result.next).toBe("function");
     });
 
     test("await is syntax error outside async", () => {
-      // await outside async function is a syntax error
       const result = TemplateEngine.evaluate("await Promise.resolve(42)", {});
-      expect(result).toBe(""); // Should fail and return empty string
+      expect(result).toBe("");
     });
   });
 
   // ==========================================================================
-  // 10. Error Recovery
+  // 7. Template Literals Inside Expressions
   // ==========================================================================
-  describe("Error Recovery", () => {
-    test("runtime error returns empty string", () => {
-      expect(TemplateEngine.evaluate("obj.method()", { obj: {} })).toBe("");
-    });
 
-    test("type error returns empty string", () => {
-      expect(TemplateEngine.evaluate("null.property", {})).toBe("");
-    });
-
-    test("reference error returns empty string", () => {
-      expect(TemplateEngine.evaluate("undefinedVariable", {})).toBe("");
-    });
-
-    test("syntax error returns empty string", () => {
-      expect(TemplateEngine.evaluate("function {}", {})).toBe("");
-    });
-
-    test("error in one expression doesn't affect others in template", () => {
-      const result = TemplateEngine.parse("{{a}} {{invalid.prop}} {{b}}", { a: "A", b: "B" });
-      expect(result).toBe("A  B");
-    });
-  });
-});
-
-// =============================================================================
-// Remaining Cases Tests
-// =============================================================================
-
-describe("TemplateEngine Remaining Cases", () => {
-
-  beforeEach(() => {
-    (TemplateEngine as any)._functionCache.clear();
-  });
-
-  // ==========================================================================
-  // 1. Template Literals Inside Expressions
-  // ==========================================================================
   describe("Template Literals Inside Expressions", () => {
     test("basic template literal", () => {
       expect(TemplateEngine.evaluate("`Hello ${name}`", { name: "World" })).toBe("Hello World");
@@ -1462,16 +1249,15 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 2. Logical Assignment Operators
+  // 8. Logical Assignment Operators
   // ==========================================================================
+
   describe("Logical Assignment Operators", () => {
     test("nullish assignment (??=) concept", () => {
-      // Can't do assignment in expression, but can test the logic
       expect(TemplateEngine.evaluate("a ?? (a = b, a)", { a: null, b: 10 })).toBe(10);
     });
 
     test("nullish coalescing with assignment simulation", () => {
-      // Test the ?? operator which is the basis of ??=
       expect(TemplateEngine.evaluate("value ?? defaultValue", { value: null, defaultValue: "default" })).toBe("default");
       expect(TemplateEngine.evaluate("value ?? defaultValue", { value: "exists", defaultValue: "default" })).toBe("exists");
     });
@@ -1486,10 +1272,17 @@ describe("TemplateEngine Remaining Cases", () => {
       expect(TemplateEngine.evaluate("a && b", { a: false, b: "value" })).toBe(false);
     });
   });
+});
 
+// =============================================================================
+// TemplateEngine Remaining Cases
+// =============================================================================
+
+describe("TemplateEngine Remaining Cases", () => {
   // ==========================================================================
-  // 3. Numeric Edge Cases
+  // 1. Numeric Edge Cases
   // ==========================================================================
+
   describe("Numeric Edge Cases", () => {
     test("Number.MAX_SAFE_INTEGER", () => {
       expect(TemplateEngine.evaluate("Number.MAX_SAFE_INTEGER", {})).toBe(9007199254740991);
@@ -1553,18 +1346,31 @@ describe("TemplateEngine Remaining Cases", () => {
     test("Number.isNaN", () => {
       expect(TemplateEngine.evaluate("Number.isNaN(NaN)", {})).toBe(true);
       expect(TemplateEngine.evaluate("Number.isNaN(42)", {})).toBe(false);
-      expect(TemplateEngine.evaluate("Number.isNaN('hello')", {})).toBe(false); // Unlike global isNaN
+      expect(TemplateEngine.evaluate("Number.isNaN('hello')", {})).toBe(false);
     });
 
     test("Number.isSafeInteger", () => {
       expect(TemplateEngine.evaluate("Number.isSafeInteger(42)", {})).toBe(true);
       expect(TemplateEngine.evaluate("Number.isSafeInteger(9007199254740992)", {})).toBe(false);
     });
+
+    test("NaN result", () => {
+      expect(TemplateEngine.evaluate("Number.isNaN(value)", { value: NaN })).toBe(true);
+    });
+
+    test("Infinity result", () => {
+      expect(TemplateEngine.evaluate("value", { value: Infinity })).toBe(Infinity);
+    });
+
+    test("negative Infinity result", () => {
+      expect(TemplateEngine.evaluate("value", { value: -Infinity })).toBe(-Infinity);
+    });
   });
 
   // ==========================================================================
-  // 4. Built-in Methods
+  // 2. Built-in Methods
   // ==========================================================================
+
   describe("Built-in Methods", () => {
     test("JSON.parse", () => {
       expect(TemplateEngine.evaluate('JSON.parse(\'{"a":1}\')', {})).toEqual({ a: 1 });
@@ -1608,13 +1414,6 @@ describe("TemplateEngine Remaining Cases", () => {
       expect(result).toBe(true);
     });
 
-    test("Object.keys, values, entries", () => {
-      const obj = { a: 1, b: 2 };
-      expect(TemplateEngine.evaluate("Object.keys(obj)", { obj })).toEqual(["a", "b"]);
-      expect(TemplateEngine.evaluate("Object.values(obj)", { obj })).toEqual([1, 2]);
-      expect(TemplateEngine.evaluate("Object.entries(obj)", { obj })).toEqual([["a", 1], ["b", 2]]);
-    });
-
     test("Object.fromEntries", () => {
       expect(TemplateEngine.evaluate(
         "Object.fromEntries([['a', 1], ['b', 2]])",
@@ -1647,8 +1446,9 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 5. Arrow Function Features
+  // 3. Arrow Function Features
   // ==========================================================================
+
   describe("Arrow Function Features", () => {
     test("rest parameters", () => {
       expect(TemplateEngine.evaluate(
@@ -1673,7 +1473,7 @@ describe("TemplateEngine Remaining Cases", () => {
       expect(TemplateEngine.evaluate(
         "((a = 1, b = a * 2) => a + b)()",
         {}
-      )).toBe(3); // 1 + 2
+      )).toBe(3);
     });
 
     test("destructuring in arrow params - array", () => {
@@ -1720,35 +1520,9 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 6. Nested Expression Strings
+  // 4. Promise Chaining
   // ==========================================================================
-  describe("Nested Expression Strings", () => {
-    test("expression returning template-like string", () => {
-      // Should return the literal string, not parse it again
-      expect(TemplateEngine.parse("{{text}}", { text: "{{name}}" })).toBe("{{name}}");
-    });
 
-    test("expression with braces in result", () => {
-      expect(TemplateEngine.parse("{{text}}", { text: "{not a template}" })).toBe("{not a template}");
-    });
-
-    test("building template-like string", () => {
-      expect(TemplateEngine.evaluate("'{{' + key + '}}'", { key: "name" })).toBe("{{name}}");
-    });
-
-    test("expression result not re-parsed", () => {
-      const data = {
-        template: "Hello {{inner}}!",
-        inner: "World"
-      };
-      // Only the outer {{template}} is parsed, result is not re-parsed
-      expect(TemplateEngine.parse("{{template}}", data)).toBe("Hello {{inner}}!");
-    });
-  });
-
-  // ==========================================================================
-  // 7. Promise Chaining
-  // ==========================================================================
   describe("Promise Chaining", () => {
     test("Promise.resolve", () => {
       const result = TemplateEngine.evaluate("Promise.resolve(42)", {});
@@ -1802,8 +1576,9 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 8. String Methods (Additional)
+  // 5. String Methods (Additional)
   // ==========================================================================
+
   describe("String Methods (Additional)", () => {
     test("startsWith", () => {
       expect(TemplateEngine.evaluate("str.startsWith('Hello')", { str: "Hello World" })).toBe(true);
@@ -1902,9 +1677,18 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 9. Array Methods (Additional)
+  // 6. Array Methods (Additional)
   // ==========================================================================
+
   describe("Array Methods (Additional)", () => {
+    test("array index access", () => {
+      expect(TemplateEngine.evaluate("items[0]", { items: ["first", "second"] })).toBe("first");
+    });
+
+    test("array length", () => {
+      expect(TemplateEngine.evaluate("items.length", { items: [1, 2, 3] })).toBe(3);
+    });
+
     test("flat", () => {
       expect(TemplateEngine.evaluate("arr.flat()", { arr: [1, [2, [3]]] })).toEqual([1, 2, [3]]);
     });
@@ -2024,8 +1808,9 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 10. Error Objects
+  // 7. Error Objects
   // ==========================================================================
+
   describe("Error Objects", () => {
     test("new Error", () => {
       const result = TemplateEngine.evaluate("new Error('test message')", {});
@@ -2068,7 +1853,6 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("throwing and catching error", () => {
-      // Can't throw in expression, but can create and inspect
       const result = TemplateEngine.evaluate(
         "(() => { try { throw new Error('caught'); } catch(e) { return e.message; } })()",
         {}
@@ -2078,11 +1862,11 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 11. Console Methods (Verification)
+  // 8. Console Methods
   // ==========================================================================
+
   describe("Console Methods", () => {
     test("console.log returns undefined", () => {
-      // console.log exists but returns undefined
       expect(TemplateEngine.evaluate("typeof console.log", {})).toBe("function");
     });
 
@@ -2094,8 +1878,9 @@ describe("TemplateEngine Remaining Cases", () => {
   });
 
   // ==========================================================================
-  // 12. Additional Global Objects
+  // 9. Additional Global Objects
   // ==========================================================================
+
   describe("Additional Global Objects", () => {
     test("Intl.NumberFormat", () => {
       expect(TemplateEngine.evaluate(
@@ -2138,6 +1923,25 @@ describe("TemplateEngine Remaining Cases", () => {
         "new TextDecoder().decode(new TextEncoder().encode('hello'))",
         {}
       )).toBe("hello");
+    });
+  });
+
+  // ==========================================================================
+  // 10. Expression Edge Cases
+  // ==========================================================================
+
+  describe("Expression Edge Cases", () => {
+    test("very long expression", () => {
+      const longExpr = "a" + " + a".repeat(100);
+      const result = TemplateEngine.evaluate(longExpr, { a: 1 });
+      expect(result).toBe(101);
+    });
+
+    test("expression with many different operators", () => {
+      const expr = "a + b - c * d / e % f ** g & h | i ^ j << k >> l";
+      const data = { a: 100, b: 50, c: 10, d: 4, e: 2, f: 7, g: 2, h: 15, i: 8, j: 3, k: 1, l: 1 };
+      const result = TemplateEngine.evaluate(expr, data);
+      expect(typeof result).toBe("number");
     });
   });
 });

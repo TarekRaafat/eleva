@@ -1,6 +1,6 @@
 # Migrating from React
 
-> **Version:** 1.0.0-rc.13 | A comprehensive guide for React developers transitioning to Eleva
+> **Version:** 1.0.0-rc.14 | A comprehensive guide for React developers transitioning to Eleva
 
 This guide helps React developers understand Eleva by mapping familiar React concepts to their Eleva equivalents.
 
@@ -384,7 +384,7 @@ app.component("TodoList", {
     <div>
       <div class="todo-form" :on-add="addTodo"></div>
       ${ctx.todos.value.map(todo => `
-        <div key="${todo.id}" class="todo-item" :todo='${JSON.stringify(todo)}'></div>
+        <div key="${todo.id}" class="todo-item" :todo="todo"></div>
       `).join('')}
     </div>
   `,
@@ -671,7 +671,7 @@ setup({ signal }) {
 - No useCallback/useMemo optimization dance
 
 ### Smaller Bundle
-- ~2.4KB vs React 19's ~44KB
+- ~2.5KB vs React's ~40KB
 - No virtual DOM overhead
 - No reconciler complexity
 

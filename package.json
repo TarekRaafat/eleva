@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.0-rc.13",
+  "version": "1.0.0-rc.14",
   "description": "Eleva.js - Best DX for Building the Best UX. A minimalist, lightweight, pure vanilla JavaScript frontend framework.",
   "type": "module",
   "private": false,

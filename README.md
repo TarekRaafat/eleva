@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.0-rc.13` | **Size:** ~6KB min (~2.4KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.0-rc.14` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -42,9 +42,9 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.13` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
+> **Stability Notice**: This is `v1.0.0-rc.14` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
 
-**Version:** `1.0.0-rc.13`
+**Version:** `1.0.0-rc.14`
 
 
 
@@ -98,7 +98,6 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
       - [Core Framework Only (Lightweight)](#core-framework-only-lightweight)
       - [Attr Plugin](#attr-plugin)
       - [Router Plugin](#router-plugin)
-      - [Props Plugin](#props-plugin)
       - [Store Plugin](#store-plugin)
   - [Development](#development)
   - [Testing](#testing)
@@ -138,14 +137,15 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### Template Syntax
 
-> **Quick Rule:** `${}` needs `ctx.` — `{{ }}` and `@events` don't.
+> **Quick Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
 
 | Syntax | Use | `ctx.`? |
 |--------|-----|:-------:|
-| `${expr}` | Static value | ✓ |
-| `{{ expr }}` | Reactive value | ✗ |
+| `${expr}` | JS value interpolation | ✓ |
 | `@click` | Event handler | ✗ |
-| `:prop` | Pass to child | ✓ |
+| `:prop` | Pass to child | ✗ |
+
+> **How it works:** Use `${ctx.value}` to interpolate values into your template. For `@events` and `:props`, expressions are evaluated against the component context directly — no `ctx.` prefix needed. This allows cleaner syntax like `:user="userData"` instead of `:user="${ctx.userData}"`.
 
 ---
 
@@ -193,7 +193,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.4KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
@@ -214,10 +214,10 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
-- **🎯 Built-in Plugins:** Attr for advanced attributes, Props for complex data handling, Router for client-side routing, and Store for reactive state management
+- **🎯 Built-in Plugins:** Attr for advanced attributes, Router for client-side routing, and Store for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6KB minified with built-in TypeScript declarations
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
 
 ---
 
@@ -242,7 +242,7 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.13` indicate the API is stable but still gathering community feedback before the final release.
+- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.14` indicate the API is stable but still gathering community feedback before the final release.
 - **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
@@ -262,7 +262,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6KB minified and ~2.4KB gzipped.
+- **Lightweight:** Approximately ~6 KB minified and ~2.3 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -277,16 +277,16 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** (Direct DOM)    | **~2.4KB**                 | **~30**                 | ~105*                   | ~15             |
-| **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4             |
-| **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6             |
+| **Eleva** (Direct DOM)        | **~2.3 KB**                | **~23**                 | ~82*                    | ~15             |
+| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
+| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
+| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
 
 _*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
 
 **Eleva's Strengths:**
-- **Smallest bundle size** (~2.4KB vs 44-90 KB)
-- **Competitive initial render** (~30ms for 1K rows)
+- **Smallest bundle size** (~2.3 KB vs 35-90 KB)
+- **Competitive initial render** (~23ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead
 
@@ -315,7 +315,7 @@ How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte,
 | **Build Required** | No | Yes | Optional | Yes | Yes |
 | **Learning Curve** | Low | Medium | Medium | Low | High |
 
-_*Svelte 5 compiles away with a ~3KB signals runtime, so bundle is minimal but build step is required._
+_*Svelte compiles away, so runtime is minimal but build step is required._
 
 Eleva offers a refreshing alternative to frameworks like React, Vue, and Angular:
 
@@ -458,10 +458,8 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 
 ### TemplateEngine
 
-- **`TemplateEngine.parse(template, data)`**
-  Replaces `{{ expression }}` patterns in the template with evaluated values.
 - **`TemplateEngine.evaluate(expr, data)`**
-  Safely evaluates JavaScript expressions within a given context.
+  Safely evaluates JavaScript expressions within a given context. Used internally for `@events` and `:props` attribute processing.
 
 ### Signal
 
@@ -512,7 +510,7 @@ Eleva's plugin system allows you to extend functionality as needed. Plugins are 
 | **Core Plugins** | Bundled with Eleva | `import { X } from "eleva/plugins"` |
 | **External Plugins** | Community/Ecosystem | `npm install eleva-plugin-x` |
 
-> **Core plugins** (Attr, Props, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](docs/plugins/index.md) for details.
+> **Core plugins** (Attr, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](docs/plugins/index.md) for details.
 
 #### Core Framework Only (Lightweight)
 
@@ -616,54 +614,6 @@ router.navigate('/users/123', { replace: true });
 ```
 
 📚 **[Full Router Documentation →](docs/plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
-
-#### Props Plugin
-
-🎯 **Advanced props handling** with automatic type detection, parsing, and reactivity for complex data structures:
-
-```javascript
-import Eleva from 'eleva';
-import { Props } from 'eleva/plugins';
-
-const app = new Eleva("myApp");
-app.use(Props, {
-    enableAutoParsing: true,    // Enable automatic type detection
-    enableReactivity: true,     // Enable reactive prop updates
-    onError: (error, value) => {
-        console.error('Props parsing error:', error, value);
-    }
-});
-
-// Use complex props in components
-app.component("UserCard", {
-    template: (ctx) => `
-        <div class="user-container"
-             :user='${JSON.stringify(ctx.user.value)}'
-             :permissions='${JSON.stringify(ctx.permissions.value)}'>
-        </div>
-    `,
-    children: {
-        '.user-container': 'UserInfo'
-    }
-});
-
-app.component("UserInfo", {
-    setup({ props }) {
-        return {
-            user: props.user,              // Automatically parsed object
-            permissions: props.permissions  // Automatically parsed array
-        };
-    },
-    template: (ctx) => `
-        <div class="user-info">
-            <h3>${ctx.user.value.name}</h3>
-            <p>Role: ${ctx.user.value.role}</p>
-        </div>
-    `
-});
-```
-
-📚 **[Full Props Documentation →](docs/plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, complex data structures, and error handling.
 
 #### Store Plugin
 
@@ -793,37 +743,32 @@ app.dispatch("increment");          // Dispatch actions globally
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
 - Core + Attr: ~8KB (minified)
-- Core + Props: ~10KB (minified)
 - Core + Router: ~21KB (minified)
 - Core + Store: ~12KB (minified)
-- Core + All plugins: ~25KB (minified)
+- Core + All plugins: ~21KB (minified)
 
 **Individual Plugin Sizes:**
 - Attr: ~2.2KB (minified)
-- Props: ~4.2KB (minified)
 - Router: ~15KB (minified)
 - Store: ~6KB (minified)
 
 **Available Plugin Formats:**
 
 **For Bundlers (Tree-Shaking Supported):**
-- ESM: `import { Attr, Props, Router, Store } from 'eleva/plugins'`
-- CJS: `const { Attr, Props, Router, Store } = require('eleva/plugins')`
+- ESM: `import { Attr, Router, Store } from 'eleva/plugins'`
+- CJS: `const { Attr, Router, Store } = require('eleva/plugins')`
 
 **For CDN (Individual Plugins - Smaller Bundle Size):**
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/eleva.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
-- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/props.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/router.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/store.umd.min.js"></script>`
 
 **Individual Plugin Imports (Best for Tree-Shaking):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`
-- ESM: `import { Props } from 'eleva/plugins/props'`
 - ESM: `import { Router } from 'eleva/plugins/router'`
 - ESM: `import { Store } from 'eleva/plugins/store'`
 - CJS: `const { Attr } = require('eleva/plugins/attr')`
-- CJS: `const { Props } = require('eleva/plugins/props')`
 - CJS: `const { Router } = require('eleva/plugins/router')`
 - CJS: `const { Store } = require('eleva/plugins/store')`
 

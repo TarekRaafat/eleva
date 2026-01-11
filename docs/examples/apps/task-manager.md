@@ -256,10 +256,10 @@ app.component("TaskManager", {
             </p>
           ` : filtered.map(task => `
             <div key="${task.id}" class="task-item-container"
-                 :task='${JSON.stringify(task)}'
-                 :onToggle="() => toggleTask(${task.id})"
-                 :onDelete="() => deleteTask(${task.id})"
-                 :onEdit="() => startEdit(${JSON.stringify(task).replace(/"/g, '&quot;')})">
+                 :task="task"
+                 :onToggle="() => toggleTask(task.id)"
+                 :onDelete="() => deleteTask(task.id)"
+                 :onEdit="() => startEdit(task)">
             </div>
           `).join("")}
         </div>

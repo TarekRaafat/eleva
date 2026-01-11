@@ -775,21 +775,21 @@ Eleva is built for high-refresh-rate displays and smooth animations. The framewo
 
 | FPS Target | Frame Budget | Eleva Capability |
 |------------|--------------|------------------|
-| **60 fps** | 16.67ms | ~1,700 renders possible |
-| **120 fps** | 8.33ms | ~833 renders possible |
-| **240 fps** | 4.17ms | ~417 renders possible |
+| **60 fps** | 16.67ms | ~1,500 renders possible |
+| **120 fps** | 8.33ms | ~750 renders possible |
+| **240 fps** | 4.17ms | ~380 renders possible |
 
 ### Benchmark Results
 
 | Scenario | Ops/Second | Avg Render Time |
 |----------|-----------|-----------------|
-| Simple counter | 24,428 | 0.041ms |
-| Position animation | 50,928 | 0.020ms |
-| 5 signals batched | 31,403 | 0.032ms |
-| 100-item list | 1,453 | 0.688ms |
-| Complex template | 6,369 | 0.157ms |
+| Simple counter | 32,815 | 0.030ms |
+| Position animation | 45,072 | 0.022ms |
+| 5 signals batched | 34,290 | 0.029ms |
+| 100-item list | 1,628 | 0.614ms |
+| Complex template | 7,146 | 0.140ms |
 
-With an average render time of **0.010ms**, Eleva can theoretically achieve **100,000+ fps** for simple updates. Even the heaviest workload (100-item list) fits comfortably within a 240fps frame budget.
+With an average render time of **0.011ms**, Eleva can theoretically achieve **90,000+ fps** for simple updates. Even the heaviest workload (100-item list) fits comfortably within a 240fps frame budget.
 
 ### Animation Example
 

@@ -465,11 +465,10 @@ export class Eleva {
        * 4. Processing events, injecting styles, and mounting child components.
        */
       const render = async () => {
-        const templateResult =
+        const html =
           typeof template === "function"
             ? await template(mergedContext)
             : template;
-        const html = this.templateEngine.parse(templateResult, mergedContext);
 
         // Execute before hooks
         if (!isMounted) {
@@ -488,7 +487,12 @@ export class Eleva {
         this._processEvents(container, mergedContext, listeners);
         if (style) this._injectStyles(container, compId, style, mergedContext);
         if (children)
-          await this._mountComponents(container, children, childInstances);
+          await this._mountComponents(
+            container,
+            children,
+            childInstances,
+            mergedContext
+          );
 
         // Execute after hooks
         if (!isMounted) {
@@ -606,9 +610,7 @@ export class Eleva {
   _injectStyles(container, compId, styleDef, context) {
     /** @type {string} */
     const newStyle =
-      typeof styleDef === "function"
-        ? this.templateEngine.parse(styleDef(context), context)
-        : styleDef;
+      typeof styleDef === "function" ? styleDef(context) : styleDef;
 
     /** @type {HTMLStyleElement|null} */
     let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);
@@ -624,18 +626,21 @@ export class Eleva {
   }
 
   /**
-   * Extracts props from an element's attributes that start with the specified prefix.
-   * This method is used to collect component properties from DOM elements.
+   * Extracts and evaluates props from an element's attributes that start with `:`.
+   * Prop values are evaluated as expressions against the component context,
+   * allowing direct passing of objects, arrays, and other complex types.
    *
    * @private
    * @param {HTMLElement} element - The DOM element to extract props from
-   * @returns {Record<string, string>} An object containing the extracted props
+   * @param {ComponentContext} context - The component context for evaluating prop expressions
+   * @returns {Record<string, string>} An object containing the evaluated props
    * @example
    * // For an element with attributes:
-   * // <div :name="John" :age="25">
-   * // Returns: { name: "John", age: "25" }
+   * // <div :name="user.name" :data="items">
+   * // With context: { user: { name: "John" }, items: [1, 2, 3] }
+   * // Returns: { name: "John", data: [1, 2, 3] }
    */
-  _extractProps(element) {
+  _extractProps(element, context) {
     if (!element.attributes) return {};
 
     const props = {};
@@ -645,7 +650,7 @@ export class Eleva {
       const attr = attrs[i];
       if (attr.name.startsWith(":")) {
         const propName = attr.name.slice(1);
-        props[propName] = attr.value;
+        props[propName] = this.templateEngine.evaluate(attr.value, context);
         element.removeAttribute(attr.name);
       }
     }
@@ -664,6 +669,7 @@ export class Eleva {
    * @param {HTMLElement} container - The container element to mount components in
    * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
    * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+   * @param {ComponentContext} context - The parent component context for evaluating prop expressions
    * @returns {Promise<void>}
    *
    * @example
@@ -673,13 +679,13 @@ export class Eleva {
    *   '#settings-panel': "settings-panel"
    * };
    */
-  async _mountComponents(container, children, childInstances) {
+  async _mountComponents(container, children, childInstances, context) {
     for (const [selector, component] of Object.entries(children)) {
       if (!selector) continue;
       for (const el of container.querySelectorAll(selector)) {
         if (!(el instanceof HTMLElement)) continue;
         /** @type {Record<string, string>} */
-        const props = this._extractProps(el);
+        const props = this._extractProps(el, context);
         /** @type {MountResult} */
         const instance = await this.mount(el, component, props);
         if (instance && !childInstances.includes(instance)) {

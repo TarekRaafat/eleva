@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.13 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0-rc.14 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -9,101 +9,45 @@
   // TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
   // ============================================================================
   /**
-   * @typedef {Record<string, unknown>} TemplateData
-   *           Data context for template interpolation
-   */ /**
-   * @typedef {string} TemplateString
-   *           A string containing {{ expression }} interpolation markers
+   * @typedef {Record<string, unknown>} ContextData
+   *           Data context for expression evaluation
    */ /**
    * @typedef {string} Expression
    *           A JavaScript expression to be evaluated in the data context
    */ /**
    * @typedef {unknown} EvaluationResult
-   *           The result of evaluating an expression (string, number, boolean, object, etc.)
+   *           The result of evaluating an expression (string, number, boolean, object, function, etc.)
    */ /**
    * @class 🔒 TemplateEngine
-   * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
-   * Provides a way to evaluate expressions in templates.
+   * @classdesc A minimal expression evaluator for Eleva's directive attributes.
+   * Evaluates JavaScript expressions against a component's context data.
+   * Used internally for `@event` handlers and `:prop` bindings.
+   *
    * All methods are static and can be called directly on the class.
    *
-   * Template Syntax:
-   * - `{{ expression }}` - Interpolate any JavaScript expression
-   * - `{{ variable }}` - Access data properties directly
-   * - `{{ object.property }}` - Access nested properties
-   * - `{{ condition ? a : b }}` - Ternary expressions
-   * - `{{ func(arg) }}` - Call functions from data context
+   * @example
+   * // Property access
+   * TemplateEngine.evaluate("user.name", { user: { name: "John" } });
+   * // Result: "John"
    *
    * @example
-   * // Basic interpolation
-   * const template = "Hello, {{name}}!";
-   * const data = { name: "World" };
-   * const result = TemplateEngine.parse(template, data);
-   * // Result: "Hello, World!"
+   * // Function reference (for @event handlers)
+   * TemplateEngine.evaluate("handleClick", { handleClick: () => console.log("clicked") });
+   * // Result: [Function]
    *
    * @example
-   * // Nested properties
-   * const template = "Welcome, {{user.name}}!";
-   * const data = { user: { name: "John" } };
-   * const result = TemplateEngine.parse(template, data);
-   * // Result: "Welcome, John!"
+   * // Signal values (for :prop bindings)
+   * TemplateEngine.evaluate("count.value", { count: { value: 42 } });
+   * // Result: 42
    *
    * @example
-   * // Expressions
-   * const template = "Status: {{active ? 'Online' : 'Offline'}}";
-   * const data = { active: true };
-   * const result = TemplateEngine.parse(template, data);
-   * // Result: "Status: Online"
-   *
-   * @example
-   * // With Signal values
-   * const template = "Count: {{count.value}}";
-   * const data = { count: { value: 42 } };
-   * const result = TemplateEngine.parse(template, data);
-   * // Result: "Count: 42"
+   * // Complex expressions
+   * TemplateEngine.evaluate("items.filter(i => i.active)", { items: [{active: true}, {active: false}] });
+   * // Result: [{active: true}]
    */ class TemplateEngine {
       /**
-     * Parses a template string, replacing expressions with their evaluated values.
-     * Expressions are evaluated in the provided data context.
-     *
-     * @public
-     * @static
-     * @param {TemplateString|unknown} template - The template string to parse.
-     * @param {TemplateData} data - The data context for evaluating expressions.
-     * @returns {string} The parsed template with expressions replaced by their values.
-     *
-     * @example
-     * // Simple variables
-     * TemplateEngine.parse("Hello, {{name}}!", { name: "World" });
-     * // Result: "Hello, World!"
-     *
-     * @example
-     * // Nested properties
-     * TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
-     *   user: { name: "John", age: 30 }
-     * });
-     * // Result: "John is 30 years old"
-     *
-     * @example
-     * // Multiple expressions
-     * TemplateEngine.parse("{{greeting}}, {{name}}! You have {{count}} messages.", {
-     *   greeting: "Hello",
-     *   name: "User",
-     *   count: 5
-     * });
-     * // Result: "Hello, User! You have 5 messages."
-     *
-     * @example
-     * // With conditionals
-     * TemplateEngine.parse("Status: {{online ? 'Active' : 'Inactive'}}", {
-     *   online: true
-     * });
-     * // Result: "Status: Active"
-     */ static parse(template, data) {
-          if (typeof template !== "string") return template;
-          return template.replace(this.expressionPattern, (_, expression)=>this.evaluate(expression, data));
-      }
-      /**
      * Evaluates an expression in the context of the provided data object.
+     * Used for resolving `@event` handlers and `:prop` bindings.
      *
      * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      * The use of the `with` statement is necessary for expression evaluation but has security implications.
@@ -112,7 +56,7 @@
      * @public
      * @static
      * @param {Expression|unknown} expression - The expression to evaluate.
-     * @param {TemplateData} data - The data context for evaluation.
+     * @param {ContextData} data - The data context for evaluation.
      * @returns {EvaluationResult} The result of the evaluation, or empty string if evaluation fails.
      *
      * @example
@@ -121,9 +65,19 @@
      * // Result: "John"
      *
      * @example
-     * // Numeric values
-     * TemplateEngine.evaluate("user.age", { user: { age: 30 } });
-     * // Result: 30
+     * // Function reference
+     * TemplateEngine.evaluate("increment", { increment: () => count++ });
+     * // Result: [Function]
+     *
+     * @example
+     * // Nested property with Signal
+     * TemplateEngine.evaluate("count.value", { count: { value: 42 } });
+     * // Result: 42
+     *
+     * @example
+     * // Object reference (no JSON.stringify needed)
+     * TemplateEngine.evaluate("user", { user: { name: "John", age: 30 } });
+     * // Result: { name: "John", age: 30 }
      *
      * @example
      * // Expressions
@@ -131,19 +85,12 @@
      * // Result: true
      *
      * @example
-     * // Function calls
-     * TemplateEngine.evaluate("formatDate(date)", {
-     *   date: new Date(),
-     *   formatDate: (d) => d.toISOString()
-     * });
-     * // Result: "2024-01-01T00:00:00.000Z"
-     *
-     * @example
      * // Failed evaluation returns empty string
      * TemplateEngine.evaluate("nonexistent.property", {});
      * // Result: ""
      */ static evaluate(expression, data) {
           if (typeof expression !== "string") return expression;
+          if (!expression.trim()) return "";
           let fn = this._functionCache.get(expression);
           if (!fn) {
               try {
@@ -160,14 +107,6 @@
           }
       }
   }
-  /**
-     * Regular expression for matching template expressions in the format {{ expression }}
-     * Matches: {{ anything }} with optional whitespace inside braces
-     *
-     * @static
-     * @private
-     * @type {RegExp}
-     */ TemplateEngine.expressionPattern = /\{\{\s*(.*?)\s*\}\}/g;
   /**
      * Cache for compiled expression functions.
      * Stores compiled Function objects keyed by expression string for O(1) lookup.
@@ -1102,8 +1041,7 @@
          * 3. Updating the DOM
          * 4. Processing events, injecting styles, and mounting child components.
          */ const render = async ()=>{
-                  const templateResult = typeof template === "function" ? await template(mergedContext) : template;
-                  const html = this.templateEngine.parse(templateResult, mergedContext);
+                  const html = typeof template === "function" ? await template(mergedContext) : template;
                   // Execute before hooks
                   if (!isMounted) {
                       await mergedContext.onBeforeMount?.({
@@ -1119,7 +1057,7 @@
                   this.renderer.patchDOM(container, html);
                   this._processEvents(container, mergedContext, listeners);
                   if (style) this._injectStyles(container, compId, style, mergedContext);
-                  if (children) await this._mountComponents(container, children, childInstances);
+                  if (children) await this._mountComponents(container, children, childInstances, mergedContext);
                   // Execute after hooks
                   if (!isMounted) {
                       await mergedContext.onMount?.({
@@ -1212,7 +1150,7 @@
      * @param {ComponentContext} context - The current component context for style interpolation.
      * @returns {void}
      */ _injectStyles(container, compId, styleDef, context) {
-          /** @type {string} */ const newStyle = typeof styleDef === "function" ? this.templateEngine.parse(styleDef(context), context) : styleDef;
+          /** @type {string} */ const newStyle = typeof styleDef === "function" ? styleDef(context) : styleDef;
           /** @type {HTMLStyleElement|null} */ let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);
           if (styleEl && styleEl.textContent === newStyle) return;
           if (!styleEl) {
@@ -1223,17 +1161,20 @@
           styleEl.textContent = newStyle;
       }
       /**
-     * Extracts props from an element's attributes that start with the specified prefix.
-     * This method is used to collect component properties from DOM elements.
+     * Extracts and evaluates props from an element's attributes that start with `:`.
+     * Prop values are evaluated as expressions against the component context,
+     * allowing direct passing of objects, arrays, and other complex types.
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
-     * @returns {Record<string, string>} An object containing the extracted props
+     * @param {ComponentContext} context - The component context for evaluating prop expressions
+     * @returns {Record<string, string>} An object containing the evaluated props
      * @example
      * // For an element with attributes:
-     * // <div :name="John" :age="25">
-     * // Returns: { name: "John", age: "25" }
-     */ _extractProps(element) {
+     * // <div :name="user.name" :data="items">
+     * // With context: { user: { name: "John" }, items: [1, 2, 3] }
+     * // Returns: { name: "John", data: [1, 2, 3] }
+     */ _extractProps(element, context) {
           if (!element.attributes) return {};
           const props = {};
           const attrs = element.attributes;
@@ -1241,7 +1182,7 @@
               const attr = attrs[i];
               if (attr.name.startsWith(":")) {
                   const propName = attr.name.slice(1);
-                  props[propName] = attr.value;
+                  props[propName] = this.templateEngine.evaluate(attr.value, context);
                   element.removeAttribute(attr.name);
               }
           }
@@ -1259,6 +1200,7 @@
      * @param {HTMLElement} container - The container element to mount components in
      * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
      * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+     * @param {ComponentContext} context - The parent component context for evaluating prop expressions
      * @returns {Promise<void>}
      *
      * @example
@@ -1267,12 +1209,12 @@
      *   'UserProfile': UserProfileComponent,
      *   '#settings-panel': "settings-panel"
      * };
-     */ async _mountComponents(container, children, childInstances) {
+     */ async _mountComponents(container, children, childInstances, context) {
           for (const [selector, component] of Object.entries(children)){
               if (!selector) continue;
               for (const el of container.querySelectorAll(selector)){
                   if (!(el instanceof HTMLElement)) continue;
-                  /** @type {Record<string, string>} */ const props = this._extractProps(el);
+                  /** @type {Record<string, string>} */ const props = this._extractProps(el, context);
                   /** @type {MountResult} */ const instance = await this.mount(el, component, props);
                   if (instance && !childInstances.includes(instance)) {
                       childInstances.push(instance);

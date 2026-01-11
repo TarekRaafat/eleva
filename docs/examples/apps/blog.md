@@ -85,7 +85,7 @@ app.component("BlogPost", {
       ${ctx.showComments.value ? `
         <div class="comments-section">
           ${ctx.comments.value.map(comment => `
-            <div key="${comment.id}" class="comment-wrapper" :comment='${JSON.stringify(comment)}'></div>
+            <div key="${comment.id}" class="comment-wrapper" :comment="comment"></div>
           `).join('')}
 
           <div class="add-comment">
@@ -153,7 +153,7 @@ app.component("Blog", {
 
       <div class="posts">
         ${ctx.posts.value.map(post => `
-          <div key="${post.id}" class="post-wrapper" :post='${JSON.stringify(post)}'></div>
+          <div key="${post.id}" class="post-wrapper" :post="post"></div>
         `).join('')}
       </div>
     </div>

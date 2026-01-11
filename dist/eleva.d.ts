@@ -305,12 +305,8 @@ type SignalLike<T> = {
 };
 
 /**
- * @typedef {Record<string, unknown>} TemplateData
- *           Data context for template interpolation
- */
-/**
- * @typedef {string} TemplateString
- *           A string containing {{ expression }} interpolation markers
+ * @typedef {Record<string, unknown>} ContextData
+ *           Data context for expression evaluation
  */
 /**
  * @typedef {string} Expression
@@ -318,59 +314,37 @@ type SignalLike<T> = {
  */
 /**
  * @typedef {unknown} EvaluationResult
- *           The result of evaluating an expression (string, number, boolean, object, etc.)
+ *           The result of evaluating an expression (string, number, boolean, object, function, etc.)
  */
 /**
  * @class 🔒 TemplateEngine
- * @classdesc A secure template engine that handles interpolation and dynamic attribute parsing.
- * Provides a way to evaluate expressions in templates.
+ * @classdesc A minimal expression evaluator for Eleva's directive attributes.
+ * Evaluates JavaScript expressions against a component's context data.
+ * Used internally for `@event` handlers and `:prop` bindings.
+ *
  * All methods are static and can be called directly on the class.
  *
- * Template Syntax:
- * - `{{ expression }}` - Interpolate any JavaScript expression
- * - `{{ variable }}` - Access data properties directly
- * - `{{ object.property }}` - Access nested properties
- * - `{{ condition ? a : b }}` - Ternary expressions
- * - `{{ func(arg) }}` - Call functions from data context
+ * @example
+ * // Property access
+ * TemplateEngine.evaluate("user.name", { user: { name: "John" } });
+ * // Result: "John"
  *
  * @example
- * // Basic interpolation
- * const template = "Hello, {{name}}!";
- * const data = { name: "World" };
- * const result = TemplateEngine.parse(template, data);
- * // Result: "Hello, World!"
+ * // Function reference (for @event handlers)
+ * TemplateEngine.evaluate("handleClick", { handleClick: () => console.log("clicked") });
+ * // Result: [Function]
  *
  * @example
- * // Nested properties
- * const template = "Welcome, {{user.name}}!";
- * const data = { user: { name: "John" } };
- * const result = TemplateEngine.parse(template, data);
- * // Result: "Welcome, John!"
+ * // Signal values (for :prop bindings)
+ * TemplateEngine.evaluate("count.value", { count: { value: 42 } });
+ * // Result: 42
  *
  * @example
- * // Expressions
- * const template = "Status: {{active ? 'Online' : 'Offline'}}";
- * const data = { active: true };
- * const result = TemplateEngine.parse(template, data);
- * // Result: "Status: Online"
- *
- * @example
- * // With Signal values
- * const template = "Count: {{count.value}}";
- * const data = { count: { value: 42 } };
- * const result = TemplateEngine.parse(template, data);
- * // Result: "Count: 42"
+ * // Complex expressions
+ * TemplateEngine.evaluate("items.filter(i => i.active)", { items: [{active: true}, {active: false}] });
+ * // Result: [{active: true}]
  */
 declare class TemplateEngine {
-    /**
-     * Regular expression for matching template expressions in the format {{ expression }}
-     * Matches: {{ anything }} with optional whitespace inside braces
-     *
-     * @static
-     * @private
-     * @type {RegExp}
-     */
-    private static expressionPattern;
     /**
      * Cache for compiled expression functions.
      * Stores compiled Function objects keyed by expression string for O(1) lookup.
@@ -381,46 +355,8 @@ declare class TemplateEngine {
      */
     private static _functionCache;
     /**
-     * Parses a template string, replacing expressions with their evaluated values.
-     * Expressions are evaluated in the provided data context.
-     *
-     * @public
-     * @static
-     * @param {TemplateString|unknown} template - The template string to parse.
-     * @param {TemplateData} data - The data context for evaluating expressions.
-     * @returns {string} The parsed template with expressions replaced by their values.
-     *
-     * @example
-     * // Simple variables
-     * TemplateEngine.parse("Hello, {{name}}!", { name: "World" });
-     * // Result: "Hello, World!"
-     *
-     * @example
-     * // Nested properties
-     * TemplateEngine.parse("{{user.name}} is {{user.age}} years old", {
-     *   user: { name: "John", age: 30 }
-     * });
-     * // Result: "John is 30 years old"
-     *
-     * @example
-     * // Multiple expressions
-     * TemplateEngine.parse("{{greeting}}, {{name}}! You have {{count}} messages.", {
-     *   greeting: "Hello",
-     *   name: "User",
-     *   count: 5
-     * });
-     * // Result: "Hello, User! You have 5 messages."
-     *
-     * @example
-     * // With conditionals
-     * TemplateEngine.parse("Status: {{online ? 'Active' : 'Inactive'}}", {
-     *   online: true
-     * });
-     * // Result: "Status: Active"
-     */
-    public static parse(template: TemplateString | unknown, data: TemplateData): string;
-    /**
      * Evaluates an expression in the context of the provided data object.
+     * Used for resolving `@event` handlers and `:prop` bindings.
      *
      * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
      * The use of the `with` statement is necessary for expression evaluation but has security implications.
@@ -429,7 +365,7 @@ declare class TemplateEngine {
      * @public
      * @static
      * @param {Expression|unknown} expression - The expression to evaluate.
-     * @param {TemplateData} data - The data context for evaluation.
+     * @param {ContextData} data - The data context for evaluation.
      * @returns {EvaluationResult} The result of the evaluation, or empty string if evaluation fails.
      *
      * @example
@@ -438,9 +374,19 @@ declare class TemplateEngine {
      * // Result: "John"
      *
      * @example
-     * // Numeric values
-     * TemplateEngine.evaluate("user.age", { user: { age: 30 } });
-     * // Result: 30
+     * // Function reference
+     * TemplateEngine.evaluate("increment", { increment: () => count++ });
+     * // Result: [Function]
+     *
+     * @example
+     * // Nested property with Signal
+     * TemplateEngine.evaluate("count.value", { count: { value: 42 } });
+     * // Result: 42
+     *
+     * @example
+     * // Object reference (no JSON.stringify needed)
+     * TemplateEngine.evaluate("user", { user: { name: "John", age: 30 } });
+     * // Result: { name: "John", age: 30 }
      *
      * @example
      * // Expressions
@@ -448,34 +394,22 @@ declare class TemplateEngine {
      * // Result: true
      *
      * @example
-     * // Function calls
-     * TemplateEngine.evaluate("formatDate(date)", {
-     *   date: new Date(),
-     *   formatDate: (d) => d.toISOString()
-     * });
-     * // Result: "2024-01-01T00:00:00.000Z"
-     *
-     * @example
      * // Failed evaluation returns empty string
      * TemplateEngine.evaluate("nonexistent.property", {});
      * // Result: ""
      */
-    public static evaluate(expression: Expression | unknown, data: TemplateData): EvaluationResult;
+    public static evaluate(expression: Expression | unknown, data: ContextData): EvaluationResult;
 }
 /**
- * Data context for template interpolation
+ * Data context for expression evaluation
  */
-type TemplateData = Record<string, unknown>;
-/**
- * A string containing {{ expression }} interpolation markers
- */
-type TemplateString = string;
+type ContextData = Record<string, unknown>;
 /**
  * A JavaScript expression to be evaluated in the data context
  */
 type Expression = string;
 /**
- * The result of evaluating an expression (string, number, boolean, object, etc.)
+ * The result of evaluating an expression (string, number, boolean, object, function, etc.)
  */
 type EvaluationResult = unknown;
 
@@ -957,16 +891,19 @@ declare class Eleva {
      */
     private _injectStyles;
     /**
-     * Extracts props from an element's attributes that start with the specified prefix.
-     * This method is used to collect component properties from DOM elements.
+     * Extracts and evaluates props from an element's attributes that start with `:`.
+     * Prop values are evaluated as expressions against the component context,
+     * allowing direct passing of objects, arrays, and other complex types.
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
-     * @returns {Record<string, string>} An object containing the extracted props
+     * @param {ComponentContext} context - The component context for evaluating prop expressions
+     * @returns {Record<string, string>} An object containing the evaluated props
      * @example
      * // For an element with attributes:
-     * // <div :name="John" :age="25">
-     * // Returns: { name: "John", age: "25" }
+     * // <div :name="user.name" :data="items">
+     * // With context: { user: { name: "John" }, items: [1, 2, 3] }
+     * // Returns: { name: "John", data: [1, 2, 3] }
      */
     private _extractProps;
     /**
@@ -981,6 +918,7 @@ declare class Eleva {
      * @param {HTMLElement} container - The container element to mount components in
      * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
      * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+     * @param {ComponentContext} context - The parent component context for evaluating prop expressions
      * @returns {Promise<void>}
      *
      * @example

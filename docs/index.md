@@ -27,7 +27,7 @@ head:
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.0-rc.13` | **Bundle Size:** ~6KB minified (~2.4KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.0.0-rc.14` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -73,7 +73,7 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.13. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.14. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
 
 ---
 
@@ -92,7 +92,7 @@ How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte,
 | **Learning Curve** | Low | Medium | Medium | Low | High |
 | **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | Decorators |
 
-_*Svelte 5 compiles away with a ~3KB signals runtime, so bundle is minimal but build step is required._
+_*Svelte compiles away, so runtime is minimal but build step is required._
 
 ### When to Use Eleva
 
@@ -125,7 +125,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.4KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
 | **No Hidden Magic** | Debug easily with transparent, predictable behavior |
 | **Sync & Async Hooks** | Lifecycle hooks that work the way you expect |
 
@@ -232,14 +232,15 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### Template Syntax Cheatsheet
 
-> **Quick Rule:** `${}` needs `ctx.` — everything else doesn't.
+> **Quick Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
 
 | Syntax | Purpose | `ctx.`? | Example |
 |--------|---------|:-------:|---------|
-| `${expr}` | Static interpolation | ✓ | `${ctx.user.name}` |
-| `{% raw %}{{ expr }}{% endraw %}` | Reactive interpolation | ✗ | `{% raw %}{{ count.value }}{% endraw %}` |
+| `${expr}` | JavaScript value interpolation | ✓ | `${ctx.user.name}` |
 | `@event` | Event binding | ✗ | `@click="handleClick"` |
-| `:prop` | Pass prop to child | ✓ | `:title="${ctx.todo.title}"` |
+| `:prop` | Pass prop to child | ✗ | `:user="userData.value"` |
+
+> **How it works:** Use `${ctx.value}` to interpolate values into your template. For `@events` and `:props`, expressions are evaluated against the component context directly — no `ctx.` prefix needed. This allows cleaner syntax like `:user="userData.value"` instead of `:user="${ctx.userData.value}"`.
 
 ### Lifecycle Hooks
 
@@ -275,8 +276,7 @@ setup: ({ signal }) => ({
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| `Attr` | ARIA, data-*, boolean attributes | ~2.2KB | [→](./plugins/attr.md) |
-| `Props` | Complex prop parsing & reactivity | ~4.2KB | [→](./plugins/props.md) |
+| `Attr` | ARIA, data-*, boolean attributes | ~2.4KB | [→](./plugins/attr.md) |
 | `Router` | Client-side routing & guards | ~15KB | [→](./plugins/router.md) |
 | `Store` | Global state management | ~6KB | [→](./plugins/store.md) |
 
@@ -335,7 +335,6 @@ setup: ({ signal }) => ({
     - [Built-in Plugins](#built-in-plugins)
       - [🎯 Attr Plugin](#-attr-plugin)
       - [🚀 Router Plugin](#-router-plugin)
-      - [🎯 Props Plugin](#-props-plugin)
       - [🏪 Store Plugin](#-store-plugin)
       - [Plugin Installation](#plugin-installation)
       - [Bundle Sizes](#bundle-sizes)
@@ -416,25 +415,25 @@ At the heart of Eleva are a few fundamental principles that guide its design and
 
 ### ⚡ 240fps+ Ready - The Framework Is Never the Bottleneck
 
-Eleva is built for high-performance applications. With an average render time of **0.010ms**, Eleva can theoretically achieve **100,000+ fps** for simple updates:
+Eleva is built for high-performance applications. With an average render time of **0.011ms**, Eleva can theoretically achieve **90,000+ fps** for simple updates:
 
 | FPS Target | Frame Budget | Eleva Capability | Status |
 |------------|--------------|------------------|:------:|
-| **60 fps** | 16.67ms | ~1,700 renders possible | ✅ |
-| **120 fps** | 8.33ms | ~833 renders possible | ✅ |
-| **240 fps** | 4.17ms | ~417 renders possible | ✅ |
+| **60 fps** | 16.67ms | ~1,500 renders possible | ✅ |
+| **120 fps** | 8.33ms | ~750 renders possible | ✅ |
+| **240 fps** | 4.17ms | ~380 renders possible | ✅ |
 
 **FPS Throughput Benchmarks:**
 
 | Scenario | Ops/Second | Avg Render Time | 240fps Ready? |
 |----------|-----------|-----------------|:-------------:|
-| Simple counter | 24,428 | 0.041ms | ✅ |
-| Position animation (2 signals) | 50,928 | 0.020ms | ✅ |
-| 5 signals batched | 31,403 | 0.032ms | ✅ |
-| 100-item list | 1,453 | 0.688ms | ✅ |
-| Complex nested template | 6,369 | 0.157ms | ✅ |
+| Simple counter | 32,815 | 0.030ms | ✅ |
+| Position animation (2 signals) | 45,072 | 0.022ms | ✅ |
+| 5 signals batched | 34,290 | 0.029ms | ✅ |
+| 100-item list | 1,628 | 0.614ms | ✅ |
+| Complex nested template | 7,146 | 0.140ms | ✅ |
 
-Even the **heaviest scenario** (100-item list at 0.688ms) comfortably fits within a 240fps frame budget of 4.17ms.
+Even the **heaviest scenario** (100-item list at 0.614ms) comfortably fits within a 240fps frame budget of 4.17ms.
 
 ### js-framework-benchmark Comparison
 
@@ -442,7 +441,7 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** (Direct DOM)    | **~2.4KB**                 | **~30**                 | ~105*                   | ~15             |
+| **Eleva 1.0** (Direct DOM)    | **~2.3KB**                 | **~23**                 | ~82*                    | ~15             |
 | **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5             |
 | **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4             |
 | **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6             |
@@ -451,8 +450,8 @@ _*Eleva uses DOM diffing & patching, but templates generate HTML strings that re
 
 **Eleva's Strengths:**
 - **240fps+ capable** - Framework never limits frame rate
-- **Smallest bundle size** (~2.4KB vs 44-90 KB)
-- **Competitive initial render** (~30ms for 1K rows)
+- **Smallest bundle size** (~2.3 KB vs 35-90 KB)
+- **Competitive initial render** (~23ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render
 
@@ -486,14 +485,12 @@ const app = new Eleva("MyApp");
 **With Individual Plugins (Optional):**
 ```javascript
 import Eleva from 'eleva';
-import { Attr } from 'eleva/plugins/attr';      // ~2.2KB
-import { Props } from 'eleva/plugins/props';    // ~4.2KB
+import { Attr } from 'eleva/plugins/attr';      // ~2.4KB
 import { Router } from 'eleva/plugins/router';  // ~15KB
 import { Store } from 'eleva/plugins/store';    // ~6KB
 
 const app = new Eleva("MyApp");
 app.use(Attr);    // Only if needed
-app.use(Props);   // Only if needed
 app.use(Router);  // Only if needed
 app.use(Store);   // Only if needed
 ```
@@ -509,7 +506,6 @@ Or include it directly via CDN:
 
 <!-- Or individual plugins -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/props.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
 ```
@@ -560,83 +556,130 @@ For interactive demos, check out the [CodePen Example](https://codepen.io/tarekr
 
 ### TemplateEngine
 
-The **TemplateEngine** is responsible for parsing templates and evaluating embedded expressions.
+The **TemplateEngine** is responsible for evaluating expressions in `@events` and `:props` attributes.
 
-- **`TemplateEngine.parse(template, data)`**: Replaces `{% raw %}{{ expression }}{% endraw %}` with values from `data`.
-- **`TemplateEngine.evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context.
+- **`TemplateEngine.evaluate(expr, data)`**: Safely evaluates JavaScript expressions within the provided context. Used internally for event handlers and prop values.
 
 _Example:_
 
 ```js
-const template = "Hello, {% raw %}{{ name }}{% endraw %}!";
-const data = { name: "World" };
-const output = TemplateEngine.parse(template, data);
-console.log(output); // "Hello, World!"
+// Internal usage for event handlers
+const handler = TemplateEngine.evaluate("handleClick", context);
+// handler is now the actual function reference
+
+// Internal usage for props
+const userData = TemplateEngine.evaluate("user.value", context);
+// userData is the actual object value
 ```
 
 **Key Features:**
 - Static method-based API
-- Expression evaluation in data context
-- Whitespace-preserving interpolation
+- Expression evaluation in component context
+- Function caching for performance
 - Error handling for invalid expressions
-- Support for complex object access
+- Support for complex object access and method calls
 
 ### Template Interpolation
 
-Eleva supports two methods for dynamic content:
+Eleva uses JavaScript template literals for value interpolation, with special syntax for events and props.
 
-1. **Native Template Literals (`${...}`):**  
-   Evaluated once, providing static content.
+#### Understanding the Syntax
 
-_Example:_
+| Syntax | Evaluated By | Requires `ctx.`? | Example |
+|--------|--------------|:----------------:|---------|
+| `${...}` | JavaScript | ✓ | `${ctx.count.value}` |
+| `@event="..."` | TemplateEngine | ✗ | `@click="increment"` |
+| `:prop="..."` | TemplateEngine | ✗ | `:user="userData.value"` |
+
+**How reactivity works:** Eleva re-executes the entire template function when any signal changes. This updates all `${}` interpolations automatically.
+
+#### Value Interpolation with `${...}`
+
+Use `${...}` to interpolate values into your template:
 
 ```js
-const greeting = `Hello, ${name}!`; // Evaluates to "Hello, World!" if name is "World"
+// ✓ Standard approach
+const Counter = {
+  setup: ({ signal }) => ({ count: signal(0) }),
+  template: (ctx) => `<p>Count: ${ctx.count.value}</p>`
+};
 ```
 
-2. **Handlebars-like Syntax (`{% raw %}{{...}}{% endraw %}`):**
-   Enables dynamic, reactive updates.
+**Advantages:**
+- Native JavaScript syntax—no learning curve
+- Full IDE support (autocomplete, type checking)
+- Access to all JavaScript features (methods, conditionals, etc.)
 
-```html
-<p>Hello, {% raw %}{{ name }}{% endraw %}!</p>
+#### Event Handlers with `@event`
+
+Event handlers are evaluated against your component context (no `ctx.` needed):
+
+```js
+const Counter = {
+  setup: ({ signal }) => {
+    const count = signal(0);
+    const increment = () => count.value++;
+    return { count, increment };
+  },
+  template: (ctx) => `
+    <p>Count: ${ctx.count.value}</p>
+    <button @click="increment">+</button>
+  `
+};
 ```
 
-**When to Use Each:**
+You can also use inline expressions:
 
-- Use **`${...}`** for one-time, static content.
-- Use **`{% raw %}{{...}}{% endraw %}`** for dynamic, reactive data binding.
+```js
+template: (ctx) => `
+  <button @click="() => count.value++">+</button>
+`
+```
 
-> **Important: Context Difference**
->
-> **Simple Rule:** If it's inside `"quotes"`, no `ctx.` needed. If it's a `${template literal}`, use `ctx.`
->
-> | Syntax | Inside Quotes? | Uses `ctx.`? | Example |
-> |--------|---------------|--------------|---------|
-> | `${...}` | No | Yes | `${ctx.count.value}` |
-> | `{% raw %}{{ ... }}{% endraw %}` | Yes | No | `{% raw %}{{ count.value }}{% endraw %}` |
-> | `@event="..."` | Yes | No | `@click="increment"` |
-> | `:prop="${...}"` | No (it's a `${}`) | Yes | `:data="${ctx.items.value}"` |
->
-> ```js
-> template: (ctx) => `
->   <p>Static: ${ctx.count.value}</p>
->   <p>Reactive: {% raw %}{{ count.value }}{% endraw %}</p>
->   <button @click="increment">+</button>
->   <child-component :data="${ctx.items.value}"></child-component>
-> `
-> ```
->
-> **Why?** Template literals (`${}`) are evaluated by JavaScript where `ctx` is the function parameter. Quoted content (`{% raw %}{{ }}{% endraw %}`, `@event`) is evaluated by Eleva's TemplateEngine which already has your context unwrapped.
+#### Passing Props with `:prop`
+
+Props are evaluated against your component context (no `ctx.` needed):
+
+```js
+const Parent = {
+  setup: ({ signal }) => ({
+    user: signal({ name: "John", age: 30 }),
+    items: ["a", "b", "c"]
+  }),
+  template: (ctx) => `
+    <child-comp
+      :user="user.value"
+      :items="items"
+      :count="10 + 5">
+    </child-comp>
+  `,
+  children: { "child-comp": "ChildComponent" }
+};
+```
+
+**Key benefit:** No need for `JSON.stringify` — objects and arrays are passed directly!
+
+#### Context Reference Rules
+
+> **Simple Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
+
+| Syntax | Uses `ctx.`? | Example |
+|--------|:------------:|---------|
+| `${...}` | ✓ | `${ctx.count.value}` |
+| `@event="..."` | ✗ | `@click="increment"` |
+| `:prop="..."` | ✗ | `:user="userData.value"` |
+
+**Why the difference?** JavaScript template literals (`${}`) are evaluated where `ctx` is the function parameter. TemplateEngine evaluates `@event` and `:prop` expressions with your context already unwrapped.
+
+```js
+template: (ctx) => `
+  <p>${ctx.count.value}</p>              <!-- JavaScript evaluates with ctx -->
+  <button @click="increment">+</button>  <!-- TemplateEngine evaluates without ctx -->
+  <child :data="items.value"></child>    <!-- TemplateEngine evaluates without ctx -->
+`
+```
 
 #### Common Mistakes
-
-```js
-// ❌ WRONG: Using ctx. inside {% raw %}{{ }}{% endraw %}
-template: (ctx) => `<p>{% raw %}{{ ctx.count.value }}{% endraw %}</p>`
-
-// ✓ CORRECT: No ctx. inside {% raw %}{{ }}{% endraw %}
-template: (ctx) => `<p>{% raw %}{{ count.value }}{% endraw %}</p>`
-```
 
 ```js
 // ❌ WRONG: Using ctx. in event handlers
@@ -644,6 +687,14 @@ template: (ctx) => `<button @click="ctx.handleClick">Click</button>`
 
 // ✓ CORRECT: No ctx. in event handlers
 template: (ctx) => `<button @click="handleClick">Click</button>`
+```
+
+```js
+// ❌ WRONG: Using ctx. in props
+template: (ctx) => `<child :user="ctx.userData.value"></child>`
+
+// ✓ CORRECT: No ctx. in props
+template: (ctx) => `<child :user="userData.value"></child>`
 ```
 
 ```js
@@ -1163,9 +1214,9 @@ Eleva provides two powerful ways to mount child components in your application:
            return { user };
          },
          template: (ctx) => `
-           <UserCard 
-             :user="${JSON.stringify(ctx.user)}"
-             :onSelect="() => selectUser(${JSON.stringify(ctx.user)})"
+           <UserCard
+             :user="user"
+             :onSelect="selectUser"
            ></UserCard>
          `,
          children: {
@@ -1547,8 +1598,8 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 2. **Signals (Reactivity):**
    Signals are reactive data holders that notify watchers when their values change, triggering re-renders of the affected UI.
 
-3. **TemplateEngine (Rendering):**
-   This module processes template strings by replacing placeholders (e.g., `{% raw %}{{ count }}{% endraw %}`) with live data, enabling dynamic rendering.
+3. **TemplateEngine (Evaluation):**
+   This module evaluates expressions in `@events` and `:props` attributes against the component context, enabling event binding and prop passing.
 
 4. **Renderer (DOM Diffing and Patching):**
    The Renderer compares the new HTML structure with the current DOM and patches only the parts that have changed, ensuring high performance and efficient updates without the overhead of a virtual DOM.
@@ -1566,7 +1617,8 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 2. **Rendering:**
 
    - The **template** function is called with the combined context and reactive state.
-   - The **TemplateEngine** parses the template, replacing expressions like `{% raw %}{{ count }}{% endraw %}` with the current values.
+   - JavaScript template literals (`${}`) interpolate values directly during template execution.
+   - The **TemplateEngine** evaluates `@events` and `:props` expressions against the context.
    - The **Renderer** takes the resulting HTML and patches it into the DOM, ensuring only changes are applied.
 
 3. **Reactivity:**
@@ -1892,67 +1944,6 @@ router.navigate('/users/123', { replace: true });
 
 📚 **[Full Router Documentation →](./plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
 
-#### 🎯 Props Plugin
-
-Advanced props data handling for complex data structures with automatic type detection and reactivity.
-
-```javascript
-import { Props } from 'eleva/plugins';
-
-const app = new Eleva("myApp");
-app.use(Props, {
-    enableAutoParsing: true,      // Enable automatic type detection and parsing
-    enableReactivity: true,       // Enable reactive prop updates using Eleva's signal system
-    onError: (error, value) => {
-        console.error('Props parsing error:', error, value);
-    }
-});
-
-// Use complex props in components
-app.component("UserCard", {
-    template: (ctx) => `
-        <div class="user-info-container"
-             :user='${JSON.stringify(ctx.user.value)}'
-             :permissions='${JSON.stringify(ctx.permissions.value)}'
-             :settings='${JSON.stringify(ctx.settings.value)}'>
-        </div>
-    `,
-    children: {
-        '.user-info-container': 'UserInfo'
-    }
-});
-
-app.component("UserInfo", {
-    setup({ props }) {
-        return {
-            user: props.user,        // Automatically parsed object
-            permissions: props.permissions,  // Automatically parsed array
-            settings: props.settings  // Automatically parsed object
-        };
-    },
-    template: (ctx) => `
-        <div class="user-info">
-            <h3>${ctx.user.value.name}</h3>
-            <p>Age: ${ctx.user.value.age}</p>
-            <p>Active: ${ctx.user.value.active}</p>
-            <ul>
-                ${ctx.permissions.value.map((perm, index) => `<li key="${index}">${perm}</li>`).join('')}
-            </ul>
-        </div>
-    `
-});
-```
-
-**Features:**
-- 🎯 **Automatic Type Detection**: Intelligently detects and parses strings, numbers, booleans, objects, arrays, dates, and more
-- 📊 **Complex Data Structures**: Seamless handling of nested objects and arrays
-- 🔄 **Reactive Props**: Automatic reactive updates when parent data changes using Eleva's signal system
-- 🛠️ **Error Handling**: Comprehensive error handling with custom error callbacks
-- 🧹 **Attribute Cleanup**: Automatic removal of prop attributes after extraction
-- ⚡ **Performance Optimized**: Efficient parsing with minimal overhead
-
-📚 **[Full Props Documentation →](./plugins/props.md)** - Comprehensive guide with type parsing, reactive props, signal linking, and complex data structures.
-
 #### 🏪 Store Plugin
 
 Reactive state management for sharing data across your entire Eleva application with centralized data store, persistence, and cross-component reactive updates.
@@ -2091,13 +2082,12 @@ app.dispatch("increment");          // Dispatch actions globally
 
 ```javascript
 // Import plugins
-import { Attr, Router, Props, Store } from 'eleva/plugins';
+import { Attr, Router, Store } from 'eleva/plugins';
 
 // Install multiple plugins
 const app = new Eleva("myApp");
 app.use(Attr);
 app.use(Router, routerOptions);
-app.use(Props, propsOptions);
 app.use(Store, storeOptions);
 
 // Or install with options
@@ -2124,14 +2114,12 @@ app.use(Store, {
 
 - **Core framework only**: ~6KB (minified)
 - **Core + Attr plugin**: ~8KB (minified)
-- **Core + Props plugin**: ~10KB (minified)
 - **Core + Router plugin**: ~21KB (minified)
 - **Core + Store plugin**: ~12KB (minified)
-- **Core + All plugins**: ~25KB (minified)
+- **Core + All plugins**: ~21KB (minified)
 
 **Individual Plugin Sizes:**
 - **Attr plugin only**: ~2.2KB (minified)
-- **Props plugin only**: ~4.2KB (minified)
 - **Router plugin only**: ~15KB (minified)
 - **Store plugin only**: ~6KB (minified)
 
@@ -2779,7 +2767,7 @@ Signals are Eleva's reactivity primitive. They hold values and automatically tri
 | Derived/computed values | ❌ No | Use functions instead |
 | Constants | ❌ No | Never changes |
 | Internal helpers (caches, refs) | ❌ No | Not displayed in UI |
-| Props received from parent | ⚠️ Depends | Use Props plugin for reactivity |
+| Props received from parent | ⚠️ Depends | Pass signal itself for reactivity |
 
 ```js
 setup: ({ signal }) => {
@@ -3570,7 +3558,7 @@ app.component("TodoList", {
   template: (ctx) => `
     <ul>
       ${ctx.todos.value.map(todo => `
-        <li key="${todo.id}" class="todo-item" :todo='${JSON.stringify(todo)}'></li>
+        <li key="${todo.id}" class="todo-item" :todo="todo"></li>
       `).join("")}
     </ul>
   `,
@@ -3646,7 +3634,7 @@ app.component("UserList", {
   template: (ctx) => `
     <div class="users">
       ${ctx.users.value.map(u => `
-        <div key="${u.id}" class="card" :user='${JSON.stringify(u)}'></div>
+        <div key="${u.id}" class="card" :user="u"></div>
       `).join("")}
     </div>
   `,
@@ -3692,8 +3680,8 @@ app.component("ProductList", {
     <div class="products">
       ${ctx.products.value.map(product => `
         <div key="${product.id}" class="product-card"
-          :product='${JSON.stringify(product)}'
-          :onSelect="() => handleSelect(${JSON.stringify(product)})">
+          :product="product"
+          :onSelect="() => handleSelect(product)">
         </div>
       `).join("")}
     </div>
@@ -3813,8 +3801,8 @@ children: {
 
 // ❌ DON'T: Duplicate component for same data
 template: (ctx) => `
-  <div class="card1" :user='${JSON.stringify(ctx.user)}'></div>
-  <div class="card2" :user='${JSON.stringify(ctx.user)}'></div>
+  <div class="card1" :user="user"></div>
+  <div class="card2" :user="user"></div>
 `,
 children: {
   ".card1": "UserCard",
@@ -3849,62 +3837,38 @@ children: {
 
 Eleva provides multiple ways to share data between components. Choosing the right method is crucial for maintainable code.
 
-##### Basic Props (No Plugin)
-
-**Limitations:**
-- Only supports **strings** in attributes
-- Complex objects require manual `JSON.stringify`/`JSON.parse`
-- Functions cannot be passed directly
-- No automatic reactivity for prop changes
-
-```js
-// Parent - must stringify complex data
-template: (ctx) => `
-  <div class="child" :name="John" :count="5"></div>
-  <div class="child" :user='${JSON.stringify(ctx.user)}'></div>
-`
-
-// Child - receives strings, must parse manually
-setup({ props }) {
-  const count = parseInt(props.count);  // "5" → 5
-  const user = JSON.parse(props.user);  // string → object
-  return { count, user };
-}
-```
-
-**Use when:** Simple string/number values, small data, no reactivity needed.
-
-##### Props Plugin (Recommended for Complex Data)
+##### Props (Data Down)
 
 **Capabilities:**
-- **Automatic type detection** (boolean, number, object, array, date)
-- **Reactive props** - child updates when parent data changes
-- **Functions can be passed** via parent context
-- Handles large/complex data structures
+- Pass any JavaScript value (objects, arrays, functions, primitives)
+- No `JSON.stringify` needed — values are passed directly
+- Child updates when parent re-renders with new prop values
+- Pass signal references for true reactivity in child
 
 ```js
-import { Props } from "eleva/plugins";
-app.use(Props);
-
-// Parent - pass complex data naturally
+// Parent - pass complex data directly (no JSON.stringify!)
 template: (ctx) => `
   <div class="child"
-    :user='${JSON.stringify(ctx.user)}'
-    :items='${JSON.stringify(ctx.items)}'
-    :onSelect="(item) => handleSelect(item)">
+    :user="user.value"
+    :items="items"
+    :onSelect="handleSelect">
   </div>
 `
 
-// Child - props are automatically parsed and reactive
+// Child - receives actual values
 setup({ props }) {
   // props.user is already an object
   // props.items is already an array
   // props.onSelect is a callable function
-  return { user: props.user, items: props.items };
+  return { user: props.user, items: props.items, onSelect: props.onSelect };
 }
+
+// For reactive props in child, pass the signal itself (not .value)
+// Parent: :counter="counter"
+// Child: props.counter.watch(() => { /* react to changes */ })
 ```
 
-**Use when:** Passing objects, arrays, dates, or need reactive prop updates.
+**Use when:** Passing data from parent to child, any data type.
 
 ##### Emitter (Events Up)
 
@@ -4012,21 +3976,22 @@ app.store.subscribe((mutation) => {
 
 | Scenario | Solution | Why |
 |----------|----------|-----|
-| Pass string/number to child | Basic Props | Simple, no plugin needed |
-| Pass object/array to child | Props Plugin | Auto-parsing, reactivity |
-| Pass function to child | Props Plugin | Function reference preserved |
+| Pass any value to child | Props | Direct value passing, any type |
+| Pass object/array to child | Props | No JSON.stringify needed |
+| Pass function to child | Props | Function reference preserved |
 | Child notifies parent of action | Emitter | Events flow up |
 | Siblings need to communicate | Emitter | Decoupled messaging |
 | Many components need same data | Store | Central state management |
 | User session/auth state | Store | Global, persistent |
-| Parent updates, child should react | Props Plugin | Reactive props |
+| Parent updates, child should react | Props (pass signal) | Pass signal reference, not `.value` |
 | Form data in multi-step wizard | Store or Props | Depends on component structure |
 
 ##### Anti-Patterns to Avoid
 
 ```js
-// ❌ DON'T: Pass large objects without Props plugin
-:data='${JSON.stringify(massiveObject)}'  // String size limits
+// ❌ DON'T: Use JSON.stringify for props (no longer needed!)
+:data='${JSON.stringify(object)}'  // Old approach
+:data="object"                     // ✅ New: just pass directly
 
 // ❌ DON'T: Use Store for parent-child only communication
 store.dispatch("setParentData", data);  // Overkill, use props
@@ -4157,7 +4122,7 @@ _A:_ Eleva is designed for small to medium applications. For large enterprise ap
 _A:_ Yes! Eleva includes a powerful built-in Router plugin that provides advanced client-side routing with navigation guards, reactive state, and component resolution. You can import it from `eleva/plugins`.
 
 **Q: What plugins are available with Eleva?**
-_A:_ Eleva comes with four powerful built-in plugins: Attr for advanced attribute handling, Router for client-side routing, Props for advanced props data handling with automatic type detection and reactivity, and Store for reactive state management with persistence and namespacing. All plugins are designed to work seamlessly with the core framework.
+_A:_ Eleva comes with three powerful built-in plugins: Attr for advanced attribute handling (ARIA, data attributes, boolean attributes), Router for client-side routing with navigation guards and reactive state, and Store for reactive state management with persistence and namespacing. Props are now evaluated natively in the core framework without requiring a plugin. All plugins are designed to work seamlessly with the core framework.
 
 **Q: Can I create custom plugins for Eleva?**
 _A:_ Yes! Eleva has a simple plugin API. Plugins are objects with an `install(eleva, options)` method. See the [Custom Plugin Guide](./examples/custom-plugin.md) for detailed instructions on creating and publishing your own plugins.
@@ -4304,7 +4269,6 @@ Detailed API documentation with parameter descriptions, return values, and usage
 - **Built-in Plugins:**
   - **[Attr](./plugins/attr.md):** Advanced attribute handling with ARIA support
   - **[Router](./plugins/router.md):** Client-side routing with navigation guards and reactive state
-  - **[Props](./plugins/props.md):** Advanced props data handling with automatic type detection and reactivity
   - **[Store](./plugins/store.md):** Reactive state management with persistence and namespacing
 
 - **Eleva (Core):**  
@@ -4369,12 +4333,12 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 
 | Metric | Value |
 |--------|-------|
-| **Bundle Size** | ~6KB minified, ~2.4KB gzipped |
+| **Bundle Size** | ~6KB minified, ~2.3KB gzipped |
 | **Dependencies** | Zero |
 | **Core Modules** | 5 (Eleva, Signal, Emitter, Renderer, TemplateEngine) |
 | **Lifecycle Hooks** | 5 (onBeforeMount, onMount, onBeforeUpdate, onUpdate, onUnmount) |
-| **Built-in Plugins** | 4 (Attr, Props, Router, Store) |
-| **Template Syntaxes** | 4 (${}, {% raw %}{{}}{% endraw %}, @event, :prop) |
+| **Built-in Plugins** | 3 (Attr, Router, Store) |
+| **Template Syntaxes** | 3 (${}, @event, :prop) |
 
 ### Core Modules Quick Reference
 
@@ -4384,7 +4348,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 | **Signal** | Reactive state | `.value`, `.watch()` |
 | **Emitter** | Event handling | `.on()`, `.off()`, `.emit()` |
 | **Renderer** | DOM diffing | `.patchDOM()` |
-| **TemplateEngine** | Template parsing | `.parse()`, `.evaluate()` |
+| **TemplateEngine** | Expression evaluation | `.evaluate()` |
 
 ### Component Definition Structure
 
@@ -4429,7 +4393,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 │  [template() Produces HTML]                                 │
 │          │                                                  │
 │          ▼                                                  │
-│  [TemplateEngine.parse()] ──► Interpolates {% raw %}{{ values }}{% endraw %}     │
+│  [TemplateEngine.evaluate()] ──► Evaluates @events & :props  │
 │          │                                                  │
 │          ▼                                                  │
 │  [Renderer.patchDOM()] ──► Updates only changed nodes       │

@@ -1,6 +1,6 @@
 # Router Plugin
 
-> **Version:** 1.0.0-rc.13 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.0-rc.14 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
 
 The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
 
@@ -2282,4 +2282,4 @@ For questions or issues, visit the [GitHub repository](https://github.com/TarekR
 
 ---
 
-[← Back to Plugins](./index.md) | [Previous: Props Plugin](./props.md) | [Next: Store Plugin →](./store.md)
+[← Back to Plugins](./index.md) | [Previous: Attr Plugin](./attr.md) | [Next: Store Plugin →](./store.md)

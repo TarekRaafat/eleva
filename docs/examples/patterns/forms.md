@@ -27,7 +27,7 @@ app.component("TextInput", {
         @input="handleInput"
         placeholder="Type something..."
       />
-      <p>You typed: <strong>{{ inputValue.value }}</strong></p>
+      <p>You typed: <strong>${ctx.inputValue.value}</strong></p>
     </div>
   `
 });
@@ -37,7 +37,7 @@ app.component("TextInput", {
 - Use `signal()` to create reactive state
 - Bind input value with `value="${ctx.inputValue.value}"`
 - Handle changes with `@input="handleInput"`
-- Display reactive updates with `{{ inputValue.value }}`
+- Display reactive updates with `${ctx.inputValue.value}`
 
 ---
 

@@ -314,16 +314,19 @@ export class Eleva {
      */
     private _injectStyles;
     /**
-     * Extracts props from an element's attributes that start with the specified prefix.
-     * This method is used to collect component properties from DOM elements.
+     * Extracts and evaluates props from an element's attributes that start with `:`.
+     * Prop values are evaluated as expressions against the component context,
+     * allowing direct passing of objects, arrays, and other complex types.
      *
      * @private
      * @param {HTMLElement} element - The DOM element to extract props from
-     * @returns {Record<string, string>} An object containing the extracted props
+     * @param {ComponentContext} context - The component context for evaluating prop expressions
+     * @returns {Record<string, string>} An object containing the evaluated props
      * @example
      * // For an element with attributes:
-     * // <div :name="John" :age="25">
-     * // Returns: { name: "John", age: "25" }
+     * // <div :name="user.name" :data="items">
+     * // With context: { user: { name: "John" }, items: [1, 2, 3] }
+     * // Returns: { name: "John", data: [1, 2, 3] }
      */
     private _extractProps;
     /**
@@ -338,6 +341,7 @@ export class Eleva {
      * @param {HTMLElement} container - The container element to mount components in
      * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
      * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
+     * @param {ComponentContext} context - The parent component context for evaluating prop expressions
      * @returns {Promise<void>}
      *
      * @example

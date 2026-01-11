@@ -871,7 +871,7 @@
      * @returns {ComponentDefinition} The resolved component.
      * @throws {Error} If the component is not registered.
      *
-     * @note Core plugins (Router, Attr, Props, Store) may access eleva._components
+     * @note Core plugins (Router, Attr, Store) may access eleva._components
      * directly. This is intentional and stable for official Eleva plugins shipped
      * with the framework. Third-party plugins should use eleva.component() for
      * registration and avoid direct access to internal APIs.

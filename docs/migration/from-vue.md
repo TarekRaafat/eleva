@@ -1,6 +1,6 @@
 # Migrating from Vue
 
-> **Version:** 1.0.0-rc.13 | A comprehensive guide for Vue developers transitioning to Eleva
+> **Version:** 1.0.0-rc.14 | A comprehensive guide for Vue developers transitioning to Eleva
 
 This guide helps Vue developers understand Eleva by mapping familiar Vue concepts to their Eleva equivalents.
 
@@ -324,7 +324,7 @@ app.component("ParentComponent", {
   template: (ctx) => `
     <div
       class="child-container"
-      :user='${JSON.stringify(ctx.currentUser.value)}'
+      :user="currentUser.value"
       :is-admin="true"
       :on-update="handleUpdate"
     ></div>
@@ -805,7 +805,7 @@ template: (ctx) => `
 ## What You Gain
 
 ### Smaller Bundle
-- ~2.4KB vs Vue 3.5's ~45KB
+- ~2.5KB vs Vue's ~33KB
 - No virtual DOM overhead
 - No template compiler in production
 

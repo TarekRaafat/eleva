@@ -146,11 +146,11 @@
               // Override the _patchNode method to use our attribute handler
               eleva.renderer._patchNode = function(oldNode, newNode) {
                   if (oldNode?._eleva_instance) return;
-                  if (oldNode.nodeType === 3) {
+                  if (oldNode.nodeType === Node.TEXT_NODE) {
                       if (oldNode.nodeValue !== newNode.nodeValue) {
                           oldNode.nodeValue = newNode.nodeValue;
                       }
-                  } else if (oldNode.nodeType === 1) {
+                  } else if (oldNode.nodeType === Node.ELEMENT_NODE) {
                       // Use advanced attribute handler instead of basic _updateAttributes
                       updateAttributes(oldNode, newNode);
                       this._diff(oldNode, newNode);

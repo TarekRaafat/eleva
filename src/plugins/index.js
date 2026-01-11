@@ -36,5 +36,5 @@
 // Export plugins with clean names
 export { AttrPlugin as Attr } from "./Attr.js";
 export { RouterPlugin as Router } from "./Router.js";
-export { PropsPlugin as Props } from "./Props.js";
 export { StorePlugin as Store } from "./Store.js";
+// Props plugin removed - native props evaluation is now built into Eleva core

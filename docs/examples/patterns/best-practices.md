@@ -601,23 +601,21 @@ template: (ctx) => `
 ### Template Anti-Patterns
 
 ```js
-// DON'T: Use ctx. inside {{ }}
-`{{ ctx.count.value }}`  // Wrong - ctx is implicit
-
-// DO: Omit ctx. in interpolation
-`{{ count.value }}`  // Correct
-
-// DON'T: Use ctx. in event handlers
+// DON'T: Use ctx. in event handlers or props
 `<button @click="ctx.handleClick">`  // Wrong
+`:user="ctx.user"`                   // Wrong
 
-// DO: Reference function name directly
-`<button @click="handleClick">`  // Correct
+// DO: Reference values directly (no ctx. prefix)
+`<button @click="handleClick">`     // Correct
+`:user="user"`                      // Correct
 
-// DON'T: Missing ctx. in template literals
+// DON'T: Missing ctx. in template literals (${}
 `<p>${count.value}</p>`  // Wrong - count is undefined
 
-// DO: Include ctx. in template literals
+// DO: Include ctx. in template literal interpolation
 `<p>${ctx.count.value}</p>`  // Correct
+
+// RULE: ${} needs ctx., @events and :props don't
 ```
 
 ---
@@ -664,7 +662,7 @@ children: {
 ### Passing Props to Children
 
 ```html
-<div class="user-card" :user='${JSON.stringify(user)}' :editable="true"></div>
+<div class="user-card" :user="user" :editable="true"></div>
 ```
 
 ```js

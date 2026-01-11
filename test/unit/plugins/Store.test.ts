@@ -855,6 +855,7 @@ describe("StorePlugin", () => {
 
   describe("DevTools Integration", () => {
     test("should register with devtools when enabled", () => {
+      const originalWindow = (globalThis as any).window;
       (globalThis as any).window = {
         __ELEVA_DEVTOOLS__: {
           registerStore: mock(() => {}),
@@ -871,10 +872,11 @@ describe("StorePlugin", () => {
         (globalThis as any).window.__ELEVA_DEVTOOLS__.registerStore
       ).toHaveBeenCalledWith(app.store);
 
-      delete (globalThis as any).window;
+      (globalThis as any).window = originalWindow;
     });
 
     test("should notify devtools of mutations when enabled", async () => {
+      const originalWindow = (globalThis as any).window;
       (globalThis as any).window = {
         __ELEVA_DEVTOOLS__: {
           registerStore: mock(() => {}),
@@ -900,7 +902,7 @@ describe("StorePlugin", () => {
         expect.any(Object)
       );
 
-      delete (globalThis as any).window;
+      (globalThis as any).window = originalWindow;
     });
   });
 
@@ -1571,6 +1573,7 @@ describe("StorePlugin", () => {
     });
 
     test("should not crash when devTools is enabled but __ELEVA_DEVTOOLS__ is undefined", () => {
+      const originalWindow = (globalThis as any).window;
       (globalThis as any).window = {};
 
       expect(() => {
@@ -1580,7 +1583,7 @@ describe("StorePlugin", () => {
         });
       }).not.toThrow();
 
-      delete (globalThis as any).window;
+      (globalThis as any).window = originalWindow;
     });
 
     test("should handle devTools disabled gracefully", async () => {

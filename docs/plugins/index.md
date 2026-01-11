@@ -1,6 +1,6 @@
 # Eleva Plugins
 
-> **Version:** 1.0.0-rc.13 | **All plugins are optional and tree-shakeable**
+> **Version:** 1.0.0-rc.14 | **All plugins are optional and tree-shakeable**
 
 Eleva's plugin system extends the core framework with powerful optional features. Plugins come in two types: **Core Plugins** maintained by the Eleva team, and **External Plugins** created by the community.
 
@@ -23,7 +23,7 @@ Core plugins are **built and maintained by the Eleva team**. They are:
 
 ```javascript
 // Core plugins - import from "eleva/plugins"
-import { Attr, Props, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store } from "eleva/plugins";
 ```
 
 ### External Plugins (Community)
@@ -51,23 +51,22 @@ app.use(SomePlugin, { /* options */ });
 
 ```javascript
 import Eleva from "eleva";
-import { Attr, Props, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store } from "eleva/plugins";
 
 const app = new Eleva("MyApp");
 
 // Install plugins as needed
 app.use(Attr);
-app.use(Props);
 app.use(Store, { state: { count: 0 } });
 app.use(Router, { routes: [...] });
 ```
 
-> **Template Context Quick Rule:** `${}` needs `ctx.` — `{{ }}` and `@events` don't.
+> **Template Context Quick Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
 > ```js
 > template: (ctx) => `
 >   <p>${ctx.count.value}</p>        // ✓ ${} uses ctx.
->   <p>{{ count.value }}</p>          // ✓ {{ }} no ctx.
 >   <button @click="increment">+</button>  // ✓ @event no ctx.
+>   <child :data="items.value"></child>    // ✓ :prop no ctx.
 > `
 > ```
 > See [Template Interpolation](../index.md#template-interpolation) for details.
@@ -78,8 +77,7 @@ app.use(Router, { routes: [...] });
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attribute handling | ~2.2KB | [View →](./attr.md) |
-| **Props** | Complex prop parsing & reactivity | ~4.2KB | [View →](./props.md) |
+| **Attr** | ARIA, data-*, boolean attribute handling | ~2.4KB | [View →](./attr.md) |
 | **Router** | Client-side routing & navigation guards | ~15KB | [View →](./router.md) |
 | **Store** | Global state management & persistence | ~6KB | [View →](./store.md) |
 
@@ -113,38 +111,6 @@ app.component("Button", {
 - Dynamic property detection
 
 [Full Attr Documentation →](./attr.md)
-
----
-
-### Props Plugin
-
-Advanced props handling with automatic type detection and reactivity.
-
-```javascript
-app.use(Props);
-
-// Parent passes complex data
-app.component("Parent", {
-  setup: ({ signal }) => ({ user: signal({ name: "John", age: 30 }) }),
-  template: (ctx) => `
-    <div class="child" :user='${JSON.stringify(ctx.user.value)}'></div>
-  `,
-  children: { ".child": "Child" }
-});
-
-// Child receives parsed, reactive props
-app.component("Child", {
-  setup: ({ props }) => ({ user: props.user }),
-  template: (ctx) => `<p>${ctx.user.value.name} is ${ctx.user.value.age}</p>`
-});
-```
-
-**Key Features:**
-- Automatic type parsing (objects, arrays, dates, booleans)
-- Reactive prop updates
-- Custom error handling
-
-[Full Props Documentation →](./props.md)
 
 ---
 
@@ -238,16 +204,16 @@ bun add eleva
 ```javascript
 // Import specific plugins (recommended)
 import { Attr } from "eleva/plugins";
-import { Props } from "eleva/plugins";
 import { Router } from "eleva/plugins";
 import { Store } from "eleva/plugins";
 
 // Import all plugins
-import { Attr, Props, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store } from "eleva/plugins";
 
 // Import from specific paths (alternative)
 import { Attr } from "eleva/plugins/attr";
 import { Router } from "eleva/plugins/router";
+import { Store } from "eleva/plugins/store";
 ```
 
 ### Via CDN
@@ -258,7 +224,6 @@ import { Router } from "eleva/plugins/router";
 
 <!-- Individual plugins -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/props.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
 ```
@@ -270,12 +235,11 @@ import { Router } from "eleva/plugins/router";
 | Scenario | Recommended Plugin |
 |----------|-------------------|
 | Building accessible UIs | Attr |
-| Passing complex data to children | Props |
 | Multi-page SPA navigation | Router |
 | Sharing state across components | Store |
-| Form handling with validation | Attr + Props |
+| Form handling with validation | Attr |
 | Authenticated routes | Router + Store |
-| E-commerce cart | Store + Props |
+| E-commerce cart | Store |
 
 ---
 
@@ -288,7 +252,6 @@ All core plugins work independently or together:
 const app = new Eleva("MyApp");
 
 app.use(Attr);                    // Attribute handling
-app.use(Props);                   // Props parsing
 app.use(Store, { state: {} });    // State management
 app.use(Router, { routes: [] }); // Routing
 
