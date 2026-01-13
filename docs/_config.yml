@@ -34,11 +34,6 @@ logo: /imgs/eleva.js%20Full%20Logo.png
 # GitHub repository
 repository: TarekRaafat/eleva
 
-# Plugins (supported by GitHub Pages)
-plugins:
-  - jekyll-seo-tag
-  - jekyll-sitemap
-
 # Markdown settings
 markdown: kramdown
 kramdown:
