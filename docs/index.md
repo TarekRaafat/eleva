@@ -1,7 +1,7 @@
 ---
 title: Best DX for Building the Best UX
 description: Eleva.js is a 6KB minimalist pure vanilla JavaScript frontend framework designed for the best Developer Experience (DX). Signal-based reactivity, zero dependencies, and built-in TypeScript support. The perfect React and Vue alternative for developers who want simplicity without sacrificing power.
-image: /imgs/eleva.js Full Logo.png
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Eleva.js - Best DX for Building the Best UX

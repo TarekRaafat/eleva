@@ -29,7 +29,7 @@ social:
     - https://www.npmjs.com/package/eleva
 
 # Open Graph
-logo: /imgs/eleva.js Full Logo.png
+logo: /imgs/eleva.js%20Full%20Logo.png
 
 # GitHub repository
 repository: TarekRaafat/eleva
@@ -63,4 +63,4 @@ defaults:
       type: "pages"
     values:
       layout: "default"
-      image: /imgs/eleva.js Full Logo.png
+      image: /imgs/eleva.js%20Full%20Logo.png
