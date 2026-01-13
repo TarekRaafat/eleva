@@ -13,22 +13,11 @@
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge?style=rounded)](https://www.jsdelivr.com/package/npm/eleva)
-[![Supported by Canonical](https://img.shields.io/badge/Supported%20by-Canonical-E95420?logo=ubuntu&logoColor=white)](https://canonical.com)
 
 <br>
 
 <p align="center">
   <a href="https://tarekraafat.github.io/eleva/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="Eleva.js - Lightweight JavaScript Framework Logo" width="50%"></a>
-</p>
-
-<p align="center">
-  <a href="https://canonical.com" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/SebastJava/Ubuntu-logo/649d55eca403302fb06281d9dd94798bb0568e8d/logo-v2025-plain-450x708.svg" alt="Canonical Logo" width="80"/>
-  </a>
-</p>
-
-<p align="center">
-  <em>Eleva is proudly supported by Canonical - the company behind Ubuntu.</em>
 </p>
 
 <p align="center">

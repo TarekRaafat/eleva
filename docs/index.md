@@ -17,7 +17,6 @@ image: /imgs/eleva.js%20Full%20Logo.png
 [![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
 [![](https://data.jsdelivr.com/v1/package/npm/eleva/badge?style=rounded)](https://www.jsdelivr.com/package/npm/eleva)
-[![Supported by Canonical](https://img.shields.io/badge/Supported%20by-Canonical-E95420?logo=ubuntu&logoColor=white)](https://canonical.com)
 
 <br>
 
@@ -344,7 +343,6 @@ setup: ({ signal }) => ({
   - [17. Community \& Support](#17-community--support)
   - [18. Changelog](#18-changelog)
   - [19. License](#19-license)
-  - [20. Sponsors \& Partners](#20-sponsors--partners)
   - [Summary](#summary)
 
 ---
@@ -4515,22 +4513,6 @@ For a detailed log of all changes and updates, please refer to the [Changelog](h
 ## 19. License
 
 Eleva is open-source and available under the [MIT License](https://github.com/TarekRaafat/eleva/blob/master/LICENSE).
-
----
-
-## 20. Sponsors & Partners
-
-We gratefully acknowledge the organizations that help make Eleva possible.
-
-<p>
-  <a href="https://canonical.com" target="_blank" rel="noopener">
-    <img src="https://raw.githubusercontent.com/SebastJava/Ubuntu-logo/649d55eca403302fb06281d9dd94798bb0568e8d/logo-v2025-plain-450x708.svg" alt="Canonical Logo" width="100"/>
-  </a>
-</p>
-
-<p>
-  <em>Initial development of Eleva has been supported by <a href="https://canonical.com">Canonical</a>, the publisher of Ubuntu.</em>
-</p>
 
 ---
 
