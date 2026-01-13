@@ -1586,7 +1586,7 @@ app.mount(document.getElementById("app"), "ComponentB");
 
 The following diagram illustrates how data flows between parent and child components using props (down) and events (up):
 
-```
+<pre>
 ┌─────────────────────────────────────────────────────────────┐
 │                      PARENT COMPONENT                       │
 │                                                             │
@@ -1615,7 +1615,7 @@ The following diagram illustrates how data flows between parent and child compon
 ┌─────────────────────────────────────────────────────────────┐
 │   PARENT: emitter.on("update", handler) → updates signals   │
 └─────────────────────────────────────────────────────────────┘
-```
+</pre>
 
 This pattern ensures:
 - **Unidirectional data flow**: Props flow down, events bubble up
@@ -1796,7 +1796,7 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 
 For contributors or developers seeking a deeper understanding, here is the comprehensive flow including all initialization steps:
 
-```
+<pre>
               [Component Registration]
                          │
                          ▼
@@ -1874,7 +1874,7 @@ For contributors or developers seeking a deeper understanding, here is the compr
 │                   ─ onUpdate ──────────────────┘   │
 │                                                    │
 └────────────────────────────────────────────────────┘
-```
+</pre>
 
 </details>
 
@@ -4587,8 +4587,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 
 <details>
 <summary><strong>Data Flow Diagram</strong> (click to expand)</summary>
-
-```
+<pre>
 ┌─────────────────────────────────────────────────────────────┐
 │                     ELEVA DATA FLOW                         │
 ├─────────────────────────────────────────────────────────────┤
@@ -4648,8 +4647,7 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 │  └────────────────────────────────────────────────────────┘ │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
-```
-
+</pre>
 </details>
 
 ### Installation Methods
