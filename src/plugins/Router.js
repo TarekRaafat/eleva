@@ -1779,7 +1779,7 @@ export const RouterPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0-rc.12",
+  version: "1.0.0",
 
   /**
    * Plugin description

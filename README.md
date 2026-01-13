@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.0-rc.14` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.0` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -42,9 +42,7 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stability Notice**: This is `v1.0.0-rc.14` - The core functionality is stable. Seeking community feedback before the final v1.0.0 release.
-
-**Version:** `1.0.0-rc.14`
+> **Stable Release**: This is `v1.0.0` - The first official stable release of Eleva.js!
 
 
 
@@ -242,8 +240,8 @@ Eleva is ideal for developers seeking a lightweight, flexible, and high-performa
 
 I believe in clear versioning that reflects the maturity of the project:
 
-- **Pre-release Versions (RC):** Release candidate versions like `1.0.0-rc.14` indicate the API is stable but still gathering community feedback before the final release.
-- **Semantic Versioning:** Once stable, I'll follow semantic versioning strictly to clearly communicate any breaking changes.
+- **Stable Versions:** Version `1.0.0` and above follow semantic versioning with full backward compatibility guarantees within major versions.
+- **Semantic Versioning:** Eleva follows semantic versioning strictly to clearly communicate any breaking changes.
 
 ---
 
@@ -275,29 +273,26 @@ Eleva is crafted for performance:
 
 Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
 
-| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
-| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva** (Direct DOM)        | **~2.3 KB**                | **~23**                 | ~82*                    | ~15             |
-| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4             |
-| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6             |
-
-_*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
+| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB)* |
+| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | ---------------- |
+| **Eleva** (Direct DOM)        | **~2.3 KB**                | **~25**                 | ~86                     | **~0.5** (Chrome) |
+| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5              |
+| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4              |
+| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6              |
 
 **Eleva's Strengths:**
 - **Smallest bundle size** (~2.3 KB vs 35-90 KB)
-- **Competitive initial render** (~23ms for 1K rows)
+- **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead
 
 **Performance Tips:**
 - Use `key` attribute on list items for optimal diffing
-- Split large lists into smaller components
-- Eleva excels at initial renders and small-to-medium updates
+- Eleva excels at initial renders and memory efficiency
+- For large lists (10K+ rows), use [virtual scrolling](./docs/examples/patterns/lists.md#virtual-scrolling) for **5.5x less memory** and **10x faster creation**
+- See [Large List Performance](./docs/examples/patterns/best-practices.md#large-list-performance) for detailed patterns and benchmarks
 
-> 💡 **Run benchmarks yourself:** `bun run test:benchmark`
-
-> ⚠️ **Disclaimer:** Benchmarks vary by application complexity, browser, and hardware. Eleva results from internal test suite using Bun runtime. Other framework data from [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/).
+> 💡 **Run benchmarks yourself:** `bun run test:benchmark` | [Detailed benchmark results](./test/__results__/performance/BENCHMARKS.md)
 
 ---
 
@@ -862,7 +857,7 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-**Note:** This is a release candidate (RC). The core functionality is stable and suitable for production use. Your feedback and contributions will help shape Eleva into something truly amazing. Let's build something great together! 💪✨
+**Note:** This is the first official stable release of Eleva.js! The framework is production-ready with a stable API. Your feedback and contributions will help make Eleva even better. Let's build something great together! 💪✨
 
 ---
 

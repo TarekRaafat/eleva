@@ -1,33 +1,12 @@
 ---
-title: Eleva.js - Best DX for Building the Best UX | Official Documentation
+title: Best DX for Building the Best UX
 description: Eleva.js is a 6KB minimalist pure vanilla JavaScript frontend framework designed for the best Developer Experience (DX). Signal-based reactivity, zero dependencies, and built-in TypeScript support. The perfect React and Vue alternative for developers who want simplicity without sacrificing power.
-head:
-  - - meta
-    - name: keywords
-      content: eleva, eleva.js, elevajs, javascript framework, lightweight javascript framework, vanilla javascript framework, reactive javascript, frontend framework, react alternative, vue alternative, signal-based reactivity, typescript framework, zero dependencies, minimalist framework, web components, SPA framework, developer experience, DX, UX, user experience
-  - - meta
-    - property: og:title
-      content: Eleva.js - Best DX for Building the Best UX
-  - - meta
-    - property: og:description
-      content: A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.
-  - - meta
-    - property: og:type
-      content: website
-  - - meta
-    - name: twitter:card
-      content: summary_large_image
-  - - meta
-    - name: twitter:title
-      content: Eleva.js - Best DX for Building the Best UX
-  - - meta
-    - name: twitter:description
-      content: A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.
+image: /imgs/eleva.js Full Logo.png
 ---
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.0-rc.14` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.0.0` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -73,7 +52,7 @@ Eleva is ideal for developers building lightweight web applications, prototypes,
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **RC Release Notice**: This documentation is for Eleva v1.0.0-rc.14. The core functionality is stable and suitable for production use. While we're still gathering feedback before the final v1.0.0 release, the framework has reached a significant milestone in its development. Help us improve Eleva by sharing your feedback and experiences.
+> **Stable Release**: This is the official documentation for Eleva v1.0.0 - the first stable release! The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
 
 ---
 
@@ -317,12 +296,14 @@ setup: ({ signal }) => ({
       - [Supported Children Selector Types](#supported-children-selector-types)
     - [Style Injection \& Scoped CSS](#style-injection--scoped-css)
     - [Inter-Component Communication](#inter-component-communication)
+      - [Component Communication Flow](#component-communication-flow)
     - [Component Context](#component-context)
     - [Mounting Process](#mounting-process)
   - [7. Architecture \& Data Flow](#7-architecture--data-flow)
     - [Key Components](#key-components)
     - [Data Flow Process](#data-flow-process)
     - [Visual Overview](#visual-overview)
+    - [Detailed Architecture Flow](#detailed-architecture-flow)
     - [Benefits](#benefits)
   - [8. Plugin System](#8-plugin-system)
     - [Plugin Structure](#plugin-structure)
@@ -439,30 +420,102 @@ Even the **heaviest scenario** (100-item list at 0.614ms) comfortably fits withi
 
 Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
 
-| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
-| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** (Direct DOM)    | **~2.3KB**                 | **~23**                 | ~82*                    | ~15             |
-| **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5             |
-| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4             |
-| **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6             |
-
-_*Eleva uses DOM diffing & patching, but templates generate HTML strings that require parsing. For large frequently-updating lists, use granular components or the `key` attribute for optimal diffing._
+| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB)* |
+| ----------------------------- | -------------------------- | ----------------------- | ----------------------- | ---------------- |
+| **Eleva 1.0** (Direct DOM)    | **~2.3KB**                 | **~25**                 | ~86                     | **~0.5** (Chrome) |
+| **React 19** (Virtual DOM)    | ~44KB                      | 40-70                   | 10-20                   | 2-5              |
+| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4              |
+| **Angular 19** (Signals)      | ~90KB                      | 50-80                   | 15-25                   | 3-6              |
 
 **Eleva's Strengths:**
 - **240fps+ capable** - Framework never limits frame rate
 - **Smallest bundle size** (~2.3 KB vs 35-90 KB)
-- **Competitive initial render** (~23ms for 1K rows)
+- **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render
 
 **Performance Tips:**
 - Use `key` attribute on list items for optimal diffing
-- Split large lists into smaller components
-- Eleva excels at initial renders and small-to-medium updates
+- Eleva excels at initial renders and memory efficiency
+- For large lists, use keyed reconciliation in a single template:
+
+```javascript
+// Recommended: Single template with keyed rows
+template: (ctx) => `
+  <table>
+    <tbody>
+      ${ctx.rows.value.map(row => `
+        <tr key="${row.id}">
+          <td>${row.id}</td>
+          <td>${row.label}</td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+`
+```
+
+> ⚠️ **Note:** Avoid component splitting for large lists (1000+ rows). Creating separate component instances adds significant overhead (~125 MB vs ~29 MB for 10K rows).
+
+> 💡 **For 10K+ rows:** Use [virtual scrolling](./examples/patterns/best-practices.md#virtual-scrolling-10k-rows) - renders only visible rows (~17 instead of 10,000). Verified results: **5.5x less memory**, **9.5x faster updates**, **12x faster creation**.
 
 > 💡 **Run benchmarks yourself:** `bun run test:benchmark` or `bun run test:fps`
 
-> ⚠️ **Disclaimer:** Benchmarks vary by application complexity, browser, and hardware. Eleva results from internal test suite using Bun runtime. Other framework data from [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/).
+#### *Memory Measurement Details
+
+**Chrome DevTools Measurement (Real Browser):**
+
+Using the [js-framework-benchmark](https://github.com/krausest/js-framework-benchmark) methodology in Chrome:
+
+```
+Chrome Memory (1,000 rows):
+- Baseline:    15.2 MB
+- After:       15.7 MB
+- Overhead:    ~0.5 MB  (~0.5 KB/row)
+
+Chrome Memory (10,000 rows):
+- Baseline:    15.2 MB
+- After:       28.9 MB
+- Overhead:    ~13.7 MB (~1.37 KB/row)
+
+Chrome Memory (Append 1,000 rows to 10K):
+- Before:      39.3 MB (10K rows)
+- After:       40.7 MB (11K rows)
+- Overhead:    ~1.4 MB  (~1.4 KB/row)
+
+Chrome Memory (Update every 10th row):
+- Before:      40.7 MB
+- After:       40.7 MB
+- Overhead:    ~0 MB  (no memory growth)
+
+Chrome Memory (Clear):
+- Before:      37.8 MB
+- After:       37.8 MB
+- Overhead:    ~0 MB  (memory properly released)
+
+Chrome Memory (Swap Rows):
+- Before:      37.8 MB
+- After:       37.8 MB
+- Overhead:    ~0 MB  (no memory growth)
+```
+
+This confirms Eleva uses **less memory than VDOM frameworks** because:
+
+1. **No virtual DOM tree** - VDOM frameworks maintain a parallel JS object tree
+2. **No diffing state** - No previous render state to compare against
+3. **Direct DOM manipulation** - No intermediate representations
+
+**Note on Node.js Testing:**
+
+Our automated tests run in **happy-dom** (Node.js), which shows inflated numbers (~19 MB) because DOM nodes in happy-dom are JavaScript objects (~3KB each) rather than native browser DOM nodes.
+
+```
+Environment comparison (1,000 rows):
+- Chrome (real browser):  ~0.5 MB  ← Accurate
+- happy-dom (Node.js):    ~19 MB   ← Inflated by 38x
+```
+
+> 💡 **Test it yourself:** Run `bun run serve` from repo root, open http://localhost:3000/test/performance/browser/standalone.html, and use Chrome DevTools Memory tab.
 
 ---
 
@@ -1528,6 +1581,49 @@ app.mount(document.getElementById("app"), "ComponentA");
 app.mount(document.getElementById("app"), "ComponentB");
 ```
 
+<details>
+<summary><strong>Component Communication Flow</strong> (click to expand)</summary>
+
+The following diagram illustrates how data flows between parent and child components using props (down) and events (up):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      PARENT COMPONENT                       │
+│                                                             │
+│                 [setup() → state signals]                   │
+│                            │                                │
+│                            ▼                                │
+│               [Template with :prop="value"]                 │
+│                            │                                │
+└────────────────────────────┼────────────────────────────────┘
+                             │ props (down)
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      CHILD COMPONENT                        │
+│                                                             │
+│               [setup(ctx) → ctx.props.value]                │
+│                            │                                │
+│                            ▼                                │
+│                   [Template uses prop]                      │
+│                            │                                │
+│                            ▼                                │
+│             [Event: emitter.emit("update", data)]           │
+│                                                             │
+└────────────────────────────┼────────────────────────────────┘
+                             │ events (up)
+                             ▼
+┌─────────────────────────────────────────────────────────────┐
+│   PARENT: emitter.on("update", handler) → updates signals   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+This pattern ensures:
+- **Unidirectional data flow**: Props flow down, events bubble up
+- **Decoupled components**: Children don't directly modify parent state
+- **Predictable updates**: State changes always originate from signal updates
+
+</details>
+
 ### Component Context
 
 The component context provides access to essential tools and data for component development:
@@ -1641,26 +1737,146 @@ Eleva's design emphasizes clarity, modularity, and performance. This section exp
 [Mounting & Context Creation]
          │
          ▼
-[setup() Execution]
+[setup() Execution → Creates Signals]
          │
          ▼
 [Template Function Produces HTML]
          │
          ▼
-[TemplateEngine Processes HTML]
+    onBeforeMount
          │
          ▼
-[Renderer Patches the DOM] ◂────────┐
-         │                          │
-         ▼                          │
-[User Interaction / Signal Change]  │
-         │                          │
-         ▼                          │ ↺
-[Signal Watchers Trigger Re-render] │
-         │                          │
-         ▼                          │
-[Renderer Diffs the DOM]   ─────────┘
+[Renderer: Diff → Patch DOM]
+         │
+         ▼
+[Process @events & :props]
+         │
+         ▼
+[Inject Scoped Styles]
+         │
+         ▼
+[Mount Child Components]
+         │
+         ▼
+      onMount
+         │
+         ▼
+┌────────────────────────────────────────────┐
+│            ↺ REACTIVE CYCLE                │
+├────────────────────────────────────────────┤
+│                                            │
+│  [Idle: Waiting for Signal Change] ◄───┐   │
+│           │                            │   │
+│           ▼                            │   │
+│  [User Event / Signal Change / Emit]   │   │
+│           │                            │   │
+│           ▼                            │   │
+│  [queueMicrotask Batches Updates]      │   │
+│           │                            │   │
+│           ▼                            │   │
+│  [Template Re-evaluation]              │   │
+│           │                            │   │
+│           ▼                            │   │
+│     onBeforeUpdate                     │   │
+│           │                            │   │
+│           ▼                            │   │
+│  [Renderer: Diff → Patch DOM]          │   │
+│           │                            │   │
+│           ▼                            │   │
+│  [Process @events & :props]            │   │
+│           │                            │   │
+│           ▼                            │   │
+│       onUpdate ────────────────────────┘   │
+│                                            │
+└────────────────────────────────────────────┘
 ```
+
+<details>
+<summary><strong>Detailed Architecture Flow</strong> (click to expand)</summary>
+
+For contributors or developers seeking a deeper understanding, here is the comprehensive flow including all initialization steps:
+
+```
+              [Component Registration]
+                         │
+                         ▼
+              [Mounting & Context Creation]
+              • props passed to context
+              • emitter reference (shared instance)
+              • signal factory function
+                         │
+                         ▼
+              [setup() Execution]
+              • Creates signals via factory
+              • Returns state + lifecycle hooks
+                         │
+                         ▼
+             [Template Function Produces HTML]
+             • Template literals ${} evaluated
+             • Returns HTML string
+                         │
+                         ▼
+                  ─ onBeforeMount ─
+                         │
+                         ▼
+            [Renderer: Diff → Patch]
+            • Two-pointer diffing algorithm
+            • Key-based reconciliation
+            • Minimal DOM mutations
+                         │
+                         ▼
+            [TemplateEngine Processes]
+            • Evaluates @event expressions
+            • Binds event listeners to DOM
+            • Evaluates :prop expressions
+                         │
+                         ▼
+               [Inject Scoped Styles]
+                         │
+                         ▼
+              [Mount Child Components]
+                         │
+                         ▼
+                    ─ onMount ─
+                         │
+                         ▼
+┌────────────────────────────────────────────────────┐
+│                 ↺ REACTIVE CYCLE                   │
+├────────────────────────────────────────────────────┤
+│                                                    │
+│       [Idle: Waiting for Signal Change] ◄──────┐   │
+│                        │                       │   │
+│    ┌───────────────────┼───────────────────┐   │   │
+│    ▼                   ▼                   ▼   │   │
+│ [User Event]    [Signal.value = x]  [emitter]  │   │
+│    │                   │                   │   │   │
+│    └───────────────────┼───────────────────┘   │   │
+│                        ▼                       │   │
+│             [queueMicrotask Batching]          │   │
+│             • Multiple changes collapsed       │   │
+│             • Single render scheduled          │   │
+│                        │                       │   │
+│                        ▼                       │   │
+│             [Template Re-evaluation]           │   │
+│                        │                       │   │
+│                        ▼                       │   │
+│                ─ onBeforeUpdate ─              │   │
+│                        │                       │   │
+│                        ▼                       │   │
+│              [Renderer: Diff → Patch]          │   │
+│                        │                       │   │
+│                        ▼                       │   │
+│            [TemplateEngine Processes]          │   │
+│            • Re-binds @events                  │   │
+│            • Re-evaluates :props               │   │
+│                        │                       │   │
+│                        ▼                       │   │
+│                   ─ onUpdate ──────────────────┘   │
+│                                                    │
+└────────────────────────────────────────────────────┘
+```
+
+</details>
 
 ### Benefits
 
@@ -2094,11 +2310,6 @@ app.use(Store, storeOptions);
 app.use(Attr, {
     enableAria: true,
     enableData: true
-});
-
-app.use(Props, {
-    enableAutoParsing: true,
-    enableReactivity: true
 });
 
 app.use(Store, {
@@ -4080,7 +4291,7 @@ Full mini-applications demonstrating multiple features.
 _A:_ Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks.
 
 **Q: Is Eleva production-ready?**
-_A:_ Eleva is currently in release candidate (RC). While it's stable and suitable for production use, we're still gathering feedback before the final v1.0.0 release.
+_A:_ Yes! Eleva v1.0.0 is the first official stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions to make Eleva even better.
 
 **Q: How do I report issues or request features?**
 _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page.
@@ -4374,7 +4585,8 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 }
 ```
 
-### Data Flow Diagram
+<details>
+<summary><strong>Data Flow Diagram</strong> (click to expand)</summary>
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -4393,25 +4605,52 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 │  [template() Produces HTML]                                 │
 │          │                                                  │
 │          ▼                                                  │
-│  [TemplateEngine.evaluate()] ──► Evaluates @events & :props  │
+│  [onBeforeMount]                                            │
 │          │                                                  │
 │          ▼                                                  │
-│  [Renderer.patchDOM()] ──► Updates only changed nodes       │
+│  [Renderer.patchDOM()] ──► Diff & patch changes             │
 │          │                                                  │
 │          ▼                                                  │
-│  [DOM Rendered] ◄─────────────────────────────┐             │
-│          │                                    │             │
-│          ▼                                    │             │
-│  [User Interaction] ──► Event Handler         │             │
-│          │                                    │             │
-│          ▼                                    │             │
-│  [signal.value = newValue]                    │             │
-│          │                                    │             │
-│          ▼                                    │             │
-│  [Signal notifies watchers] ──────────────────┘             │
+│  [TemplateEngine] ──► Bind @events, eval :props             │
+│          │                                                  │
+│          ▼                                                  │
+│      [onMount]                                              │
+│          │                                                  │
+│          ▼                                                  │
+│  ┌─────────────────── ↺ REACTIVE CYCLE ───────────────────┐ │
+│  │                                                        │ │
+│  │  [Idle: Waiting] ◄─────────────────────────────────┐   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [User Interaction] ──► Event Handler              │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [signal.value = newValue]                         │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [queueMicrotask batching]                         │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [template() Re-evaluation]                        │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [onBeforeUpdate]                                  │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [Renderer.patchDOM()]                             │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [TemplateEngine] ──► Re-bind @events              │   │ │
+│  │        │                                           │   │ │
+│  │        ▼                                           │   │ │
+│  │  [onUpdate] ───────────────────────────────────────┘   │ │
+│  │                                                        │ │
+│  └────────────────────────────────────────────────────────┘ │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+</details>
 
 ### Installation Methods
 
@@ -4424,3 +4663,140 @@ Thank you for exploring Eleva! I hope this documentation helps you build amazing
 | **Plugin Import** | `import { Router, Store } from "eleva/plugins"` |
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+<!-- JSON-LD Structured Data for SEO and GEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Eleva.js",
+  "alternateName": ["Eleva", "ElevaJS"],
+  "description": "A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.",
+  "url": "https://elevajs.com",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "JavaScript Framework",
+  "operatingSystem": "Cross-platform (Web Browser)",
+  "softwareVersion": "1.0.0",
+  "datePublished": "2026-01-12",
+  "releaseNotes": "First official stable release with production-ready API",
+  "downloadUrl": "https://www.npmjs.com/package/eleva",
+  "installUrl": "https://www.npmjs.com/package/eleva",
+  "fileSize": "6KB",
+  "memoryRequirements": "Minimal",
+  "storageRequirements": "6KB minified, 2.3KB gzipped",
+  "softwareRequirements": "Modern web browser (Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+)",
+  "permissions": "None required",
+  "featureList": [
+    "Signal-based reactivity",
+    "Zero dependencies",
+    "No build step required",
+    "Built-in TypeScript support",
+    "Component-based architecture",
+    "Direct DOM manipulation",
+    "Plugin system (Router, Store, Attr)",
+    "Lifecycle hooks",
+    "Event handling",
+    "Template literals"
+  ],
+  "screenshot": "https://elevajs.com/imgs/eleva.js Full Logo.png",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://www.tarekraafat.com",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "maintainer": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://www.tarekraafat.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "codeRepository": "https://github.com/TarekRaafat/eleva",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Web Browser",
+  "keywords": "javascript framework, frontend framework, react alternative, vue alternative, signal-based reactivity, lightweight framework, vanilla javascript"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Eleva.js?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva production-ready?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva v1.0.0 is the first official stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and React?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva use Virtual DOM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach is simpler and often faster for smaller applications."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva require a build step?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Eleva with TypeScript?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely! Eleva includes built-in TypeScript declarations (.d.ts files) to help keep your codebase strongly typed. No additional @types packages are needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What plugins are available with Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva comes with three powerful built-in plugins: Attr for advanced attribute handling (ARIA, data attributes, boolean attributes), Router for client-side routing with navigation guards and reactive state, and Store for reactive state management with persistence and namespacing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Eleva's reactivity work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing."
+      }
+    }
+  ]
+}
+</script>

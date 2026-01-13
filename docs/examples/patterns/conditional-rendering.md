@@ -1,3 +1,8 @@
+---
+title: Conditional Rendering - Show/Hide & Tabs
+description: Eleva.js conditional rendering patterns. Build accordions, tabs, modals, skeleton loaders, and dynamic content with ternary operators and template strings.
+---
+
 # Conditional Rendering Examples
 
 Learn how to conditionally show, hide, and switch between components and content in Eleva.

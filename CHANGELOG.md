@@ -6,6 +6,213 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.0 🎉 (12-01-2026)
+
+### 🚀 Official Stable Release
+
+This marks the **first stable release** of Eleva.js! After 14 release candidates and extensive testing, Eleva is ready for production use. This release includes important memory optimizations and improved benchmark methodology for accurate performance measurements.
+
+### ✨ Highlights
+
+#### Framework at a Glance
+
+| Feature | Details |
+|---------|---------|
+| **Bundle Size** | ~2.3KB gzipped (core) |
+| **Dependencies** | Zero runtime dependencies |
+| **Plugins** | 3 official plugins (Attr, Router, Store) |
+| **Browser Support** | All modern browsers |
+| **TypeScript** | Full type definitions included |
+
+#### Core Features
+
+- **Signal-Based Reactivity** - Fine-grained reactivity with `.value` access and `.watch()` subscriptions
+- **Template Literals** - No build step required, native JavaScript template strings
+- **Direct DOM Updates** - No virtual DOM, surgical DOM patching for maximum performance
+- **Render Batching** - Automatic batching via `queueMicrotask` for optimal updates
+- **Component System** - Nested components with props, events, and lifecycle hooks
+- **Scoped Styles** - Component-level CSS isolation
+
+#### Simple Mental Model
+
+Only 3 syntaxes to learn:
+
+```javascript
+// 1. Template expressions - use ctx. prefix
+template: (ctx) => `<p>Count: ${ctx.count.value}</p>`
+
+// 2. Event handlers - no prefix needed
+template: (ctx) => `<button @click="increment">+</button>`
+
+// 3. Props - no prefix needed
+template: (ctx) => `<Child :user="user.value" />`
+```
+
+#### What Changed from RC Phase
+
+| Change | Description |
+|--------|-------------|
+| **Native Props** | Props plugin removed - props now evaluated natively in core |
+| **Simplified Syntax** | Consistent rules: `${}` needs `ctx.`, directives don't |
+| **Memory Optimized** | 71-83% reduction in memory overhead |
+| **Performance** | 240+ FPS rendering capability |
+
+#### Official Plugins
+
+| Plugin | Size | Purpose |
+|--------|------|---------|
+| **Attr** | ~2.2KB | ARIA, data attributes, boolean attributes |
+| **Router** | ~3.5KB | SPA routing with history/hash modes |
+| **Store** | ~1.8KB | Global state management with actions |
+
+### 📝 Release Notes
+
+#### 🐛 Fixed
+
+- **Memory Leak in Renderer** - Fixed a significant memory leak where `_tempContainer` was not cleared after DOM diffing
+  - The Renderer uses `cloneNode(true)` to copy nodes from a temporary container to the actual DOM
+  - Previously, the parsed DOM tree in `_tempContainer` persisted in memory until the next render
+  - Now `_tempContainer` is cleared immediately after diffing, allowing garbage collection
+  - **Impact**: 71-83% reduction in memory overhead
+
+#### ⚡ Performance Improvements
+
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| Memory overhead (1K rows) | 65.16 MB | 18.97 MB | **-71%** |
+| Memory overhead (10K rows) | 111.93 MB | 19.23 MB | **-83%** |
+| Per-row overhead (10K) | 11.5 KB/row | 2.0 KB/row | **-83%** |
+| Re-render memory growth | +8.49 MB | -8.31 MB (GC works) | **Fixed leak** |
+
+#### 📊 Improved Benchmark Methodology
+
+The memory benchmark now uses an **accurate measurement methodology** instead of arbitrary estimation:
+
+**Old methodology (flawed):**
+```javascript
+// Arbitrary 15% factor - not based on actual measurements
+const estimatedElevaMemory = memoryDelta * 0.15;
+```
+
+**New methodology (accurate):**
+```javascript
+// Compare against pure DOM baseline to measure actual framework overhead
+const pureDomBaseline = measurePureDomMemory(rows);
+const elevaMemory = measureElevaMemory(rows);
+const actualOverhead = elevaMemory - pureDomBaseline;
+```
+
+This methodology isolates Eleva's actual overhead by comparing:
+1. **Pure DOM Baseline**: Identical table structure using only native DOM APIs
+2. **Eleva Measurement**: Same structure using Eleva's reactive system
+3. **Overhead Calculation**: `Eleva Memory - Pure DOM Memory = True Overhead`
+
+#### 🎛️ Changed
+
+- **Renderer.patchDOM()** now clears `_tempContainer` after diffing:
+  ```javascript
+  patchDOM(container, newHtml) {
+    this._tempContainer.innerHTML = newHtml;
+    this._diff(container, this._tempContainer);
+    this._tempContainer.innerHTML = ""; // NEW: Release for GC
+  }
+  ```
+
+- **Documentation** updated with accurate benchmark numbers and methodology notes
+
+#### 📦 Files Changed
+
+- `src/modules/Renderer.js` - Added tempContainer cleanup after diff
+- `test/performance/js-framework-benchmark.test.ts` - New accurate memory methodology
+- `test/performance/browser/standalone.html` - Browser-based Chrome testing
+- `README.md` - Updated performance benchmarks with Chrome measurements
+- `docs/index.md` - Updated performance benchmarks with Chrome measurements
+
+### 💻 Developer Notes
+
+#### Memory Overhead Breakdown
+
+The ~19 MB measured overhead is **not directly comparable** to other frameworks due to different test environments:
+
+| | **Eleva** | **React/Vue/Angular** |
+|---|-----------|----------------------|
+| **Environment** | happy-dom (Node.js) | Chrome DevTools |
+| **DOM nodes** | JS objects (~3KB each) | Native C++ objects |
+| **What's measured** | V8 heap (includes DOM sim) | JS heap only |
+
+**Investigation revealed:**
+```
+VDOM-like plain objects (1000 rows): 0.5 MB
+happy-dom DOM nodes (1000 rows):     6.9 MB  ← 13.6x heavier!
+```
+
+**Eleva's actual framework overhead is minimal:**
+| Component | Memory |
+|-----------|--------|
+| Data storage | ~0.04 MB |
+| Signals | ~0.6 MB |
+| Component state | negligible |
+| happy-dom DOM simulation | ~15+ MB |
+
+#### Chrome Memory Measurement (Real Browser)
+
+Testing with Chrome DevTools using the js-framework-benchmark methodology confirms Eleva's low memory footprint:
+
+```
+Chrome Memory (1,000 rows):
+- Baseline:    15.2 MB
+- After:       15.7 MB
+- Overhead:    ~0.5 MB  (~0.5 KB/row)
+
+Chrome Memory (10,000 rows):
+- Baseline:    15.2 MB
+- After:       28.9 MB
+- Overhead:    ~13.7 MB (~1.37 KB/row)
+
+Chrome Memory (Append 1,000 rows to 10K):
+- Before:      39.3 MB (10K rows)
+- After:       40.7 MB (11K rows)
+- Overhead:    ~1.4 MB  (~1.4 KB/row)
+
+Chrome Memory (Update every 10th row):
+- Before:      40.7 MB
+- After:       40.7 MB
+- Overhead:    ~0 MB  (no memory growth)
+
+Chrome Memory (Clear):
+- Before:      37.8 MB
+- After:       37.8 MB
+- Overhead:    ~0 MB  (memory properly released)
+
+Chrome Memory (Swap Rows):
+- Before:      37.8 MB
+- After:       37.8 MB
+- Overhead:    ~0 MB  (no memory growth)
+```
+
+**This is ~38x lower than happy-dom measurements**, confirming that:
+1. No virtual DOM tree to maintain
+2. No diffing state between renders
+3. Direct DOM manipulation without intermediate representations
+
+> 💡 **Test it yourself:** Run `bun run serve` from repo root, open http://localhost:3000/test/performance/browser/standalone.html, and use Chrome DevTools Memory tab.
+
+#### Running Benchmarks
+
+```bash
+# Run full benchmark suite
+bun run test:benchmark
+
+# Run js-framework-benchmark style tests
+bun test test/performance/js-framework-benchmark.test.ts
+
+# Run browser-based Chrome testing
+bun run serve
+# Open: http://localhost:3000/test/performance/browser/standalone.html
+```
+
+---
+
 ## v1.0.0-rc.14 🎯 (11-01-2026)
 
 ### 🚀 Native Props Evaluation - Smaller, Faster, Simpler

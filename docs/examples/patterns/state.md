@@ -1,3 +1,8 @@
+---
+title: State Management - Computed & Derived State
+description: Eleva.js state patterns for computed values, shopping carts, undo/redo, multi-step wizards, and derived state. Master signal-based reactivity with practical examples.
+---
+
 # State Management Examples
 
 Learn how to manage computed values, derived state, and complex state patterns in Eleva.

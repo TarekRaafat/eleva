@@ -1,3 +1,8 @@
+---
+title: UI Patterns - Forms, Lists, Async & More
+description: Reusable Eleva.js code patterns for forms, async data, conditional rendering, lists, state management, and localStorage. Copy-paste ready solutions with explanations.
+---
+
 # UI Patterns
 
 Reusable code patterns for common UI scenarios. Each pattern is a focused, copy-paste ready solution.
@@ -37,6 +42,7 @@ Reusable code patterns for common UI scenarios. Each pattern is a focused, copy-
 ### Lists
 - [Searchable List](./lists.md#searchable--filterable-list)
 - [Drag & Drop](./lists.md#drag-and-drop-reorderable-list)
+- [Virtual Scrolling](./lists.md#virtual-scrolling)
 
 ### State Management
 - [Shopping Cart](./state.md#shopping-cart-with-computed-totals)

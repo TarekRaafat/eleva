@@ -1,6 +1,11 @@
+---
+title: Migrate from React
+description: React to Eleva.js migration guide. Learn how useState maps to signals, useEffect to watchers, and JSX to template strings. Side-by-side code comparisons included.
+---
+
 # Migrating from React
 
-> **Version:** 1.0.0-rc.14 | A comprehensive guide for React developers transitioning to Eleva
+> **Version:** 1.0.0 | A comprehensive guide for React developers transitioning to Eleva
 
 This guide helps React developers understand Eleva by mapping familiar React concepts to their Eleva equivalents.
 

@@ -1,4 +1,4 @@
-/*! Eleva Router Plugin v1.0.0-rc.12 | MIT License | https://elevajs.com */
+/*! Eleva Router Plugin v1.0.0 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -1461,7 +1461,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.0.0-rc.12",
+     */ version: "1.0.0",
       /**
      * Plugin description
      * @type {string}

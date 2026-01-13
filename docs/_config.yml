@@ -1,0 +1,66 @@
+# Eleva.js Documentation - Jekyll Configuration
+# https://elevajs.com
+
+# Site Settings
+title: Eleva.js
+tagline: Best DX for Building the Best UX
+description: A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.
+url: https://elevajs.com
+baseurl: ""
+
+# SEO Title Separator (page title | site title)
+title_separator: "|"
+
+# Author
+author:
+  name: Tarek Raafat
+  url: https://www.tarekraafat.com
+  email: tarek.m.raafat@gmail.com
+
+# Social / SEO
+twitter:
+  username: null
+  card: summary_large_image
+
+social:
+  name: Eleva.js
+  links:
+    - https://github.com/TarekRaafat/eleva
+    - https://www.npmjs.com/package/eleva
+
+# Open Graph
+logo: /imgs/eleva.js Full Logo.png
+
+# GitHub repository
+repository: TarekRaafat/eleva
+
+# Plugins (supported by GitHub Pages)
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Markdown settings
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
+
+# Exclude files from build
+exclude:
+  - README.md
+  - CONTRIBUTING.md
+  - LICENSE
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+
+# Default frontmatter
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+      image: /imgs/eleva.js Full Logo.png

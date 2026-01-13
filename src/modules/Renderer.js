@@ -97,6 +97,8 @@ export class Renderer {
   patchDOM(container, newHtml) {
     this._tempContainer.innerHTML = newHtml;
     this._diff(container, this._tempContainer);
+    // Clear tempContainer to release cloned source nodes for garbage collection.
+    this._tempContainer.innerHTML = "";
   }
 
   /**

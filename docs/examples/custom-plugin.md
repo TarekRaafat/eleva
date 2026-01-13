@@ -1,3 +1,8 @@
+---
+title: Create Custom Plugins
+description: Complete guide to building Eleva.js plugins. Learn plugin architecture, lifecycle hooks, TypeScript support, testing strategies, and npm publishing best practices.
+---
+
 # Creating a Custom Plugin for Eleva
 
 This comprehensive guide will walk you through creating, testing, and publishing plugins for Eleva. Whether you're building a simple utility or a complex feature set, this guide covers everything you need to know.

@@ -1,0 +1,22 @@
+<!-- Custom head content for Eleva.js Documentation -->
+
+<!-- Canonical URL -->
+{% if page.url %}
+<link rel="canonical" href="{{ site.url }}{{ page.url | replace: '.html', '' | replace: 'index', '' }}">
+{% endif %}
+
+<!-- Preconnect to external resources -->
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+
+<!-- Additional Open Graph tags not covered by jekyll-seo-tag -->
+<meta property="og:site_name" content="Eleva.js Documentation">
+<meta property="og:locale" content="en_US">
+
+<!-- Article metadata for documentation pages -->
+{% if page.date %}
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}">
+{% endif %}
+{% if page.modified %}
+<meta property="article:modified_time" content="{{ page.modified | date_to_xmlschema }}">
+{% endif %}

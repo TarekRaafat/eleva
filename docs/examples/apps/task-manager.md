@@ -1,3 +1,8 @@
+---
+title: Task Manager App
+description: Build a full task manager with Eleva.js. Features filtering, sorting, priorities, due dates, search, and localStorage persistence. Complete source code included.
+---
+
 # Task Manager
 
 A complete task manager with filtering, sorting, priorities, due dates, and localStorage persistence.

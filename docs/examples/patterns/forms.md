@@ -1,3 +1,8 @@
+---
+title: Form Handling - Input Binding & Validation
+description: Eleva.js form examples with two-way data binding, real-time validation, error messages, and form submission. Build accessible forms with signal-based reactivity.
+---
+
 # Form Handling Examples
 
 Learn how to handle forms in Eleva, including input binding, validation, and submission.

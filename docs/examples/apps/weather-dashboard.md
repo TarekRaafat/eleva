@@ -1,3 +1,8 @@
+---
+title: Weather Dashboard App
+description: Build a weather dashboard with Eleva.js. Features API fetching, city search, temperature unit toggle, search history, and responsive UI. Complete source code included.
+---
+
 # Weather Dashboard
 
 A weather app that fetches data from an API with search history and unit conversion.

@@ -1,3 +1,8 @@
+---
+title: Complete App Examples
+description: Full Eleva.js application examples including task manager, weather dashboard, and blog. Learn component composition, API integration, and localStorage persistence.
+---
+
 # Complete Application Examples
 
 Full mini-applications demonstrating multiple Eleva features working together.

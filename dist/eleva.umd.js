@@ -1,4 +1,4 @@
-/*! Eleva v1.0.0-rc.14 | MIT License | https://elevajs.com */
+/*! Eleva v1.0.0 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -493,6 +493,8 @@
      */ patchDOM(container, newHtml) {
           this._tempContainer.innerHTML = newHtml;
           this._diff(container, this._tempContainer);
+          // Clear tempContainer to release cloned source nodes for garbage collection.
+          this._tempContainer.innerHTML = "";
       }
       /**
      * Performs a diff between two DOM nodes and patches the old node to match the new node.

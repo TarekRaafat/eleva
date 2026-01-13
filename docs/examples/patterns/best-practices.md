@@ -1,3 +1,8 @@
+---
+title: Best Practices - Performance & Architecture
+description: Eleva.js best practices for selector performance, component structure, lifecycle hooks, signal reactivity, templates, and communication patterns. Write efficient code.
+---
+
 # Best Practices
 
 Comprehensive guide to writing efficient, maintainable Eleva components.
@@ -10,6 +15,7 @@ Comprehensive guide to writing efficient, maintainable Eleva components.
 - [Lifecycle Hooks](#lifecycle-hooks)
 - [Signal Reactivity](#signal-reactivity)
 - [Templates](#templates)
+  - [Parameterized Event Handlers](#parameterized-event-handlers)
 - [Children & Composition](#children--composition)
 - [Communication Patterns](#communication-patterns)
 - [General Guidelines](#general-guidelines)
@@ -598,6 +604,46 @@ template: (ctx) => `
 `
 ```
 
+### Parameterized Event Handlers
+
+When passing arguments to event handlers, wrap the call in an arrow function:
+
+```js
+setup: ({ signal }) => {
+  const items = signal([{ id: 1, name: "Item 1" }, { id: 2, name: "Item 2" }]);
+
+  const selectItem = (id) => {
+    console.log("Selected:", id);
+  };
+
+  const removeItem = (id) => {
+    items.value = items.value.filter(item => item.id !== id);
+  };
+
+  return { items, selectItem, removeItem };
+},
+template: (ctx) => `
+  <ul>
+    ${ctx.items.value.map(item => `
+      <li key="${item.id}">
+        <span @click="() => selectItem(${item.id})">${item.name}</span>
+        <button @click="() => removeItem(${item.id})">×</button>
+      </li>
+    `).join("")}
+  </ul>
+`
+```
+
+**Why arrow functions?**
+
+| Syntax | Behavior | Result |
+|--------|----------|--------|
+| `@click="handleClick"` | References function directly | Works |
+| `@click="removeItem(5)"` | Executes immediately during render | Broken |
+| `@click="() => removeItem(5)"` | Creates function that calls on click | Works |
+
+The arrow function defers execution until the actual click event occurs.
+
 ### Template Anti-Patterns
 
 ```js
@@ -814,6 +860,158 @@ setup: ({ signal }) => {
 3. **Lazy load components** - Load on demand when possible
 4. **Keep templates simple** - Complex logic in setup, not template
 5. **Minimize DOM queries** - Use efficient selectors
+6. **Use keyed reconciliation for lists** - Add `key` attribute for efficient DOM diffing
+
+### Large List Performance
+
+For large lists (1,000+ items), Eleva's single-template approach with keyed reconciliation is the most efficient pattern:
+
+```js
+app.component("data-table", {
+  setup: ({ signal }) => ({
+    rows: signal([])
+  }),
+  template: (ctx) => `
+    <table>
+      <tbody>
+        ${ctx.rows.value.map(row => `
+          <tr key="${row.id}">
+            <td>${row.id}</td>
+            <td>${row.label}</td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `
+});
+```
+
+**Why this works:**
+- The `key` attribute enables efficient DOM diffing
+- Only changed elements are updated in the DOM
+- Minimal memory overhead (~1.37 KB/row for 10K rows)
+- No component instance overhead per row
+
+**Avoid component splitting for large lists:**
+| Pattern | 10K Rows Memory | Recommendation |
+|---------|-----------------|----------------|
+| Single template with keys | ~28.9 MB | Recommended |
+| Separate component per row | ~125 MB | Avoid for large lists |
+
+Component splitting creates per-instance overhead (signals, context, lifecycle) that far exceeds any benefit for simple list items. Reserve component splitting for complex, interactive sub-components (not simple table rows).
+
+### Virtual Scrolling (10K+ Rows)
+
+For very large datasets (10,000+ rows), virtual scrolling renders only visible rows. This dramatically improves both memory usage and update performance.
+
+**Verified Benchmark Results (10,000 rows):**
+
+| Metric | Standard | Virtual Scrolling | Improvement |
+|--------|----------|-------------------|-------------|
+| Memory | ~29 MB | ~5 MB | **5.5x less** |
+| Create 10K rows | ~250ms | ~21ms | **12x faster** |
+| Update every 10th row | ~86ms | ~9ms | **9.5x faster** |
+| DOM rows rendered | 10,000 | ~17 | **588x fewer** |
+
+```js
+// Configuration
+const ROW_HEIGHT = 37;
+const VIEWPORT_HEIGHT = 400;
+const VISIBLE_COUNT = Math.ceil(VIEWPORT_HEIGHT / ROW_HEIGHT) + 6;
+
+app.component("virtual-table", {
+  setup: ({ signal }) => {
+    const rows = signal([]);
+    const scrollTop = signal(0);
+
+    const handleScroll = (e) => {
+      scrollTop.value = e.target.scrollTop;
+    };
+
+    // ... other methods (add, update, remove, etc.)
+
+    return { rows, scrollTop, handleScroll };
+  },
+
+  template: (ctx) => {
+    // Calculate visible slice
+    const allRows = ctx.rows.value;
+    const scroll = ctx.scrollTop.value;
+    const startIndex = Math.max(0, Math.floor(scroll / ROW_HEIGHT) - 3);
+    const endIndex = Math.min(allRows.length, startIndex + VISIBLE_COUNT);
+    const items = allRows.slice(startIndex, endIndex);
+    const offset = startIndex * ROW_HEIGHT;
+    const totalHeight = allRows.length * ROW_HEIGHT;
+
+    return `
+      <div class="virtual-viewport"
+           style="height: ${VIEWPORT_HEIGHT}px; overflow-y: auto;"
+           @scroll="handleScroll">
+        <div style="height: ${totalHeight}px; position: relative;">
+          <table style="position: absolute; top: ${offset}px; width: 100%;">
+            <tbody>
+              ${items.map(row => `
+                <tr key="${row.id}" style="height: ${ROW_HEIGHT}px;">
+                  <td>${row.id}</td>
+                  <td>${row.label}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  }
+});
+```
+
+**For row interactions (select, remove), use arrow functions:**
+
+```js
+setup: ({ signal }) => {
+  const rows = signal([]);
+  const selected = signal(null);
+
+  const selectRow = (id) => {
+    selected.value = id;
+  };
+
+  const removeRow = (id) => {
+    rows.value = rows.value.filter(row => row.id !== id);
+  };
+
+  return { rows, selected, selectRow, removeRow, /* ... */ };
+},
+
+template: (ctx) => {
+  // ... virtual scrolling calculation ...
+
+  const renderRow = (row) => `
+    <tr key="${row.id}" class="${ctx.selected.value === row.id ? 'selected' : ''}">
+      <td><a @click="() => selectRow(${row.id})">${row.label}</a></td>
+      <td><a @click="() => removeRow(${row.id})">×</a></td>
+    </tr>
+  `;
+
+  // ... rest of template
+}
+```
+
+**Why virtual scrolling works:**
+- Renders only ~17 visible rows instead of 10,000
+- Updates are near-instant (~9ms vs ~86ms)
+- Memory stays constant (~5 MB) regardless of data size
+- Combined with Eleva's efficient memory footprint, you can handle virtually unlimited data
+
+**When to use:**
+
+| Dataset Size | Recommended Approach |
+|--------------|---------------------|
+| < 1,000 rows | Single template with keys |
+| 1,000 - 10,000 rows | Single template with keys (Eleva handles this efficiently) |
+| 10,000+ rows | Virtual scrolling |
+
+> 💡 **Tip:** Eleva's low memory overhead makes it ideal for data-intensive applications. The combination of Eleva + virtual scrolling delivers performance that rivals or exceeds heavier frameworks while maintaining a ~2.3 KB footprint.
 
 ---
 

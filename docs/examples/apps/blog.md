@@ -1,3 +1,8 @@
+---
+title: Simple Blog App
+description: Build a blog with Eleva.js featuring posts, comments, and nested components. Learn component composition, scoped styling, and reactive state management.
+---
+
 # Simple Blog
 
 A basic blog with posts and comments demonstrating component composition.

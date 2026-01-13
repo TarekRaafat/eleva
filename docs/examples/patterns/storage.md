@@ -1,3 +1,8 @@
+---
+title: Local Storage - Persistence & Caching
+description: Eleva.js localStorage patterns for data persistence, session storage, caching strategies, and auto-save functionality. Keep user data across browser sessions.
+---
+
 # Local Storage Examples
 
 Learn how to persist data to localStorage and sessionStorage in Eleva.

@@ -1,6 +1,11 @@
+---
+title: Migrate from jQuery
+description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components, $.ajax with fetch + signals, and event handlers with declarative @event syntax.
+---
+
 # Migrating from jQuery
 
-> **Version:** 1.0.0-rc.14 | A comprehensive guide for jQuery developers transitioning to Eleva
+> **Version:** 1.0.0 | A comprehensive guide for jQuery developers transitioning to Eleva
 
 This guide helps jQuery developers understand Eleva by mapping familiar jQuery patterns to their Eleva equivalents. Eleva offers modern component architecture while maintaining the simplicity you love about jQuery.
 

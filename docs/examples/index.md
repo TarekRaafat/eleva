@@ -1,3 +1,8 @@
+---
+title: Code Examples - Patterns, Apps & Plugins
+description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, and async data. Complete apps like task managers and blogs. Custom plugin development guide.
+---
+
 # Code Examples
 
 This section provides comprehensive, real-world examples that you can copy and adapt for your projects.

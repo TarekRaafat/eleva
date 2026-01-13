@@ -1,0 +1,40 @@
+# Eleva.js Documentation - robots.txt
+# https://elevajs.com
+
+User-agent: *
+Allow: /
+
+# Allow all crawlers to index documentation
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# AI/LLM crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: Anthropic-AI
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Cohere-AI
+Allow: /
+
+# Sitemap location
+Sitemap: https://elevajs.com/sitemap.xml
+
+# Crawl-delay for politeness (optional)
+Crawl-delay: 1

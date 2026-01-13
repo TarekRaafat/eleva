@@ -1,6 +1,11 @@
+---
+title: Attr Plugin - Intelligent Attribute Binding
+description: Eleva.js Attr plugin for automatic ARIA accessibility, data attributes, boolean attributes, and dynamic property binding. 2.2KB, zero-config setup with full examples.
+---
+
 # Attr Plugin
 
-> **Version:** 1.0.0-rc.14 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.0 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
 
@@ -532,7 +537,7 @@ const SelectAllComponent = {
                 <input
                   type="checkbox"
                   checked="${item.selected}"
-                  @change="toggleItem(${item.id})"
+                  @change="() => toggleItem(${item.id})"
                 />
                 ${item.name}
               </label>
@@ -847,7 +852,7 @@ const Accordion = {
                 id="trigger-${section.id}"
                 aria-expanded="${section.open}"
                 aria-controls="panel-${section.id}"
-                @click="toggleSection('${section.id}')"
+                @click="() => toggleSection('${section.id}')"
               >
                 ${section.title}
                 <span class="icon" aria-hidden="true">
@@ -924,8 +929,8 @@ const TabContainer = {
               aria-controls="panel-${tab.id}"
               tabindex="${activeTab.value === index ? 0 : -1}"
               class="tab-button ${activeTab.value === index ? 'active' : ''}"
-              @click="selectTab(${index})"
-              @keydown="handleKeyDown($event, ${index})"
+              @click="() => selectTab(${index})"
+              @keydown="(e) => handleKeyDown(e, ${index})"
             >
               ${tab.label}
             </button>
@@ -1024,7 +1029,7 @@ const DataTable = {
                   : 'none'}"
                 data-column="${col.key}"
               >
-                <button @click="toggleSort('${col.key}')">
+                <button @click="() => toggleSort('${col.key}')">
                   ${col.label}
                   <span aria-hidden="true">
                     ${sortColumn.value === col.key
@@ -1048,7 +1053,7 @@ const DataTable = {
                 <input
                   type="checkbox"
                   checked="${isSelected(row.id)}"
-                  @change="toggleRowSelection(${row.id})"
+                  @change="() => toggleRowSelection(${row.id})"
                   aria-label="Select ${row.name}"
                 />
               </td>

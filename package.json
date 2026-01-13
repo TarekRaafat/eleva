@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.0-rc.14",
+  "version": "1.0.0",
   "description": "Eleva.js - Best DX for Building the Best UX. A minimalist, lightweight, pure vanilla JavaScript frontend framework.",
   "type": "module",
   "private": false,
@@ -123,8 +123,8 @@
   },
   "sideEffects": false,
   "devDependencies": {
-    "@babel/core": "^7.28.5",
-    "@babel/preset-env": "^7.28.5",
+    "@babel/core": "^7.28.6",
+    "@babel/preset-env": "^7.28.6",
     "@codecov/rollup-plugin": "^1.9.1",
     "@happy-dom/global-registrator": "^20.1.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
@@ -171,6 +171,7 @@
     "lint": "eslint src/**/*.js",
     "format": "npx prettier \"src/**/*\" \"types/**/*\" --write",
     "clean": "rimraf dist types test/coverage",
+    "serve": "bunx serve . -l 3000",
     "prepublishOnly": "bun run format && bun run lint && bun run test:coverage && bun run build:all",
     "prepare": "bun run build:all"
   },

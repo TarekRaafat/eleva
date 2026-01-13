@@ -1,3 +1,8 @@
+---
+title: Async Data Fetching - API & Loading States
+description: Eleva.js async patterns for API fetching, loading spinners, error handling, pagination, and caching. Best practices using signals with onMount lifecycle hook.
+---
+
 # Async Data Fetching Examples
 
 Learn how to fetch data from APIs, handle loading states, and implement pagination in Eleva.

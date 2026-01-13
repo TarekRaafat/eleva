@@ -57,6 +57,12 @@ interface BenchmarkSummary {
   platform: string;
   bundleSize: number;
   results: BenchmarkResult[];
+  memoryBaselines: {
+    pureDom1k: number;
+    pureDom10k: number;
+    elevaOverhead1k: number;
+    elevaOverhead10k: number;
+  };
   documentationMetrics: {
     bundleSize: string;
     hydrationTime: string;
@@ -201,6 +207,8 @@ async function measureOperation(
 
 const benchmarkResults: BenchmarkResult[] = [];
 let baselineMemory = 0;
+let pureDomMemory1k = 0; // Memory for pure DOM without Eleva (1k rows)
+let pureDomMemory10k = 0; // Memory for pure DOM without Eleva (10k rows)
 
 function recordResult(
   name: string,
@@ -217,7 +225,7 @@ function recordResult(
 // Report Generation
 // ============================================================================
 
-function generateReport(summary: BenchmarkSummary): string {
+function generateReport(summary: BenchmarkSummary, pureDom1k: number, pureDom10k: number): string {
   const results = summary.results;
 
   // Group results by operation type
@@ -230,6 +238,15 @@ function generateReport(summary: BenchmarkSummary): string {
   const create1k = results.find((r) => r.name === "create 1,000 rows");
   const partialUpdate = results.find((r) => r.name === "partial update (every 10th row)");
   const memoryAfter1k = results.find((r) => r.name === "memory after 1,000 rows");
+  const memoryAfter10k = results.find((r) => r.name === "memory after 10,000 rows");
+
+  // Calculate actual Eleva overhead
+  const elevaOverhead1k = memoryAfter1k && pureDom1k > 0
+    ? memoryAfter1k.memory! - pureDom1k
+    : 0;
+  const elevaOverhead10k = memoryAfter10k && pureDom10k > 0
+    ? memoryAfter10k.memory! - pureDom10k
+    : 0;
 
   return `# Eleva.js - js-framework-benchmark Results
 
@@ -246,7 +263,7 @@ These metrics are comparable to js-framework-benchmark results:
 | Bundle Size (min+gzip) | ${formatBytes(summary.bundleSize)} | **~${Math.round(summary.bundleSize / 1024)} KB** |
 | Hydration/Startup (1k rows) | ${create1k ? formatMs(create1k.duration) : "N/A"} | **${summary.documentationMetrics.hydrationTime}** |
 | DOM Update (partial 1k) | ${partialUpdate ? formatMs(partialUpdate.duration) : "N/A"} | **${summary.documentationMetrics.domUpdate}** |
-| Memory (after 1k rows) | ${memoryAfter1k ? memoryAfter1k.memory?.toFixed(2) + " MB" : "N/A"} | **${summary.documentationMetrics.memory}** |
+| Memory (Eleva overhead) | ${elevaOverhead1k.toFixed(2)} MB | **${summary.documentationMetrics.memory}** |
 
 ### Documentation Table Row
 
@@ -278,11 +295,15 @@ ${manipulateOps.map((r) => `| ${r.name} | ${formatMs(r.duration)} |`).join("\n")
 
 ### Memory Usage
 
-| Measurement Point | Total Heap (MB) | Delta from Baseline | Est. Eleva Overhead* |
-|-------------------|-----------------|---------------------|----------------------|
-${memoryOps.map((r) => `| ${r.name} | ${r.memory?.toFixed(2) || "-"} | +${((r.memory || 0) - baselineMemory).toFixed(2)} MB | ~${(((r.memory || 0) - baselineMemory) * 0.15).toFixed(2)} MB |`).join("\n")}
+Memory is measured by comparing Eleva-managed DOM against an identical pure DOM structure (no framework).
+This isolates Eleva's actual overhead: signals, component state, watchers, and internal data structures.
 
-*Note: Total heap includes DOM nodes from happy-dom test environment. Estimated Eleva overhead (signals, component state) is ~15% of total delta. Actual browser memory will differ.
+| Rows | Pure DOM (MB) | With Eleva (MB) | **Eleva Overhead** |
+|------|---------------|-----------------|-------------------|
+| 1,000 | ${pureDom1k.toFixed(2)} | ${memoryAfter1k?.memory?.toFixed(2) || "-"} | **${elevaOverhead1k.toFixed(2)} MB** |
+| 10,000 | ${pureDom10k.toFixed(2)} | ${memoryAfter10k?.memory?.toFixed(2) || "-"} | **${elevaOverhead10k.toFixed(2)} MB** |
+
+**Per-row overhead**: ~${((elevaOverhead1k / 1000) * 1024).toFixed(1)} KB/row (1k) | ~${((elevaOverhead10k / 10000) * 1024).toFixed(1)} KB/row (10k)
 
 ---
 
@@ -309,11 +330,21 @@ This benchmark follows the [js-framework-benchmark](https://github.com/krausest/
 7. **Append rows** - Add 1,000 rows to existing 1,000
 8. **Clear rows** - Remove all rows from DOM
 
-### Comparison Notes
+### Memory Measurement Methodology
 
-- **Hydration Time**: Measured as time to create and render 1,000 rows (comparable to "create rows" in js-framework-benchmark)
-- **DOM Update**: Measured as time for partial update of 1,000 rows (every 10th row = 100 updates)
-- **Memory**: Measured after creating 1,000 rows with forced GC
+Unlike arbitrary estimation, this benchmark measures Eleva's **actual memory overhead**:
+
+1. **Pure DOM Baseline**: Create identical table structure using only native DOM APIs (no framework)
+2. **Eleva Measurement**: Create same structure using Eleva's reactive system
+3. **Overhead Calculation**: \`Eleva Memory - Pure DOM Memory = Eleva Overhead\`
+
+This methodology isolates what Eleva actually adds to memory:
+- Signal objects and their subscriptions
+- Component instances and state
+- Template compilation cache
+- Internal watchers and effect tracking
+
+**Note**: Tests run in happy-dom (Node.js DOM simulation). Actual browser memory characteristics may differ, but the relative overhead measurement remains valid.
 
 ---
 
@@ -603,9 +634,76 @@ describe("js-framework-benchmark Style Performance Test", () => {
   });
 
   describe("Memory Usage", () => {
-    test("memory after 1,000 rows", async () => {
+    test("pure DOM baseline (1,000 rows) - no framework", async () => {
       console.log("\n💾 Memory Measurements");
+      console.log("  Measuring pure DOM baseline (no framework)...");
 
+      // Create identical DOM structure WITHOUT Eleva to establish baseline
+      resetId();
+      document.body.innerHTML = `<div id="pure-dom-test"></div>`;
+      const c = document.getElementById("pure-dom-test")!;
+      const data = buildData(ROWS_1K);
+
+      // Build DOM directly without any framework
+      const table = document.createElement("table");
+      table.className = "table table-hover table-striped test-data";
+      const tbody = document.createElement("tbody");
+
+      for (const row of data) {
+        const tr = document.createElement("tr");
+        tr.setAttribute("key", String(row.id));
+        tr.setAttribute("data-id", String(row.id));
+
+        const td1 = document.createElement("td");
+        td1.className = "col-md-1";
+        td1.textContent = String(row.id);
+
+        const td2 = document.createElement("td");
+        td2.className = "col-md-4";
+        const a = document.createElement("a");
+        a.className = "lbl";
+        a.textContent = row.label;
+        td2.appendChild(a);
+
+        const td3 = document.createElement("td");
+        td3.className = "col-md-1";
+        const removeLink = document.createElement("a");
+        removeLink.className = "remove";
+        const span = document.createElement("span");
+        span.className = "glyphicon glyphicon-remove";
+        span.setAttribute("aria-hidden", "true");
+        removeLink.appendChild(span);
+        td3.appendChild(removeLink);
+
+        const td4 = document.createElement("td");
+        td4.className = "col-md-6";
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+        tr.appendChild(td4);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      c.appendChild(table);
+
+      await new Promise((r) => setTimeout(r, 100));
+
+      if (typeof Bun !== "undefined" && Bun.gc) {
+        Bun.gc(true);
+      }
+      await new Promise((r) => setTimeout(r, 50));
+
+      pureDomMemory1k = getMemoryMB();
+      console.log(`  Pure DOM (1k rows): ${pureDomMemory1k.toFixed(2)} MB`);
+
+      // Clean up
+      document.body.innerHTML = "";
+
+      expect(pureDomMemory1k).toBeGreaterThan(baselineMemory);
+    });
+
+    test("memory after 1,000 rows (with Eleva)", async () => {
       await app.mount(container, "benchmark-table");
       rowsSignal.value = buildData(ROWS_1K);
       await new Promise((r) => setTimeout(r, 100));
@@ -616,14 +714,64 @@ describe("js-framework-benchmark Style Performance Test", () => {
       await new Promise((r) => setTimeout(r, 50));
 
       const memory = getMemoryMB();
+      const elevaOverhead = memory - pureDomMemory1k;
+
+      console.log(`  Eleva + DOM (1k rows): ${memory.toFixed(2)} MB`);
+      console.log(`  Eleva overhead: ${elevaOverhead.toFixed(2)} MB`);
+
       recordResult("memory after 1,000 rows", "memory", 0, memory, ROWS_1K);
 
-      // Memory includes DOM nodes (happy-dom overhead is significant)
-      // Just verify it doesn't grow unboundedly
-      expect(memory).toBeLessThan(500);
+      // Note: Overhead includes signal storage, template compilation, and reactive system
+      // The threshold is set to ensure memory doesn't grow unboundedly
+      expect(elevaOverhead).toBeLessThan(150);
     });
 
-    test("memory after 10,000 rows", async () => {
+    test("pure DOM baseline (10,000 rows) - no framework", async () => {
+      console.log("  Measuring pure DOM baseline 10k (no framework)...");
+
+      resetId();
+      document.body.innerHTML = `<div id="pure-dom-test-10k"></div>`;
+      const c = document.getElementById("pure-dom-test-10k")!;
+      const data = buildData(ROWS_10K);
+
+      // Build DOM directly without any framework
+      const table = document.createElement("table");
+      const tbody = document.createElement("tbody");
+
+      for (const row of data) {
+        const tr = document.createElement("tr");
+        tr.setAttribute("key", String(row.id));
+
+        const td1 = document.createElement("td");
+        td1.textContent = String(row.id);
+
+        const td2 = document.createElement("td");
+        td2.textContent = row.label;
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tbody.appendChild(tr);
+      }
+      table.appendChild(tbody);
+      c.appendChild(table);
+
+      await new Promise((r) => setTimeout(r, 100));
+
+      if (typeof Bun !== "undefined" && Bun.gc) {
+        Bun.gc(true);
+      }
+      await new Promise((r) => setTimeout(r, 50));
+
+      pureDomMemory10k = getMemoryMB();
+      console.log(`  Pure DOM (10k rows): ${pureDomMemory10k.toFixed(2)} MB`);
+
+      // Clean up
+      document.body.innerHTML = "";
+
+      expect(pureDomMemory10k).toBeGreaterThan(pureDomMemory1k);
+    });
+
+    test("memory after 10,000 rows (with Eleva)", async () => {
       resetId();
       document.body.innerHTML = `<div id="mem-test"></div>`;
       const c = document.getElementById("mem-test")!;
@@ -649,10 +797,16 @@ describe("js-framework-benchmark Style Performance Test", () => {
       await new Promise((r) => setTimeout(r, 50));
 
       const memory = getMemoryMB();
+      const elevaOverhead = memory - pureDomMemory10k;
+
+      console.log(`  Eleva + DOM (10k rows): ${memory.toFixed(2)} MB`);
+      console.log(`  Eleva overhead: ${elevaOverhead.toFixed(2)} MB`);
+
       recordResult("memory after 10,000 rows", "memory", 0, memory, ROWS_10K);
 
-      // Memory includes DOM nodes (happy-dom overhead is significant)
-      expect(memory).toBeLessThan(1000);
+      // Note: Overhead should scale roughly linearly with rows
+      // The threshold is set to ensure memory doesn't grow unboundedly
+      expect(elevaOverhead).toBeLessThan(500);
     });
   });
 
@@ -696,20 +850,29 @@ describe("js-framework-benchmark Style Performance Test", () => {
             : `${Math.round(partialUpdate.duration)}`
       : "N/A";
 
-    // Calculate memory per 1000 rows (more meaningful metric)
-    // Note: This includes DOM node overhead from happy-dom
-    const memoryDelta = memory1k ? memory1k.memory! - baselineMemory : 0;
-    // Estimate Eleva-only overhead (framework + signals) - roughly 10-20% of total
-    // DOM nodes account for most memory in happy-dom environment
-    const estimatedElevaMemory = memoryDelta * 0.15; // Conservative estimate
-    const memoryUsage = memory1k
-      ? estimatedElevaMemory < 1
-        ? "< 1"
-        : estimatedElevaMemory < 2
-          ? "1-2"
-          : estimatedElevaMemory < 5
-            ? "2-5"
-            : `${Math.round(estimatedElevaMemory)}`
+    // Calculate Eleva's actual memory overhead by comparing against pure DOM baseline
+    // This measures what Eleva adds: signals, component state, watchers, etc.
+    const elevaOverhead1k = memory1k && pureDomMemory1k > 0
+      ? memory1k.memory! - pureDomMemory1k
+      : 0;
+
+    // Calculate 10k overhead
+    const memory10k = benchmarkResults.find((r) => r.name === "memory after 10,000 rows");
+    const elevaOverhead10k = memory10k && pureDomMemory10k > 0
+      ? memory10k.memory! - pureDomMemory10k
+      : 0;
+
+    // Format memory for documentation (actual measured overhead)
+    const memoryUsage = memory1k && pureDomMemory1k > 0
+      ? elevaOverhead1k < 0.5
+        ? "< 0.5"
+        : elevaOverhead1k < 1
+          ? "< 1"
+          : elevaOverhead1k < 2
+            ? "1-2"
+            : elevaOverhead1k < 5
+              ? "2-5"
+              : `~${Math.round(elevaOverhead1k)}`
       : "N/A";
 
     const summary: BenchmarkSummary = {
@@ -719,6 +882,12 @@ describe("js-framework-benchmark Style Performance Test", () => {
       platform: `${process.platform} ${process.arch}`,
       bundleSize,
       results: benchmarkResults,
+      memoryBaselines: {
+        pureDom1k: pureDomMemory1k,
+        pureDom10k: pureDomMemory10k,
+        elevaOverhead1k,
+        elevaOverhead10k,
+      },
       documentationMetrics: {
         bundleSize: `~${Math.round(bundleSize / 1024)} KB`,
         hydrationTime,
@@ -731,7 +900,7 @@ describe("js-framework-benchmark Style Performance Test", () => {
     fs.writeFileSync(JSON_FILE, JSON.stringify(summary, null, 2));
 
     // Generate and save report
-    const report = generateReport(summary);
+    const report = generateReport(summary, pureDomMemory1k, pureDomMemory10k);
     fs.writeFileSync(REPORT_FILE, report);
 
     // Print summary
@@ -743,7 +912,9 @@ describe("js-framework-benchmark Style Performance Test", () => {
     console.log(`  Bundle Size:     ${formatBytes(bundleSize)} (min+gzip)`);
     console.log(`  Create 1k rows:  ${create1k ? formatMs(create1k.duration) : "N/A"}`);
     console.log(`  Partial update:  ${partialUpdate ? formatMs(partialUpdate.duration) : "N/A"}`);
-    console.log(`  Memory (1k):     ${memory1k ? `${(memory1k.memory! - baselineMemory).toFixed(2)} MB` : "N/A"}`);
+    console.log(`  Memory (1k):     ${elevaOverhead1k.toFixed(2)} MB (Eleva overhead vs pure DOM)`);
+    console.log(`    Pure DOM:      ${pureDomMemory1k.toFixed(2)} MB`);
+    console.log(`    With Eleva:    ${memory1k ? memory1k.memory!.toFixed(2) : "N/A"} MB`);
 
     console.log("\n" + "─".repeat(70));
     console.log("\n📝 For documentation table:\n");

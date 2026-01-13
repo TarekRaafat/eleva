@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eleva.js Benchmark (Standalone)</title>
+  <!-- Bootstrap CSS for styling (same as js-framework-benchmark) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .jumbotron { padding: 1rem; margin-bottom: 1rem; }
+    .row { margin: 0 -7.5px; }
+    .col-sm-6.smallpad { padding: 0 7.5px; margin-bottom: 5px; }
+    .btn-block { width: 100%; }
+    .danger { background-color: #f9d6d5 !important; }
+    .glyphicon-remove { color: #888; cursor: pointer; }
+    .glyphicon-remove:hover { color: #333; }
+    .preloadicon { display: none; }
+    #timing { margin-top: 20px; padding: 10px; background: #f5f5f5; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="main"></div>
+  <div class="container">
+    <div id="timing">
+      <strong>Last operation:</strong> <span id="timing-result">-</span>
+    </div>
+  </div>
+
+  <!-- Load Eleva from parent dist (adjust path as needed) -->
+  <script type="module">
+    // Import Eleva - adjust path based on your setup
+    // Option 1: From npm (if installed)
+    // import Eleva from "eleva";
+
+    // Option 2: From local dist (relative to Eleva repo root)
+    import Eleva from "../../../dist/eleva.esm.js";
+
+    // ========================================================================
+    // Data Generation (matching js-framework-benchmark standard)
+    // ========================================================================
+
+    const adjectives = [
+      "pretty", "large", "big", "small", "tall", "short", "long", "handsome",
+      "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful",
+      "mushy", "odd", "unsightly", "adorable", "important", "inexpensive",
+      "cheap", "expensive", "fancy"
+    ];
+
+    const colours = [
+      "red", "yellow", "blue", "green", "pink", "brown", "purple", "brown",
+      "white", "black", "orange"
+    ];
+
+    const nouns = [
+      "table", "chair", "house", "bbq", "desk", "car", "pony", "cookie",
+      "sandwich", "burger", "pizza", "mouse", "keyboard"
+    ];
+
+    let nextId = 1;
+
+    function random(max) {
+      return Math.round(Math.random() * 1000) % max;
+    }
+
+    function buildData(count) {
+      const data = [];
+      for (let i = 0; i < count; i++) {
+        data.push({
+          id: nextId++,
+          label: `${adjectives[random(adjectives.length)]} ${colours[random(colours.length)]} ${nouns[random(nouns.length)]}`
+        });
+      }
+      return data;
+    }
+
+    // ========================================================================
+    // Timing helper
+    // ========================================================================
+
+    function timed(name, fn) {
+      return function(...args) {
+        const start = performance.now();
+        fn.apply(this, args);
+        // Wait for render to complete
+        requestAnimationFrame(() => {
+          const duration = performance.now() - start;
+          document.getElementById("timing-result").textContent =
+            `${name}: ${duration.toFixed(2)}ms`;
+        });
+      };
+    }
+
+    // ========================================================================
+    // Eleva Application
+    // ========================================================================
+
+    const app = new Eleva("BenchmarkApp");
+
+    app.component("benchmark-app", {
+      setup: ({ signal }) => {
+        const rows = signal([]);
+        const selected = signal(null);
+
+        // Benchmark operations (wrapped with timing)
+        const run = timed("Create 1,000 rows", () => {
+          rows.value = buildData(1000);
+          selected.value = null;
+        });
+
+        const runLots = timed("Create 10,000 rows", () => {
+          rows.value = buildData(10000);
+          selected.value = null;
+        });
+
+        const add = timed("Append 1,000 rows", () => {
+          rows.value = [...rows.value, ...buildData(1000)];
+        });
+
+        const update = timed("Update every 10th row", () => {
+          const newRows = [...rows.value];
+          for (let i = 0; i < newRows.length; i += 10) {
+            newRows[i] = { ...newRows[i], label: newRows[i].label + " !!!" };
+          }
+          rows.value = newRows;
+        });
+
+        const clear = timed("Clear", () => {
+          rows.value = [];
+          selected.value = null;
+        });
+
+        const swapRows = timed("Swap rows", () => {
+          if (rows.value.length > 998) {
+            const newRows = [...rows.value];
+            const temp = newRows[1];
+            newRows[1] = newRows[998];
+            newRows[998] = temp;
+            rows.value = newRows;
+          }
+        });
+
+        const select = (id) => {
+          selected.value = id;
+        };
+
+        const remove = (id) => {
+          const start = performance.now();
+          rows.value = rows.value.filter(row => row.id !== id);
+          requestAnimationFrame(() => {
+            const duration = performance.now() - start;
+            document.getElementById("timing-result").textContent =
+              `Remove row: ${duration.toFixed(2)}ms`;
+          });
+        };
+
+        return {
+          rows,
+          selected,
+          run,
+          runLots,
+          add,
+          update,
+          clear,
+          swapRows,
+          select,
+          remove
+        };
+      },
+
+      template: (ctx) => `
+        <div class="container">
+          <div class="jumbotron">
+            <div class="row">
+              <div class="col-md-6">
+                <h1>Eleva.js (keyed)</h1>
+              </div>
+              <div class="col-md-6">
+                <div class="row">
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="run" @click="run">Create 1,000 rows</button>
+                  </div>
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="runlots" @click="runLots">Create 10,000 rows</button>
+                  </div>
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="add" @click="add">Append 1,000 rows</button>
+                  </div>
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="update" @click="update">Update every 10th row</button>
+                  </div>
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="clear" @click="clear">Clear</button>
+                  </div>
+                  <div class="col-sm-6 smallpad">
+                    <button type="button" class="btn btn-primary btn-block" id="swaprows" @click="swapRows">Swap Rows</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <table class="table table-hover table-striped test-data">
+            <tbody id="tbody">
+              ${ctx.rows.value.map(row => `
+                <tr key="${row.id}" class="${ctx.selected.value === row.id ? 'danger' : ''}" data-id="${row.id}">
+                  <td class="col-md-1">${row.id}</td>
+                  <td class="col-md-4">
+                    <a class="lbl" @click="select(${row.id})">${row.label}</a>
+                  </td>
+                  <td class="col-md-1">
+                    <a class="remove" @click="remove(${row.id})">
+                      <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </a>
+                  </td>
+                  <td class="col-md-6"></td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+          <span class="preloadicon glyphicon glyphicon-remove" aria-hidden="true"></span>
+        </div>
+      `
+    });
+
+    // Mount the application
+    app.mount(document.getElementById("main"), "benchmark-app");
+
+    console.log("Eleva.js Benchmark loaded. Use Chrome DevTools Memory tab for profiling.");
+  </script>
+</body>
+</html>
