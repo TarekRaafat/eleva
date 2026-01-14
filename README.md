@@ -536,7 +536,7 @@ app.component("myComponent", {
 });
 ```
 
-📚 **[Full Attr Documentation →](docs/plugins/attr.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
+📚 **[Full Attr Documentation →](docs/plugins/attr/index.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
 
 #### Router Plugin
 
@@ -551,8 +551,8 @@ const app = new Eleva("myApp");
 // Define components
 const HomePage = { template: () => `<h1>Home</h1>` };
 const AboutPage = { template: () => `<h1>About</h1>` };
-const UserPage = { 
-    template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>` 
+const UserPage = {
+    template: (ctx) => `<h1>User: ${ctx.router.currentParams.value.id}</h1>`
 };
 
 // Install router with advanced configuration
@@ -589,7 +589,7 @@ const router = app.use(Router, {
 });
 
 // Access reactive router state
-router.currentRoute.subscribe(route => {
+router.currentRoute.watch(route => {
     console.log('Route changed:', route);
 });
 
@@ -597,7 +597,7 @@ router.currentRoute.subscribe(route => {
 router.navigate('/users/123', { replace: true });
 ```
 
-📚 **[Full Router Documentation →](docs/plugins/router.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
+📚 **[Full Router Documentation →](docs/plugins/router/index.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
 
 #### Store Plugin
 
@@ -681,11 +681,11 @@ app.component("TodoManager", {
             state: { items: [], filter: "all" },
             actions: {
                 addTodo: (state, text) => {
-                    state.todos.items.value.push({
+                    state.todos.items.value = [...state.todos.items.value, {
                         id: Date.now(),
                         text,
                         completed: false
-                    });
+                    }];
                 },
                 toggleTodo: (state, id) => {
                     const todo = state.todos.items.value.find(t => t.id === id);
@@ -722,14 +722,14 @@ console.log(app.store.getState()); // Get current state values
 app.dispatch("increment");          // Dispatch actions globally
 ```
 
-📚 **[Full Store Documentation →](docs/plugins/store.md)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
+📚 **[Full Store Documentation →](docs/plugins/store/index.md)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
 
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
 - Core + Attr: ~8KB (minified)
 - Core + Router: ~21KB (minified)
 - Core + Store: ~12KB (minified)
-- Core + All plugins: ~21KB (minified)
+- Core + All plugins: ~29KB (minified)
 
 **Individual Plugin Sizes:**
 - Attr: ~2.2KB (minified)
