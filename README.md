@@ -828,13 +828,13 @@ Contributions to tests are very welcome! 🧪
 
 ## Contributing
 
-I'd love to have you onboard as a contributor! Whether you're adding new features, squashing bugs, or sharing ideas, your input is invaluable. Please check out [CONTRIBUTING](CONTRIBUTING.md) for guidelines on getting started.
+I'd love to have you onboard as a contributor! Whether you're adding new features, squashing bugs, or sharing ideas, your input is invaluable. Please check out [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md) for guidelines on getting started.
 
 ---
 
 ## License
 
-Eleva is open-source and available under the [MIT License](LICENSE).
+Eleva is open-source and available under the [MIT License](https://github.com/TarekRaafat/eleva/blob/master/LICENSE).
 
 ---
 
