@@ -50,7 +50,7 @@ Unlike React, Vue, or Angular, Eleva:
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
 
-Eleva is ideal for developers building lightweight web applications, prototypes, micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
 
 ---
 
@@ -212,11 +212,11 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 
 Eleva is ideal for developers seeking a lightweight, flexible, and high-performance solution for building frontend applications. Here are some scenarios where Eleva shines:
 
-- **🚀 Small to Medium Projects:** Perfect for web apps or websites that don't require the overhead of a full-fledged framework.
-- **⚡ Performance-Critical Applications:** Optimized reactivity and DOM diffing ensure smooth performance without bloat.
+- **⚡ Performance-Critical Applications:** 240fps-capable rendering handles everything from simple counters to 10K+ row dashboards (via virtual scrolling).
+- **📦 Bundle-Sensitive Projects:** At ~6KB with zero dependencies, ideal for embedded widgets, micro-frontends, and mobile-first apps.
 - **🔄 Unopinionated & Flexible:** Architect your application your way with a straightforward API and plugin system.
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
-- **🧪 Rapid Prototyping:** Quickly prototype ideas with a minimal and extendable framework.
+- **🧪 Rapid Prototyping:** Start building immediately—no build tooling required.
 - **🔌 Extensible:** Easily add features like routing or state management through plugins.
 - **🚀 Built-in Routing:** Advanced client-side routing with navigation guards and reactive state via Router plugin.
 - **🎯 Advanced Attributes:** Sophisticated attribute handling with ARIA support via Attr plugin.

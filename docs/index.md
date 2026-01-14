@@ -47,7 +47,7 @@ Unlike React, Vue, or Angular, Eleva:
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
 
-Eleva is ideal for developers building lightweight web applications, prototypes, micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
@@ -75,18 +75,17 @@ _*Svelte compiles away, so runtime is minimal but build step is required._
 ### When to Use Eleva
 
 **Choose Eleva when you need:**
-- A lightweight framework without build complexity
-- Quick prototypes or MVPs
-- Micro-frontends or embedded widgets
-- Server-side rendered pages with progressive enhancement
-- Projects where bundle size matters
-- A simpler alternative to React or Vue
+- High performance without complexity (~6KB, 240fps capable, handles 10K+ rows)
+- Zero build tooling—works directly in browsers via CDN
+- Micro-frontends, embedded widgets, or progressive enhancement
+- Data-intensive UIs where bundle size and render speed matter
+- A simpler, lightweight alternative to React or Vue
 
 **Consider other frameworks when you need:**
-- Large enterprise applications (Angular)
-- Extensive ecosystem and community (React)
-- Full-featured SPA with routing built-in (Vue + Vue Router)
-- Maximum performance for complex UIs (Svelte)
+- Extensive ecosystem with mature tooling (React, Vue)
+- Large team with established patterns (Angular)
+- Built-in SSR/SSG frameworks (Next.js, Nuxt, SvelteKit)
+- Compiler-based optimization (Svelte)
 
 ---
 
@@ -276,6 +275,7 @@ setup: ({ signal }) => ({
   - [4. Performance Benchmarks](#4-performance-benchmarks)
   - [5. Getting Started](#5-getting-started)
     - [Installation](#installation)
+    - [Your First Component: Dynamic Greeting](#your-first-component-dynamic-greeting)
     - [Quick Start Tutorial](#quick-start-tutorial)
   - [6. Core Concepts](#6-core-concepts)
     - [TemplateEngine](#templateengine)
@@ -564,22 +564,134 @@ Or include it directly via CDN:
 or
 
 ```html
-<!-- unpkg -->
-<script src="https://unpkg.com/eleva"></script>
+<!-- jsDelivr CDN -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 ```
+
+### Your First Component: Dynamic Greeting
+
+Let's create a simple component that displays a dynamic greeting message. This is the simplest possible Eleva component with reactive state.
+
+**Step 1: Create the HTML file**
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My First Eleva App</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
+
+**Step 2: Create the JavaScript file (main.js)**
+
+```javascript
+import Eleva from "eleva";
+
+// 1. Create the application instance
+const app = new Eleva("GreetingApp");
+
+// 2. Define a component with dynamic state
+app.component("Greeting", {
+  setup({ signal }) {
+    // Create reactive state for the name
+    const name = signal("World");
+
+    // Function to update the greeting
+    function updateName(newName) {
+      name.value = newName;
+    }
+
+    // Return state and functions for use in the template
+    return { name, updateName };
+  },
+
+  template: (ctx) => `
+    <div class="greeting">
+      <h1>Hello, ${ctx.name.value}!</h1>
+      <input
+        type="text"
+        value="${ctx.name.value}"
+        placeholder="Enter your name"
+        @input="(e) => updateName(e.target.value)"
+      />
+      <p>Type in the input to change the greeting message.</p>
+    </div>
+  `,
+
+  style: `
+    .greeting { font-family: system-ui; padding: 20px; }
+    .greeting h1 { color: #333; }
+    .greeting input { padding: 8px; font-size: 16px; }
+  `
+});
+
+// 3. Mount the component to the DOM
+app.mount(document.getElementById("app"), "Greeting");
+```
+
+**What's happening:**
+
+| Step | Code | Purpose |
+|------|------|---------|
+| 1 | `new Eleva("GreetingApp")` | Create an app instance with a name |
+| 2 | `signal("World")` | Create reactive state that triggers re-renders when changed |
+| 3 | `name.value = newName` | Update the signal value (triggers re-render) |
+| 4 | `${ctx.name.value}` | Display the current signal value in the template |
+| 5 | `@input="(e) => ..."` | Bind an event handler to the input |
+| 6 | `app.mount(document.getElementById("app"), "Greeting")` | Render the component into the DOM element |
+
+**Even Simpler: Static Greeting**
+
+If you don't need reactivity, the simplest component is just a template:
+
+```javascript
+import Eleva from "eleva";
+
+const app = new Eleva("MyApp");
+
+// Minimal component - just a template
+app.component("SimpleGreeting", {
+  template: () => `<h1>Hello, Eleva!</h1>`
+});
+
+app.mount(document.getElementById("app"), "SimpleGreeting");
+```
+
+**Dynamic Greeting with Props**
+
+Pass the name as a prop when mounting:
+
+```javascript
+app.component("GreetingWithProps", {
+  setup({ props }) {
+    // Access the name from props (passed during mount)
+    return { name: props.name || "Guest" };
+  },
+  template: (ctx) => `<h1>Hello, ${ctx.name}!</h1>`
+});
+
+// Mount with initial props
+app.mount(document.getElementById("app"), "GreetingWithProps", { name: "Alice" });
+```
+
+---
 
 ### Quick Start Tutorial
 
-Below is a step-by-step tutorial to help you get started. This example demonstrates component registration, state creation, and mounting using a DOM element (not a selector), with asynchronous handling.
+Below is a step-by-step tutorial with a more complete example. This demonstrates component registration, state creation, event handling, and mounting.
 
 ```js
 import Eleva from "eleva";
 
 const app = new Eleva("MyApp");
 
-// Define a simple component
+// Define a component with state and interactivity
 app.component("HelloWorld", {
-  // Optional setup: if omitted, Eleva defaults to an empty state
   setup({ signal }) {
     const count = signal(0);
     return { count };
@@ -593,10 +705,19 @@ app.component("HelloWorld", {
   `,
 });
 
-// Mount the component by providing a DOM element and handling the returned Promise
-app
-  .mount(document.getElementById("app"), "HelloWorld")
-  .then((instance) => console.log("Component mounted:", instance));
+// Mount the component to a DOM element
+app.mount(document.getElementById("app"), "HelloWorld");
+```
+
+**Mounting Options:**
+
+```javascript
+// Mount using DOM element directly
+app.mount(document.getElementById("app"), "HelloWorld");
+
+// Mount with async handling
+app.mount(document.getElementById("app"), "HelloWorld")
+  .then((instance) => console.log("Mounted:", instance));
 ```
 
 For interactive demos, check out the [CodePen Example](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010).
@@ -1469,7 +1590,7 @@ Eleva supports various selector types for defining child components in the `chil
 
 ```js
 // ✅ Best - ID selector for root mounting
-app.mount("#app", "App");
+app.mount(document.getElementById("app"), "App");
 
 // ✅ Good - Component name or class for children
 children: {
@@ -4232,10 +4353,13 @@ store.dispatch("setUser", newUser);  // ✅ Correct
 
 ### Use Cases
 
-- **Small to Medium Projects:** Ideal for lightweight apps and websites where performance matters.
-- **Performance-Critical Applications:** Low bundle size and fast rendering are essential.
-- **Rapid Prototyping:** Quick experimentation and proof-of-concept projects.
+- **Performance-Critical Applications:** From simple counters to data-intensive dashboards with 10K+ rows (via virtual scrolling). Eleva's 240fps-capable rendering ensures the framework is never the bottleneck.
+- **Bundle-Sensitive Projects:** At ~6KB with zero dependencies, Eleva excels where every kilobyte matters—embedded widgets, micro-frontends, mobile-first apps, or slow network environments.
+- **Rapid Prototyping:** Quick experimentation and proof-of-concept projects without build tooling overhead.
 - **Highly Customizable Solutions:** Benefit from Eleva's unopinionated architecture to tailor the framework using plugins and custom logic.
+- **Progressive Enhancement:** Add interactivity to server-rendered pages without heavy framework overhead.
+
+> **Note:** For enterprise applications requiring extensive tooling ecosystems (mature testing libraries, dev tools, large plugin marketplaces), consider React or Vue. Eleva's performance scales well, but its ecosystem is still growing.
 
 ---
 
@@ -4297,13 +4421,13 @@ _A:_ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues)
 ### Comparison Questions
 
 **Q: What is the difference between Eleva and React?**
-_A:_ Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX. Choose Eleva for simpler projects where bundle size matters; choose React for larger applications needing its extensive ecosystem.
+_A:_ Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX. Choose Eleva when bundle size and performance matter without build complexity; choose React when you need its extensive ecosystem and tooling.
 
 **Q: What is the difference between Eleva and Vue?**
-_A:_ Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package. Choose Eleva for simpler projects; choose Vue for larger SPAs needing its mature ecosystem.
+_A:_ Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package. Choose Eleva when bundle size matters and you want zero build setup; choose Vue when you need its mature ecosystem and extensive community support.
 
 **Q: What is the difference between Eleva and Svelte?**
-_A:_ Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva for quick prototypes or when avoiding build complexity; choose Svelte for production apps where you're already using a bundler.
+_A:_ Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity or for CDN-based deployment; choose Svelte when you're already using a bundler and want compiler-based optimization.
 
 **Q: Is Eleva a React alternative?**
 _A:_ Yes, Eleva can serve as a lightweight React alternative for projects that don't need React's full ecosystem. Eleva offers similar component-based architecture and reactivity patterns but with a much smaller footprint (6KB vs 42KB+) and zero dependencies.
@@ -4314,7 +4438,7 @@ _A:_ Yes, Eleva can serve as a lightweight React alternative for projects that d
 _A:_ Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing.
 
 **Q: Does Eleva use Virtual DOM?**
-_A:_ No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach is simpler and often faster for smaller applications.
+_A:_ No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach reduces memory overhead and delivers 240fps-capable performance, handling everything from simple updates to 10K+ row lists (with virtual scrolling).
 
 **Q: Can I use Eleva with TypeScript?**
 _A:_ Absolutely! Eleva includes built-in TypeScript declarations (`.d.ts` files) to help keep your codebase strongly typed. No additional `@types` packages are needed.
@@ -4323,7 +4447,7 @@ _A:_ Absolutely! Eleva includes built-in TypeScript declarations (`.d.ts` files)
 _A:_ No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer.
 
 **Q: Is Eleva suitable for large applications?**
-_A:_ Eleva is designed for small to medium applications. For large enterprise applications with complex state management, routing, and team collaboration needs, you may benefit from the more extensive ecosystems of React, Vue, or Angular. However, Eleva's plugin system (Router, Store) can handle moderately complex SPAs.
+_A:_ Eleva's performance scales well—it handles 10K+ rows efficiently (via virtual scrolling), achieves 240fps rendering, and its Router/Store plugins support complex SPAs. The main consideration for large applications isn't performance but ecosystem maturity: React, Vue, and Angular offer more extensive tooling, testing libraries, and community resources. Choose based on your team's needs for tooling vs. simplicity.
 
 ### Plugin Questions
 
@@ -4742,7 +4866,7 @@ For questions or issues, visit the [GitHub repository](https://github.com/TarekR
       "name": "Does Eleva use Virtual DOM?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach is simpler and often faster for smaller applications."
+        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach reduces memory overhead and delivers 240fps-capable performance."
       }
     },
     {
