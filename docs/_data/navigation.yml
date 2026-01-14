@@ -24,6 +24,8 @@ sidebar:
         url: /getting-started
       - title: "Cheat Sheet"
         url: /cheatsheet
+      - title: "Glossary"
+        url: /glossary
       - title: "Core Concepts"
         url: /core-concepts
 

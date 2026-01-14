@@ -381,4 +381,4 @@ onMount: () => { window.addEventListener("scroll", fn); }
 
 ---
 
-[← Back to Main Docs](./index.md)
+[← Getting Started](./getting-started.md) | [Back to Main Docs](./index.md) | [Glossary →](./glossary.md)

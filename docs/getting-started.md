@@ -353,4 +353,4 @@ Now that you have Eleva installed and have created your first component, explore
 
 ---
 
-[← Home](./index.md) | [Core Concepts →](./core-concepts.md)
+[← Home](./index.md) | [Cheat Sheet →](./cheatsheet.md)

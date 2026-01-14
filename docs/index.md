@@ -122,6 +122,7 @@ app.mount(document.getElementById("app"), "Counter");
 |-------|-------------|
 | **[Getting Started](./getting-started.md)** | Installation, first component, design philosophy |
 | **[Cheat Sheet](./cheatsheet.md)** | Quick reference for syntax, signals, templates, events |
+| **[Glossary](./glossary.md)** | Definitions of key terms and concepts |
 | **[Core Concepts](./core-concepts.md)** | Signals, templates, lifecycle hooks, emitter, renderer |
 | **[Components](./components.md)** | Registration, mounting, children, props, styles |
 | **[Architecture](./architecture.md)** | Data flow diagrams and internal architecture |

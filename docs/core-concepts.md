@@ -612,4 +612,4 @@ setup: ({ signal }) => {
 
 ---
 
-[← Getting Started](./getting-started.md) | [Back to Main Docs](./index.md) | [Components →](./components.md)
+[← Glossary](./glossary.md) | [Back to Main Docs](./index.md) | [Components →](./components.md)
