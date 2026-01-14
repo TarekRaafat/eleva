@@ -219,4 +219,4 @@ This demonstrates Eleva's component composition:
 
 ---
 
-[← Back to Apps](./index.md) | [Previous: Weather Dashboard](./weather-dashboard.md) | [Next: Custom Plugin Guide →](../custom-plugin.md)
+[← Back to Apps](./index.md) | [Previous: Weather Dashboard](./weather-dashboard.md) | [Next: Custom Plugin Guide →](../custom-plugin/index.md)

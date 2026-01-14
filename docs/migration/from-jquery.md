@@ -1,6 +1,6 @@
 ---
 title: Migrate from jQuery
-description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components, $.ajax with fetch + signals, and event handlers with declarative @event syntax.
+description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components and $.ajax with fetch + signals.
 ---
 
 # Migrating from jQuery
@@ -898,4 +898,4 @@ Eleva can run alongside jQuery:
 
 ---
 
-[← From Alpine.js](./from-alpine.md) | [Back to Migration Overview](./index.md)
+[← From Alpine.js](./from-alpine.md) | [Back to Migration Overview](./index.md) | [Back to Main Docs →](../index.md)

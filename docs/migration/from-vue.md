@@ -1,6 +1,6 @@
 ---
 title: Migrate from Vue
-description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to template syntax. Code comparisons included.
+description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to templates.
 ---
 
 # Migrating from Vue

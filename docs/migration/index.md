@@ -1,6 +1,6 @@
 ---
 title: Migration Guides
-description: Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping tables, code comparisons, and best practices for smooth transitions.
+description: Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping and code comparisons.
 ---
 
 # Migration Guides

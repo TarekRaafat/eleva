@@ -431,4 +431,4 @@ app.component("EmptyState", {
 
 ---
 
-[← Back to Patterns](./index.md) | [Previous: Async Data](./async-data.md) | [Next: Lists →](./lists.md)
+[← Back to Patterns](./index.md) | [Previous: Async Data](./async-data/index.md) | [Next: Lists →](./lists/index.md)

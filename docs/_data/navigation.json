@@ -1,0 +1,144 @@
+{
+  "main": [
+    { "title": "Home", "url": "/" },
+    { "title": "Docs", "url": "/getting-started" },
+    { "title": "Examples", "url": "/examples/" },
+    { "title": "Plugins", "url": "/plugins/" },
+    { "title": "GitHub", "url": "https://github.com/TarekRaafat/eleva", "external": true }
+  ],
+  "sidebar": [
+    {
+      "title": "Getting Started",
+      "items": [
+        { "title": "Introduction", "url": "/" },
+        { "title": "Quick Start", "url": "/getting-started" },
+        { "title": "Core Concepts", "url": "/core-concepts" }
+      ]
+    },
+    {
+      "title": "Core",
+      "items": [
+        { "title": "Components", "url": "/components" },
+        { "title": "Architecture", "url": "/architecture" },
+        { "title": "Plugin System", "url": "/plugin-system" },
+        { "title": "Best Practices", "url": "/best-practices" },
+        { "title": "FAQ", "url": "/faq" }
+      ]
+    },
+    {
+      "title": "Plugins",
+      "items": [
+        { "title": "Overview", "url": "/plugins/" },
+        {
+          "title": "Attr Plugin",
+          "url": "/plugins/attr/",
+          "children": [
+            { "title": "Features", "url": "/plugins/attr/features" },
+            { "title": "Patterns", "url": "/plugins/attr/patterns" },
+            { "title": "API Reference", "url": "/plugins/attr/api" }
+          ]
+        },
+        {
+          "title": "Router Plugin",
+          "url": "/plugins/router/",
+          "children": [
+            { "title": "Configuration", "url": "/plugins/router/configuration" },
+            { "title": "Navigation", "url": "/plugins/router/navigation" },
+            { "title": "Guards", "url": "/plugins/router/guards" },
+            { "title": "Lazy Loading", "url": "/plugins/router/lazy-loading" },
+            { "title": "API Reference", "url": "/plugins/router/api" }
+          ]
+        },
+        {
+          "title": "Store Plugin",
+          "url": "/plugins/store/",
+          "children": [
+            { "title": "Core Concepts", "url": "/plugins/store/core-concepts" },
+            { "title": "Configuration", "url": "/plugins/store/configuration" },
+            { "title": "Patterns", "url": "/plugins/store/patterns" },
+            { "title": "Advanced", "url": "/plugins/store/advanced" },
+            { "title": "API Reference", "url": "/plugins/store/api" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Examples",
+      "items": [
+        { "title": "Overview", "url": "/examples/" },
+        {
+          "title": "UI Patterns",
+          "url": "/examples/patterns/",
+          "children": [
+            { "title": "Forms", "url": "/examples/patterns/forms" },
+            { "title": "Conditional Rendering", "url": "/examples/patterns/conditional-rendering" },
+            { "title": "Storage", "url": "/examples/patterns/storage" }
+          ]
+        },
+        {
+          "title": "Best Practices",
+          "url": "/examples/patterns/best-practices/",
+          "children": [
+            { "title": "Selectors & Structure", "url": "/examples/patterns/best-practices/selectors-structure" },
+            { "title": "Setup & Lifecycle", "url": "/examples/patterns/best-practices/setup-lifecycle" },
+            { "title": "Signals & Templates", "url": "/examples/patterns/best-practices/signals-templates" },
+            { "title": "Performance", "url": "/examples/patterns/best-practices/performance" }
+          ]
+        },
+        {
+          "title": "Async Data",
+          "url": "/examples/patterns/async-data/",
+          "children": [
+            { "title": "Caching", "url": "/examples/patterns/async-data/caching" },
+            { "title": "Resilience", "url": "/examples/patterns/async-data/resilience" }
+          ]
+        },
+        {
+          "title": "Lists",
+          "url": "/examples/patterns/lists/",
+          "children": [
+            { "title": "Search & Filter", "url": "/examples/patterns/lists/search-filter" },
+            { "title": "Patterns", "url": "/examples/patterns/lists/patterns" },
+            { "title": "Virtual Scrolling", "url": "/examples/patterns/lists/virtual-scrolling" }
+          ]
+        },
+        {
+          "title": "State Management",
+          "url": "/examples/patterns/state/",
+          "children": [
+            { "title": "Project Structure", "url": "/examples/patterns/state/project-structure" },
+            { "title": "Patterns", "url": "/examples/patterns/state/patterns" },
+            { "title": "Batching", "url": "/examples/patterns/state/batching" }
+          ]
+        },
+        {
+          "title": "Custom Plugins",
+          "url": "/examples/custom-plugin/",
+          "children": [
+            { "title": "Development", "url": "/examples/custom-plugin/development" },
+            { "title": "Best Practices", "url": "/examples/custom-plugin/best-practices" }
+          ]
+        },
+        {
+          "title": "Complete Apps",
+          "url": "/examples/apps/",
+          "children": [
+            { "title": "Task Manager", "url": "/examples/apps/task-manager" },
+            { "title": "Weather Dashboard", "url": "/examples/apps/weather-dashboard" },
+            { "title": "Blog", "url": "/examples/apps/blog" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Migration",
+      "items": [
+        { "title": "Overview", "url": "/migration/" },
+        { "title": "From React", "url": "/migration/from-react" },
+        { "title": "From Vue", "url": "/migration/from-vue" },
+        { "title": "From Alpine.js", "url": "/migration/from-alpine" },
+        { "title": "From jQuery", "url": "/migration/from-jquery" }
+      ]
+    }
+  ]
+}

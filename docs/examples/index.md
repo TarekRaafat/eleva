@@ -1,6 +1,6 @@
 ---
 title: Code Examples - Patterns, Apps & Plugins
-description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, and async data. Complete apps like task managers and blogs. Custom plugin development guide.
+description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, async data. Complete apps and plugin development guide.
 ---
 
 # Code Examples
@@ -13,7 +13,7 @@ This section provides comprehensive, real-world examples that you can copy and a
 |---------|-------------|------|
 | **UI Patterns** | Reusable code patterns for common scenarios | [View Patterns →](./patterns/index.md) |
 | **Complete Apps** | Full mini-applications | [View Apps →](./apps/index.md) |
-| **Custom Plugins** | Plugin development guide | [View Guide →](./custom-plugin.md) |
+| **Custom Plugins** | Plugin development guide | [View Guide →](./custom-plugin/index.md) |
 
 ---
 
@@ -23,11 +23,12 @@ Focused, copy-paste ready solutions for common UI scenarios.
 
 | Pattern | Description | Link |
 |---------|-------------|------|
+| **Best Practices** | Selectors, lifecycle, signals, performance | [View →](./patterns/best-practices/index.md) |
 | **Forms** | Input binding, validation, submission | [View →](./patterns/forms.md) |
-| **Async Data** | API fetching, loading states, pagination | [View →](./patterns/async-data.md) |
+| **Async Data** | API fetching, loading states, pagination | [View →](./patterns/async-data/index.md) |
 | **Conditional Rendering** | Show/hide, tabs, modals, skeletons | [View →](./patterns/conditional-rendering.md) |
-| **Lists** | Search, filter, sort, drag-and-drop | [View →](./patterns/lists.md) |
-| **State Management** | Computed values, undo/redo, wizards | [View →](./patterns/state.md) |
+| **Lists** | Search, filter, sort, drag-and-drop | [View →](./patterns/lists/index.md) |
+| **State Management** | Computed values, undo/redo, wizards | [View →](./patterns/state/index.md) |
 | **Local Storage** | Persistence, session storage, caching | [View →](./patterns/storage.md) |
 
 ---
@@ -49,11 +50,13 @@ Full mini-applications demonstrating multiple features working together.
 ### Patterns
 - [Basic Input Binding](./patterns/forms.md#basic-input-binding)
 - [Form Validation](./patterns/forms.md#complete-form-with-validation)
-- [API Fetching](./patterns/async-data.md#basic-api-fetch)
+- [API Fetching](./patterns/async-data/index.md#basic-api-fetch)
+- [Caching & SWR](./patterns/async-data/caching.md)
 - [Accordion](./patterns/conditional-rendering.md#showhide-toggle)
-- [Searchable List](./patterns/lists.md#searchable--filterable-list)
-- [Drag & Drop](./patterns/lists.md#drag-and-drop-reorderable-list)
-- [Shopping Cart](./patterns/state.md#shopping-cart-with-computed-totals)
+- [Searchable List](./patterns/lists/search-filter.md)
+- [Drag & Drop](./patterns/lists/patterns.md#drag-and-drop-reorderable-list)
+- [Virtual Scrolling](./patterns/lists/virtual-scrolling.md)
+- [Shopping Cart](./patterns/state/patterns.md#shopping-cart-with-computed-totals)
 - [Notes App](./patterns/storage.md#persistent-notes-app)
 
 ### Apps
@@ -62,7 +65,8 @@ Full mini-applications demonstrating multiple features working together.
 - [Simple Blog](./apps/blog.md)
 
 ### Guides
-- [Creating Custom Plugins](./custom-plugin.md#creating-your-first-plugin)
+- [Creating Custom Plugins](./custom-plugin/development.md)
+- [Plugin Best Practices](./custom-plugin/best-practices.md)
 
 ---
 
@@ -73,4 +77,4 @@ Full mini-applications demonstrating multiple features working together.
 
 ---
 
-[← Back to Documentation](../index.md)
+[← Back to Documentation](../index.md) | [UI Patterns →](./patterns/index.md)

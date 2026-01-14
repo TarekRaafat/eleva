@@ -597,4 +597,4 @@ app.component("StorageInfo", {
 
 ---
 
-[← Back to Patterns](./index.md) | [Previous: State Management](./state.md) | [Next: Complete Apps →](../apps/index.md)
+[← Back to Patterns](./index.md) | [Previous: State Management](./state/index.md) | [Next: Complete Apps →](../apps/index.md)

@@ -1,6 +1,6 @@
 ---
 title: Form Handling - Input Binding & Validation
-description: Eleva.js form examples with two-way data binding, real-time validation, error messages, and form submission. Build accessible forms with signal-based reactivity.
+description: Eleva.js form examples with two-way data binding, real-time validation, and form submission. Build accessible reactive forms.
 ---
 
 # Form Handling Examples
@@ -660,4 +660,4 @@ app.component("CountrySelector", {
 
 ---
 
-[← Back to Patterns](./index.md) | [Next: Async Data →](./async-data.md)
+[← Back to Patterns](./index.md) | [Next: Async Data →](./async-data/index.md)

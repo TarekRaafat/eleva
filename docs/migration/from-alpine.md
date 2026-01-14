@@ -1,6 +1,6 @@
 ---
 title: Migrate from Alpine.js
-description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding. Both are lightweight, but Eleva is JS-first.
+description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.
 ---
 
 # Migrating from Alpine.js

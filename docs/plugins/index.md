@@ -1,6 +1,6 @@
 ---
 title: Plugins - Router, Store & Attr
-description: Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed. Complete API reference and examples.
+description: Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed.
 ---
 
 # Eleva Plugins
@@ -48,7 +48,7 @@ import { AnotherPlugin } from "@community/eleva-another";
 app.use(SomePlugin, { /* options */ });
 ```
 
-> **Creating External Plugins?** See the [Custom Plugin Guide](../examples/custom-plugin.md) for the plugin API.
+> **Creating External Plugins?** See the [Custom Plugin Guide](../examples/custom-plugin/index.md) for the plugin API.
 
 ---
 
@@ -74,7 +74,7 @@ app.use(Router, { routes: [...] });
 >   <child :data="items.value"></child>    // ✓ :prop no ctx.
 > `
 > ```
-> See [Template Interpolation](../index.md#template-interpolation) for details.
+> See [Template Syntax](../index.md#template-syntax) for details.
 
 ---
 
@@ -82,9 +82,9 @@ app.use(Router, { routes: [...] });
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attribute handling | ~2.4KB | [View →](./attr.md) |
-| **Router** | Client-side routing & navigation guards | ~15KB | [View →](./router.md) |
-| **Store** | Global state management & persistence | ~6KB | [View →](./store.md) |
+| **Attr** | ARIA, data-*, boolean attribute handling | ~2.4KB | [View →](./attr/) |
+| **Router** | Client-side routing & navigation guards | ~15KB | [View →](./router/) |
+| **Store** | Global state management & persistence | ~6KB | [View →](./store/) |
 
 ---
 
@@ -115,7 +115,7 @@ app.component("Button", {
 - Boolean attribute management
 - Dynamic property detection
 
-[Full Attr Documentation →](./attr.md)
+[Full Attr Documentation →](./attr/)
 
 ---
 
@@ -150,7 +150,7 @@ router.currentRoute.watch(route => console.log(route.path));
 - Lazy component loading
 - Layout system
 
-[Full Router Documentation →](./router.md)
+[Full Router Documentation →](./router/)
 
 ---
 
@@ -186,7 +186,7 @@ app.component("Counter", {
 - Built-in persistence
 - Subscription system
 
-[Full Store Documentation →](./store.md)
+[Full Store Documentation →](./store/)
 
 ---
 
@@ -322,7 +322,7 @@ export const MyPlugin = {
 };
 ```
 
-> **Full Guide:** See the [Custom Plugin Guide](../examples/custom-plugin.md) for detailed instructions, best practices, and examples.
+> **Full Guide:** See the [Custom Plugin Guide](../examples/custom-plugin/index.md) for detailed instructions, best practices, and examples.
 
 ### Plugin Conventions
 
@@ -338,4 +338,4 @@ When creating or using external plugins:
 
 ---
 
-[← Back to Main Docs](../index.md)
+[← Back to Main Docs](../index.md) | [Attr Plugin →](./attr/index.md)
