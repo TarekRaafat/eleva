@@ -1331,9 +1331,10 @@ const safeMessage = () => encodeURIComponent(message.value);
 
 1. **Check installation order**:
    ```javascript
-   const app = new Eleva("App", container);
+   const app = new Eleva("App");
    app.use(Attr);  // Must be before mount()
-   app.component("my-component", MyComponent).mount();
+   app.component("MyComponent", { /* ... */ });
+   app.mount(document.getElementById("app"), "MyComponent");
    ```
 
 2. **Verify plugin is imported**:

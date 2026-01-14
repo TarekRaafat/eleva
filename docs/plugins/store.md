@@ -117,6 +117,10 @@ app.use(Store, {
   - [DevTools Integration](#devtools-integration)
   - [Data Flow](#data-flow)
   - [Best Practices](#best-practices)
+  - [Error Handling](#error-handling)
+  - [TypeScript Support](#typescript-support)
+  - [Organizing Complex State](#organizing-complex-state)
+  - [Debugging Strategies](#debugging-strategies)
   - [Troubleshooting](#troubleshooting)
   - [Batching Tips \& Gotchas](#batching-tips--gotchas)
   - [Migration Guide](#migration-guide)
@@ -1379,48 +1383,48 @@ app.store.replaceState(previousState);
 │                     STORE DATA FLOW                             │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐     │
-│  │  Component  │      │  Component  │      │  Component  │     │
-│  │      A      │      │      B      │      │      C      │     │
-│  └──────┬──────┘      └──────┬──────┘      └──────┬──────┘     │
+│  ┌─────────────┐      ┌─────────────┐      ┌─────────────┐      │
+│  │  Component  │      │  Component  │      │  Component  │      │
+│  │      A      │      │      B      │      │      C      │      │
+│  └──────┬──────┘      └──────┬──────┘      └──────┬──────┘      │
 │         │                    │                    │             │
 │         │   store.dispatch("action", payload)     │             │
-│         └──────────────────┬─────────────────────┘             │
+│         └──────────────────┬──────────────────────┘             │
 │                            │                                    │
 │                            ▼                                    │
-│  ┌─────────────────────────────────────────────────────────┐   │
-│  │                      STORE                               │   │
-│  │  ┌─────────────────────────────────────────────────┐    │   │
-│  │  │                    Actions                       │    │   │
-│  │  │  increment: (state) => state.count.value++      │    │   │
-│  │  │  setUser: (state, user) => state.user.value=user│    │   │
-│  │  └────────────────────┬────────────────────────────┘    │   │
-│  │                       │                                  │   │
-│  │                       ▼                                  │   │
-│  │  ┌─────────────────────────────────────────────────┐    │   │
-│  │  │                    State                         │    │   │
-│  │  │  count: Signal(0)                               │    │   │
-│  │  │  user: Signal(null)                             │    │   │
-│  │  │  auth: { token: Signal(null), ... }             │    │   │
-│  │  └────────────────────┬────────────────────────────┘    │   │
-│  │                       │                                  │   │
-│  │                       │  Signal notifies watchers        │   │
-│  │                       ▼                                  │   │
-│  │  ┌─────────────────────────────────────────────────┐    │   │
-│  │  │              Subscribers                         │    │   │
-│  │  │  - Logging                                      │    │   │
-│  │  │  - Analytics                                    │    │   │
-│  │  │  - Persistence                                  │    │   │
-│  │  └─────────────────────────────────────────────────┘    │   │
-│  └─────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │                      STORE                              │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │                    Actions                      │    │    │
+│  │  │  increment: (state) => state.count.value++      │    │    │
+│  │  │  setUser: (state, user) => state.user.value=user│    │    │
+│  │  └────────────────────┬────────────────────────────┘    │    │
+│  │                       │                                 │    │
+│  │                       ▼                                 │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │                    State                        │    │    │
+│  │  │  count: Signal(0)                               │    │    │
+│  │  │  user: Signal(null)                             │    │    │
+│  │  │  auth: { token: Signal(null), ... }             │    │    │
+│  │  └────────────────────┬────────────────────────────┘    │    │
+│  │                       │                                 │    │
+│  │                       │  Signal notifies watchers       │    │
+│  │                       ▼                                 │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │              Subscribers                        │    │    │
+│  │  │  - Logging                                      │    │    │
+│  │  │  - Analytics                                    │    │    │
+│  │  │  - Persistence                                  │    │    │
+│  │  └─────────────────────────────────────────────────┘    │    │
+│  └─────────────────────────────────────────────────────────┘    │
 │                            │                                    │
-│         ┌──────────────────┼──────────────────┐                │
-│         │                  │                  │                │
-│         ▼                  ▼                  ▼                │
-│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐        │
-│  │  Component  │    │  Component  │    │  Component  │        │
-│  │  A (update) │    │  B (update) │    │  C (update) │        │
-│  └─────────────┘    └─────────────┘    └─────────────┘        │
+│         ┌──────────────────┼──────────────────┐                 │
+│         │                  │                  │                 │
+│         ▼                  ▼                  ▼                 │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐          │
+│  │  Component  │    │  Component  │    │  Component  │          │
+│  │  A (update) │    │  B (update) │    │  C (update) │          │
+│  └─────────────┘    └─────────────┘    └─────────────┘          │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -1540,6 +1544,634 @@ setup({ store }) {
 
   return { completedTodos, totalPrice };
 }
+```
+
+---
+
+## Error Handling
+
+The Store plugin provides multiple levels of error handling for robust applications.
+
+### Global Error Handler
+
+Set up a global error handler to catch all store-related errors:
+
+```javascript
+app.use(Store, {
+  state: { /* ... */ },
+  actions: { /* ... */ },
+  onError: (error, context) => {
+    // context tells you where the error occurred
+    console.error(`[Store Error] ${context}:`, error);
+
+    // Send to error tracking service
+    errorTracker.captureException(error, {
+      tags: { component: "store", context }
+    });
+
+    // Show user-friendly notification
+    if (context.startsWith("action:")) {
+      showToast("An error occurred. Please try again.");
+    }
+  }
+});
+```
+
+### Action-Level Error Handling
+
+Handle errors within individual actions:
+
+```javascript
+app.use(Store, {
+  state: {
+    users: [],
+    error: null,
+    isLoading: false
+  },
+  actions: {
+    fetchUsers: async (state) => {
+      state.isLoading.value = true;
+      state.error.value = null;
+
+      try {
+        const response = await fetch("/api/users");
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        state.users.value = await response.json();
+      } catch (error) {
+        // Store error in state for UI to display
+        state.error.value = error.message;
+
+        // Re-throw if you want global handler to also catch it
+        // throw error;
+      } finally {
+        state.isLoading.value = false;
+      }
+    }
+  }
+});
+```
+
+### Component-Level Error Handling
+
+Handle errors when dispatching actions from components:
+
+```javascript
+app.component("UserList", {
+  setup({ store, signal }) {
+    const localError = signal(null);
+
+    const loadUsers = async () => {
+      try {
+        await store.dispatch("fetchUsers");
+      } catch (error) {
+        // Handle at component level
+        localError.value = "Failed to load users";
+        console.error("Component caught:", error);
+      }
+    };
+
+    return {
+      users: store.state.users,
+      error: store.state.error,
+      localError,
+      isLoading: store.state.isLoading,
+      loadUsers,
+      onMount: loadUsers
+    };
+  },
+  template: (ctx) => `
+    <div>
+      ${ctx.isLoading.value ? `<p>Loading...</p>` :
+        ctx.error.value ? `
+          <div class="error">
+            <p>${ctx.error.value}</p>
+            <button @click="loadUsers">Retry</button>
+          </div>
+        ` : `
+          <ul>
+            ${ctx.users.value.map(u => `<li key="${u.id}">${u.name}</li>`).join("")}
+          </ul>
+        `
+      }
+    </div>
+  `
+});
+```
+
+### Error Handling Patterns
+
+| Pattern | Use Case | Example |
+|---------|----------|---------|
+| **Global onError** | Logging, error tracking | Send all errors to Sentry/LogRocket |
+| **Action try/catch** | Store error in state | Show error message in UI |
+| **Component try/catch** | Local error handling | Retry logic, fallback UI |
+| **Error state** | Display errors to user | `state.error`, `state.auth.error` |
+
+### Retry Pattern
+
+```javascript
+actions: {
+  fetchWithRetry: async (state, { url, maxRetries = 3 }) => {
+    let lastError;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return await response.json();
+      } catch (error) {
+        lastError = error;
+        console.warn(`Attempt ${attempt}/${maxRetries} failed:`, error.message);
+
+        if (attempt < maxRetries) {
+          // Exponential backoff
+          await new Promise(r => setTimeout(r, 1000 * Math.pow(2, attempt - 1)));
+        }
+      }
+    }
+
+    throw lastError;
+  }
+}
+```
+
+---
+
+## TypeScript Support
+
+The Store plugin includes TypeScript type definitions for full type safety.
+
+### Basic Typed Store
+
+```typescript
+import Eleva from "eleva";
+import { Store } from "eleva/plugins";
+
+// Define your state shape
+interface AppState {
+  count: number;
+  user: User | null;
+  theme: "light" | "dark";
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+// Define action payloads
+interface ActionPayloads {
+  increment: void;
+  setCount: number;
+  setUser: User | null;
+  setTheme: "light" | "dark";
+}
+
+const app = new Eleva("TypedApp");
+
+app.use(Store, {
+  state: {
+    count: 0,
+    user: null,
+    theme: "light"
+  } as AppState,
+
+  actions: {
+    increment: (state) => {
+      state.count.value++;
+    },
+    setCount: (state, value: number) => {
+      state.count.value = value;
+    },
+    setUser: (state, user: User | null) => {
+      state.user.value = user;
+    },
+    setTheme: (state, theme: "light" | "dark") => {
+      state.theme.value = theme;
+    }
+  }
+});
+
+// Type-safe dispatch
+app.store.dispatch("setCount", 10);
+app.store.dispatch("setUser", { id: 1, name: "John", email: "john@example.com" });
+```
+
+### Typed Component Setup
+
+```typescript
+interface ComponentContext {
+  store: {
+    state: {
+      count: Signal<number>;
+      user: Signal<User | null>;
+    };
+    dispatch: (action: string, payload?: unknown) => Promise<unknown>;
+  };
+  signal: <T>(value: T) => Signal<T>;
+}
+
+app.component("TypedComponent", {
+  setup({ store, signal }: ComponentContext) {
+    const localValue = signal<string>("");
+
+    const increment = () => store.dispatch("increment");
+    const setUser = (user: User) => store.dispatch("setUser", user);
+
+    return {
+      count: store.state.count,
+      user: store.state.user,
+      localValue,
+      increment,
+      setUser
+    };
+  },
+  template: (ctx) => `
+    <div>
+      <p>Count: ${ctx.count.value}</p>
+      <p>User: ${ctx.user.value?.name || "Guest"}</p>
+    </div>
+  `
+});
+```
+
+### Typed Namespaces
+
+```typescript
+interface AuthState {
+  user: User | null;
+  token: string | null;
+  isAuthenticated: boolean;
+}
+
+interface CartState {
+  items: CartItem[];
+  total: number;
+}
+
+interface CartItem {
+  id: number;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+app.use(Store, {
+  namespaces: {
+    auth: {
+      state: {
+        user: null,
+        token: null,
+        isAuthenticated: false
+      } as AuthState,
+      actions: {
+        login: (state, payload: { user: User; token: string }) => {
+          state.auth.user.value = payload.user;
+          state.auth.token.value = payload.token;
+          state.auth.isAuthenticated.value = true;
+        },
+        logout: (state) => {
+          state.auth.user.value = null;
+          state.auth.token.value = null;
+          state.auth.isAuthenticated.value = false;
+        }
+      }
+    },
+    cart: {
+      state: {
+        items: [],
+        total: 0
+      } as CartState,
+      actions: {
+        addItem: (state, item: CartItem) => {
+          state.cart.items.value = [...state.cart.items.value, item];
+          state.cart.total.value += item.price * item.quantity;
+        }
+      }
+    }
+  }
+});
+```
+
+---
+
+## Organizing Complex State
+
+For large applications, follow these patterns to keep state manageable.
+
+### Feature-Based Namespaces
+
+Organize state by feature/domain rather than by type:
+
+```javascript
+// Good - organized by feature
+app.use(Store, {
+  namespaces: {
+    // User-related state
+    user: {
+      state: {
+        profile: null,
+        preferences: {},
+        notifications: []
+      },
+      actions: {
+        updateProfile: (state, profile) => { /* ... */ },
+        setPreference: (state, { key, value }) => { /* ... */ }
+      }
+    },
+
+    // Product catalog
+    products: {
+      state: {
+        items: [],
+        categories: [],
+        selectedCategory: null,
+        searchQuery: "",
+        isLoading: false
+      },
+      actions: {
+        fetchProducts: async (state) => { /* ... */ },
+        setCategory: (state, category) => { /* ... */ },
+        search: (state, query) => { /* ... */ }
+      }
+    },
+
+    // Shopping cart
+    cart: {
+      state: {
+        items: [],
+        coupon: null,
+        shippingMethod: null
+      },
+      actions: {
+        addItem: (state, item) => { /* ... */ },
+        applyCoupon: (state, code) => { /* ... */ }
+      }
+    },
+
+    // Checkout flow
+    checkout: {
+      state: {
+        step: 1,
+        shippingAddress: null,
+        billingAddress: null,
+        paymentMethod: null,
+        isProcessing: false,
+        error: null
+      },
+      actions: {
+        setStep: (state, step) => { /* ... */ },
+        submitOrder: async (state) => { /* ... */ }
+      }
+    }
+  }
+});
+```
+
+### Async Action Patterns
+
+#### Loading State Pattern
+
+```javascript
+namespaces: {
+  products: {
+    state: {
+      items: [],
+      isLoading: false,
+      error: null,
+      lastFetched: null
+    },
+    actions: {
+      fetchStart: (state) => {
+        state.products.isLoading.value = true;
+        state.products.error.value = null;
+      },
+      fetchSuccess: (state, items) => {
+        state.products.items.value = items;
+        state.products.isLoading.value = false;
+        state.products.lastFetched.value = Date.now();
+      },
+      fetchError: (state, error) => {
+        state.products.error.value = error;
+        state.products.isLoading.value = false;
+      }
+    }
+  }
+}
+
+// Orchestrating action
+app.store.createAction("products.fetch", async (state) => {
+  await app.dispatch("products.fetchStart");
+
+  try {
+    const response = await fetch("/api/products");
+    if (!response.ok) throw new Error("Failed to fetch");
+    const items = await response.json();
+    await app.dispatch("products.fetchSuccess", items);
+  } catch (error) {
+    await app.dispatch("products.fetchError", error.message);
+  }
+});
+```
+
+#### Optimistic Updates Pattern
+
+```javascript
+actions: {
+  toggleTodoOptimistic: async (state, todoId) => {
+    // 1. Save previous state for rollback
+    const previousTodos = [...state.todos.value];
+
+    // 2. Optimistically update UI immediately
+    state.todos.value = state.todos.value.map(todo =>
+      todo.id === todoId ? { ...todo, completed: !todo.completed } : todo
+    );
+
+    try {
+      // 3. Sync with server
+      const response = await fetch(`/api/todos/${todoId}/toggle`, {
+        method: "PATCH"
+      });
+
+      if (!response.ok) throw new Error("Failed to update");
+    } catch (error) {
+      // 4. Rollback on failure
+      state.todos.value = previousTodos;
+      throw error;
+    }
+  }
+}
+```
+
+#### Debounced Action Pattern
+
+```javascript
+// For search/autocomplete
+let searchTimeout = null;
+
+app.store.createAction("search.debounced", (state, query) => {
+  clearTimeout(searchTimeout);
+
+  searchTimeout = setTimeout(async () => {
+    state.search.isLoading.value = true;
+
+    try {
+      const results = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      state.search.results.value = await results.json();
+    } finally {
+      state.search.isLoading.value = false;
+    }
+  }, 300);
+});
+```
+
+#### Polling Pattern
+
+```javascript
+let pollingInterval = null;
+
+app.store.createAction("notifications.startPolling", (state, intervalMs = 30000) => {
+  // Clear existing interval
+  if (pollingInterval) clearInterval(pollingInterval);
+
+  // Fetch immediately
+  app.dispatch("notifications.fetch");
+
+  // Then poll
+  pollingInterval = setInterval(() => {
+    app.dispatch("notifications.fetch");
+  }, intervalMs);
+});
+
+app.store.createAction("notifications.stopPolling", () => {
+  if (pollingInterval) {
+    clearInterval(pollingInterval);
+    pollingInterval = null;
+  }
+});
+```
+
+---
+
+## Debugging Strategies
+
+### Console Logging
+
+Enable detailed logging in development:
+
+```javascript
+if (process.env.NODE_ENV === "development") {
+  // Log all mutations
+  app.store.subscribe((mutation, state) => {
+    console.group(`%c[Store] ${mutation.type}`, "color: #42b883; font-weight: bold");
+    console.log("Payload:", mutation.payload);
+    console.log("Timestamp:", new Date(mutation.timestamp).toISOString());
+    console.log("State after:", JSON.parse(JSON.stringify(app.store.getState())));
+    console.groupEnd();
+  });
+}
+```
+
+### State Snapshots
+
+Take snapshots for debugging:
+
+```javascript
+// Create snapshot utility
+const stateSnapshots = [];
+
+function takeSnapshot(label = "") {
+  stateSnapshots.push({
+    label,
+    timestamp: Date.now(),
+    state: app.store.getState()
+  });
+  console.log(`Snapshot taken: ${label || stateSnapshots.length}`);
+}
+
+function compareSnapshots(index1, index2) {
+  const s1 = stateSnapshots[index1];
+  const s2 = stateSnapshots[index2];
+  console.log("Comparing:", s1.label, "vs", s2.label);
+  console.log("Diff:", JSON.stringify(s1.state) === JSON.stringify(s2.state) ? "No changes" : "Changed");
+}
+
+// Usage
+takeSnapshot("before login");
+await store.dispatch("auth.login", credentials);
+takeSnapshot("after login");
+```
+
+### Action Tracing
+
+Track action call chains:
+
+```javascript
+const actionTrace = [];
+
+app.store.subscribe((mutation) => {
+  actionTrace.push({
+    action: mutation.type,
+    payload: mutation.payload,
+    timestamp: mutation.timestamp,
+    stack: new Error().stack  // Capture call stack
+  });
+
+  // Keep only last 50 actions
+  if (actionTrace.length > 50) actionTrace.shift();
+});
+
+// Debug helper
+window.debugStore = {
+  getTrace: () => actionTrace,
+  getState: () => app.store.getState(),
+  dispatch: (action, payload) => app.store.dispatch(action, payload)
+};
+```
+
+### Time-Travel Debugging
+
+Implement basic time-travel:
+
+```javascript
+const stateHistory = [];
+let historyIndex = -1;
+
+app.store.subscribe((mutation, state) => {
+  // Remove any "future" states if we're not at the end
+  if (historyIndex < stateHistory.length - 1) {
+    stateHistory.splice(historyIndex + 1);
+  }
+
+  stateHistory.push({
+    action: mutation.type,
+    state: JSON.parse(JSON.stringify(app.store.getState()))
+  });
+  historyIndex = stateHistory.length - 1;
+});
+
+function timeTravel(index) {
+  if (index < 0 || index >= stateHistory.length) return;
+  historyIndex = index;
+  app.store.replaceState(stateHistory[index].state);
+  console.log(`Time-traveled to: ${stateHistory[index].action}`);
+}
+
+function undo() {
+  if (historyIndex > 0) timeTravel(historyIndex - 1);
+}
+
+function redo() {
+  if (historyIndex < stateHistory.length - 1) timeTravel(historyIndex + 1);
+}
+
+// Expose for debugging
+window.timeTravel = { undo, redo, history: stateHistory, goto: timeTravel };
 ```
 
 ---
@@ -1716,14 +2348,20 @@ test("counter increments", async () => {
 
 ### 4. Use Immutable Updates for Arrays/Objects
 
-Always create new references for clearer state changes and proper reactivity:
+> **Critical:** Store state uses signals internally, which detect changes via identity comparison (`===`). Array methods like `.push()`, `.pop()`, `.splice()` mutate the existing array without changing its reference, so **the UI won't update**.
+
+Always create new references for proper reactivity:
 
 ```javascript
-// Good - new array reference triggers update
+// ✅ Good - new array reference triggers update
 state.todos.value = [...state.todos.value, newTodo];
+state.todos.value = state.todos.value.filter(t => t.id !== id);
+state.todos.value = state.todos.value.map(t => t.id === id ? {...t, done: true} : t);
 
-// Bad - mutation may not trigger update
-state.todos.value.push(newTodo); // Might not re-render!
+// ❌ Bad - mutation doesn't trigger update (same reference!)
+state.todos.value.push(newTodo);     // Won't re-render!
+state.todos.value.splice(index, 1);  // Won't re-render!
+state.todos.value[0].done = true;    // Won't re-render!
 ```
 
 ### 5. Subscription Callbacks Are Synchronous

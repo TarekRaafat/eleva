@@ -7,6 +7,440 @@ description: Eleva.js state patterns for computed values, shopping carts, undo/r
 
 Learn how to manage computed values, derived state, and complex state patterns in Eleva.
 
+## Table of Contents
+
+- [Basic Counter](#basic-counter)
+- [Multi-File Application Structure](#multi-file-application-structure)
+- [Shopping Cart with Computed Totals](#shopping-cart-with-computed-totals)
+- [Undo/Redo Pattern](#undoredo-pattern)
+- [Multi-Step Wizard](#multi-step-wizard)
+
+---
+
+## Basic Counter
+
+The classic counter example demonstrates Eleva's core concepts: initialization, signals, and event handling.
+
+### Complete Single-File Example
+
+```javascript
+import Eleva from "eleva";
+
+// 1. Initialize the application
+const app = new Eleva("CounterApp");
+
+// 2. Define a counter component
+app.component("Counter", {
+  setup({ signal }) {
+    // Create reactive state
+    const count = signal(0);
+    const min = -10;
+    const max = 10;
+
+    // Increment with boundary check
+    function increment() {
+      if (count.value < max) {
+        count.value++;
+      }
+    }
+
+    // Decrement with boundary check
+    function decrement() {
+      if (count.value > min) {
+        count.value--;
+      }
+    }
+
+    // Reset to initial value
+    function reset() {
+      count.value = 0;
+    }
+
+    // Check if at boundaries
+    function isAtMin() {
+      return count.value <= min;
+    }
+
+    function isAtMax() {
+      return count.value >= max;
+    }
+
+    return {
+      count,
+      increment,
+      decrement,
+      reset,
+      isAtMin,
+      isAtMax,
+      min,
+      max
+    };
+  },
+
+  template: (ctx) => `
+    <div class="counter">
+      <h2>Counter: ${ctx.count.value}</h2>
+
+      <div class="controls">
+        <button
+          @click="decrement"
+          ${ctx.isAtMin() ? "disabled" : ""}
+          title="Minimum: ${ctx.min}"
+        >
+          − Decrement
+        </button>
+
+        <button @click="reset">
+          Reset
+        </button>
+
+        <button
+          @click="increment"
+          ${ctx.isAtMax() ? "disabled" : ""}
+          title="Maximum: ${ctx.max}"
+        >
+          + Increment
+        </button>
+      </div>
+
+      <p class="status">
+        ${ctx.isAtMin() ? "At minimum!" :
+          ctx.isAtMax() ? "At maximum!" :
+          `Range: ${ctx.min} to ${ctx.max}`}
+      </p>
+    </div>
+  `,
+
+  style: `
+    .counter { text-align: center; padding: 20px; }
+    .counter h2 { font-size: 2rem; margin-bottom: 20px; }
+    .controls { display: flex; gap: 10px; justify-content: center; }
+    .controls button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: white;
+    }
+    .controls button:hover:not(:disabled) { background: #f0f0f0; }
+    .controls button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .status { color: #666; margin-top: 15px; }
+  `
+});
+
+// 3. Mount to DOM
+app.mount(document.getElementById("app"), "Counter");
+```
+
+### HTML File
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Counter App</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
+
+### With Error Handling
+
+Add error boundaries and validation for production use:
+
+```javascript
+app.component("SafeCounter", {
+  setup({ signal }) {
+    const count = signal(0);
+    const error = signal(null);
+
+    function safeUpdate(operation) {
+      try {
+        error.value = null;
+        operation();
+      } catch (err) {
+        error.value = `Operation failed: ${err.message}`;
+        console.error("Counter error:", err);
+      }
+    }
+
+    function increment() {
+      safeUpdate(() => {
+        if (typeof count.value !== "number") {
+          throw new Error("Count is not a number");
+        }
+        if (count.value >= Number.MAX_SAFE_INTEGER) {
+          throw new Error("Maximum safe integer reached");
+        }
+        count.value++;
+      });
+    }
+
+    function decrement() {
+      safeUpdate(() => {
+        if (typeof count.value !== "number") {
+          throw new Error("Count is not a number");
+        }
+        if (count.value <= Number.MIN_SAFE_INTEGER) {
+          throw new Error("Minimum safe integer reached");
+        }
+        count.value--;
+      });
+    }
+
+    function setCount(value) {
+      safeUpdate(() => {
+        const num = parseInt(value, 10);
+        if (isNaN(num)) {
+          throw new Error("Invalid number");
+        }
+        count.value = num;
+      });
+    }
+
+    return { count, error, increment, decrement, setCount };
+  },
+
+  template: (ctx) => `
+    <div class="counter">
+      ${ctx.error.value ? `
+        <div class="error-message">
+          ${ctx.error.value}
+          <button @click="() => error.value = null">Dismiss</button>
+        </div>
+      ` : ""}
+
+      <h2>Count: ${ctx.count.value}</h2>
+
+      <div class="controls">
+        <button @click="decrement">−</button>
+        <input
+          type="number"
+          value="${ctx.count.value}"
+          @change="(e) => setCount(e.target.value)"
+        />
+        <button @click="increment">+</button>
+      </div>
+    </div>
+  `,
+
+  style: `
+    .error-message {
+      background: #fee;
+      color: #c00;
+      padding: 10px;
+      margin-bottom: 15px;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  `
+});
+```
+
+---
+
+## Multi-File Application Structure
+
+For larger applications, organize your code into separate files.
+
+### Recommended Project Structure
+
+```
+my-eleva-app/
+├── index.html
+├── src/
+│   ├── main.js              # App initialization and mounting
+│   ├── app.js               # Eleva instance (shared)
+│   ├── components/
+│   │   ├── Counter.js       # Counter component
+│   │   ├── Header.js        # Header component
+│   │   └── index.js         # Export all components
+│   ├── utils/
+│   │   └── helpers.js       # Utility functions
+│   └── styles/
+│       └── main.css         # Global styles
+└── package.json
+```
+
+### Implementation
+
+**src/app.js** - Shared Eleva instance:
+
+```javascript
+import Eleva from "eleva";
+
+// Create and export the app instance
+export const app = new Eleva("MyApp");
+```
+
+**src/components/Counter.js** - Counter component:
+
+```javascript
+import { app } from "../app.js";
+
+// Define the component
+const Counter = {
+  setup({ signal, props }) {
+    const count = signal(props.initialValue || 0);
+    const step = props.step || 1;
+
+    const increment = () => { count.value += step; };
+    const decrement = () => { count.value -= step; };
+    const reset = () => { count.value = props.initialValue || 0; };
+
+    return { count, step, increment, decrement, reset };
+  },
+
+  template: (ctx) => `
+    <div class="counter">
+      <h3>${ctx.props.label || "Counter"}</h3>
+      <p>Value: ${ctx.count.value}</p>
+      <button @click="decrement">-${ctx.step}</button>
+      <button @click="reset">Reset</button>
+      <button @click="increment">+${ctx.step}</button>
+    </div>
+  `
+};
+
+// Register with the app
+app.component("Counter", Counter);
+
+// Export for testing or direct use
+export default Counter;
+```
+
+**src/components/Header.js** - Header component:
+
+```javascript
+import { app } from "../app.js";
+
+const Header = {
+  template: (ctx) => `
+    <header>
+      <h1>${ctx.props.title || "My App"}</h1>
+      <nav>
+        <a href="#/">Home</a>
+        <a href="#/about">About</a>
+      </nav>
+    </header>
+  `
+};
+
+app.component("Header", Header);
+export default Header;
+```
+
+**src/components/index.js** - Export all components:
+
+```javascript
+// Import components to register them with the app
+import "./Counter.js";
+import "./Header.js";
+
+// Re-export for direct imports if needed
+export { default as Counter } from "./Counter.js";
+export { default as Header } from "./Header.js";
+```
+
+**src/main.js** - Application entry point:
+
+```javascript
+import { app } from "./app.js";
+
+// Import all components (registers them with app)
+import "./components/index.js";
+
+// Define the root component
+app.component("App", {
+  template: () => `
+    <div class="app">
+      <Header :title="'Counter Demo'" />
+      <main>
+        <Counter :label="'Main Counter'" :initialValue="0" :step="1" />
+        <Counter :label="'By Fives'" :initialValue="0" :step="5" />
+      </main>
+    </div>
+  `,
+  children: {
+    "Header": "Header",
+    "Counter": "Counter"
+  }
+});
+
+// Mount the application
+async function init() {
+  try {
+    await app.mount(document.getElementById("app"), "App");
+    console.log("App mounted successfully");
+  } catch (error) {
+    console.error("Failed to mount app:", error);
+    document.getElementById("app").innerHTML = `
+      <div class="error">
+        <h1>Application Error</h1>
+        <p>Failed to load the application. Please refresh the page.</p>
+        <pre>${error.message}</pre>
+      </div>
+    `;
+  }
+}
+
+init();
+```
+
+### Testing Components
+
+```javascript
+// src/components/Counter.test.js
+import { describe, it, expect, beforeEach } from "vitest";
+import Eleva from "eleva";
+
+describe("Counter Component", () => {
+  let app;
+  let container;
+
+  beforeEach(() => {
+    app = new Eleva("TestApp");
+    container = document.createElement("div");
+    document.body.appendChild(container);
+  });
+
+  it("should increment count", async () => {
+    app.component("Counter", {
+      setup: ({ signal }) => {
+        const count = signal(0);
+        return {
+          count,
+          increment: () => count.value++
+        };
+      },
+      template: (ctx) => `
+        <div>
+          <span class="count">${ctx.count.value}</span>
+          <button @click="increment">+</button>
+        </div>
+      `
+    });
+
+    await app.mount(container, "Counter");
+
+    expect(container.querySelector(".count").textContent).toBe("0");
+
+    container.querySelector("button").click();
+    await new Promise(r => queueMicrotask(r));
+
+    expect(container.querySelector(".count").textContent).toBe("1");
+  });
+});
+```
+
 ---
 
 ## Shopping Cart with Computed Totals
@@ -703,21 +1137,23 @@ expect(container.innerHTML).toContain("10");
 
 ### 3. Use Immutable Updates for Arrays/Objects
 
-Creating new references ensures proper DOM diffing and clearer state changes:
+> **Important:** Signals detect changes via identity comparison (`===`). Methods like `.push()`, `.pop()`, `.splice()`, and direct property assignment mutate the existing reference without changing it, so **Eleva won't detect the change** and won't re-render.
+
+Creating new references ensures reactivity and proper DOM diffing:
 
 ```javascript
-// ❌ Wrong: Mutating array then reassigning
-items.value.push(newItem);
-items.value = items.value; // Confusing - mutation already happened
+// ❌ Wrong: Mutation doesn't trigger reactivity (same reference!)
+items.value.push(newItem);    // Mutates array, but reference unchanged
+items.value = items.value;    // Still same reference - no update!
 
-// ✅ Correct: Create new array
+// ✅ Correct: Create new array (new reference triggers update)
 items.value = [...items.value, newItem];
 
-// ❌ Wrong: Mutating object then reassigning
-user.value.name = "Alice";
-user.value = user.value; // Confusing - mutation already happened
+// ❌ Wrong: Mutation doesn't trigger reactivity
+user.value.name = "Alice";    // Mutates object, but reference unchanged
+user.value = user.value;      // Still same reference - no update!
 
-// ✅ Correct: Create new object
+// ✅ Correct: Create new object (new reference triggers update)
 user.value = { ...user.value, name: "Alice" };
 ```
 

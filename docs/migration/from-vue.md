@@ -19,12 +19,12 @@ This guide helps Vue developers understand Eleva by mapping familiar Vue concept
 | `reactive(obj)` | `signal(obj)` | Use signal for objects too |
 | `computed(() => val)` | Function in setup | Called during render |
 | `watch(source, fn)` | `signal.watch(fn)` | On signal directly |
-| `onMounted(() => {})` | Code in `setup()` | Runs during setup |
+| `onMounted(() => {})` | `onMount` hook | Returned from setup |
 | `v-if="condition"` | `${cond ? '...' : ''}` | Ternary in template |
 | `v-for="item in items"` | `${items.map(...).join('')}` | Array map |
 | `v-model="value"` | `value` + `@input` | Two-way binding |
 | `@click="handler"` | `@click="handler"` | Same syntax! |
-| `:prop="value"` | `:prop="${value}"` | Nearly identical |
+| `:prop="value"` | `:prop="value"` | Same syntax! |
 | `<slot />` | `children` property | Different approach |
 
 ---
@@ -256,29 +256,38 @@ onBeforeUpdate(() => {
 ```javascript
 const MyComponent = {
   setup({ signal }) {
-    // onMounted equivalent - runs during setup
-    console.log('Component mounted');
-    window.addEventListener('resize', handleResize);
+    function handleResize() {
+      console.log('Window resized');
+    }
 
-    // For cleanup, return onUnmount
     return {
+      // onMounted equivalent - runs after DOM mount
+      onMount: ({ container, context }) => {
+        console.log('Component mounted');
+        window.addEventListener('resize', handleResize);
+      },
+      // onUnmounted equivalent - cleanup
       onUnmount: () => {
         console.log('Component unmounted');
         window.removeEventListener('resize', handleResize);
+      },
+      onBeforeUpdate: ({ container, context }) => {
+        console.log('About to update');
+      },
+      onUpdate: ({ container, context }) => {
+        console.log('Updated');
       }
     };
-
-    // Note: No direct onBeforeUpdate equivalent
-    // Use signal.watch() for reactive updates
   },
   template: () => `<div>Content</div>`
 };
 ```
 
 **Key differences:**
-- `setup()` runs once like `onMounted`
-- Return `onUnmount` function for cleanup
-- No `onBeforeUpdate`; use signal watchers instead
+- `setup()` runs during initialization (before DOM mount)
+- `onMount` runs after component is mounted to DOM (like Vue's `onMounted`)
+- Return lifecycle hooks (`onMount`, `onUnmount`, `onBeforeUpdate`, `onUpdate`) from setup
+- All hooks receive `{ container, context }` with access to DOM and reactive state
 
 ---
 
@@ -343,8 +352,8 @@ app.component("ParentComponent", {
 app.component("ChildComponent", {
   setup({ props }) {
     const save = () => {
-      // Call parent's handler
-      props.onUpdate.value(props.user.value);
+      // Call parent's handler (parent passed values via .value, so props are plain)
+      props.onUpdate(props.user);
     };
 
     return {
@@ -355,8 +364,8 @@ app.component("ChildComponent", {
   },
   template: (ctx) => `
     <div>
-      <h1>${ctx.user.value.name}</h1>
-      ${ctx.isAdmin.value ? '<span>Admin</span>' : ''}
+      <h1>${ctx.user.name}</h1>
+      ${ctx.isAdmin ? '<span>Admin</span>' : ''}
     </div>
   `
 });

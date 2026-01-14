@@ -831,6 +831,17 @@ const Parent = {
 
 **Key benefit:** No need for `JSON.stringify` — objects and arrays are passed directly!
 
+> **Props Support Any JavaScript Type:** Props are evaluated expressions, so you can pass any value:
+> - **Primitives:** `:count="42"`, `:name="'John'"`, `:active="true"`
+> - **Objects:** `:user="user.value"`, `:config="{ theme: 'dark' }"`
+> - **Arrays:** `:items="items.value"`, `:options="[1, 2, 3]"`
+> - **Functions:** `:onClick="handleClick"`, `:onSubmit="(data) => save(data)"`
+> - **Signals:** `:userSignal="user"` (pass the Signal itself, not `.value`)
+>
+> What the child receives depends on what you pass:
+> - `:user="user.value"` → child receives the **evaluated value** (the object)
+> - `:user="user"` → child receives the **Signal itself** (can use `.value` and `.watch()`)
+
 #### Context Reference Rules
 
 > **Simple Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
@@ -1433,8 +1444,10 @@ Eleva supports four main approaches to mounting child components, each with its 
    ```js
    children: {
      ".dynamic-container": {
-       setup: (ctx) => ({ /* dynamic setup */ }),
-       template: (ctx) => `<UserCard :props="${ctx.props}" />`,
+       setup: ({ signal }) => ({
+         userData: signal({ name: "John", role: "admin" })
+       }),
+       template: (ctx) => `<UserCard :user="userData.value" :editable="true" />`,
        children: { "UserCard": "UserCard" }
      }
    }
@@ -2012,11 +2025,12 @@ The Plugin System in Eleva provides a powerful way to extend the framework's fun
 
 ### Plugin Structure
 
-A plugin in Eleva is an object that must have two required properties:
+A plugin in Eleva is an object with three required properties:
 
 ```js
 const MyPlugin = {
-  name: "myPlugin", // Unique identifier for the plugin
+  name: "myPlugin",       // Unique identifier for the plugin
+  version: "1.0.0",       // Semantic version string
   install(eleva, options) {
     // Plugin installation logic
   },
@@ -2024,6 +2038,7 @@ const MyPlugin = {
 ```
 
 - `name`: A unique string identifier for the plugin
+- `version`: A semantic version string (e.g., "1.0.0")
 - `install`: A function that receives the Eleva instance and optional configuration
 
 ### Installing Plugins
@@ -2111,6 +2126,7 @@ Here's a complete example of a custom plugin:
 ```js
 const Logger = {
   name: "logger",
+  version: "1.0.0",
   install(eleva, options = {}) {
     const { level = "info" } = options;
 
@@ -2260,7 +2276,7 @@ const router = app.use(Router, {
 });
 
 // Access reactive router state
-router.currentRoute.subscribe(route => {
+router.currentRoute.watch(route => {
     console.log('Route changed:', route);
 });
 
@@ -2360,15 +2376,16 @@ app.component("TodoManager", {
             state: { items: [], filter: "all" },
             actions: {
                 addTodo: (state, text) => {
-                    state.todos.items.value.push({
+                    state.todos.items.value = [...state.todos.items.value, {
                         id: Date.now(),
                         text,
                         completed: false
-                    });
+                    }];
                 },
                 toggleTodo: (state, id) => {
-                    const todo = state.todos.items.value.find(t => t.id === id);
-                    if (todo) todo.completed = !todo.completed;
+                    state.todos.items.value = state.todos.items.value.map(t =>
+                        t.id === id ? { ...t, completed: !t.completed } : t
+                    );
                 }
             }
         });
@@ -2524,10 +2541,13 @@ The `setup` function initializes your component's state, functions, and lifecycl
 ```js
 // ✅ With setup - component has state and behavior
 app.component("Counter", {
-  setup: ({ signal }) => ({
-    count: signal(0),
-    increment: function() { this.count.value++; }
-  }),
+  setup: ({ signal }) => {
+    const count = signal(0);
+    return {
+      count,
+      increment: () => count.value++
+    };
+  },
   template: (ctx) => `<button @click="increment">${ctx.count.value}</button>`
 });
 
@@ -3215,19 +3235,29 @@ setup: ({ signal }) => {
 
 ##### Object & Array Immutability
 
-**Key Rule:** Always replace objects and arrays, never mutate them.
+> **CRITICAL: Mutations Don't Trigger Reactivity**
+>
+> Eleva's signals use **identity comparison** (`===`) to detect changes. When you mutate an object or array (e.g., `.push()`, `.pop()`, `.splice()`, or direct property assignment), the reference stays the same, so Eleva doesn't know anything changed.
+>
+> **These methods will NOT trigger re-renders:**
+> - `array.value.push(item)` / `.pop()` / `.shift()` / `.unshift()`
+> - `array.value.splice(index, 1)`
+> - `array.value[index] = newValue`
+> - `object.value.property = newValue`
+>
+> **Always create a new reference to trigger updates.**
 
 ```js
 const user = signal({ name: "John", settings: { theme: "dark" } });
 const items = signal([1, 2, 3]);
 
-// ❌ WRONG: Mutation (won't trigger re-render)
+// ❌ WRONG: Mutation (won't trigger re-render - same reference!)
 user.value.name = "Jane";
 user.value.settings.theme = "light";
 items.value.push(4);
 items.value[0] = 10;
 
-// ✅ CORRECT: Replacement (triggers re-render)
+// ✅ CORRECT: Replacement (triggers re-render - new reference!)
 user.value = { ...user.value, name: "Jane" };
 user.value = {
   ...user.value,
@@ -3236,6 +3266,17 @@ user.value = {
 items.value = [...items.value, 4];
 items.value = items.value.map((v, i) => i === 0 ? 10 : v);
 ```
+
+**Quick Reference - Array Operations:**
+
+| Instead of (won't work) | Use this (works) |
+|------------------------|------------------|
+| `arr.value.push(item)` | `arr.value = [...arr.value, item]` |
+| `arr.value.pop()` | `arr.value = arr.value.slice(0, -1)` |
+| `arr.value.shift()` | `arr.value = arr.value.slice(1)` |
+| `arr.value.unshift(item)` | `arr.value = [item, ...arr.value]` |
+| `arr.value.splice(i, 1)` | `arr.value = arr.value.filter((_, idx) => idx !== i)` |
+| `arr.value[i] = x` | `arr.value = arr.value.map((v, idx) => idx === i ? x : v)` |
 
 ##### Computed/Derived Values
 
@@ -3456,40 +3497,78 @@ Understanding when to use async functions in your component properties is crucia
 
 | Property | Async Support | Recommendation |
 |----------|---------------|----------------|
-| `setup` | ✅ Yes | Use sparingly; prefer sync setup + async in `onMount` |
-| `template` | ❌ No | Never use async; must return string synchronously |
-| `style` | ❌ No | Never use async; must return string synchronously |
+| `setup` | ✅ Supported | Valid for auth gates, SDK init, critical config |
+| `template` | ⚠️ Supported | Avoid - causes poor UX (no loading state) |
+| `style` | ❌ Not supported | Never use - styles are not awaited |
 
-##### Setup: Async Considerations
+##### Setup: When Async is the Right Choice
 
-The `setup` function CAN be async, but use it carefully:
+Async setup is **fully supported** and appropriate when the component **cannot function without** certain data or initialization:
 
 ```js
-// ⚠️ Async setup - blocks mounting until resolved
-app.component("AsyncSetup", {
+// ✅ VALID: Authentication gate - don't render until verified
+app.component("ProtectedDashboard", {
   setup: async ({ signal }) => {
-    const data = signal(null);
-
-    // This delays the entire component mount
-    const response = await fetch("/api/config");
-    data.value = await response.json();
-
-    return { data };
+    // Redirect if not authenticated
+    const user = await authService.getCurrentUser();
+    if (!user) {
+      window.location.href = "/login";
+      return {};
+    }
+    return { user: signal(user) };
   },
-  template: (ctx) => `<div>${JSON.stringify(ctx.data.value)}</div>`
+  template: (ctx) => `<h1>Welcome, ${ctx.user.value.name}</h1>`
+});
+
+// ✅ VALID: Dynamic import of heavy dependencies
+app.component("ChartWidget", {
+  setup: async ({ signal, props }) => {
+    // Load charting library only when needed
+    const { Chart } = await import("./heavy-chart-library.js");
+    return { Chart, data: signal(props.initialData) };
+  },
+  template: (ctx) => `<div id="chart"></div>`
+});
+
+// ✅ VALID: Third-party SDK initialization
+app.component("PaymentForm", {
+  setup: async ({ signal }) => {
+    // SDK must be initialized before rendering payment form
+    await StripeSDK.init({ publishableKey: "pk_..." });
+    const elements = await StripeSDK.createElements();
+    return { elements, processing: signal(false) };
+  },
+  template: (ctx) => `<div id="card-element"></div>`
+});
+
+// ✅ VALID: Critical configuration that affects entire component
+app.component("FeatureFlaggedUI", {
+  setup: async ({ signal }) => {
+    const flags = await fetch("/api/feature-flags").then(r => r.json());
+    return { flags, enabled: signal(flags.newDashboard) };
+  },
+  template: (ctx) => ctx.enabled.value
+    ? `<NewDashboard />`
+    : `<LegacyDashboard />`
 });
 ```
 
-**When Async Setup is Acceptable:**
-- Loading critical configuration before render
-- Initializing a required dependency
-- Component cannot render without the data
+**Use async setup when:**
+- Authentication/authorization must complete before render
+- Heavy dependencies should be lazy-loaded
+- Third-party SDKs require async initialization
+- Component literally cannot render without the data
 
-**Problems with Async Setup:**
+**Tradeoffs of async setup:**
 - Blocks mounting - user sees nothing until resolved
-- No loading state shown during fetch
-- Error handling is more complex
-- Harder to show fallback UI
+- No loading state shown during the async operation
+- Error handling is more complex (no error UI to show)
+- Parent components also wait for child async setup
+
+**Use sync setup + onMount when:**
+- You want to show a loading state
+- Data can be fetched after initial render
+- User should see something immediately
 
 ##### Recommended: Sync Setup + Async in onMount
 
@@ -3543,15 +3622,20 @@ app.component("BetterAsync", {
 - Easy retry on error
 - Better user experience
 
-##### Template: Never Async
+##### Template: Avoid Async
 
-The `template` property must return a string synchronously. Eleva calls template on every render cycle - async templates would break reactivity.
+While Eleva technically supports async templates (they are awaited internally), **you should avoid them**. Async templates cause poor user experience:
+
+- **No loading state** - Users see nothing until the async operation completes
+- **Delayed renders** - Every re-render waits for the async operation
+- **No error handling UI** - Failed fetches leave users with a blank screen
+- **No retry capability** - Users can't retry failed operations
 
 ```js
-// ❌ WRONG: Async template (will not work)
-app.component("WrongAsync", {
+// ❌ AVOID: Async template (works but poor UX)
+app.component("PoorUXAsync", {
   template: async (ctx) => {
-    const data = await fetch("/api/data");  // DON'T DO THIS
+    const data = await fetch("/api/data");  // Blocks every render!
     return `<div>${data}</div>`;
   }
 });
@@ -3574,17 +3658,18 @@ app.component("CorrectAsync", {
 });
 ```
 
-##### Style: Never Async
+##### Style: Not Async (Unsupported)
 
-Like template, the `style` property must return CSS synchronously.
+Unlike `setup` and `template`, the `style` property is **not awaited** in the source code. Async styles will result in `[object Promise]` being injected as CSS, which breaks styling completely.
 
 ```js
-// ❌ WRONG: Async style (will not work)
-app.component("WrongStyle", {
+// ❌ BROKEN: Async style is NOT supported
+app.component("BrokenStyle", {
   style: async () => {
-    const theme = await fetch("/api/theme");  // DON'T DO THIS
+    const theme = await fetch("/api/theme");
     return `.btn { color: ${theme.primary}; }`;
   }
+  // Result: <style>[object Promise]</style> - completely broken!
 });
 
 // ✅ CORRECT: Load theme data in setup, use in sync style
@@ -3611,7 +3696,10 @@ app.component("CorrectStyle", {
 | Scenario | Approach |
 |----------|----------|
 | Fetch data on component load | Sync setup + async `onMount` |
-| Load critical config before render | Async setup (rare) |
+| Auth gate / protected routes | Async setup ✅ |
+| Third-party SDK initialization | Async setup ✅ |
+| Lazy-load heavy dependencies | Async setup with `import()` ✅ |
+| Critical config before render | Async setup ✅ |
 | Periodic data refresh | Sync setup + `setInterval` in `onMount` |
 | User-triggered fetch | Sync setup + async function called on event |
 | Load theme/styles dynamically | Signal with default + async `onMount` |

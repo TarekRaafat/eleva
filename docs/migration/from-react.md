@@ -21,7 +21,7 @@ This guide helps React developers understand Eleva by mapping familiar React con
 | `useRef(initial)` | `signal(initial)` | Same API for refs |
 | `useMemo(() => val, [deps])` | Regular function | Computed on access |
 | `useCallback(fn, [deps])` | Regular function | No memoization needed |
-| `<Component prop={val} />` | `:prop="${val}"` | Attribute syntax |
+| `<Component prop={val} />` | `:prop="val"` | Attribute syntax |
 | `{condition && <El />}` | `${cond ? '<El />' : ''}` | Template literal |
 | `onClick={() => fn()}` | `@click="fn"` | Event syntax |
 | JSX | Template strings | No transpilation |
@@ -111,27 +111,24 @@ const UserProfile = {
     const user = signal(null);
     const loading = signal(true);
 
-    // Fetch on userId change
+    // Fetch user data
     const fetchData = async (id) => {
       loading.value = true;
       user.value = await fetchUser(id);
       loading.value = false;
     };
 
-    // Initial fetch
-    fetchData(props.userId.value);
-
-    // Watch for userId changes
-    props.userId.watch((newId) => {
-      fetchData(newId);
-    });
-
-    // Watch user for side effects
+    // Watch user for side effects (like updating document title)
     user.watch((userData) => {
       document.title = userData?.name || 'Loading...';
     });
 
-    return { user, loading };
+    return {
+      user,
+      loading,
+      // Fetch initial data after mount
+      onMount: () => fetchData(props.userId)
+    };
   },
   template: (ctx) => `
     ${ctx.loading.value
@@ -143,9 +140,11 @@ const UserProfile = {
 ```
 
 **Key differences:**
+- Props can be Signals or plain values depending on what the parent passes
+- This example assumes `props.userId` is a plain value (parent passed `:userId="id.value"`)
+- Use `onMount` lifecycle hook to fetch data after component mounts
+- Each signal has its own `.watch()` method for side effects
 - No dependency arrays to manage
-- Each signal has its own `.watch()` method
-- No cleanup function syntax (return unsubscribe if needed)
 - Effects run on signal change, not component re-render
 
 ---
@@ -235,9 +234,11 @@ const ExpensiveList = {
   setup({ props }) {
     // Computed values - just use functions
     // They're called during template execution
+    // Note: props can be Signals or values depending on what parent passes
+    // This example assumes parent passed values (e.g., :items="items.value")
     const filteredItems = () => {
-      return props.items.value.filter(item =>
-        item.name.includes(props.filter.value)
+      return props.items.filter(item =>
+        item.name.includes(props.filter)
       );
     };
 

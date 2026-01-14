@@ -1,6 +1,6 @@
 ---
 title: Best Practices - Performance & Architecture
-description: Eleva.js best practices for selector performance, component structure, lifecycle hooks, signal reactivity, templates, and communication patterns. Write efficient code.
+description: Eleva.js best practices for selector performance, component structure, lifecycle hooks, signal reactivity, templates, communication patterns, and manual render optimization with direct DOM control. Write efficient code.
 ---
 
 # Best Practices
@@ -19,6 +19,12 @@ Comprehensive guide to writing efficient, maintainable Eleva components.
 - [Children & Composition](#children--composition)
 - [Communication Patterns](#communication-patterns)
 - [General Guidelines](#general-guidelines)
+  - [Preventing Unnecessary Re-renders](#preventing-unnecessary-re-renders)
+    - [Gating Signal Updates](#1-gating-signal-updates)
+    - [Template Partitioning](#2-template-partitioning)
+    - [Component Isolation](#3-component-isolation)
+    - [Direct DOM Access](#4-direct-dom-access-bypassing-reactivity)
+    - [Hybrid Approach](#5-hybrid-approach)
 
 ---
 
@@ -41,7 +47,7 @@ Choosing the right selector impacts performance, especially when mounting many c
 
 ```js
 // Best - ID selector for root mounting (uses getElementById)
-app.mount("#app", "App");
+app.mount(document.getElementById("app"), "App");
 
 // Good - Component name for children (direct matching)
 children: {
@@ -136,10 +142,13 @@ app.component("MyComponent", {
 ```js
 // With setup - component has state and behavior
 app.component("Counter", {
-  setup: ({ signal }) => ({
-    count: signal(0),
-    increment: function() { this.count.value++; }
-  }),
+  setup: ({ signal }) => {
+    const count = signal(0);
+    return {
+      count,
+      increment: () => count.value++
+    };
+  },
   template: (ctx) => `<button @click="increment">${ctx.count.value}</button>`
 });
 
@@ -549,18 +558,27 @@ setup: ({ signal }) => {
 
 ### Signal Anti-Patterns
 
+> **Why Mutations Don't Work:** Signals use identity comparison (`===`). When you call `.push()` or modify a property, the reference stays the same, so Eleva sees no change. You must assign a **new** array/object to trigger reactivity.
+
 ```js
-// DON'T: Mutate arrays/objects in place
-items.value.push(newItem);  // Won't trigger update!
+// ❌ DON'T: Mutate arrays/objects in place (same reference = no update!)
+items.value.push(newItem);      // Won't trigger update!
+items.value.splice(0, 1);       // Won't trigger update!
+items.value[0] = "new";         // Won't trigger update!
+user.value.name = "Jane";       // Won't trigger update!
 
-// DO: Replace with new reference
-items.value = [...items.value, newItem];
+// ✅ DO: Replace with new reference (new reference = triggers update!)
+items.value = [...items.value, newItem];           // Add item
+items.value = items.value.slice(1);                // Remove first
+items.value = items.value.filter((_, i) => i !== 0); // Remove by index
+items.value = items.value.map((v, i) => i === 0 ? "new" : v); // Update item
+user.value = { ...user.value, name: "Jane" };      // Update property
 
-// DON'T: Forget .value in template
-`${ctx.count}`  // Wrong
+// ❌ DON'T: Forget .value in template
+`${ctx.count}`  // Wrong - shows [object Signal]
 
-// DO: Always use .value
-`${ctx.count.value}`  // Correct
+// ✅ DO: Always use .value
+`${ctx.count.value}`  // Correct - shows the actual value
 ```
 
 ---
@@ -759,7 +777,7 @@ children: {
 ```js
 // Parent
 template: (ctx) => `
-  <div class="child" :message="Hello" :count="${ctx.count.value}"></div>
+  <div class="child" :message="Hello" :count="count.value"></div>
 `,
 children: { ".child": "Child" }
 
@@ -861,6 +879,324 @@ setup: ({ signal }) => {
 4. **Keep templates simple** - Complex logic in setup, not template
 5. **Minimize DOM queries** - Use efficient selectors
 6. **Use keyed reconciliation for lists** - Add `key` attribute for efficient DOM diffing
+
+### Preventing Unnecessary Re-renders
+
+Eleva gives developers direct control over the DOM through its Signal-based reactivity and Renderer. Unlike frameworks that abstract DOM updates behind a virtual DOM, Eleva's architecture means **you control exactly when and how the DOM updates** by controlling signal changes. This direct control enables precise manual optimization for performance-critical sections.
+
+#### When Manual Optimization Is Needed
+
+Eleva's automatic render batching (`queueMicrotask`) handles most cases efficiently—multiple signal updates in the same synchronous block trigger only one re-render. Manual optimization is needed when:
+
+| Scenario | Problem | Solution |
+|----------|---------|----------|
+| High-frequency events (mousemove, scroll) | Too many signal updates | Throttle/debounce |
+| Noisy data streams (WebSocket, sensors) | Minor changes trigger renders | Conditional updates |
+| Complex component with mixed update rates | Entire template re-renders | Template partitioning or component isolation |
+| Animation or real-time visualization | Need direct DOM manipulation | Direct DOM access |
+
+#### 1. Gating Signal Updates
+
+Since Eleva re-renders when signals change, the most direct optimization is **preventing unnecessary signal updates**:
+
+**Conditional Updates** - Only update when changes are meaningful:
+
+```js
+setup: ({ signal }) => {
+  const data = signal(0);
+
+  const updateIfSignificant = (value) => {
+    // Only trigger re-render if change exceeds threshold
+    if (Math.abs(value - data.value) > 10) {
+      data.value = value;
+    }
+  };
+
+  return { data, updateIfSignificant };
+}
+```
+
+**Debounced Updates** - Delay updates until activity stops (ideal for input fields):
+
+```js
+setup: ({ signal }) => {
+  const searchQuery = signal("");
+  let debounceTimer = null;
+
+  const updateDebounced = (value) => {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      searchQuery.value = value;  // Only updates after 300ms of no input
+    }, 300);
+  };
+
+  return {
+    searchQuery,
+    updateDebounced,
+    onUnmount: () => clearTimeout(debounceTimer)
+  };
+}
+```
+
+**Throttled Updates** - Limit update frequency (ideal for scroll/mousemove):
+
+```js
+setup: ({ signal }) => {
+  const position = signal({ x: 0, y: 0 });
+  let lastUpdate = 0;
+
+  const updateThrottled = (newPos) => {
+    const now = Date.now();
+    if (now - lastUpdate >= 16) {  // Cap at ~60fps
+      position.value = newPos;
+      lastUpdate = now;
+    }
+  };
+
+  return { position, updateThrottled };
+}
+```
+
+#### 2. Template Partitioning
+
+For complex components where only part of the UI needs frequent updates, partition your template using conditional rendering to minimize DOM diffing work:
+
+```js
+app.component("StockDashboard", {
+  setup: ({ signal }) => {
+    const stocks = signal([]);           // Changes frequently
+    const selectedStock = signal(null);  // Changes frequently
+    const userSettings = signal({});     // Rarely changes
+    const staticContent = {              // Never changes - not a signal
+      title: "Stock Dashboard",
+      footer: "Data delayed 15 minutes"
+    };
+
+    return { stocks, selectedStock, userSettings, staticContent };
+  },
+
+  template: (ctx) => `
+    <div class="dashboard">
+      <!-- Static section - no signals, never re-diffed meaningfully -->
+      <header>${ctx.staticContent.title}</header>
+
+      <!-- Dynamic section - minimal, focused updates -->
+      <div class="stock-list">
+        ${ctx.stocks.value.map(stock => `
+          <div key="${stock.symbol}"
+               class="${ctx.selectedStock.value === stock.symbol ? 'selected' : ''}"
+               @click="() => selectedStock.value = '${stock.symbol}'">
+            <span class="symbol">${stock.symbol}</span>
+            <span class="price">${stock.price}</span>
+          </div>
+        `).join("")}
+      </div>
+
+      <footer>${ctx.staticContent.footer}</footer>
+    </div>
+  `
+});
+```
+
+**Key technique:** Use plain objects (not signals) for truly static content. Eleva's renderer will still diff them, but they won't trigger re-renders on their own, and the diffing cost is minimal for unchanged content.
+
+#### 3. Component Isolation
+
+Extract frequently-updating sections into child components. Each component has its own render cycle, so updates in a child don't re-render the parent:
+
+```js
+// Parent - renders only when its own signals change
+app.component("Dashboard", {
+  setup: ({ signal }) => ({
+    userName: signal("John")  // Rarely changes
+  }),
+  template: (ctx) => `
+    <div class="dashboard">
+      <header>Welcome, ${ctx.userName.value}</header>
+      <div id="live-ticker"></div>  <!-- Child handles its own updates -->
+      <div id="chart"></div>        <!-- Another isolated child -->
+      <footer>Static content here</footer>
+    </div>
+  `,
+  children: {
+    "#live-ticker": "LiveTicker",
+    "#chart": "RealTimeChart"
+  }
+});
+
+// Child - re-renders at 60fps without affecting parent
+app.component("LiveTicker", {
+  setup: ({ signal }) => {
+    const prices = signal([]);
+    let intervalId = null;
+
+    return {
+      prices,
+      onMount: () => {
+        intervalId = setInterval(() => {
+          // High-frequency updates isolated to this component
+          prices.value = fetchLatestPrices();
+        }, 16);
+      },
+      onUnmount: () => clearInterval(intervalId)
+    };
+  },
+  template: (ctx) => `
+    <div class="ticker">
+      ${ctx.prices.value.map(p => `<span key="${p.id}">${p.value}</span>`).join("")}
+    </div>
+  `
+});
+```
+
+#### 4. Direct DOM Access (Bypassing Reactivity)
+
+For maximum performance in animation-heavy or real-time visualization sections, bypass Eleva's reactive system entirely and manipulate the DOM directly using the `container` reference in lifecycle hooks:
+
+```js
+app.component("RealTimeChart", {
+  setup: ({ signal }) => {
+    const data = signal([]);
+    let canvas = null;
+    let ctx = null;
+    let animationId = null;
+
+    // Direct DOM manipulation for performance-critical rendering
+    const drawFrame = () => {
+      if (!ctx) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Draw directly - no signals, no re-renders
+      const points = data.value;
+      ctx.beginPath();
+      points.forEach((point, i) => {
+        const x = (i / points.length) * canvas.width;
+        const y = canvas.height - (point / 100) * canvas.height;
+        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      animationId = requestAnimationFrame(drawFrame);
+    };
+
+    // Update data without triggering Eleva re-render
+    const pushDataPoint = (value) => {
+      const current = data.value;
+      current.push(value);
+      if (current.length > 100) current.shift();
+      // Note: mutating in place intentionally to avoid re-render
+      // The canvas drawFrame reads data.value directly
+    };
+
+    return {
+      data,
+      pushDataPoint,
+      onMount: ({ container }) => {
+        // Get direct DOM reference
+        canvas = container.querySelector("canvas");
+        ctx = canvas.getContext("2d");
+        drawFrame();
+      },
+      onUnmount: () => {
+        cancelAnimationFrame(animationId);
+      }
+    };
+  },
+
+  // Template renders once, canvas updates happen via direct DOM access
+  template: () => `
+    <div class="chart-container">
+      <canvas width="800" height="400"></canvas>
+    </div>
+  `
+});
+```
+
+**When to use direct DOM access:**
+- Canvas-based visualizations
+- WebGL rendering
+- High-frequency animations (60+ fps)
+- Real-time data streams where re-rendering is too expensive
+
+#### 5. Hybrid Approach
+
+Combine reactive UI with direct DOM updates for the best of both worlds:
+
+```js
+app.component("PerformanceMonitor", {
+  setup: ({ signal }) => {
+    // Reactive state for UI controls (normal Eleva reactivity)
+    const isRunning = signal(false);
+    const displayMode = signal("chart");
+
+    // Non-reactive state for high-frequency data
+    let metricsBuffer = [];
+    let chartElement = null;
+
+    const updateChart = () => {
+      if (!chartElement) return;
+      // Direct DOM update - bypasses Eleva entirely
+      chartElement.style.setProperty("--value", metricsBuffer[metricsBuffer.length - 1]);
+    };
+
+    const addMetric = (value) => {
+      metricsBuffer.push(value);
+      if (metricsBuffer.length > 1000) metricsBuffer.shift();
+      updateChart();  // Direct DOM, no re-render
+    };
+
+    return {
+      isRunning,
+      displayMode,
+      addMetric,
+      toggleRunning: () => { isRunning.value = !isRunning.value; },
+      onMount: ({ container }) => {
+        chartElement = container.querySelector(".chart-bar");
+      }
+    };
+  },
+
+  template: (ctx) => `
+    <div class="monitor">
+      <!-- Reactive UI - re-renders when signals change -->
+      <div class="controls">
+        <button @click="toggleRunning">
+          ${ctx.isRunning.value ? "Stop" : "Start"}
+        </button>
+        <select @change="(e) => displayMode.value = e.target.value">
+          <option value="chart">Chart</option>
+          <option value="table">Table</option>
+        </select>
+      </div>
+
+      <!-- Performance-critical section - updated via direct DOM access -->
+      <div class="chart-bar" style="--value: 0;"></div>
+    </div>
+  `,
+
+  style: `
+    .chart-bar {
+      width: calc(var(--value) * 1%);
+      height: 20px;
+      background: linear-gradient(90deg, green, red);
+      transition: width 16ms linear;
+    }
+  `
+});
+```
+
+#### Decision Guide
+
+| Update Frequency | Approach | Example |
+|------------------|----------|---------|
+| User-triggered (clicks, form submits) | Normal signals | Form validation, toggles |
+| Moderate (every few seconds) | Normal signals | API polling, notifications |
+| High (multiple per second) | Throttle/debounce signals | Search input, scroll position |
+| Very high (60+ fps) | Direct DOM access | Canvas, animations, real-time charts |
+| Mixed in same component | Hybrid approach | Dashboard with controls + live data |
+
+> **Key insight:** Eleva's direct DOM control means you choose the optimization strategy. Gate signal updates for reactive optimization, or bypass signals entirely for maximum performance. The `container` reference in lifecycle hooks gives you direct DOM access when you need it.
 
 ### Large List Performance
 

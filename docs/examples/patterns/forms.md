@@ -9,6 +9,330 @@ Learn how to handle forms in Eleva, including input binding, validation, and sub
 
 ---
 
+## Quick Start: Input and Button
+
+A complete example showing an input field with a button that displays the current value when clicked.
+
+### Complete Setup
+
+```javascript
+// main.js - Complete application setup
+import Eleva from "eleva";
+
+// 1. Create the application instance
+const app = new Eleva("FormApp");
+
+// 2. Define the component
+app.component("InputDisplay", {
+  setup({ signal }) {
+    // Reactive state for the input value
+    const inputValue = signal("");
+    // Reactive state for the displayed message
+    const displayedValue = signal("");
+
+    // Handle input changes
+    function handleInput(event) {
+      inputValue.value = event.target.value;
+    }
+
+    // Handle button click - display current input value
+    function showValue() {
+      displayedValue.value = inputValue.value;
+    }
+
+    return { inputValue, displayedValue, handleInput, showValue };
+  },
+  template: (ctx) => `
+    <div class="input-display">
+      <input
+        type="text"
+        value="${ctx.inputValue.value}"
+        @input="handleInput"
+        placeholder="Enter some text..."
+      />
+      <button type="button" @click="showValue">Show Value</button>
+
+      ${ctx.displayedValue.value ? `
+        <p class="result">
+          Current value: <strong>${ctx.displayedValue.value}</strong>
+        </p>
+      ` : ''}
+    </div>
+  `,
+  style: `
+    .input-display { display: flex; flex-direction: column; gap: 1rem; max-width: 300px; }
+    .input-display input { padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; }
+    .input-display button { padding: 0.5rem 1rem; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    .input-display button:hover { background: #0056b3; }
+    .result { margin: 0; padding: 0.5rem; background: #f0f0f0; border-radius: 4px; }
+  `
+});
+
+// 3. Mount to the DOM
+app.mount(document.getElementById("app"), "InputDisplay");
+```
+
+```html
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Input Display Example</title>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
+```
+
+**Key Concepts:**
+- **Import Eleva**: `import Eleva from "eleva"` to access the framework
+- **Create app instance**: `new Eleva("AppName")` initializes your application
+- **Define component**: `app.component("Name", { setup, template })` registers a component
+- **Mount**: `app.mount(element, "Name")` renders the component to the DOM
+- **Signals**: `signal("")` creates reactive state that triggers re-renders
+- **Event binding**: `@input` and `@click` bind event handlers
+
+### With Props (Reusable Component)
+
+```javascript
+import Eleva from "eleva";
+
+const app = new Eleva("FormApp");
+
+app.component("InputDisplay", {
+  setup({ signal, props }) {
+    const inputValue = signal(props.initialValue || "");
+    const displayedValue = signal("");
+
+    function handleInput(event) {
+      inputValue.value = event.target.value;
+    }
+
+    function showValue() {
+      displayedValue.value = inputValue.value;
+      // Call optional callback if provided
+      if (props.onDisplay) {
+        props.onDisplay(inputValue.value);
+      }
+    }
+
+    return { inputValue, displayedValue, handleInput, showValue };
+  },
+  template: (ctx) => `
+    <div class="input-display">
+      <input
+        type="text"
+        value="${ctx.inputValue.value}"
+        @input="handleInput"
+        placeholder="${ctx.props.placeholder || 'Enter text...'}"
+      />
+      <button type="button" @click="showValue">
+        ${ctx.props.buttonText || 'Show Value'}
+      </button>
+
+      ${ctx.displayedValue.value ? `
+        <p class="result">Value: <strong>${ctx.displayedValue.value}</strong></p>
+      ` : ''}
+    </div>
+  `
+});
+
+// Mount with props
+app.mount(document.getElementById("app"), "InputDisplay", {
+  initialValue: "Hello",
+  placeholder: "Type here...",
+  buttonText: "Display",
+  onDisplay: (value) => console.log("Displayed:", value)
+});
+```
+
+---
+
+## Edge Cases and Error Handling
+
+When working with input fields and button clicks, handle these common edge cases:
+
+### Preventing Rapid Clicks (Debouncing)
+
+```javascript
+app.component("DebouncedInput", {
+  setup({ signal }) {
+    const inputValue = signal("");
+    const displayedValue = signal("");
+    const isProcessing = signal(false);
+
+    function handleInput(event) {
+      inputValue.value = event.target.value;
+    }
+
+    // Prevent rapid clicks with a simple flag
+    function showValue() {
+      if (isProcessing.value) return; // Ignore if already processing
+
+      isProcessing.value = true;
+      displayedValue.value = inputValue.value;
+
+      // Re-enable after a short delay
+      setTimeout(() => {
+        isProcessing.value = false;
+      }, 300);
+    }
+
+    return { inputValue, displayedValue, isProcessing, handleInput, showValue };
+  },
+  template: (ctx) => `
+    <div class="input-display">
+      <input
+        type="text"
+        value="${ctx.inputValue.value}"
+        @input="handleInput"
+        placeholder="Type something..."
+      />
+      <button
+        type="button"
+        @click="showValue"
+        ${ctx.isProcessing.value ? 'disabled' : ''}
+      >
+        ${ctx.isProcessing.value ? 'Processing...' : 'Show Value'}
+      </button>
+
+      ${ctx.displayedValue.value ? `
+        <p>Value: <strong>${ctx.displayedValue.value}</strong></p>
+      ` : ''}
+    </div>
+  `
+});
+```
+
+### Input Validation
+
+```javascript
+app.component("ValidatedInput", {
+  setup({ signal }) {
+    const inputValue = signal("");
+    const displayedValue = signal("");
+    const error = signal("");
+
+    function handleInput(event) {
+      inputValue.value = event.target.value;
+      // Clear error when user types
+      if (error.value) error.value = "";
+    }
+
+    function showValue() {
+      // Validate before displaying
+      const value = inputValue.value.trim();
+
+      if (!value) {
+        error.value = "Please enter a value";
+        return;
+      }
+
+      if (value.length < 3) {
+        error.value = "Value must be at least 3 characters";
+        return;
+      }
+
+      if (value.length > 50) {
+        error.value = "Value must be 50 characters or less";
+        return;
+      }
+
+      error.value = "";
+      displayedValue.value = value;
+    }
+
+    return { inputValue, displayedValue, error, handleInput, showValue };
+  },
+  template: (ctx) => `
+    <div class="input-display">
+      <input
+        type="text"
+        value="${ctx.inputValue.value}"
+        @input="handleInput"
+        placeholder="Enter 3-50 characters..."
+        class="${ctx.error.value ? 'input-error' : ''}"
+      />
+      ${ctx.error.value ? `
+        <span class="error">${ctx.error.value}</span>
+      ` : ''}
+      <button type="button" @click="showValue">Show Value</button>
+
+      ${ctx.displayedValue.value ? `
+        <p class="result">Value: <strong>${ctx.displayedValue.value}</strong></p>
+      ` : ''}
+    </div>
+  `,
+  style: `
+    .input-error { border-color: #dc3545 !important; }
+    .error { color: #dc3545; font-size: 0.875rem; }
+  `
+});
+```
+
+### Component Lifecycle (Cleanup)
+
+```javascript
+app.component("InputWithCleanup", {
+  setup({ signal }) {
+    const inputValue = signal("");
+    const displayedValue = signal("");
+    let debounceTimer = null;
+
+    function handleInput(event) {
+      inputValue.value = event.target.value;
+    }
+
+    function showValue() {
+      // Clear any pending timer
+      if (debounceTimer) clearTimeout(debounceTimer);
+
+      // Debounce the display update
+      debounceTimer = setTimeout(() => {
+        displayedValue.value = inputValue.value;
+      }, 200);
+    }
+
+    // Cleanup function called when component unmounts
+    function onUnmount() {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+        debounceTimer = null;
+      }
+    }
+
+    return { inputValue, displayedValue, handleInput, showValue, onUnmount };
+  },
+  template: (ctx) => `
+    <div class="input-display">
+      <input
+        type="text"
+        value="${ctx.inputValue.value}"
+        @input="handleInput"
+        placeholder="Type something..."
+      />
+      <button type="button" @click="showValue">Show Value</button>
+
+      ${ctx.displayedValue.value ? `
+        <p>Value: <strong>${ctx.displayedValue.value}</strong></p>
+      ` : ''}
+    </div>
+  `
+});
+```
+
+**Key Points:**
+- **Debouncing**: Prevent multiple rapid clicks by using a processing flag or timer
+- **Validation**: Check input before processing; show clear error messages
+- **Lifecycle**: Use `onUnmount` to clean up timers, event listeners, or subscriptions
+- **User feedback**: Disable buttons during processing; show loading states
+
+---
+
 ## Basic Input Binding
 
 A simple example showing two-way data binding with an input field.

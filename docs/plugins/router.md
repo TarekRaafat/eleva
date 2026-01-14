@@ -15,7 +15,7 @@ The Router Plugin is a powerful, reactive, and fully extensible routing solution
 
 ### Minimal Setup
 ```javascript
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 import { Router } from "eleva/plugins";
 
 const app = new Eleva("myApp");
@@ -101,14 +101,17 @@ await router.stop();
 8. [Lifecycle Hooks](#lifecycle-hooks)
 9. [Layouts](#layouts)
 10. [Lazy Loading](#lazy-loading)
+    - [Code Splitting Strategies](#code-splitting-strategies)
 11. [Reactive State](#reactive-state)
 12. [Events](#events)
 13. [Dynamic Routes](#dynamic-routes)
 14. [Scroll Behavior](#scroll-behavior)
 15. [Error Handling](#error-handling)
+    - [Error Handling Patterns](#error-handling-patterns)
 16. [Router Plugins](#router-plugins)
 17. [TypeScript Support](#typescript-support)
 18. [API Reference](#api-reference)
+    - [Method Details](#method-details)
 19. [Examples](#examples)
 20. [Migration Guide](#migration-from-other-routers)
 21. [Troubleshooting](#troubleshooting)
@@ -154,11 +157,11 @@ bun add eleva
 ### Import
 ```javascript
 // ES Modules (recommended)
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 import { Router } from "eleva/plugins";
 
 // CommonJS
-const { Eleva } = require("eleva");
+const Eleva = require("eleva");
 const { Router } = require("eleva/plugins");
 ```
 
@@ -236,7 +239,7 @@ export const NotFoundPage = {
 
 ```javascript
 // File: main.js
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 import { Router } from "eleva/plugins";
 import { HomePage } from "./components/HomePage.js";
 import { AboutPage } from "./components/AboutPage.js";
@@ -1012,11 +1015,150 @@ router.emitter.on("router:afterResolve", (context) => {
 <div id="loading" style="display: none;">Loading...</div>
 ```
 
+### Code Splitting Strategies
+
+#### Route-Based Splitting (Recommended)
+
+Split code by route for optimal loading:
+
+```javascript
+const router = app.use(Router, {
+  routes: [
+    // Eagerly loaded - small, critical components
+    { path: "/", component: HomePage },
+    { path: "/login", component: LoginPage },
+
+    // Lazy loaded - large feature modules
+    { path: "/dashboard", component: () => import("./pages/Dashboard.js") },
+    { path: "/settings", component: () => import("./pages/Settings.js") },
+    { path: "/admin", component: () => import("./pages/Admin.js") },
+
+    // Catch-all - always eager (should be small)
+    { path: "*", component: NotFoundPage }
+  ]
+});
+```
+
+#### Feature-Based Splitting
+
+Group related routes into feature bundles:
+
+```javascript
+// Feature: Analytics module
+const analyticsRoutes = [
+  {
+    path: "/analytics",
+    component: () => import("./features/analytics/Dashboard.js")
+  },
+  {
+    path: "/analytics/reports",
+    component: () => import("./features/analytics/Reports.js")
+  },
+  {
+    path: "/analytics/settings",
+    component: () => import("./features/analytics/Settings.js")
+  }
+];
+
+// Feature: User management module
+const userRoutes = [
+  {
+    path: "/users",
+    component: () => import("./features/users/List.js")
+  },
+  {
+    path: "/users/:id",
+    component: () => import("./features/users/Profile.js")
+  }
+];
+
+// Register all routes
+const router = app.use(Router, {
+  routes: [
+    { path: "/", component: HomePage },
+    ...analyticsRoutes,
+    ...userRoutes,
+    { path: "*", component: NotFoundPage }
+  ]
+});
+```
+
+#### Preloading Critical Routes
+
+Preload routes that users are likely to visit:
+
+```javascript
+// Preload function
+function preloadRoute(path) {
+  const route = router.getRoute(path);
+  if (route && typeof route.component === "function") {
+    route.component(); // Trigger dynamic import
+  }
+}
+
+// Preload after initial page load
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    preloadRoute("/dashboard");  // Preload dashboard after home loads
+    preloadRoute("/settings");   // Preload settings
+  }, 2000); // Wait 2s to avoid competing with initial load
+});
+
+// Preload on hover
+document.addEventListener("mouseover", (e) => {
+  const link = e.target.closest("a[href^='#/']");
+  if (link) {
+    const path = link.getAttribute("href").slice(1);
+    preloadRoute(path);
+  }
+});
+```
+
+#### Conditional Loading
+
+Load different component versions based on conditions:
+
+```javascript
+{
+  path: "/editor",
+  component: () => {
+    // Load lightweight editor for mobile
+    if (window.innerWidth < 768) {
+      return import("./pages/EditorMobile.js");
+    }
+    // Load full editor for desktop
+    return import("./pages/EditorDesktop.js");
+  }
+}
+```
+
+#### Loading with Named Exports
+
+Handle modules with named exports:
+
+```javascript
+// If module exports: export { Dashboard, DashboardSettings }
+{
+  path: "/dashboard",
+  component: () => import("./pages/Dashboard.js").then(m => m.Dashboard)
+}
+
+// Or using async/await style
+{
+  path: "/settings",
+  component: async () => {
+    const { Settings } = await import("./pages/Settings.js");
+    return Settings;
+  }
+}
+```
+
 ### Advanced Loading Plugin
 
 ```javascript
 const LoadingPlugin = {
   name: "loading-indicator",
+  version: "1.0.0",
 
   install(router, options = {}) {
     const {
@@ -1546,6 +1688,163 @@ router.emitter.on("router:onError", (error, to, from) => {
 });
 ```
 
+### Error Handling Patterns
+
+#### Lazy Loading Errors
+
+Handle failures when dynamically importing components:
+
+```javascript
+// Retry failed imports
+const withRetry = (importFn, retries = 3) => async () => {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await importFn();
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      await new Promise(r => setTimeout(r, 1000 * (i + 1)));
+    }
+  }
+};
+
+const routes = [
+  {
+    path: "/dashboard",
+    component: withRetry(() => import("./pages/Dashboard.js"))
+  }
+];
+
+// Global handler for import failures
+router.onError((error, to, from) => {
+  if (error.message.includes("Failed to fetch") ||
+      error.message.includes("Loading chunk")) {
+    // Network error - show offline page
+    router.navigate("/offline");
+  }
+});
+```
+
+#### Guard Errors
+
+Handle errors thrown in navigation guards:
+
+```javascript
+router.onBeforeEach(async (to, from) => {
+  try {
+    const hasAccess = await checkAccess(to.path);
+    if (!hasAccess) return "/unauthorized";
+  } catch (error) {
+    console.error("Access check failed:", error);
+    // Fail closed - deny access on error
+    return "/error";
+  }
+});
+
+// Global guard error handler
+router.onError((error, to, from) => {
+  if (error.context === "guard") {
+    console.error("Guard threw error:", error);
+    // Navigate to error page
+    router.navigate("/error", { replace: true });
+  }
+});
+```
+
+#### Component Errors
+
+Handle errors in route component setup/template:
+
+```javascript
+// Wrap component setup with error boundary
+const withErrorBoundary = (component) => ({
+  ...component,
+  setup: (ctx) => {
+    try {
+      return component.setup?.(ctx) || {};
+    } catch (error) {
+      console.error("Component setup error:", error);
+      return { error: error.message };
+    }
+  },
+  template: (ctx) => {
+    if (ctx.error) {
+      return `<div class="error">Something went wrong: ${ctx.error}</div>`;
+    }
+    try {
+      return component.template(ctx);
+    } catch (error) {
+      return `<div class="error">Render error: ${error.message}</div>`;
+    }
+  }
+});
+
+// Apply to routes
+const routes = [
+  { path: "/risky", component: withErrorBoundary(RiskyComponent) }
+];
+```
+
+#### Centralized Error Handling
+
+Complete error handling setup:
+
+```javascript
+// Error page component
+const ErrorPage = {
+  setup(ctx) {
+    return {
+      errorInfo: ctx.router.currentQuery.value
+    };
+  },
+  template: (ctx) => `
+    <div class="error-page">
+      <h1>Oops! Something went wrong</h1>
+      <p>${ctx.errorInfo?.message || "An unexpected error occurred"}</p>
+      <button @click="() => router.navigate('/')">Go Home</button>
+      <button @click="() => location.reload()">Refresh Page</button>
+    </div>
+  `
+};
+
+// Setup centralized error handling
+function setupErrorHandling(router) {
+  // Handle navigation errors
+  router.onError((error, to, from) => {
+    console.error("[Router Error]", { error, to, from });
+
+    // Categorize and handle
+    if (error.message.includes("not found")) {
+      router.navigate("/404");
+    } else if (error.message.includes("network") ||
+               error.message.includes("fetch")) {
+      router.navigate("/offline");
+    } else {
+      router.navigate(`/error?message=${encodeURIComponent(error.message)}`);
+    }
+
+    // Report to monitoring
+    errorReporter.capture(error, { to, from });
+  });
+
+  // Handle uncaught promise rejections in navigation
+  window.addEventListener("unhandledrejection", (event) => {
+    if (event.reason?.isRouterError) {
+      event.preventDefault();
+      router.navigate("/error");
+    }
+  });
+}
+```
+
+| Error Type | Detection | Recovery |
+|------------|-----------|----------|
+| Network/Import failure | `error.message.includes("fetch")` | Show offline page, retry |
+| Route not found | `error.message.includes("not found")` | Show 404 page |
+| Guard rejection | Guard returns `false` | Stay on current page |
+| Guard error | Guard throws | Navigate to error page |
+| Component error | Try/catch in setup | Show error boundary |
+| Permission denied | Guard returns redirect | Navigate to login/unauthorized |
+
 ---
 
 ## Router Plugins
@@ -1645,6 +1944,7 @@ router.use(AnalyticsPlugin, {
 ```javascript
 const PageTitlePlugin = {
   name: "page-title",
+  version: "1.0.0",
 
   install(router, options = {}) {
     const {
@@ -1730,6 +2030,7 @@ router.use(AuthPlugin, {
 ```javascript
 const LoadingPlugin = {
   name: "loading",
+  version: "1.0.0",
 
   install(router, options = {}) {
     const {
@@ -1889,9 +2190,10 @@ const authGuard = (to, from) => {
   }
 };
 
-/** @type {import('eleva/plugins').Router} */
+/** @type {import('eleva/plugins').RouterPlugin} */
 const myPlugin = {
   name: "my-plugin",
+  version: "1.0.0",
   install(router) {
     router.onAfterEach((to, from) => {
       console.log(to.path);
@@ -1945,6 +2247,231 @@ const myPlugin = {
 | `removePlugin` | `(name) => boolean` | Remove plugin |
 | `setErrorHandler` | `(handler) => void` | Set error handler |
 
+### Method Details
+
+#### navigate(location, options?)
+
+The primary method for programmatic navigation.
+
+**Signatures:**
+
+```javascript
+// Navigate by path string
+await router.navigate("/users/123");
+
+// Navigate by path with query
+await router.navigate("/search?q=hello&page=1");
+
+// Navigate with route object
+await router.navigate({
+  path: "/users/:id",
+  params: { id: "123" },
+  query: { tab: "settings" },
+  hash: "#section"
+});
+
+// Navigate with replace (no history entry)
+await router.navigate("/dashboard", { replace: true });
+```
+
+**Return Value:** `Promise<boolean>` - `true` if navigation succeeded, `false` if blocked by guard.
+
+**Examples:**
+
+```javascript
+// Basic navigation
+async function goToUser(userId) {
+  const success = await router.navigate(`/users/${userId}`);
+  if (!success) {
+    console.log("Navigation was blocked");
+  }
+}
+
+// With error handling
+async function navigateSafely(path) {
+  try {
+    await router.navigate(path);
+  } catch (error) {
+    console.error("Navigation failed:", error);
+    await router.navigate("/error");
+  }
+}
+
+// Conditional navigation
+async function submitForm() {
+  const saved = await saveData();
+  if (saved) {
+    await router.navigate("/success");
+  } else {
+    await router.navigate("/error", { replace: true });
+  }
+}
+```
+
+#### onBeforeEach(guard)
+
+Register a global navigation guard that runs before every navigation.
+
+**Signature:**
+
+```javascript
+const unsubscribe = router.onBeforeEach((to, from) => {
+  // Return: true | false | "/redirect" | { path, query, ... }
+});
+```
+
+**Examples:**
+
+```javascript
+// Authentication guard
+const unsubAuth = router.onBeforeEach((to, from) => {
+  if (to.meta?.requiresAuth && !isAuthenticated()) {
+    return { path: "/login", query: { redirect: to.path } };
+  }
+  return true;
+});
+
+// Role-based access
+router.onBeforeEach((to, from) => {
+  if (to.meta?.roles) {
+    const userRoles = getCurrentUserRoles();
+    const hasAccess = to.meta.roles.some(role => userRoles.includes(role));
+    if (!hasAccess) return "/unauthorized";
+  }
+});
+
+// Confirm navigation away from unsaved changes
+router.onBeforeEach((to, from) => {
+  if (from?.meta?.hasUnsavedChanges && hasUnsavedChanges()) {
+    const confirmed = confirm("You have unsaved changes. Leave anyway?");
+    if (!confirmed) return false;
+  }
+});
+
+// Async guard (e.g., check permissions from API)
+router.onBeforeEach(async (to, from) => {
+  if (to.meta?.checkPermission) {
+    const allowed = await checkPermissionAPI(to.path);
+    if (!allowed) return "/forbidden";
+  }
+});
+```
+
+#### addRoute(route) / removeRoute(path)
+
+Dynamically manage routes at runtime.
+
+**Examples:**
+
+```javascript
+// Add route dynamically
+const removeRoute = router.addRoute({
+  path: "/admin/new-feature",
+  component: NewFeaturePage,
+  meta: { requiresAuth: true }
+});
+
+// Remove route when feature is disabled
+if (featureDisabled) {
+  router.removeRoute("/admin/new-feature");
+}
+
+// Add routes based on user permissions
+async function setupUserRoutes(permissions) {
+  if (permissions.includes("admin")) {
+    router.addRoute({ path: "/admin", component: AdminPage });
+  }
+  if (permissions.includes("analytics")) {
+    router.addRoute({ path: "/analytics", component: AnalyticsPage });
+  }
+}
+
+// Cleanup routes on logout
+function onLogout() {
+  router.removeRoute("/admin");
+  router.removeRoute("/analytics");
+  router.navigate("/login");
+}
+```
+
+#### start() / stop()
+
+Control the router lifecycle.
+
+**Examples:**
+
+```javascript
+// Basic startup
+const router = app.use(Router, { /* config */ });
+await router.start();
+
+// Conditional startup
+async function initApp() {
+  const router = app.use(Router, { routes });
+
+  // Wait for auth check before starting router
+  const user = await checkAuthStatus();
+  if (user) {
+    setupAuthenticatedRoutes(router, user.permissions);
+  }
+
+  await router.start();
+}
+
+// Cleanup on app destroy
+async function destroyApp() {
+  await router.stop();
+  // Router listeners removed, navigation disabled
+}
+```
+
+#### Reactive Properties Usage
+
+Access current route information reactively:
+
+```javascript
+app.component("Breadcrumbs", {
+  setup({ signal }) {
+    // Access reactive route properties from router
+    return {
+      currentPath: app.router.currentRoute,
+      params: app.router.currentParams,
+      query: app.router.currentQuery
+    };
+  },
+
+  template: (ctx) => `
+    <nav class="breadcrumbs">
+      <span>Path: ${ctx.currentPath.value?.path || "/"}</span>
+      ${ctx.params.value?.id ? `<span>ID: ${ctx.params.value.id}</span>` : ""}
+      ${ctx.query.value?.tab ? `<span>Tab: ${ctx.query.value.tab}</span>` : ""}
+    </nav>
+  `
+});
+
+// Watch for route changes
+router.currentRoute.watch((route) => {
+  // Update page title
+  document.title = route?.meta?.title || "My App";
+
+  // Track page view
+  analytics.pageView(route?.path);
+});
+
+// Conditional rendering based on route
+app.component("Navigation", {
+  setup() {
+    return { route: app.router.currentRoute };
+  },
+  template: (ctx) => `
+    <nav>
+      <a href="#/" class="${ctx.route.value?.path === "/" ? "active" : ""}">Home</a>
+      <a href="#/about" class="${ctx.route.value?.path === "/about" ? "active" : ""}">About</a>
+    </nav>
+  `
+});
+```
+
 ---
 
 ## Examples
@@ -1953,7 +2480,7 @@ const myPlugin = {
 
 ```javascript
 // File: main.js
-import { Eleva } from "eleva";
+import Eleva from "eleva";
 import { Router } from "eleva/plugins";
 
 // ============ Components ============

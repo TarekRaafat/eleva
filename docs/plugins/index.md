@@ -304,6 +304,7 @@ Plugins receive the Eleva instance and can extend it with new functionality:
 // my-plugin.js
 export const MyPlugin = {
   name: "MyPlugin",
+  version: "1.0.0",
   install(eleva, options = {}) {
     // Add properties to the app
     eleva.myFeature = { /* ... */ };
