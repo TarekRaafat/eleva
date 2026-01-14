@@ -22,6 +22,8 @@ sidebar:
         url: /
       - title: "Quick Start"
         url: /getting-started
+      - title: "Cheat Sheet"
+        url: /cheatsheet
       - title: "Core Concepts"
         url: /core-concepts
 
