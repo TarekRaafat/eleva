@@ -278,10 +278,10 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 **Performance Tips:**
 - Use `key` attribute on list items for optimal diffing
 - Eleva excels at initial renders and memory efficiency
-- For large lists (10K+ rows), use [virtual scrolling](./docs/examples/patterns/lists.md#virtual-scrolling) for **5.5x less memory** and **10x faster creation**
-- See [Large List Performance](./docs/examples/patterns/best-practices.md#large-list-performance) for detailed patterns and benchmarks
+- For large lists (10K+ rows), use [virtual scrolling](https://elevajs.com/examples/patterns/lists/virtual-scrolling.html) for **5.5x less memory** and **10x faster creation**
+- See [Large List Performance](https://elevajs.com/examples/patterns/best-practices/performance.html#large-list-performance) for detailed patterns and benchmarks
 
-> 💡 **Run benchmarks yourself:** `bun run test:benchmark` | [Detailed benchmark results](./test/__results__/performance/BENCHMARKS.md)
+> 💡 **Run benchmarks yourself:** `bun run test:benchmark` | [Detailed benchmark results](https://github.com/TarekRaafat/eleva/blob/master/test/__results__/performance/BENCHMARKS.md)
 
 ---
 
@@ -494,7 +494,7 @@ Eleva's plugin system allows you to extend functionality as needed. Plugins are 
 | **Core Plugins** | Bundled with Eleva | `import { X } from "eleva/plugins"` |
 | **External Plugins** | Community/Ecosystem | `npm install eleva-plugin-x` |
 
-> **Core plugins** (Attr, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](docs/plugins/index.md) for details.
+> **Core plugins** (Attr, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](https://elevajs.com/plugins/) for details.
 
 #### Core Framework Only (Lightweight)
 
@@ -536,7 +536,7 @@ app.component("myComponent", {
 });
 ```
 
-📚 **[Full Attr Documentation →](docs/plugins/attr/index.md)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
+📚 **[Full Attr Documentation →](https://elevajs.com/plugins/attr/)** - Comprehensive guide with ARIA attributes, data attributes, boolean handling, and dynamic properties.
 
 #### Router Plugin
 
@@ -597,7 +597,7 @@ router.currentRoute.watch(route => {
 router.navigate('/users/123', { replace: true });
 ```
 
-📚 **[Full Router Documentation →](docs/plugins/router/index.md)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
+📚 **[Full Router Documentation →](https://elevajs.com/plugins/router/)** - Comprehensive guide with 13 events, 7 reactive signals, navigation guards, scroll management, and more.
 
 #### Store Plugin
 
@@ -722,7 +722,7 @@ console.log(app.store.getState()); // Get current state values
 app.dispatch("increment");          // Dispatch actions globally
 ```
 
-📚 **[Full Store Documentation →](docs/plugins/store/index.md)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
+📚 **[Full Store Documentation →](https://elevajs.com/plugins/store/)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
 
 **Bundle Sizes:**
 - Core framework only: ~6KB (minified)
@@ -756,7 +756,7 @@ app.dispatch("increment");          // Dispatch actions globally
 - CJS: `const { Router } = require('eleva/plugins/router')`
 - CJS: `const { Store } = require('eleva/plugins/store')`
 
-For detailed API documentation, please check the [docs](docs/index.md) folder.
+For detailed API documentation, please check the [docs](https://elevajs.com) folder.
 
 ---
 
@@ -854,7 +854,7 @@ Eleva is open-source and available under the [MIT License](LICENSE).
 
 ---
 
-[Documentation](/docs/index.md) |
-[Examples](/examples) |
-[Changelog](/CHANGELOG.md) |
+[Documentation](https://elevajs.com) |
+[Examples](https://elevajs.com/examples) |
+[Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md) |
 [GitHub Discussions](https://github.com/TarekRaafat/eleva/discussions)
