@@ -11,8 +11,8 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "headline": "Eleva.js Migration Guides",
   "description": "Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping and code comparisons.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
-  "datePublished": "2025-01-01",
-  "dateModified": "2025-01-17",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-01-17T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",

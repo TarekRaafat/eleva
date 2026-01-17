@@ -86,8 +86,8 @@ description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x
   "headline": "Migrate from Alpine.js to Eleva.js",
   "description": "Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
-  "datePublished": "2025-01-01",
-  "dateModified": "2025-01-17",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-01-17T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",

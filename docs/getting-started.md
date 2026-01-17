@@ -75,8 +75,8 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "headline": "Getting Started with Eleva.js",
   "description": "Learn how to install and create your first Eleva.js application. Step-by-step tutorial covering installation, components, signals, and basic patterns.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
-  "datePublished": "2025-01-01",
-  "dateModified": "2025-01-17",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-01-17T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
