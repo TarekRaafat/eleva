@@ -5,7 +5,7 @@ description: Complete API reference for Eleva Router including methods, properti
 
 # Router API Reference
 
-Complete reference for the Eleva Router plugin.
+> **Router Plugin** | Complete API reference.
 
 ---
 

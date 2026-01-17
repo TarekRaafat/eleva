@@ -5,7 +5,7 @@ description: Eleva.js patterns for drag-and-drop reordering, CRUD operations, an
 
 # List Patterns
 
-> **Version:** 1.0.1 | Advanced list patterns including drag-drop, CRUD operations, and grouped lists.
+> **List Patterns** | Drag-drop, CRUD operations, and grouped lists.
 
 ---
 

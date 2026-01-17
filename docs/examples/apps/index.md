@@ -5,7 +5,9 @@ description: Full Eleva.js app examples - task manager, weather dashboard, and b
 
 # Complete Application Examples
 
-Full mini-applications demonstrating multiple Eleva features working together.
+> **Version:** 1.0.1 | Full mini-applications demonstrating Eleva features.
+
+---
 
 ## Available Apps
 

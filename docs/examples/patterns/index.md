@@ -5,7 +5,9 @@ description: Reusable Eleva.js patterns for forms, async data, conditional rende
 
 # UI Patterns
 
-Reusable code patterns for common UI scenarios. Each pattern is a focused, copy-paste ready solution.
+> **Version:** 1.0.1 | Reusable code patterns for common UI scenarios.
+
+---
 
 ## Available Patterns
 

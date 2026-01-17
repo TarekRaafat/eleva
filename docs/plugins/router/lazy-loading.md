@@ -5,7 +5,7 @@ description: Reduce bundle size with lazy loading and code splitting strategies 
 
 # Lazy Loading & Code Splitting
 
-Reduce initial bundle size by loading route components on-demand.
+> **Router Plugin** | Reduce bundle size with on-demand component loading.
 
 ---
 

@@ -5,7 +5,9 @@ description: Eleva.js async patterns for API fetching, loading states, paginatio
 
 # Async Data Fetching
 
-Learn how to fetch data from APIs, handle loading states, and implement pagination in Eleva.
+> **Version:** 1.0.1 | API fetching, loading states, and pagination patterns.
+
+---
 
 ## Documentation Pages
 

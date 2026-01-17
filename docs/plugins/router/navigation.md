@@ -5,7 +5,7 @@ description: Programmatic navigation, reactive state, events, dynamic routes, an
 
 # Router Navigation
 
-This guide covers programmatic navigation, reactive state management, events, dynamic routes, and scroll behavior.
+> **Router Plugin** | Programmatic navigation, reactive state, events, and scroll behavior.
 
 ---
 

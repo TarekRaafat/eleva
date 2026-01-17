@@ -5,7 +5,7 @@ description: Configure Eleva Store with persistence, DevTools, and error handlin
 
 # Store Configuration
 
-This guide covers all configuration options for the Store plugin including persistence and DevTools integration.
+> **Store Plugin** | Persistence, DevTools, and configuration options.
 
 ---
 

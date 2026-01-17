@@ -5,7 +5,9 @@ description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lis
 
 # Code Examples
 
-This section provides comprehensive, real-world examples that you can copy and adapt for your projects.
+> **Version:** 1.0.1 | Comprehensive, real-world examples to copy and adapt for your projects.
+
+---
 
 ## Sections
 

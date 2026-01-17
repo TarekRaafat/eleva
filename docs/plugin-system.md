@@ -5,7 +5,7 @@ description: Learn how to create, install, and use plugins in Eleva. Covers plug
 
 # Plugin System
 
-> **Version:** 1.0.1 | This guide covers creating, installing, and using plugins to extend Eleva's functionality.
+> **Core Docs** | Creating, installing, and using plugins.
 
 The Plugin System provides a powerful way to extend the framework's functionality. Plugins can add new features, modify existing behavior, or integrate with external libraries.
 

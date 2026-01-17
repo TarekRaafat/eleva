@@ -5,7 +5,7 @@ description: Learn about state, actions, and namespaces in Eleva Store plugin.
 
 # Store Core Concepts
 
-This guide covers the fundamental concepts of the Store plugin: state, actions, and namespaces.
+> **Store Plugin** | State, actions, and namespaces fundamentals.
 
 ---
 

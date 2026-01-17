@@ -5,7 +5,7 @@ description: Eleva.js conditional rendering patterns. Build accordions, tabs, mo
 
 # Conditional Rendering Examples
 
-Learn how to conditionally show, hide, and switch between components and content in Eleva.
+> **UI Patterns** | Show/hide, tabs, modals, and dynamic content.
 
 ---
 

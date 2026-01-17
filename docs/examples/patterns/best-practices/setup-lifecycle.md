@@ -5,7 +5,7 @@ description: Eleva.js best practices for setup function organization and lifecyc
 
 # Setup & Lifecycle Hooks
 
-> **Version:** 1.0.1 | Setup patterns, lifecycle hooks, and cleanup best practices.
+> **Best Practices** | Setup patterns, lifecycle hooks, and cleanup.
 
 ---
 

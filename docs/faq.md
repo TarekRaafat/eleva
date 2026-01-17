@@ -191,7 +191,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # FAQ & Troubleshooting
 
-> **Version:** 1.0.1 | Answers to common questions, testing guide, and troubleshooting tips.
+> **Core Docs** | Common questions, testing guide, and troubleshooting tips.
 
 ---
 

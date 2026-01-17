@@ -75,7 +75,7 @@ description: React to Eleva.js migration guide. Learn how useState maps to signa
 
 # Migrating from React
 
-> **Version:** 1.0.1 | A comprehensive guide for React developers transitioning to Eleva
+> **Migration Guide** | For React developers transitioning to Eleva.
 
 This guide helps React developers understand Eleva by mapping familiar React concepts to their Eleva equivalents.
 

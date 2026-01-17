@@ -5,7 +5,9 @@ description: Build a weather dashboard with Eleva.js featuring API fetching, cit
 
 # Weather Dashboard
 
-A weather app that fetches data from an API with search history and unit conversion.
+> **Example App** | Weather app with API fetching, search history, and unit conversion.
+
+---
 
 ## Features
 

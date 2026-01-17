@@ -5,7 +5,7 @@ description: Eleva.js best practices for signal reactivity, template syntax, chi
 
 # Signals, Templates & Communication
 
-> **Version:** 1.0.1 | Signal usage, template syntax, and component communication patterns.
+> **Best Practices** | Signal usage, template syntax, and component communication.
 
 ---
 

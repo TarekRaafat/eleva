@@ -5,7 +5,9 @@ description: Eleva.js state management patterns - signals, reactive state, count
 
 # State Management Examples
 
-Learn how to manage reactive state, computed values, and complex state patterns in Eleva.
+> **Version:** 1.0.1 | Reactive state, computed values, and complex state patterns.
+
+---
 
 ## Documentation Pages
 

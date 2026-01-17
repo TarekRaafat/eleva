@@ -5,7 +5,7 @@ description: Dynamic modules, async patterns, complex state organization, and de
 
 # Store Advanced Topics
 
-This guide covers advanced Store patterns including dynamic modules, async action patterns, and complex state organization.
+> **Store Plugin** | Dynamic modules, async patterns, and complex state.
 
 ---
 

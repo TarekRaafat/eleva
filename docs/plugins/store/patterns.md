@@ -5,7 +5,7 @@ description: Real-world examples of using Eleva Store plugin for counter, todo l
 
 # Store Usage Patterns
 
-This guide shows practical examples of using the Store plugin in real-world scenarios.
+> **Store Plugin** | Real-world examples for counters, todos, auth, and carts.
 
 ---
 

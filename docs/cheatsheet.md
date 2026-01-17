@@ -6,7 +6,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva.js Cheat Sheet
 
-> **Quick Reference** | Version 1.0.1 | [Full Docs](./index.md)
+> **Quick Reference** | Syntax, patterns, and common operations. | [Full Docs](./index.md)
 
 > 💡 **Vanilla JavaScript. Elevated.** Plain JS taken to the next level. Signals for reactivity. Components for structure. **If it works in vanilla JS, it works in Eleva.**
 

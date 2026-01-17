@@ -5,7 +5,9 @@ description: Build a blog with Eleva.js featuring posts, comments, and nested co
 
 # Simple Blog
 
-A basic blog with posts and comments demonstrating component composition.
+> **Example App** | Blog with posts and comments demonstrating component composition.
+
+---
 
 ## Features
 

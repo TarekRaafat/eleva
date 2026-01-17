@@ -5,7 +5,7 @@ description: Eleva.js virtual scrolling pattern for rendering 10K+ rows efficien
 
 # Virtual Scrolling
 
-> **Version:** 1.0.1 | Render only visible rows for 10K+ row performance.
+> **List Patterns** | Render only visible rows for 10K+ row performance.
 
 For very large datasets (10,000+ rows), virtual scrolling renders only visible rows instead of all items. This dramatically improves both memory usage and update performance.
 

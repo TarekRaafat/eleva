@@ -5,7 +5,7 @@ description: Control navigation flow with guards and lifecycle hooks in Eleva Ro
 
 # Navigation Guards
 
-Guards are functions that control the navigation flow. They can **allow**, **cancel**, or **redirect** navigation.
+> **Router Plugin** | Control navigation flow with guards and lifecycle hooks.
 
 ---
 

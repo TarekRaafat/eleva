@@ -1,6 +1,8 @@
 # Eleva.js 🚀
 
 > **Version:** `1.0.1` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+>
+> *Also known as: elevajs, eleva*
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 

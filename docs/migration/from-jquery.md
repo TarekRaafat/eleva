@@ -75,7 +75,7 @@ description: jQuery to Eleva.js migration guide. Replace DOM manipulation with r
 
 # Migrating from jQuery
 
-> **Version:** 1.0.1 | A comprehensive guide for jQuery developers transitioning to Eleva
+> **Migration Guide** | For jQuery developers transitioning to Eleva.
 
 This guide helps jQuery developers understand Eleva by mapping familiar jQuery patterns to their Eleva equivalents. Eleva offers modern component architecture while maintaining the simplicity you love about jQuery.
 

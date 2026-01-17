@@ -81,7 +81,7 @@ description: Step-by-step guide to creating Eleva.js plugins - project setup, de
 
 # Plugin Development Guide
 
-> **Version:** 1.0.1 | Creating, developing, and testing Eleva plugins.
+> **Plugin Guide** | Creating, developing, and testing Eleva plugins.
 
 ---
 

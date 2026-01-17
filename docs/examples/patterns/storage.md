@@ -5,7 +5,7 @@ description: Eleva.js localStorage patterns for data persistence, session storag
 
 # Local Storage Examples
 
-Learn how to persist data to localStorage and sessionStorage in Eleva.
+> **UI Patterns** | Persistence, session storage, and caching.
 
 ---
 

@@ -5,7 +5,7 @@ description: Complete API reference for Eleva Store plugin including methods, Ty
 
 # Store API Reference
 
-Complete reference for the Eleva Store plugin.
+> **Store Plugin** | Complete API reference.
 
 ---
 

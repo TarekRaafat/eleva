@@ -1,6 +1,6 @@
 ---
 title: Best DX for Building the Best UX
-description: Eleva.js - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
+description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -9,7 +9,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Eleva.js",
-  "alternateName": ["Eleva", "ElevaJS"],
+  "alternateName": ["Eleva", "ElevaJS", "eleva.js", "elevajs"],
   "description": "Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
   "url": "https://elevajs.com",
   "applicationCategory": "DeveloperApplication",
@@ -63,7 +63,14 @@ image: /imgs/eleva.js%20Full%20Logo.png
     "name": "JavaScript"
   },
   "runtimePlatform": "Web Browser",
-  "keywords": "javascript framework, frontend framework, react alternative, vue alternative, angular alternative, signal-based reactivity, lightweight framework, vanilla javascript elevated, eleva"
+  "keywords": "eleva, elevajs, eleva.js, javascript framework, frontend framework, react alternative, vue alternative, angular alternative, signal-based reactivity, lightweight framework, vanilla javascript elevated, minimalist js framework",
+  "sameAs": [
+    "https://www.npmjs.com/package/eleva",
+    "https://github.com/TarekRaafat/eleva",
+    "https://www.jsdelivr.com/package/npm/eleva",
+    "https://unpkg.com/eleva",
+    "https://bundlephobia.com/package/eleva"
+  ]
 }
 </script>
 
@@ -193,6 +200,26 @@ image: /imgs/eleva.js%20Full%20Logo.png
       }
     }
   ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Eleva.js",
+  "alternateName": ["Eleva", "ElevaJS", "eleva.js", "elevajs"],
+  "url": "https://elevajs.com",
+  "description": "Eleva.js official documentation - A minimalist, lightweight JavaScript framework for building modern web applications.",
+  "inLanguage": "en",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": "https://www.google.com/search?q=site:elevajs.com+{search_term_string}"
+    },
+    "query-input": "required name=search_term_string"
+  }
 }
 </script>
 

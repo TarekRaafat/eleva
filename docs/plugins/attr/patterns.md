@@ -5,7 +5,7 @@ description: Real-world examples of using Eleva Attr plugin for accessible forms
 
 # Attr Plugin Usage Patterns
 
-This guide shows practical examples of using the Attr plugin for building accessible, interactive components.
+> **Attr Plugin** | Practical examples for accessible, interactive components.
 
 ---
 

@@ -5,7 +5,9 @@ description: Build a task manager with Eleva.js featuring filtering, sorting, pr
 
 # Task Manager
 
-A complete task manager with filtering, sorting, priorities, due dates, and localStorage persistence.
+> **Example App** | Task manager with filtering, sorting, and persistence.
+
+---
 
 ## Features
 

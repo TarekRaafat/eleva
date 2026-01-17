@@ -5,7 +5,7 @@ description: ARIA attributes, data attributes, boolean attributes, and dynamic p
 
 # Attr Plugin Features
 
-This guide covers the four core features of the Attr plugin: ARIA attributes, data attributes, boolean attributes, and dynamic properties.
+> **Attr Plugin** | ARIA, data, boolean attributes, and dynamic properties.
 
 ---
 

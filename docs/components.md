@@ -5,7 +5,7 @@ description: Complete guide to Eleva components - registration, mounting, childr
 
 # Components Guide
 
-> **Version:** 1.0.1 | This guide covers component registration, mounting, children, props, styles, and communication patterns.
+> **Core Docs** | Component registration, mounting, children, props, and communication.
 
 ---
 

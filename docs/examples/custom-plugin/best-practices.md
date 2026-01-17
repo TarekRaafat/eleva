@@ -5,7 +5,7 @@ description: Eleva.js plugin best practices - error handling, edge cases, TypeSc
 
 # Plugin Best Practices
 
-> **Version:** 1.0.1 | Best practices for building robust, maintainable Eleva plugins.
+> **Plugin Guide** | Best practices for robust, maintainable plugins.
 
 ---
 

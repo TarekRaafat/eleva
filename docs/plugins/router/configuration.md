@@ -5,7 +5,7 @@ description: Configure Eleva Router with routing modes, route definitions, layou
 
 # Router Configuration
 
-This guide covers how to configure the Eleva Router, including routing modes, route definitions, and layouts.
+> **Router Plugin** | Routing modes, route definitions, and layout configuration.
 
 ---
 

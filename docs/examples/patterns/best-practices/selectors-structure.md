@@ -5,7 +5,7 @@ description: Eleva.js best practices for selector performance and component prop
 
 # Selectors & Component Structure
 
-> **Version:** 1.0.1 | Selector performance tips and component organization.
+> **Best Practices** | Selector performance and component organization.
 
 ---
 

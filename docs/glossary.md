@@ -6,7 +6,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Glossary
 
-> **Quick Reference** | Definitions of key terms used throughout Eleva.js documentation.
+> **Quick Reference** | Definitions of key Eleva.js terms and concepts.
 
 ---
 

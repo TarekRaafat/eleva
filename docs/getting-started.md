@@ -70,7 +70,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Getting Started
 
-> **New to Eleva?** This guide will walk you through installation, creating your first component, and understanding the fundamentals.
+> **Getting Started** | Installation, first component, and fundamentals.
 
 ---
 

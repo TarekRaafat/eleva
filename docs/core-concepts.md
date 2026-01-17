@@ -6,7 +6,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Core Concepts
 
-> **Version:** 1.0.1 | This guide covers the fundamental building blocks of Eleva applications.
+> **Core Docs** | Signals, templates, emitters, renderer, and lifecycle hooks.
 
 ---
 

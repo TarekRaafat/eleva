@@ -81,7 +81,7 @@ description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to s
 
 # Migrating from Vue
 
-> **Version:** 1.0.1 | A comprehensive guide for Vue developers transitioning to Eleva
+> **Migration Guide** | For Vue developers transitioning to Eleva.
 
 This guide helps Vue developers understand Eleva by mapping familiar Vue concepts to their Eleva equivalents.
 
