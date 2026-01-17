@@ -784,7 +784,7 @@ const LoginPage = {
   setup(ctx) {
     const login = () => {
       localStorage.setItem("token", "demo-token");
-      const redirect = ctx.router.currentQuery.value.redirect || "/dashboard";
+      const redirect = ctx.router.query.redirect || "/dashboard";
       ctx.router.navigate(redirect);
     };
     return { login };
@@ -801,7 +801,7 @@ const NotFoundPage = {
   template: (ctx) => `
     <div class="not-found">
       <h1>404 - Not Found</h1>
-      <p>Path: ${ctx.router.currentParams.value.pathMatch}</p>
+      <p>Path: ${ctx.router.params.pathMatch}</p>
       <a href="#/">Go Home</a>
     </div>
   `

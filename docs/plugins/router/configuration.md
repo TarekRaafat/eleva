@@ -171,10 +171,10 @@ RewriteRule . /index.html [L]
 // Params: { category: "tech", slug: "hello-world" }
 
 // Parameters are always strings
-// Access in component:
+// Access in component (params is a getter, no .value needed):
 setup(ctx) {
-  const id = ctx.router.currentParams.value.id;  // "123" (string)
-  const numId = parseInt(id, 10);                // 123 (number)
+  const id = ctx.router.params.id;     // "123" (string)
+  const numId = parseInt(id, 10);      // 123 (number)
 }
 ```
 

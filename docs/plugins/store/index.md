@@ -82,17 +82,25 @@ app.mount(document.getElementById("app"), "Counter");
 
 ### API Cheatsheet
 
+**In components (`ctx.store`):**
+
 | Method | Description | Returns |
 |--------|-------------|---------|
 | `store.state` | Reactive state object | `Object<Signal>` |
 | `store.dispatch(action, payload?)` | Execute an action | `Promise<any>` |
 | `store.subscribe(callback)` | Listen to all mutations | `() => void` |
 | `store.getState()` | Get non-reactive snapshot | `Object` |
-| `store.replaceState(newState)` | Replace entire state | `void` |
 | `store.registerModule(name, module)` | Add dynamic module | `void` |
 | `store.unregisterModule(name)` | Remove module | `void` |
 | `store.createState(key, value)` | Add state property | `Signal` |
 | `store.createAction(name, fn)` | Add action | `void` |
+| `store.signal` | Signal constructor | `Function` |
+
+**App instance only (`app.store`):**
+
+| Method | Description | Returns |
+|--------|-------------|---------|
+| `store.replaceState(newState)` | Replace entire state | `void` |
 | `store.clearPersistedState()` | Clear storage | `void` |
 
 ### State Access Patterns

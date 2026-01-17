@@ -47,27 +47,38 @@ app.updateElementAttributes(oldElement, newElement);
 #### Example Usage
 
 ```javascript
-const MyComponent = {
-  setup({ signal }) {
-    const app = this;  // Reference to app instance
+// Store reference to app for use in components
+const app = new Eleva("MyApp");
+app.use(Attr);
 
+// Option 1: Use outside of component setup
+const syncElements = () => {
+  const oldEl = document.getElementById('source');
+  const newEl = document.getElementById('target');
+  app.updateElementAttributes(oldEl, newEl);
+};
+
+// Option 2: Pass app reference via closure
+app.component("MyComponent", {
+  setup({ signal }) {
     const updateAttributes = () => {
       const oldEl = document.getElementById('source');
       const newEl = document.getElementById('target');
+      // app is available via closure (defined in outer scope)
       app.updateElementAttributes(oldEl, newEl);
     };
 
     return { updateAttributes };
   },
-  template() {
-    return `
-      <div id="source" data-value="123" aria-label="Source">Source</div>
-      <div id="target">Target</div>
-      <button @click="updateAttributes">Sync Attributes</button>
-    `;
-  }
-};
+  template: () => `
+    <div id="source" data-value="123" aria-label="Source">Source</div>
+    <div id="target">Target</div>
+    <button @click="updateAttributes">Sync Attributes</button>
+  `
+});
 ```
+
+> **Note:** The `setup` function receives `ctx` (context) as its argument, not `this`. To access the app instance inside setup, use a closure reference to `app` defined in the outer scope.
 
 ---
 

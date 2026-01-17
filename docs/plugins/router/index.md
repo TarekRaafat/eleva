@@ -249,8 +249,8 @@ export const AboutPage = {
 // File: components/UserPage.js
 export const UserPage = {
   setup(ctx) {
-    // Access route params from context
-    const userId = ctx.router.currentParams.value.id;
+    // Access route params from context (params is a getter, no .value needed)
+    const userId = ctx.router.params.id;
     return { userId };
   },
   template: (ctx) => `

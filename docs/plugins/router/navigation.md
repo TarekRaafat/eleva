@@ -181,14 +181,14 @@ unsubQuery();
 
 ### In Components
 
-When navigating between `/users/123` and `/users/456`, the component may **not** unmount/remount—only the params change. Use `.watch()` to react to param changes:
+When navigating between `/users/123` and `/users/456`, the component may **not** unmount/remount—only the params change. Use `.watch()` on `ctx.router.current` to react to route changes:
 
 ```javascript
 const UserPage = {
   setup(ctx) {
     const user = ctx.signal(null);
     const loading = ctx.signal(true);
-    let unwatchParams = null;
+    let unwatchRoute = null;
 
     // Function to load user data
     const loadUser = (id) => {
@@ -205,21 +205,23 @@ const UserPage = {
       loading,
 
       onMount: () => {
-        // Load initial data
-        loadUser(ctx.router.currentParams.value.id);
+        // Load initial data using params getter
+        loadUser(ctx.router.params.id);
 
-        // Watch for param changes (same component, different user)
-        unwatchParams = ctx.router.currentParams.watch((params) => {
-          if (params.id && params.id !== user.value?.id) {
-            loadUser(params.id);
+        // Watch for route changes (same component, different user)
+        // ctx.router.current is the currentRoute signal
+        unwatchRoute = ctx.router.current.watch((route) => {
+          const newId = route?.params?.id;
+          if (newId && newId !== user.value?.id) {
+            loadUser(newId);
           }
         });
       },
 
       onUnmount: () => {
         // Always clean up watchers!
-        if (unwatchParams) {
-          unwatchParams();
+        if (unwatchRoute) {
+          unwatchRoute();
         }
       }
     };
@@ -237,6 +239,18 @@ const UserPage = {
 ```
 
 > **Important:** When using `.watch()` on router state, always store the unsubscribe function and call it in `onUnmount` to prevent memory leaks.
+
+**Component Router API Reference:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `ctx.router.current` | Signal | The currentRoute signal (watchable) |
+| `ctx.router.previous` | Signal | The previousRoute signal (watchable) |
+| `ctx.router.params` | getter | Current route params (direct value) |
+| `ctx.router.query` | getter | Current query params (direct value) |
+| `ctx.router.path` | getter | Current path (direct value) |
+| `ctx.router.meta` | getter | Current route meta (direct value) |
+| `ctx.router.navigate()` | method | Navigate to a route |
 
 ---
 

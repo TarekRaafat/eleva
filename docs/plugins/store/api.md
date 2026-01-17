@@ -17,6 +17,32 @@ description: Complete API reference for Eleva Store plugin including methods, Ty
 
 ---
 
+## Store Access
+
+The Store plugin provides two access points with slightly different APIs:
+
+**`ctx.store` (in component setup):**
+Available methods: `state`, `dispatch`, `subscribe`, `getState`, `registerModule`, `unregisterModule`, `createState`, `createAction`, `signal`
+
+**`app.store` (full Store instance):**
+All of the above, plus: `replaceState`, `clearPersistedState`
+
+```javascript
+// In component setup - use ctx.store
+app.component("MyComponent", {
+  setup({ store }) {
+    // store.dispatch, store.state, etc. are available
+    // store.replaceState is NOT available here
+  }
+});
+
+// Outside components - use app.store
+app.store.replaceState(newState);  // Only available on app.store
+app.store.clearPersistedState();   // Only available on app.store
+```
+
+---
+
 ## Methods
 
 ### dispatch(actionName, payload?)
