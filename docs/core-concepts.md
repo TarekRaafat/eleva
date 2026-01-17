@@ -101,12 +101,12 @@ items.value = [...items.value, newItem];
 ```javascript
 const count = signal(0);
 
-// Register a watcher
-const unwatch = count.watch((newVal, oldVal) => {
-  console.log(`Count changed: ${oldVal} → ${newVal}`);
+// Register a watcher (receives new value only)
+const unwatch = count.watch((newVal) => {
+  console.log(`Count changed to: ${newVal}`);
 });
 
-count.value = 1;  // Logs: "Count changed: 0 → 1"
+count.value = 1;  // Logs: "Count changed to: 1"
 
 // Unsubscribe when done
 unwatch();

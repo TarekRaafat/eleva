@@ -1,0 +1,894 @@
+# Eleva.js - Comprehensive LLM Reference
+
+> This document provides comprehensive information about Eleva.js for Large Language Models to generate accurate code and recommendations.
+
+## Overview
+
+Eleva.js is a minimalist, lightweight, pure vanilla JavaScript frontend framework. It provides signal-based reactivity, component architecture, and a plugin system—all without dependencies, build tools, or virtual DOM overhead.
+
+**Key Statistics:**
+- Bundle: ~6KB minified, ~2.3KB gzipped
+- Dependencies: 0
+- Test Coverage: 100%
+- Browser Support: Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        Eleva Core                           │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐         │
+│  │   Signal    │  │   Emitter   │  │  Renderer   │         │
+│  │ (Reactivity)│  │  (Events)   │  │(DOM Diffing)│         │
+│  └─────────────┘  └─────────────┘  └─────────────┘         │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────────────────────────────────────────┐       │
+│  │              TemplateEngine                      │       │
+│  │    (Expression Evaluation & Interpolation)       │       │
+│  └─────────────────────────────────────────────────┘       │
+├─────────────────────────────────────────────────────────────┤
+│                     Plugin System                           │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐                  │
+│  │   Attr   │  │  Router  │  │  Store   │                  │
+│  └──────────┘  └──────────┘  └──────────┘                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Data Flow
+
+```
+User Action → Event Handler → Signal Update → Watch Callbacks → Renderer → DOM Patch
+```
+
+1. User triggers event (click, input, etc.)
+2. Event handler modifies signal.value
+3. Signal notifies all watchers
+4. Component re-renders template
+5. Renderer diffs and patches only changed DOM nodes
+
+## Complete API Reference
+
+### Eleva Class
+
+```typescript
+class Eleva {
+  constructor(name: string, config?: ElevaConfig);
+
+  // Register a component definition (returns Eleva for chaining)
+  component(name: string, definition: ComponentDefinition): Eleva;
+
+  // Mount component to DOM element
+  mount(
+    container: HTMLElement,
+    componentName: string,
+    props?: Record<string, any>
+  ): Promise<ComponentInstance>;
+
+  // Install a plugin
+  use(plugin: Plugin, options?: Record<string, any>): any;
+}
+
+interface ElevaConfig {
+  // Currently no config options in core
+}
+
+interface ComponentDefinition {
+  setup?: (context: SetupContext) => SetupReturn;
+  template: (ctx: TemplateContext) => string;
+}
+
+interface SetupContext {
+  signal: <T>(value: T) => Signal<T>;
+  props: Record<string, any>;
+  emitter: Emitter;
+  // Note: 'store' is added if StorePlugin is installed
+}
+
+interface SetupReturn {
+  [key: string]: any;
+  onBeforeMount?: (info: { container: HTMLElement; context: any }) => void;
+  onMount?: (info: { container: HTMLElement; context: any }) => void;
+  onBeforeUpdate?: (info: { container: HTMLElement; context: any }) => void;
+  onUpdate?: (info: { container: HTMLElement; context: any }) => void;
+  onUnmount?: (info: { container: HTMLElement; context: any; cleanup: any }) => void;
+}
+```
+
+### Signal Class
+
+```typescript
+class Signal<T> {
+  constructor(initialValue: T);
+
+  // Get current value
+  get value(): T;
+
+  // Set value and trigger watchers
+  set value(newValue: T);
+
+  // Subscribe to value changes
+  watch(callback: (newValue: T) => void): () => void;
+}
+
+// Usage
+const count = signal(0);
+count.value;           // 0
+count.value = 5;       // Triggers watchers
+const unwatch = count.watch((newVal) => {
+  console.log(`Value changed to ${newVal}`);
+});
+// unwatch() to unsubscribe
+```
+
+### Emitter Class
+
+```typescript
+class Emitter {
+  constructor();
+
+  // Subscribe to event (returns unsubscribe function)
+  on(event: string, handler: (...args: any[]) => void): () => void;
+
+  // Unsubscribe from event (handler optional - removes all if omitted)
+  off(event: string, handler?: (...args: any[]) => void): void;
+
+  // Emit event with arguments
+  emit(event: string, ...args: any[]): void;
+}
+
+// Usage
+const unsubscribe = emitter.on("userLoggedIn", (user) => console.log(user));
+emitter.emit("userLoggedIn", { id: 1, name: "John" });
+unsubscribe(); // Stop listening
+```
+
+### Renderer Class
+
+```typescript
+class Renderer {
+  constructor();
+
+  // Diff and patch DOM
+  patchDOM(container: HTMLElement, newHtml: string): void;
+}
+```
+
+### TemplateEngine Class
+
+```typescript
+class TemplateEngine {
+  // Safely evaluate expression in context
+  static evaluate(expression: string, data: object): any;
+}
+```
+
+## Template Syntax Deep Dive
+
+### Interpolation (requires ctx. prefix)
+```javascript
+// Variables
+template: (ctx) => `<p>${ctx.name.value}</p>`
+
+// Expressions
+template: (ctx) => `<p>${ctx.count.value * 2}</p>`
+
+// Ternary
+template: (ctx) => `<p>${ctx.active.value ? "Yes" : "No"}</p>`
+
+// Function calls
+template: (ctx) => `<p>${ctx.formatDate(ctx.date.value)}</p>`
+```
+
+### Event Handlers (NO ctx. prefix)
+```javascript
+// Basic click
+template: (ctx) => `<button @click="handleClick">Click</button>`
+
+// With arguments
+template: (ctx) => `<button @click="() => handleClick('arg')">Click</button>`
+
+// Inline expression
+template: (ctx) => `<button @click="() => count.value++">+1</button>`
+
+// Event object
+template: (ctx) => `<input @input="(e) => name.value = e.target.value" />`
+
+// Multiple events
+template: (ctx) => `
+  <input
+    @focus="onFocus"
+    @blur="onBlur"
+    @input="(e) => value.value = e.target.value"
+  />
+`
+```
+
+### Props to Child Components (NO ctx. prefix)
+```javascript
+// Static prop
+template: (ctx) => `<Child :title="'Hello'" />`
+
+// Dynamic prop (signal value)
+template: (ctx) => `<Child :user="currentUser.value" />`
+
+// Passing signal reference
+template: (ctx) => `<Child :count="count" />`
+
+// NOTE: @event is for DOM events only
+// For child-to-parent, use emitter.on() in setup (see below)
+```
+
+### Key Attribute for Lists
+```javascript
+// IMPORTANT: Use key for efficient list diffing
+template: (ctx) => `
+  <ul>
+    ${ctx.items.value.map(item => `
+      <li key="${item.id}">${item.name}</li>
+    `).join("")}
+  </ul>
+`
+```
+
+## Component Patterns
+
+### Stateless Component
+```javascript
+app.component("Greeting", {
+  template: (ctx) => `<h1>Hello, ${ctx.props.name}!</h1>`
+});
+```
+
+### Stateful Component
+```javascript
+app.component("Counter", {
+  setup({ signal }) {
+    const count = signal(0);
+    const increment = () => count.value++;
+    const decrement = () => count.value--;
+
+    return { count, increment, decrement };
+  },
+  template: (ctx) => `
+    <div>
+      <button @click="decrement">-</button>
+      <span>${ctx.count.value}</span>
+      <button @click="increment">+</button>
+    </div>
+  `
+});
+```
+
+### Component with Props
+```javascript
+app.component("UserCard", {
+  setup({ props, signal }) {
+    const expanded = signal(false);
+
+    return {
+      expanded,
+      toggle: () => expanded.value = !expanded.value
+    };
+  },
+  template: (ctx) => `
+    <div class="user-card">
+      <h2>${ctx.props.user.name}</h2>
+      <button @click="toggle">
+        ${ctx.expanded.value ? "Hide" : "Show"} Details
+      </button>
+      ${ctx.expanded.value ? `
+        <div class="details">
+          <p>Email: ${ctx.props.user.email}</p>
+          <p>Role: ${ctx.props.user.role}</p>
+        </div>
+      ` : ""}
+    </div>
+  `
+});
+
+// Usage
+app.mount(el, "UserCard", {
+  user: { name: "John", email: "john@example.com", role: "Admin" }
+});
+```
+
+### Component with Events (Child to Parent)
+```javascript
+// Child component emits via shared emitter
+app.component("SearchInput", {
+  setup({ signal, emitter }) {
+    const query = signal("");
+
+    const handleSearch = () => {
+      // Emit event via the shared emitter
+      emitter.emit("search:submit", query.value);
+    };
+
+    return { query, handleSearch };
+  },
+  template: (ctx) => `
+    <div class="search">
+      <input
+        type="text"
+        value="${ctx.query.value}"
+        @input="(e) => query.value = e.target.value"
+        @keyup="(e) => e.key === 'Enter' && handleSearch()"
+      />
+      <button @click="handleSearch">Search</button>
+    </div>
+  `
+});
+
+// Parent listens via emitter.on() in setup (NOT @event in template)
+app.component("SearchPage", {
+  setup({ signal, emitter }) {
+    const results = signal([]);
+
+    // Listen for child events in setup
+    emitter.on("search:submit", async (query) => {
+      const res = await fetch(`/api/search?q=${query}`);
+      results.value = await res.json();
+    });
+
+    return { results };
+  },
+  template: (ctx) => `
+    <div>
+      <SearchInput />
+      <ul>
+        ${ctx.results.value.map(r => `<li>${r.title}</li>`).join("")}
+      </ul>
+    </div>
+  `,
+  children: {
+    "SearchInput": "SearchInput"
+  }
+});
+```
+
+**Important:** `@event` syntax is for DOM events (click, input, etc.). For child-to-parent communication, children emit via `emitter.emit()` and parents listen via `emitter.on()` in their setup function.
+
+### Component with Lifecycle
+```javascript
+app.component("DataFetcher", {
+  setup({ signal, props }) {
+    const data = signal(null);
+    const loading = signal(true);
+    const error = signal(null);
+    let abortController = null;
+
+    return {
+      data,
+      loading,
+      error,
+
+      onBeforeMount({ container, context }) {
+        console.log("About to mount");
+      },
+
+      async onMount({ container, context }) {
+        abortController = new AbortController();
+
+        try {
+          const response = await fetch(props.url, {
+            signal: abortController.signal
+          });
+
+          if (!response.ok) throw new Error("Failed to fetch");
+
+          data.value = await response.json();
+        } catch (e) {
+          if (e.name !== "AbortError") {
+            error.value = e.message;
+          }
+        } finally {
+          loading.value = false;
+        }
+      },
+
+      onBeforeUpdate({ container, context }) {
+        console.log("About to update");
+      },
+
+      onUpdate({ container, context }) {
+        console.log("Updated");
+      },
+
+      onUnmount({ container, context, cleanup }) {
+        // Cleanup: abort pending requests
+        if (abortController) {
+          abortController.abort();
+        }
+      }
+    };
+  },
+  template: (ctx) => `
+    <div>
+      ${ctx.loading.value ? `<p>Loading...</p>` : ""}
+      ${ctx.error.value ? `<p class="error">${ctx.error.value}</p>` : ""}
+      ${ctx.data.value ? `<pre>${JSON.stringify(ctx.data.value, null, 2)}</pre>` : ""}
+    </div>
+  `
+});
+```
+
+### Nested Components
+```javascript
+app.component("TodoApp", {
+  setup({ signal, emitter }) {
+    const todos = signal([
+      { id: 1, text: "Learn Eleva", done: false },
+      { id: 2, text: "Build app", done: false }
+    ]);
+
+    // Listen for child events via emitter.on() in setup
+    emitter.on("todo:add", (text) => {
+      todos.value = [...todos.value, {
+        id: Date.now(),
+        text,
+        done: false
+      }];
+    });
+
+    emitter.on("todo:toggle", (id) => {
+      todos.value = todos.value.map(t =>
+        t.id === id ? { ...t, done: !t.done } : t
+      );
+    });
+
+    emitter.on("todo:delete", (id) => {
+      todos.value = todos.value.filter(t => t.id !== id);
+    });
+
+    return { todos };
+  },
+  template: (ctx) => `
+    <div class="todo-app">
+      <h1>Todo List</h1>
+      <TodoInput />
+      <TodoList :todos="todos.value" />
+      <TodoStats :todos="todos.value" />
+    </div>
+  `,
+  // Required: Define child component mappings
+  children: {
+    "TodoInput": "TodoInput",
+    "TodoList": "TodoList",
+    "TodoStats": "TodoStats"
+  }
+});
+
+app.component("TodoInput", {
+  setup({ signal, emitter }) {
+    const text = signal("");
+
+    const submit = (e) => {
+      e.preventDefault();
+      if (text.value.trim()) {
+        // Emit to parent via shared emitter
+        emitter.emit("todo:add", text.value);
+        text.value = "";
+      }
+    };
+
+    return { text, submit };
+  },
+  template: (ctx) => `
+    <form @submit="submit">
+      <input
+        type="text"
+        value="${ctx.text.value}"
+        @input="(e) => text.value = e.target.value"
+        placeholder="Add todo..."
+      />
+      <button type="submit">Add</button>
+    </form>
+  `
+});
+
+app.component("TodoList", {
+  setup({ props, emitter }) {
+    return {
+      // Emit to parent via shared emitter
+      toggle: (id) => emitter.emit("todo:toggle", id),
+      remove: (id) => emitter.emit("todo:delete", id)
+    };
+  },
+  template: (ctx) => `
+    <ul class="todo-list">
+      ${ctx.props.todos.map(todo => `
+        <li key="${todo.id}" class="${todo.done ? "done" : ""}">
+          <input
+            type="checkbox"
+            ${todo.done ? "checked" : ""}
+            @change="() => toggle(${todo.id})"
+          />
+          <span>${todo.text}</span>
+          <button @click="() => remove(${todo.id})">Delete</button>
+        </li>
+      `).join("")}
+    </ul>
+  `
+});
+
+app.component("TodoStats", {
+  template: (ctx) => `
+    <div class="stats">
+      <p>Total: ${ctx.props.todos.length}</p>
+      <p>Done: ${ctx.props.todos.filter(t => t.done).length}</p>
+      <p>Remaining: ${ctx.props.todos.filter(t => !t.done).length}</p>
+    </div>
+  `
+});
+```
+
+**Key patterns demonstrated:**
+- Parent defines `children` property mapping selectors to components
+- Child components emit events via `emitter.emit("event:name", data)`
+- Parent listens via `emitter.on("event:name", handler)` in setup
+- Props passed via `:propName="value"` syntax
+
+## Plugin System
+
+### Plugin Structure
+```javascript
+const MyPlugin = {
+  name: "my-plugin",
+
+  install(app, options) {
+    // Called when app.use(MyPlugin, options) is invoked
+
+    // Add methods to app instance
+    app.myMethod = () => {};
+
+    // Add to component context
+    app._pluginContext = app._pluginContext || {};
+    app._pluginContext.myPlugin = {
+      // Plugin state/methods available in components
+    };
+
+    // Return public API
+    return {
+      publicMethod: () => {}
+    };
+  }
+};
+
+// Usage
+const api = app.use(MyPlugin, { option: "value" });
+api.publicMethod();
+```
+
+### Attr Plugin Details
+```javascript
+import { Attr } from "eleva/plugins";
+
+app.use(Attr, {
+  enableAria: true,     // Handle aria-* attributes
+  enableData: true,     // Handle data-* attributes
+  enableBoolean: true,  // Handle boolean attributes (disabled, checked, etc.)
+  enableDynamic: true   // Dynamic property detection
+});
+
+// In templates
+template: (ctx) => `
+  <button
+    aria-expanded="${ctx.isOpen.value}"
+    aria-label="Toggle menu"
+    data-user-id="${ctx.userId.value}"
+    disabled="${ctx.isLoading.value}"
+    hidden="${ctx.isHidden.value}"
+  >
+    ${ctx.label.value}
+  </button>
+`
+```
+
+### Router Plugin Details
+```javascript
+import { Router } from "eleva/plugins";
+
+const router = app.use(Router, {
+  mode: "hash",  // "hash" | "history" | "query"
+  mount: "#app",
+
+  routes: [
+    {
+      path: "/",
+      component: HomePage,
+      meta: { title: "Home", requiresAuth: false }
+    },
+    {
+      path: "/users",
+      component: UsersPage,
+      beforeEnter: (to, from) => {
+        // Return true to allow, false to block, string to redirect
+        return isAuthenticated() || "/login";
+      }
+    },
+    {
+      path: "/users/:id",
+      component: UserDetailPage,
+      afterEnter: (to, from) => {
+        document.title = `User ${to.params.id}`;
+      }
+    },
+    {
+      path: "/users/:id/posts/:postId",
+      component: PostPage
+    },
+    {
+      path: "*",
+      component: NotFoundPage
+    }
+  ],
+
+  // Global guards
+  onBeforeEach: (to, from) => true,
+  onAfterEach: (to, from) => {}
+});
+
+// Programmatic navigation
+router.navigate("/users/123");
+router.navigate("/users/123", { replace: true });
+router.back();
+router.forward();
+
+// Reactive state
+router.currentRoute.watch(route => {
+  console.log("Route changed:", route);
+});
+
+// Access in components
+setup({ router }) {
+  return {
+    userId: router.currentParams.value.id,
+    goToUser: (id) => router.navigate(`/users/${id}`)
+  };
+}
+```
+
+### Store Plugin Details
+```javascript
+import { Store } from "eleva/plugins";
+
+app.use(Store, {
+  state: {
+    user: null,
+    theme: "light",
+    notifications: []
+  },
+
+  actions: {
+    setUser: (state, user) => {
+      state.user.value = user;
+    },
+
+    toggleTheme: (state) => {
+      state.theme.value = state.theme.value === "light" ? "dark" : "light";
+    },
+
+    addNotification: (state, notification) => {
+      state.notifications.value = [
+        ...state.notifications.value,
+        { id: Date.now(), ...notification }
+      ];
+    },
+
+    removeNotification: (state, id) => {
+      state.notifications.value = state.notifications.value.filter(n => n.id !== id);
+    }
+  },
+
+  namespaces: {
+    cart: {
+      state: { items: [], total: 0 },
+      actions: {
+        addItem: (state, item) => {
+          state.cart.items.value = [...state.cart.items.value, item];
+          state.cart.total.value += item.price;
+        }
+      }
+    }
+  },
+
+  persistence: {
+    enabled: true,
+    key: "app-state",
+    storage: "localStorage",  // or "sessionStorage"
+    include: ["theme", "user"]  // Only persist these keys
+  }
+});
+
+// Usage in components
+setup({ store }) {
+  // Access state
+  const user = store.state.user;
+  const theme = store.state.theme;
+
+  // Dispatch actions
+  const login = (userData) => store.dispatch("setUser", userData);
+  const toggleTheme = () => store.dispatch("toggleTheme");
+
+  // Namespaced actions
+  const addToCart = (item) => store.dispatch("cart.addItem", item);
+
+  // Subscribe to all changes
+  store.subscribe((mutation, state) => {
+    console.log("Mutation:", mutation.type, mutation.payload);
+  });
+
+  return { user, theme, login, toggleTheme, addToCart };
+}
+
+// Dynamic module registration
+store.registerModule("todos", {
+  state: { items: [] },
+  actions: {
+    add: (state, item) => {
+      state.todos.items.value = [...state.todos.items.value, item];
+    }
+  }
+});
+
+// Create state/action at runtime
+store.createState("count", 0);
+store.createAction("increment", (state) => state.count.value++);
+```
+
+## Common Mistakes and Solutions
+
+### WRONG: Using ctx. in event handlers
+```javascript
+// WRONG
+template: (ctx) => `<button @click="ctx.handleClick">Click</button>`
+
+// CORRECT
+template: (ctx) => `<button @click="handleClick">Click</button>`
+```
+
+### WRONG: Missing .value for signal access
+```javascript
+// WRONG
+template: (ctx) => `<p>${ctx.count}</p>`  // Shows [object Object]
+
+// CORRECT
+template: (ctx) => `<p>${ctx.count.value}</p>`
+```
+
+### WRONG: Mutating arrays/objects directly
+```javascript
+// WRONG - won't trigger reactivity
+setup({ signal }) {
+  const items = signal([]);
+  const addItem = (item) => {
+    items.value.push(item);  // Direct mutation, no re-render
+  };
+}
+
+// CORRECT - create new reference
+setup({ signal }) {
+  const items = signal([]);
+  const addItem = (item) => {
+    items.value = [...items.value, item];  // New array triggers update
+  };
+}
+```
+
+### WRONG: Forgetting key attribute in lists
+```javascript
+// WRONG - inefficient, can cause bugs
+template: (ctx) => `
+  ${ctx.items.value.map(item => `<li>${item.name}</li>`).join("")}
+`
+
+// CORRECT
+template: (ctx) => `
+  ${ctx.items.value.map(item => `<li key="${item.id}">${item.name}</li>`).join("")}
+`
+```
+
+### WRONG: Not handling async properly
+```javascript
+// WRONG - can't use async directly in setup
+setup({ signal }) {
+  const data = signal(null);
+  const res = await fetch("/api");  // SyntaxError
+  data.value = await res.json();
+}
+
+// CORRECT - use onMount for async
+setup({ signal }) {
+  const data = signal(null);
+  return {
+    data,
+    onMount: async ({ container, context }) => {
+      const res = await fetch("/api");
+      data.value = await res.json();
+    }
+  };
+}
+```
+
+## Performance Best Practices
+
+1. **Use key attributes** on list items for efficient diffing
+2. **Avoid large inline expressions** in templates
+3. **Batch signal updates** when making multiple changes
+4. **Use virtual scrolling** for lists > 1000 items
+5. **Cleanup in onUnmount** to prevent memory leaks
+6. **Memoize expensive computations** outside signal updates
+
+## Browser Compatibility
+
+Eleva uses these modern features:
+- ES6 Classes
+- Template literals
+- async/await
+- queueMicrotask
+- Proxy (for some features)
+
+No polyfills needed for: Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+
+
+## TypeScript Usage
+
+```typescript
+import Eleva, { Signal, Emitter, ComponentDefinition } from "eleva";
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+}
+
+const UserProfile: ComponentDefinition = {
+  setup({ signal, props }) {
+    const user = signal<User | null>(null);
+    const loading = signal<boolean>(true);
+
+    return {
+      user,
+      loading,
+      onMount: async ({ container, context }) => {
+        const res = await fetch(`/api/users/${props.id}`);
+        user.value = await res.json();
+        loading.value = false;
+      }
+    };
+  },
+  template: (ctx) => `
+    <div>
+      ${ctx.loading.value
+        ? "<p>Loading...</p>"
+        : `<h1>${ctx.user.value?.name}</h1>`
+      }
+    </div>
+  `
+};
+
+const app = new Eleva("TypedApp");
+app.component("UserProfile", UserProfile);
+```
+
+## File Structure Recommendation
+
+```
+project/
+├── index.html
+├── src/
+│   ├── main.js           # App entry point
+│   ├── components/
+│   │   ├── Header.js
+│   │   ├── Footer.js
+│   │   └── ...
+│   ├── pages/
+│   │   ├── Home.js
+│   │   ├── About.js
+│   │   └── ...
+│   ├── plugins/
+│   │   └── custom-plugin.js
+│   └── styles/
+│       └── main.css
+└── package.json
+```

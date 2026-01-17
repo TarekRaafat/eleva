@@ -615,10 +615,10 @@ describe("MyComponent", () => {
 ### Debugging Tips
 
 ```javascript
-// Log signal changes
+// Log signal changes (watcher receives new value only)
 const count = signal(0);
-count.watch((newVal, oldVal) => {
-  console.log(`Count changed: ${oldVal} → ${newVal}`);
+count.watch((newVal) => {
+  console.log(`Count changed to: ${newVal}`);
 });
 
 // Debug template rendering

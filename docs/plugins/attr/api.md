@@ -327,9 +327,9 @@ const DebugComponent = {
   setup({ signal }) {
     const value = signal("test");
 
-    // Watch for changes
-    value.watch((newVal, oldVal) => {
-      console.log(`Value changed: ${oldVal} → ${newVal}`);
+    // Watch for changes (receives new value only)
+    value.watch((newVal) => {
+      console.log(`Value changed to: ${newVal}`);
     });
 
     return { value };

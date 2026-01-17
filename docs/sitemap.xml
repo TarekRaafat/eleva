@@ -3,9 +3,23 @@
   <!-- Homepage -->
   <url>
     <loc>https://elevajs.com/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-18</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+  </url>
+
+  <!-- LLM Documentation (AI-optimized) -->
+  <url>
+    <loc>https://elevajs.com/llms.txt</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://elevajs.com/llms-full.txt</loc>
+    <lastmod>2026-01-18</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
   </url>
 
   <!-- Core Documentation -->

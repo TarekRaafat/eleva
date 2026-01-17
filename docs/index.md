@@ -70,7 +70,14 @@ image: /imgs/eleva.js%20Full%20Logo.png
     "https://www.jsdelivr.com/package/npm/eleva",
     "https://unpkg.com/eleva",
     "https://bundlephobia.com/package/eleva"
-  ]
+  ],
+  "documentation": "https://elevajs.com",
+  "softwareHelp": {
+    "@type": "CreativeWork",
+    "name": "Eleva.js LLM Documentation",
+    "url": "https://elevajs.com/llms.txt",
+    "description": "AI-optimized documentation for Large Language Models to generate accurate Eleva.js code"
+  }
 }
 </script>
 
@@ -513,6 +520,19 @@ See the [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBU
 ## Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).
+
+---
+
+## AI & LLM Resources
+
+Eleva.js provides optimized documentation for AI assistants and Large Language Models:
+
+| Resource | Description |
+|----------|-------------|
+| [llms.txt](https://elevajs.com/llms.txt) | Quick reference for AI code generation |
+| [llms-full.txt](https://elevajs.com/llms-full.txt) | Comprehensive patterns and examples |
+
+These files help AI tools like ChatGPT, Claude, Gemini, and others generate accurate Eleva.js code.
 
 ---
 

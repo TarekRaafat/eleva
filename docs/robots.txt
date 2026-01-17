@@ -14,7 +14,13 @@ Allow: /
 User-agent: DuckDuckBot
 Allow: /
 
-# AI/LLM crawlers
+User-agent: Yandex
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+# AI/LLM crawlers - Eleva.js welcomes AI indexing
 User-agent: GPTBot
 Allow: /
 
@@ -24,7 +30,13 @@ Allow: /
 User-agent: Claude-Web
 Allow: /
 
+User-agent: ClaudeBot
+Allow: /
+
 User-agent: Anthropic-AI
+Allow: /
+
+User-agent: anthropic-ai
 Allow: /
 
 User-agent: PerplexityBot
@@ -33,8 +45,62 @@ Allow: /
 User-agent: Cohere-AI
 Allow: /
 
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Gemini
+Allow: /
+
+User-agent: Meta-ExternalAgent
+Allow: /
+
+User-agent: Meta-ExternalFetcher
+Allow: /
+
+User-agent: FacebookBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Diffbot
+Allow: /
+
+User-agent: ImagesiftBot
+Allow: /
+
+User-agent: Omgilibot
+Allow: /
+
+User-agent: Omgili
+Allow: /
+
+User-agent: YouBot
+Allow: /
+
+User-agent: PetalBot
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# LLM-specific documentation
+# These files contain structured information optimized for AI consumption
+# llms.txt: Quick reference for LLMs
+# llms-full.txt: Comprehensive reference with all patterns and examples
+
 # Sitemap location
 Sitemap: https://elevajs.com/sitemap.xml
+
+# LLM documentation files
+# https://elevajs.com/llms.txt
+# https://elevajs.com/llms-full.txt
 
 # Crawl-delay for politeness (optional)
 Crawl-delay: 1
