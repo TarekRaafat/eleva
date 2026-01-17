@@ -77,6 +77,47 @@ store.state.count.value = 10;
 
 > **Best Practice:** Use actions for all state mutations to enable tracking and debugging.
 
+### Watching Store State Changes
+
+Store state properties are Signals, so you can use `.watch()` to react to changes. **Always clean up watchers in `onUnmount`** to prevent memory leaks:
+
+```javascript
+app.component("Notification", {
+  setup({ store, signal }) {
+    const message = signal("");
+    let unwatchUser = null;
+
+    return {
+      message,
+
+      onMount: () => {
+        // Watch for user changes
+        unwatchUser = store.state.user.watch((newUser) => {
+          if (newUser) {
+            message.value = `Welcome, ${newUser.name}!`;
+          }
+        });
+      },
+
+      onUnmount: () => {
+        // Always clean up watchers!
+        if (unwatchUser) {
+          unwatchUser();
+        }
+      }
+    };
+  },
+  template: (ctx) => `
+    ${ctx.message.value ? `<div class="notification">${ctx.message.value}</div>` : ''}
+  `
+});
+```
+
+**Key Points:**
+- `store.state.property.watch(callback)` returns an unsubscribe function
+- Store the unsubscribe function and call it in `onUnmount`
+- Useful for side effects like notifications, analytics, or syncing with external systems
+
 ---
 
 ## Actions

@@ -5,7 +5,7 @@ description: Comprehensive guide to Eleva best practices - component structure, 
 
 # Best Practices
 
-> **Version:** 1.0.0 | Patterns and guidelines for building maintainable Eleva applications.
+> **Version:** 1.0.1 | Patterns and guidelines for building maintainable Eleva applications.
 
 ---
 

@@ -1,11 +1,197 @@
 ---
 title: Eleva.js FAQ & Troubleshooting
 description: Frequently asked questions, testing guide, troubleshooting tips, and community resources for Eleva.js.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Eleva.js?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Eleva's core philosophy?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vanilla JavaScript. Elevated. Eleva takes plain vanilla JavaScript to the next level with Signals for reactivity and Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. If it works in vanilla JavaScript, it works in Eleva."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and React?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva require a build step?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Eleva with TypeScript?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely! Eleva includes built-in TypeScript declarations (.d.ts files). No additional @types packages are needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva use Virtual DOM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory, Eleva directly patches the real DOM. This reduces memory overhead and delivers 240fps-capable performance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva a React alternative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Eleva can serve as a lightweight React alternative for projects that don't need React's full ecosystem. Eleva offers similar component-based architecture and reactivity patterns but with a much smaller footprint."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What plugins are available with Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva comes with three powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), and Store (reactive state management with persistence)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva suitable for large applications?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva's performance scales well—it handles 10K+ rows efficiently via virtual scrolling, achieves 240fps rendering, and its Router/Store plugins support complex SPAs. The main consideration for large applications is ecosystem maturity compared to React, Vue, and Angular."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Vue?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Svelte?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva production-ready?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Eleva's reactivity work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva include routing capabilities?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva includes a powerful Router plugin that provides client-side routing with navigation guards, reactive state, lazy loading, and component resolution. Import it from eleva/plugins."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I create custom plugins for Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva has a simple plugin API. Plugins are objects with an install(eleva, options) method that receives the Eleva instance and can extend it with new functionality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I migrate from React to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Migration involves replacing useState with Eleva's signal(), converting JSX components to template string components, replacing useEffect with signal watchers or lifecycle hooks, and replacing React Router with Eleva's Router plugin. See the React Migration Guide for detailed examples."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I migrate from Vue to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Migration involves converting SFCs to Eleva component objects, replacing Vue's reactive/ref with Eleva's signals, converting Vue Router to Eleva's Router plugin, and replacing Vuex/Pinia with Eleva's Store plugin. See the Vue Migration Guide for detailed examples."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I migrate from Alpine.js to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both share a similar philosophy—lightweight, no build step. Migration involves replacing x-data with setup() + signal(), converting x-show/x-if to ternary expressions, replacing x-for with .map().join(''), and converting x-model to value + @input pattern. See the Alpine.js Migration Guide for detailed examples."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is my component not rendering?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check your console for error messages, verify the DOM element exists before mounting, and ensure the component is registered before mounting. Use: const container = document.getElementById('app'); if (!container) console.error('Container not found!'); app.mount(container, 'MyComponent');"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are my signal changes not updating the UI?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Make sure you're using .value to read signals in templates (use ctx.count.value not ctx.count), verify the signal is returned from setup, and check that you're modifying .value not the signal itself (use count.value = 5 not count = 5)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are my event handlers not working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Don't use ctx. prefix in event handlers (use @click=\"handleClick\" not @click=\"ctx.handleClick\"), ensure the function is returned from setup, and for inline handlers with arguments, wrap in arrow functions: @click=\"() => count.value++\"."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does my event handler execute immediately on render?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This happens when calling a function with arguments without wrapping in an arrow function. Use @click=\"() => remove(item.id)\" instead of @click=\"remove(item.id)\". Direct references work fine when no arguments are needed: @click=\"handleClick\"."
+      }
+    }
+  ]
+}
+</script>
 
 # FAQ & Troubleshooting
 
-> **Version:** 1.0.0 | Answers to common questions, testing guide, and troubleshooting tips.
+> **Version:** 1.0.1 | Answers to common questions, testing guide, and troubleshooting tips.
 
 ---
 
@@ -17,9 +203,15 @@ description: Frequently asked questions, testing guide, troubleshooting tips, an
 
 Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks.
 
+**Q: What's Eleva's core philosophy?**
+
+**💡 Vanilla JavaScript. Elevated.**
+
+Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JavaScript, it works in Eleva.**
+
 **Q: Is Eleva production-ready?**
 
-Yes! Eleva v1.0.0 is the first official stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
+Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
 
 **Q: How do I report issues or request features?**
 
@@ -86,7 +278,7 @@ Yes! Eleva includes a powerful Router plugin that provides client-side routing w
 
 **Q: What plugins are available with Eleva?**
 
-Eleva comes with three built-in plugins:
+Eleva comes with three powerful built-in plugins:
 - **Attr** - ARIA, data attributes, boolean attributes
 - **Router** - Client-side routing with guards and reactive state
 - **Store** - Reactive state management with persistence
@@ -280,6 +472,67 @@ describe("MyComponent", () => {
    ```javascript
    @click="() => count.value++"
    ```
+
+#### Event Handler Executes Immediately on Render
+
+**Problem**: Function runs when page loads instead of on click.
+
+**Cause**: Calling the function with arguments without wrapping in arrow function.
+
+**Solution**: Always wrap handlers with arguments in arrow functions:
+```javascript
+// Wrong - executes immediately during render!
+@click="remove(item.id)"
+@click="setCount(5)"
+
+// Correct - executes on click
+@click="() => remove(item.id)"
+@click="() => setCount(5)"
+```
+
+> **Note:** Direct references work fine when no arguments are needed: `@click="handleClick"`
+
+#### Input Value Not Updating
+
+**Problem**: Typing in an input doesn't update the signal.
+
+**Solutions**:
+1. Use standard HTML `value` attribute (not `.value` prefix):
+   ```javascript
+   // Wrong (Lit-specific syntax)
+   <input .value="${ctx.name.value}" />
+
+   // Correct
+   <input value="${ctx.name.value}" />
+   ```
+2. Ensure you have an `@input` handler:
+   ```javascript
+   <input
+     value="${ctx.name.value}"
+     @input="(e) => name.value = e.target.value"
+   />
+   ```
+
+#### Code Examples Display as Evaluated Values
+
+**Problem**: Showing code like `${x.value}` in templates displays the actual value instead of the code.
+
+**Cause**: Template engine evaluates all `${...}` expressions.
+
+**Solution**: Use HTML entities to escape the `$` character:
+```javascript
+// Wrong - gets evaluated by template engine
+<code>template: `Count: ${count.value}`</code>
+
+// Correct - displays as literal code
+<code>template: `Count: &#36;{count.value}`</code>
+```
+
+| Character | HTML Entity |
+|-----------|-------------|
+| `$` | `&#36;` |
+| `<` | `&lt;` |
+| `>` | `&gt;` |
 
 #### Props Not Passing to Children
 

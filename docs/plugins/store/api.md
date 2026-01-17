@@ -194,6 +194,79 @@ app.createAction("foo", fn);
 
 ---
 
+## Uninstalling the Plugin
+
+The Store plugin provides an `uninstall()` method to completely remove it from an Eleva instance.
+
+### Store.uninstall(app)
+
+Removes the Store plugin and restores the original Eleva behavior.
+
+```javascript
+import Eleva from "eleva";
+import { Store } from "eleva/plugins";
+
+const app = new Eleva("MyApp");
+app.use(Store, {
+  state: { count: 0 },
+  actions: { increment: (state) => state.count.value++ }
+});
+
+// Use the store...
+app.store.dispatch("increment");
+
+// Later, to completely remove the Store plugin:
+Store.uninstall(app);
+
+// After uninstall, these are removed:
+// - app.store (undefined)
+// - app.dispatch (undefined)
+// - app.getState (undefined)
+// - app.subscribe (undefined)
+// - app.createAction (undefined)
+// - Original mount() method is restored
+```
+
+### What `Store.uninstall()` Does
+
+1. **Restores original methods:**
+   - `app.mount` → restored to original
+   - `app._mountComponents` → restored to original
+
+2. **Removes added properties:**
+   - `app.store`
+   - `app.dispatch`
+   - `app.getState`
+   - `app.subscribe`
+   - `app.createAction`
+
+### When to Use
+
+- Completely removing state management from your app
+- Switching to a different state management solution
+- Full app teardown/cleanup
+- Testing scenarios requiring clean slate
+
+### Uninstall Order (LIFO)
+
+When using multiple plugins, uninstall in reverse order of installation:
+
+```javascript
+// Installation order
+app.use(Attr);
+app.use(Store, { state: {} });
+app.use(Router, { routes: [] });
+
+// Uninstall in reverse order (LIFO)
+await Router.uninstall(app);  // Last installed, first uninstalled
+Store.uninstall(app);
+Attr.uninstall(app);
+```
+
+> **Note:** Store's `uninstall()` is synchronous (not async), unlike Router's which is async.
+
+---
+
 ## TypeScript Support
 
 The Store plugin includes TypeScript type definitions for full type safety.

@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.0` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.0.1` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 
 **Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
 
@@ -31,7 +31,7 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stable Release**: This is `v1.0.0` - The first official stable release of Eleva.js!
+> **Stable Release**: This is `v1.0.1` - The latest stable release of Eleva.js!
 
 
 
@@ -49,6 +49,7 @@ Unlike React, Vue, or Angular, Eleva:
 - **Uses real DOM** - No virtual DOM overhead for simple apps
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
+- **Is just JavaScript** - If it works in vanilla JS, it works in Eleva
 
 Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
 
@@ -149,6 +150,7 @@ The idea behind Eleva comes from a deep appreciation for native JavaScript. I wa
 - **🔌 Extensibility:** Extend functionality by plugging in your own ideas, such as custom state management, routing, and more.
 - **🚀 Performance:** Fast, efficient, and designed with modern browsers in mind.
 - **🍦 Pure Vanilla:** No dependencies, no magic-just plain JavaScript.
+- **🔍 Transparent:** No hidden layers or abstractions — if it works in vanilla JS, it works in Eleva.
 
 ---
 
@@ -162,8 +164,13 @@ Unlike monolithic frameworks that include everything out-of-the-box, Eleva inten
 - **🎯 Native JavaScript:** Built using pure vanilla JavaScript, Eleva integrates seamlessly with your existing code without unfamiliar syntax.
 - **⚙️ Configurability:** Extend Eleva's functionality with a simple API and optional plugins.
 - **🆓 Freedom:** Decide the best way to implement features without unnecessary constraints.
+- **🔍 Transparent:** No magic, no hidden abstractions — what you write is what runs.
 
-This unopinionated approach makes Eleva versatile and ideal for developers who want full control over their application's design.
+### Core Philosophy
+
+> **💡 Vanilla JavaScript. Elevated.**
+
+Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JS, it works in Eleva.**
 
 ---
 
@@ -748,7 +755,7 @@ app.dispatch("increment");          // Dispatch actions globally
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/router.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/store.umd.min.js"></script>`
 
-**Individual Plugin Imports (Best for Tree-Shaking):**
+**Individual Plugin Imports (Smaller Bundle Size):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`
 - ESM: `import { Router } from 'eleva/plugins/router'`
 - ESM: `import { Store } from 'eleva/plugins/store'`

@@ -445,7 +445,7 @@ class Router {
     this.options = {
       mode: "hash",
       queryParam: "view",
-      viewSelector: "root",
+      viewSelector: "view",
       ...options,
     };
 
@@ -1779,7 +1779,7 @@ export const RouterPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.0",
+  version: "1.0.1",
 
   /**
    * Plugin description

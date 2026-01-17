@@ -1,11 +1,12 @@
 ---
 title: Eleva.js Core Concepts
 description: Deep dive into Eleva's core modules - Signals, TemplateEngine, Emitters, Renderer, and Lifecycle Hooks. Learn reactivity and event handling.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Core Concepts
 
-> **Version:** 1.0.0 | This guide covers the fundamental building blocks of Eleva applications.
+> **Version:** 1.0.1 | This guide covers the fundamental building blocks of Eleva applications.
 
 ---
 
@@ -20,6 +21,12 @@ Eleva is built on five core modules that work together to create reactive, compo
 | **TemplateEngine** | Expression evaluation | `.evaluate()` |
 | **Renderer** | DOM diffing | `.patchDOM()` |
 | **Eleva** | App orchestration | `.component()`, `.mount()`, `.use()` |
+
+### Core Philosophy
+
+> **💡 Vanilla JavaScript. Elevated.**
+
+Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JS, it works in Eleva.**
 
 ---
 
@@ -150,6 +157,122 @@ const Counter = {
 - Full IDE support (autocomplete, type checking)
 - Access to all JavaScript features (methods, conditionals, etc.)
 
+### Native JavaScript in Templates
+
+Since templates are just JavaScript template literals, **any valid JavaScript expression works** inside `${}`:
+
+```javascript
+template: (ctx) => `
+  <!-- Array methods -->
+  ${ctx.items.value.map(item => `<li>${item.name}</li>`).join('')}
+  ${ctx.items.value.filter(i => i.active).length} active items
+  ${ctx.users.value.find(u => u.id === ctx.selectedId.value)?.name}
+
+  <!-- String methods -->
+  ${ctx.name.value.toUpperCase()}
+  ${ctx.text.value.trim().slice(0, 100)}...
+  ${ctx.email.value.split('@')[0]}
+
+  <!-- Conditionals (ternary, &&, ||) -->
+  ${ctx.isAdmin.value ? '<button>Delete</button>' : ''}
+  ${ctx.error.value && `<span class="error">${ctx.error.value}</span>`}
+  ${ctx.username.value || 'Guest'}
+
+  <!-- Math & Numbers -->
+  ${Math.round(ctx.price.value * 100) / 100}
+  ${ctx.total.value.toFixed(2)}
+  ${(ctx.score.value * 100).toLocaleString()}%
+
+  <!-- Date formatting -->
+  ${new Date(ctx.createdAt.value).toLocaleDateString()}
+  ${new Date().getFullYear()}
+
+  <!-- JSON -->
+  <pre>${JSON.stringify(ctx.data.value, null, 2)}</pre>
+
+  <!-- Optional chaining & nullish coalescing -->
+  ${ctx.user.value?.profile?.avatar ?? '/default.png'}
+
+  <!-- Object methods -->
+  ${Object.keys(ctx.settings.value).length} settings
+  ${Object.entries(ctx.meta.value).map(([k, v]) => `${k}: ${v}`).join(', ')}
+`
+```
+
+### Native JavaScript in Setup
+
+The `setup` function is plain JavaScript — use any native APIs:
+
+```javascript
+setup: ({ signal }) => {
+  const data = signal(null);
+  const loading = signal(true);
+
+  // Fetch API
+  const loadData = async () => {
+    const res = await fetch('/api/data');
+    data.value = await res.json();
+  };
+
+  // localStorage
+  const theme = signal(localStorage.getItem('theme') || 'light');
+  const saveTheme = (t) => {
+    theme.value = t;
+    localStorage.setItem('theme', t);
+  };
+
+  // setTimeout / setInterval
+  let timer = null;
+  const startTimer = () => {
+    timer = setInterval(() => { /* ... */ }, 1000);
+  };
+
+  // URL / URLSearchParams
+  const params = new URLSearchParams(window.location.search);
+  const query = signal(params.get('q') || '');
+
+  // Regular expressions
+  const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+  // Web APIs (IntersectionObserver, ResizeObserver, etc.)
+  let observer = null;
+
+  return {
+    data, loading, theme, query,
+    loadData, saveTheme, startTimer, isValidEmail,
+
+    onMount: () => {
+      loadData();
+      observer = new IntersectionObserver(/* ... */);
+    },
+
+    onUnmount: () => {
+      clearInterval(timer);
+      observer?.disconnect();
+    }
+  };
+}
+```
+
+### Native JavaScript Summary
+
+| Category | Examples | Where |
+|----------|----------|-------|
+| **Array methods** | `.map()`, `.filter()`, `.find()`, `.some()`, `.reduce()` | Templates & Setup |
+| **String methods** | `.trim()`, `.split()`, `.slice()`, `.toUpperCase()` | Templates & Setup |
+| **Object methods** | `Object.keys()`, `Object.values()`, `Object.entries()` | Templates & Setup |
+| **Math** | `Math.round()`, `Math.floor()`, `Math.random()` | Templates & Setup |
+| **Date** | `new Date()`, `.toLocaleDateString()`, `.getTime()` | Templates & Setup |
+| **JSON** | `JSON.stringify()`, `JSON.parse()` | Templates & Setup |
+| **Fetch API** | `fetch()`, `Response`, `Request` | Setup |
+| **Storage** | `localStorage`, `sessionStorage` | Setup |
+| **Timers** | `setTimeout()`, `setInterval()`, `clearTimeout()` | Setup |
+| **URL** | `URL`, `URLSearchParams`, `location` | Setup |
+| **Observers** | `IntersectionObserver`, `ResizeObserver`, `MutationObserver` | Setup |
+| **Other Web APIs** | `navigator`, `Clipboard`, `Geolocation`, `WebSocket` | Setup |
+
+> **Key Principle:** Eleva doesn't replace JavaScript — it enhances it. Your existing JS knowledge applies directly.
+
 ### Event Handlers with `@event`
 
 Event handlers are evaluated against your component context (no `ctx.` needed):
@@ -175,6 +298,93 @@ template: (ctx) => `
   <button @click="() => count.value++">+</button>
 `
 ```
+
+#### Handler Types
+
+| Type | Syntax | When to Use |
+|------|--------|-------------|
+| Direct reference | `@click="handleClick"` | Handler receives event as first argument |
+| With custom arguments | `@click="() => remove(item.id)"` | Handler needs specific arguments |
+| Inline event processing | `@input="(e) => setValue(e.target.value)"` | Extract/transform event data inline |
+
+> ⚠️ **Critical: Use Arrow Functions When Passing Arguments**
+>
+> When passing arguments to handlers, you **must** wrap the call in an arrow function. Otherwise, the function executes immediately during render instead of on click.
+
+```javascript
+// ❌ WRONG - Executes immediately during render, returns undefined
+<button @click="setCount(5)">Set to 5</button>
+<button @click="remove(item.id)">Delete</button>
+
+// ✅ CORRECT - Creates a function that executes on click
+<button @click="() => setCount(5)">Set to 5</button>
+<button @click="() => remove(item.id)">Delete</button>
+```
+
+#### Accessing Event Objects
+
+The DOM event is automatically passed as the first argument to your handler:
+
+```javascript
+// Both syntaxes work - event is passed automatically
+<button @click="handleClick">Click</button>
+<button @click="(e) => handleClick(e)">Click</button>
+
+// In your handler, the event is the first parameter
+function handleClick(event) {
+  console.log("Event type:", event.type);
+  console.log("Target:", event.target);
+}
+```
+
+Use arrow functions when you need to process the event inline:
+
+```javascript
+// Extract value from input
+<input @input="(e) => setQuery(e.target.value)" />
+
+// Prevent default behavior
+<form @submit="(e) => { e.preventDefault(); save(); }">
+
+// Conditional logic with event
+<input @keydown="(e) => e.key === 'Enter' && submit()" />
+```
+
+#### Native DOM Events
+
+Eleva uses **native DOM events** — there's no custom event system. The `@` syntax is simply shorthand for `addEventListener`. This means:
+
+- **Any valid DOM event works** — if it works in vanilla JavaScript, it works in Eleva
+- **Event objects are native** — you get the actual DOM event, not a wrapper
+- **No learning curve** — use your existing JavaScript knowledge
+
+```javascript
+// All native DOM events work with @ syntax
+<div @scroll="handleScroll">          // scroll event
+<div @wheel="handleWheel">            // wheel event
+<div @contextmenu="handleRightClick"> // right-click
+<div @dragstart="handleDrag">         // drag and drop
+<video @timeupdate="handleTime">      // media events
+<div @animationend="handleAnimEnd">   // CSS animation events
+<div @transitionend="handleTransEnd"> // CSS transition events
+```
+
+#### Common Events
+
+| Category | Events |
+|----------|--------|
+| Mouse | `@click` `@dblclick` `@mouseenter` `@mouseleave` `@mousemove` `@mousedown` `@mouseup` `@contextmenu` |
+| Form | `@input` `@change` `@focus` `@blur` `@submit` `@reset` `@invalid` |
+| Keyboard | `@keydown` `@keyup` `@keypress` |
+| Touch | `@touchstart` `@touchend` `@touchmove` `@touchcancel` |
+| Drag | `@dragstart` `@dragend` `@dragover` `@drop` `@dragenter` `@dragleave` |
+| Scroll | `@scroll` `@wheel` |
+| Media | `@play` `@pause` `@ended` `@timeupdate` `@volumechange` |
+| Animation | `@animationstart` `@animationend` `@transitionend` |
+| Clipboard | `@copy` `@cut` `@paste` |
+| Window* | `@resize` `@load` `@error` |
+
+> *Window events require attaching to `window` via `onMount`. See [Lifecycle Hooks](#lifecycle-hooks).
 
 ### Passing Props with `:prop`
 
@@ -234,6 +444,42 @@ template: (ctx) => `<p>Count: ${count.value}</p>`
 // CORRECT: Use ctx. in template literals
 template: (ctx) => `<p>Count: ${ctx.count.value}</p>`
 ```
+
+```javascript
+// WRONG: Using .value attribute prefix (Lit-specific syntax)
+template: (ctx) => `<input .value="${ctx.name.value}" />`
+
+// CORRECT: Use standard HTML attributes
+template: (ctx) => `<input value="${ctx.name.value}" />`
+```
+
+### Displaying Code Examples in Templates
+
+When displaying code that contains `${...}` syntax within your templates (e.g., in a code playground or documentation), the template engine will try to evaluate those expressions. Use HTML entities to escape:
+
+```javascript
+// WRONG: Inner ${...} gets evaluated by template engine
+template: (ctx) => `
+  <pre><code>
+    const x = signal(0);
+    template: \`Count: ${x.value}\`  // This gets evaluated!
+  </code></pre>
+`
+
+// CORRECT: Use &#36; HTML entity to escape the $
+template: (ctx) => `
+  <pre><code>
+    const x = signal(0);
+    template: \`Count: &#36;{x.value}\`  // Displays as ${x.value}
+  </code></pre>
+`
+```
+
+| Character | HTML Entity | Use Case |
+|-----------|-------------|----------|
+| `$` | `&#36;` | Escape `${...}` in code examples |
+| `<` | `&lt;` | Escape HTML tags in code |
+| `>` | `&gt;` | Escape HTML tags in code |
 
 ---
 
@@ -397,6 +643,59 @@ const instance = await app.mount(document.getElementById("app"), "Counter");
 await instance.unmount();
 ```
 
+### MountResult
+
+The `mount()` method returns a Promise that resolves to a `MountResult` object:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `container` | `HTMLElement` | The DOM element where the component is mounted |
+| `data` | `Object` | The component's reactive state and setup return values |
+| `unmount` | `() => Promise<void>` | Function to clean up and remove the component |
+
+### Unmounting Components
+
+Call `instance.unmount()` to remove a mounted component. This triggers:
+
+1. The `onUnmount` lifecycle hook (with `cleanup` object)
+2. Automatic cleanup of signal watchers
+3. Automatic cleanup of template event listeners
+4. Recursive unmounting of child components
+5. Clearing the container's innerHTML
+
+```javascript
+const app = new Eleva("MyApp");
+
+app.component("DataFetcher", {
+  setup: ({ signal }) => {
+    const data = signal(null);
+    let abortController = null;
+
+    return {
+      data,
+      onMount: async () => {
+        abortController = new AbortController();
+        const res = await fetch("/api/data", { signal: abortController.signal });
+        data.value = await res.json();
+      },
+      onUnmount: () => {
+        // Cancel any pending requests
+        abortController?.abort();
+      }
+    };
+  },
+  template: (ctx) => `<div>${ctx.data.value ? JSON.stringify(ctx.data.value) : 'Loading...'}</div>`
+});
+
+// Mount
+const instance = await app.mount(document.getElementById("app"), "DataFetcher");
+
+// Later, unmount (triggers onUnmount, cleans up watchers/listeners)
+await instance.unmount();
+```
+
+> **Tip:** See the [Components documentation](./components.md#unmounting-components) for more details on managing multiple mounted instances.
+
 ---
 
 ## Lifecycle Hooks
@@ -542,14 +841,33 @@ setup: ({ signal }) => {
 
 **What to clean up in onUnmount:**
 
-| Resource | Cleanup Method |
-|----------|----------------|
-| Event listeners | `removeEventListener()` |
-| Timers | `clearTimeout()`, `clearInterval()` |
-| Subscriptions | Call unsubscribe function |
-| WebSocket | `socket.close()` |
-| AbortController | `controller.abort()` |
-| Third-party libraries | Library-specific destroy method |
+| Resource | Cleanup Method | Auto-cleaned? |
+|----------|----------------|:-------------:|
+| Template event listeners (`@click`, etc.) | - | ✓ Yes |
+| Signal watchers | - | ✓ Yes |
+| Child components | - | ✓ Yes |
+| Window/document event listeners | `removeEventListener()` | No |
+| Timers | `clearTimeout()`, `clearInterval()` | No |
+| Emitter subscriptions | Call unsubscribe function | No |
+| WebSocket | `socket.close()` | No |
+| AbortController | `controller.abort()` | No |
+| Third-party libraries | Library-specific destroy method | No |
+
+**Hook Parameters:** The `onUnmount` hook receives `{ container, context, cleanup }` where `cleanup` is an object containing `{ watchers, listeners, children }` arrays. This is useful for advanced scenarios where you need to inspect or manipulate the cleanup process.
+
+```javascript
+onUnmount: ({ container, context, cleanup }) => {
+  // cleanup.watchers - Array of active signal watchers
+  // cleanup.listeners - Array of registered event listeners
+  // cleanup.children - Array of mounted child components
+
+  console.log(`Cleaning up ${cleanup.watchers.length} watchers`);
+
+  // Manual cleanup still needed for external resources
+  window.removeEventListener("resize", resizeHandler);
+  clearInterval(intervalId);
+}
+```
 
 ### Async Operations with Cleanup
 

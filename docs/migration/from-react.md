@@ -3,9 +3,79 @@ title: Migrate from React
 description: React to Eleva.js migration guide. Learn how useState maps to signals, useEffect to watchers, and JSX to template strings.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Migrate from React to Eleva.js",
+  "description": "Learn how to migrate your React application to Eleva.js, converting hooks to signals, JSX to template strings, and Redux to Eleva Store.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT30M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Existing React application"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Eleva.js (~2.3KB gzipped)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Replace useState with signal",
+      "text": "Convert React's useState hooks to Eleva signals. Change const [value, setValue] = useState(initial) to const value = signal(initial), and setValue(x) to value.value = x.",
+      "url": "https://elevajs.com/migration/from-react.html#state-usestate--signal"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace useEffect with signal.watch",
+      "text": "Convert useEffect hooks with dependencies to signal.watch() calls. Each signal has its own watch method for side effects, eliminating dependency arrays.",
+      "url": "https://elevajs.com/migration/from-react.html#effects-useeffect--signalwatch"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Remove useMemo and useCallback",
+      "text": "Replace useMemo with plain functions and remove useCallback entirely. Eleva's batching handles optimization automatically without memoization hooks.",
+      "url": "https://elevajs.com/migration/from-react.html#memoization-usememousecallback"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert JSX to template strings",
+      "text": "Replace JSX syntax with JavaScript template literals. Change onClick to @click, map conditions to ternary expressions, and use ${ctx.value.value} for interpolation.",
+      "url": "https://elevajs.com/migration/from-react.html#common-migration-patterns"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace React Router with Eleva Router",
+      "text": "Migrate from React Router to Eleva Router plugin. Configure routes array and use router.navigate() for programmatic navigation.",
+      "url": "https://elevajs.com/migration/from-react.html#react-router--eleva-router"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace Redux/Context with Eleva Store",
+      "text": "Convert Redux slices or Context providers to Eleva Store plugin. Define state and actions, then access via setup({ store }) in components.",
+      "url": "https://elevajs.com/migration/from-react.html#redux--eleva-store"
+    }
+  ]
+}
+</script>
+
 # Migrating from React
 
-> **Version:** 1.0.0 | A comprehensive guide for React developers transitioning to Eleva
+> **Version:** 1.0.1 | A comprehensive guide for React developers transitioning to Eleva
 
 This guide helps React developers understand Eleva by mapping familiar React concepts to their Eleva equivalents.
 

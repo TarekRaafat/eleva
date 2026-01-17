@@ -5,7 +5,7 @@ description: Eleva.js best practices for setup function organization and lifecyc
 
 # Setup & Lifecycle Hooks
 
-> **Version:** 1.0.0 | Setup patterns, lifecycle hooks, and cleanup best practices.
+> **Version:** 1.0.1 | Setup patterns, lifecycle hooks, and cleanup best practices.
 
 ---
 
@@ -206,7 +206,7 @@ onUnmount      <- Cleanup everything
 
 ### How Lifecycle Hooks Work
 
-**Important:** Lifecycle hooks are **returned from setup**, not destructured from it. They receive a context object with `container` and `context`.
+**Important:** Lifecycle hooks are **returned from setup**, not destructured from it. They receive a context object with `container` and `context`. The `onUnmount` hook also receives a `cleanup` object containing `{ watchers, listeners, children }` arrays for advanced cleanup scenarios.
 
 ```javascript
 setup: ({ signal }) => {
@@ -218,8 +218,12 @@ setup: ({ signal }) => {
     onMount: ({ container, context }) => {
       console.log("Mounted to:", container);
     },
-    onUnmount: ({ container, context }) => {
+    onUnmount: ({ container, context, cleanup }) => {
+      // cleanup contains { watchers, listeners, children } arrays
       console.log("Unmounting...");
+      console.log("Active watchers:", cleanup.watchers.length);
+      console.log("Event listeners:", cleanup.listeners.length);
+      console.log("Child components:", cleanup.children.length);
     }
   };
 }
@@ -284,14 +288,51 @@ setup: ({ signal }) => {
 
 **What to clean up:**
 
-| Resource | Cleanup Method |
-|----------|----------------|
-| Event listeners | `removeEventListener()` |
-| Timers | `clearTimeout()`, `clearInterval()` |
-| Subscriptions | Call unsubscribe function |
-| WebSocket | `socket.close()` |
-| AbortController | `controller.abort()` |
-| Third-party libraries | Library-specific destroy method |
+| Resource | Cleanup Method | Auto-cleaned? |
+|----------|----------------|:-------------:|
+| Template event listeners (`@click`, etc.) | - | ✓ Yes |
+| Signal watchers | - | ✓ Yes |
+| Child components | - | ✓ Yes |
+| Window/document event listeners | `removeEventListener()` | No |
+| Timers | `clearTimeout()`, `clearInterval()` | No |
+| Emitter subscriptions | Call unsubscribe function | No |
+| WebSocket | `socket.close()` | No |
+| AbortController | `controller.abort()` | No |
+| Third-party libraries | Library-specific destroy method | No |
+
+### Advanced Cleanup with the cleanup Object
+
+The `onUnmount` hook receives a `cleanup` object for advanced scenarios where you need to inspect or work with Eleva's internal cleanup process:
+
+```javascript
+setup: ({ signal, emitter }) => {
+  const data = signal([]);
+
+  return {
+    data,
+    onMount: () => {
+      // Set up various resources
+      emitter.on("data:refresh", loadData);
+      window.addEventListener("online", handleOnline);
+    },
+    onUnmount: ({ container, context, cleanup }) => {
+      // cleanup.watchers - Array of active signal watchers
+      // cleanup.listeners - Array of registered event listeners
+      // cleanup.children - Array of mounted child components
+
+      // Useful for debugging or conditional cleanup
+      if (cleanup.watchers.length > 0) {
+        console.log(`Cleaning up ${cleanup.watchers.length} watchers`);
+      }
+
+      // Your manual cleanup still needed for external resources
+      window.removeEventListener("online", handleOnline);
+    }
+  };
+}
+```
+
+> **Note:** Eleva automatically cleans up signal watchers, template event listeners, and child components. The `cleanup` object is provided for debugging, logging, or advanced scenarios where you need visibility into what's being cleaned up.
 
 ### Lifecycle Anti-Patterns
 

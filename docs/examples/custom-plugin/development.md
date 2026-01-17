@@ -3,9 +3,85 @@ title: Plugin Development Guide
 description: Step-by-step guide to creating Eleva.js plugins - project setup, development workflow, and comprehensive testing strategies.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Develop and Test an Eleva.js Plugin",
+  "description": "Step-by-step guide to setting up a plugin project, creating plugin functionality, building a demo application, and writing comprehensive tests.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT45M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Terminal/command line"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Node.js (v18 or higher)"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "npm (v9 or higher)"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "Vite (build tool)"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "Vitest (testing framework)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Set up your project",
+      "text": "Create a new directory, initialize npm, install Eleva as a peer dependency, and install dev dependencies (vite, vitest, @types/node).",
+      "url": "https://elevajs.com/examples/custom-plugin/development.html#step-1-set-up-your-project"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create your plugin",
+      "text": "Create src/index.js with your plugin object containing name, version, and install method. Implement your plugin's functionality inside the install function.",
+      "url": "https://elevajs.com/examples/custom-plugin/development.html#step-2-create-your-plugin"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create a demo application",
+      "text": "Set up demo/index.html and demo/main.js to test your plugin during development. Import your plugin and use it with a sample Eleva component.",
+      "url": "https://elevajs.com/examples/custom-plugin/development.html#step-3-create-a-demo-application"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Configure development environment",
+      "text": "Create vite.config.js with build configuration for ES and UMD formats. Update package.json with scripts for dev, build, and preview.",
+      "url": "https://elevajs.com/examples/custom-plugin/development.html#step-4-configure-development-environment"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Write tests for your plugin",
+      "text": "Create test/plugin.test.js with comprehensive tests covering basic functionality, edge cases, registration behavior, and component integration.",
+      "url": "https://elevajs.com/examples/custom-plugin/development.html#testing-your-plugin"
+    }
+  ]
+}
+</script>
+
 # Plugin Development Guide
 
-> **Version:** 1.0.0 | Creating, developing, and testing Eleva plugins.
+> **Version:** 1.0.1 | Creating, developing, and testing Eleva plugins.
 
 ---
 

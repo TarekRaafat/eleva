@@ -5,7 +5,7 @@ description: Eleva.js automatic render batching, performance optimization, and 2
 
 # Batching & Performance
 
-> **Version:** 1.0.0 | Understanding Eleva's automatic render batching and high-performance capabilities.
+> **Version:** 1.0.1 | Understanding Eleva's automatic render batching and high-performance capabilities.
 
 ---
 

@@ -71,6 +71,76 @@ const MyComponent = {
 
 ---
 
+## Uninstalling the Plugin
+
+The Attr plugin provides an `uninstall()` method to completely remove it from an Eleva instance.
+
+### Attr.uninstall(app)
+
+Removes the Attr plugin and restores the original renderer behavior.
+
+```javascript
+import Eleva from "eleva";
+import { Attr } from "eleva/plugins";
+
+const app = new Eleva("MyApp");
+app.use(Attr, {
+  enableAria: true,
+  enableData: true,
+  enableBoolean: true,
+  enableDynamic: true
+});
+
+// Use the plugin...
+app.mount(document.getElementById("app"), "MyComponent");
+
+// Later, to completely remove the Attr plugin:
+Attr.uninstall(app);
+
+// After uninstall:
+// - app.updateElementAttributes (undefined)
+// - Original renderer._patchNode() is restored
+// - Plugin removed from registry
+```
+
+### What `Attr.uninstall()` Does
+
+1. **Restores original methods:**
+   - `app.renderer._patchNode` → restored to original
+
+2. **Removes added properties:**
+   - `app.updateElementAttributes`
+
+3. **Removes from plugin registry:**
+   - `app.plugins.delete("attr")`
+
+### When to Use
+
+- Removing enhanced attribute handling from your app
+- Switching to a different attribute management approach
+- Full app teardown/cleanup
+- Testing scenarios requiring clean slate
+
+### Uninstall Order (LIFO)
+
+When using multiple plugins, uninstall in reverse order of installation:
+
+```javascript
+// Installation order
+app.use(Attr);
+app.use(Store, { state: {} });
+app.use(Router, { routes: [] });
+
+// Uninstall in reverse order (LIFO)
+await Router.uninstall(app);  // Last installed, first uninstalled
+Store.uninstall(app);
+Attr.uninstall(app);
+```
+
+> **Note:** Attr's `uninstall()` is synchronous (not async), unlike Router's which is async.
+
+---
+
 ## Best Practices
 
 ### 1. Accessibility First

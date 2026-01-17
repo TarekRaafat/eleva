@@ -5,7 +5,7 @@ description: Eleva.js async patterns for caching, parallel fetching, request ded
 
 # Caching & Optimization
 
-> **Version:** 1.0.0 | Optimize async data fetching with caching, parallel requests, and smart revalidation.
+> **Version:** 1.0.1 | Optimize async data fetching with caching, parallel requests, and smart revalidation.
 
 ---
 

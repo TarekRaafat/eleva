@@ -5,7 +5,7 @@ description: Eleva.js async patterns for request cancellation, timeouts, retries
 
 # Resilience Patterns
 
-> **Version:** 1.0.0 | Handle network failures gracefully with cancellation, timeouts, and retry strategies.
+> **Version:** 1.0.1 | Handle network failures gracefully with cancellation, timeouts, and retry strategies.
 
 ---
 

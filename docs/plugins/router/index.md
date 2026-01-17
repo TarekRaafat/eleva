@@ -1,11 +1,12 @@
 ---
-title: Router Plugin - Client-Side Routing
+title: Eleva.js Router Plugin - Client-Side Routing
 description: Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and nested routes. 15KB.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Router Plugin
 
-> **Version:** 1.0.0 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
+> **Version:** 1.0.1 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
 
 The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
 
@@ -31,6 +32,21 @@ const router = app.use(Router, {
 await router.start();
 ```
 
+> ⚠️ **No Manual Mount Needed**
+>
+> When using the Router plugin, you **don't need to call `app.mount()`**. The router automatically handles mounting components based on the current route.
+>
+> ```javascript
+> // ❌ Don't do this when using Router
+> app.use(Router, { mount: '#app', routes });
+> app.mount('#app', 'HomePage'); // Not needed!
+>
+> // ✅ Correct - Router handles mounting
+> app.use(Router, { mount: '#app', routes });
+> await router.start();
+> // That's it! Router will mount the matched component
+> ```
+
 ### Common Operations
 ```javascript
 // Navigate
@@ -50,8 +66,14 @@ const unsub = router.onBeforeEach((to, from) => {
   if (to.meta.requiresAuth && !isLoggedIn()) return "/login";
 });
 
-// Stop router
+// Stop router (can restart)
 await router.stop();
+
+// Destroy router (full cleanup)
+await router.destroy();
+
+// Uninstall plugin entirely
+await Router.uninstall(app);
 ```
 
 ### Route Definition Cheatsheet

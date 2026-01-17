@@ -1,6 +1,7 @@
 ---
 title: Eleva.js Glossary
 description: Definitions of key terms and concepts used in Eleva.js - signals, reactivity, components, lifecycle hooks, and more.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Glossary
@@ -107,12 +108,25 @@ setup: ({ emitter }) => {
 ```
 
 ### Event Binding
-Attaching event handlers to DOM elements using the `@` syntax in templates.
+Attaching event handlers to DOM elements using the `@` syntax in templates. Eleva uses **native DOM events** — the `@` syntax is shorthand for `addEventListener`. Any event that works in vanilla JavaScript works in Eleva.
 
 ```javascript
+// Direct reference - event passed automatically
 <button @click="handleClick">Click me</button>
+
+// Arrow function - needed when passing arguments
+<button @click="() => remove(item.id)">Delete</button>
+
+// Inline processing of event
 <input @input="(e) => setValue(e.target.value)" />
+
+// Any native DOM event works
+<div @scroll="handleScroll">
+<div @contextmenu="handleRightClick">
+<video @timeupdate="handleTime">
 ```
+
+> **Note:** `@click="remove(id)"` executes immediately during render. Use `@click="() => remove(id)"` for handlers with arguments.
 
 ---
 
@@ -239,7 +253,15 @@ A [lifecycle hook](#lifecycle-hook) called before the component is inserted into
 A [lifecycle hook](#lifecycle-hook) called after the component is inserted into the DOM. Use for data fetching, adding event listeners, or accessing DOM elements.
 
 ### onUnmount
-A [lifecycle hook](#lifecycle-hook) called before the component is removed from the DOM. Use for cleanup: removing event listeners, canceling requests, clearing timers.
+A [lifecycle hook](#lifecycle-hook) called before the component is removed from the DOM. Use for cleanup: removing event listeners, canceling requests, clearing timers. Receives `{ container, context, cleanup }` where `cleanup` contains `{ watchers, listeners, children }` arrays for advanced scenarios.
+
+```javascript
+onUnmount: ({ container, context, cleanup }) => {
+  console.log(`Cleaning up ${cleanup.watchers.length} watchers`);
+  clearInterval(timerId);
+  window.removeEventListener("resize", handler);
+}
+```
 
 ### onUpdate
 A [lifecycle hook](#lifecycle-hook) called after the component re-renders due to state changes. Avoid setting state here to prevent infinite loops.
@@ -382,6 +404,17 @@ The process of removing a component from the DOM and cleaning up its resources.
 
 ### Virtual DOM
 A programming concept where a virtual representation of the UI is kept in memory and synced with the real DOM. **Eleva does NOT use Virtual DOM**—it uses direct, efficient DOM updates based on signal changes.
+
+### Vanilla JavaScript Compatibility
+**💡 Vanilla JavaScript. Elevated.** Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. Everything you know works exactly as expected:
+
+- **DOM events:** All native events work (`@click`, `@scroll`, `@wheel`, etc.)
+- **Array methods:** `.map()`, `.filter()`, `.find()`, `.reduce()`, etc.
+- **String/Object methods:** All native methods work in templates
+- **Web APIs:** `fetch`, `localStorage`, `URL`, Observers, etc.
+- **Timers:** `setTimeout`, `setInterval`, `requestAnimationFrame`
+
+**If it works in vanilla JavaScript, it works in Eleva.**
 
 ---
 

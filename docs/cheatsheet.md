@@ -1,11 +1,14 @@
 ---
 title: Eleva.js Cheat Sheet
 description: Quick reference for Eleva.js syntax - signals, templates, lifecycle hooks, events, props, and common patterns. Print-friendly.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Eleva.js Cheat Sheet
 
-> **Quick Reference** | Version 1.0.0 | [Full Docs](./index.md)
+> **Quick Reference** | Version 1.0.1 | [Full Docs](./index.md)
+
+> 💡 **Vanilla JavaScript. Elevated.** Plain JS taken to the next level. Signals for reactivity. Components for structure. **If it works in vanilla JS, it works in Eleva.**
 
 ---
 
@@ -16,8 +19,34 @@ import Eleva from "eleva";
 const app = new Eleva("MyApp");
 
 app.component("Name", { setup, template, style, children });
-app.mount(document.getElementById("app"), "Name", { props });
+const instance = await app.mount(document.getElementById("app"), "Name", { props });
 ```
+
+---
+
+## Mount & Unmount
+
+```javascript
+// Mount returns { container, data, unmount }
+const instance = await app.mount(container, "ComponentName", { props });
+
+instance.container;  // DOM element
+instance.data;       // Component state & functions
+instance.unmount();  // Remove component
+
+// Unmount cleans up:
+// - Calls onUnmount hook
+// - Removes signal watchers (auto)
+// - Removes event listeners (auto)
+// - Unmounts children (auto)
+// - Clears container innerHTML
+```
+
+| MountResult | Type | Description |
+|-------------|------|-------------|
+| `container` | `HTMLElement` | Mounted DOM element |
+| `data` | `Object` | Component state & context |
+| `unmount` | `Function` | Cleanup & remove component |
 
 ---
 
@@ -84,25 +113,73 @@ template: (ctx) => `
 
 ---
 
+## Native JavaScript
+
+Templates are JS template literals — **any valid JS works**:
+
+```javascript
+// Arrays
+${ctx.items.value.map(i => `<li>${i}</li>`).join('')}
+${ctx.items.value.filter(i => i.active).length}
+${ctx.users.value.find(u => u.id === 1)?.name}
+
+// Strings
+${ctx.name.value.toUpperCase()}
+${ctx.text.value.slice(0, 100)}...
+
+// Math & Numbers
+${Math.round(ctx.price.value * 100) / 100}
+${ctx.total.value.toFixed(2)}
+
+// Dates
+${new Date(ctx.date.value).toLocaleDateString()}
+
+// Conditionals
+${ctx.ok.value ? 'Yes' : 'No'}
+${ctx.err.value && `<span>${ctx.err.value}</span>`}
+${ctx.name.value || 'Guest'}
+
+// Optional chaining
+${ctx.user.value?.profile?.name ?? 'Anonymous'}
+```
+
+Setup function — use any Web API:
+
+```javascript
+setup: ({ signal }) => ({
+  // Fetch, localStorage, setTimeout, URL, Observers, etc.
+  data: signal(JSON.parse(localStorage.getItem('data')) || []),
+  onMount: async () => { await fetch('/api'); }
+})
+```
+
+---
+
 ## Events
 
 ```javascript
-// Simple handler
+// Direct reference (event auto-passed as 1st argument)
 <button @click="handleClick">Click</button>
+<input @input="handleInput" />
 
-// With argument
+// With custom arguments (MUST use arrow function!)
 <button @click="() => remove(item.id)">Delete</button>
+<button @click="() => setCount(5)">Set 5</button>
 
-// With event object
+// Inline event processing
 <input @input="(e) => setQuery(e.target.value)" />
 <form @submit="(e) => { e.preventDefault(); save(); }">
 
-// Common events
-@click    @dblclick   @mouseenter   @mouseleave
-@input    @change     @focus        @blur
-@keydown  @keyup      @keypress
-@submit   @reset
+// Common events (any native DOM event works!)
+@click    @dblclick   @mouseenter   @mouseleave   @contextmenu
+@input    @change     @focus        @blur         @submit
+@keydown  @keyup      @scroll       @wheel        @resize
+@dragstart @dragend   @drop         @paste        @copy
 ```
+
+> **Native JS:** Eleva uses native DOM events. Any event that works in vanilla JavaScript works with `@` syntax.
+
+> **Warning:** `@click="remove(id)"` executes immediately during render! Use `@click="() => remove(id)"` instead.
 
 ---
 
@@ -111,7 +188,7 @@ template: (ctx) => `
 ```javascript
 setup: ({ signal }) => {
   const data = signal(null);
-  let cleanup = null;
+  let unsub = null;
 
   return {
     data,
@@ -119,12 +196,13 @@ setup: ({ signal }) => {
     onMount: () => {
       // DOM ready - fetch data, add listeners
       fetchData().then(d => data.value = d);
-      cleanup = subscribe();
+      unsub = subscribe();
     },
     onUpdate: () => { /* After re-render (don't set state here!) */ },
-    onUnmount: () => {
-      // Cleanup - remove listeners, cancel requests
-      if (cleanup) cleanup();
+    onUnmount: ({ cleanup }) => {
+      // cleanup = { watchers, listeners, children } (auto-cleaned by Eleva)
+      // Manual cleanup still needed for external resources:
+      if (unsub) unsub();
     }
   };
 }
@@ -135,7 +213,7 @@ setup: ({ signal }) => {
 | `onBeforeMount` | Before DOM insert | Validate props |
 | `onMount` | After DOM ready | Fetch data, add listeners, focus |
 | `onUpdate` | After re-render | Sync external systems |
-| `onUnmount` | Before removal | Cleanup listeners, timers |
+| `onUnmount` | Before removal | Cleanup listeners, timers (receives `{ cleanup }`) |
 
 ---
 

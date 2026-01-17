@@ -5,7 +5,7 @@ description: Eleva.js multi-file application structure, component organization, 
 
 # Multi-File Application Structure
 
-> **Version:** 1.0.0 | Organizing larger Eleva applications into separate files.
+> **Version:** 1.0.1 | Organizing larger Eleva applications into separate files.
 
 For larger applications, organize your code into separate files for maintainability.
 

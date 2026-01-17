@@ -5,7 +5,7 @@ description: Eleva.js patterns for building searchable, filterable lists with so
 
 # Searchable & Filterable Lists
 
-> **Version:** 1.0.0 | Build interactive lists with search, category filters, and sorting.
+> **Version:** 1.0.1 | Build interactive lists with search, category filters, and sorting.
 
 ---
 

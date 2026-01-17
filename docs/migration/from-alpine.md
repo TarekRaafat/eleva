@@ -3,9 +3,85 @@ title: Migrate from Alpine.js
 description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Migrate from Alpine.js to Eleva.js",
+  "description": "Learn how to migrate from Alpine.js to Eleva.js, converting x-data to setup(), directives to template expressions, and Alpine.store to Eleva Store.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT25M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Existing Alpine.js application"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Eleva.js (~2.3KB gzipped)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Replace x-data with setup and signal",
+      "text": "Convert Alpine's x-data inline state to Eleva's setup() function with signal() calls. State is created with signal() and returned for use in templates.",
+      "url": "https://elevajs.com/migration/from-alpine.html#state-x-data--setup--signal"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert x-text and x-html to interpolation",
+      "text": "Replace x-text and x-html directives with JavaScript template literal interpolation using ${ctx.value.value} syntax.",
+      "url": "https://elevajs.com/migration/from-alpine.html#text--html-x-textx-html--template-interpolation"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace x-show with inline styles",
+      "text": "Convert x-show directives to conditional inline styles. Use style=\"${condition ? '' : 'display: none;'}\" pattern for visibility toggling.",
+      "url": "https://elevajs.com/migration/from-alpine.html#visibility-x-show--inline-style"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert x-if to ternary expressions",
+      "text": "Replace x-if template directives with JavaScript ternary expressions in template strings: ${condition ? '<div>...</div>' : ''}.",
+      "url": "https://elevajs.com/migration/from-alpine.html#conditional-rendering-x-if--ternary-expressions"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace x-for with Array.map",
+      "text": "Convert x-for loop directives to JavaScript .map().join('') pattern for rendering lists in template strings.",
+      "url": "https://elevajs.com/migration/from-alpine.html#list-rendering-x-for--arraymap"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert x-model to value + @input",
+      "text": "Replace x-model two-way binding with explicit value attribute and @input event handler pattern for form inputs.",
+      "url": "https://elevajs.com/migration/from-alpine.html#two-way-binding-x-model--value--input"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace Alpine.store with Eleva Store",
+      "text": "Convert Alpine.store global state to Eleva Store plugin. Define state and actions, then access via setup({ store }) in components.",
+      "url": "https://elevajs.com/migration/from-alpine.html#global-state-alpinestore--eleva-store"
+    }
+  ]
+}
+</script>
+
 # Migrating from Alpine.js
 
-> **Version:** 1.0.0 | A guide for Alpine.js developers transitioning to Eleva
+> **Version:** 1.0.1 | A guide for Alpine.js developers transitioning to Eleva
 
 This guide helps Alpine.js developers understand Eleva by mapping familiar Alpine concepts to their Eleva equivalents. Both frameworks share a similar philosophy—lightweight, no build step, progressive enhancement—but take different approaches: Alpine is HTML-first with directives, while Eleva is JS-first with template functions.
 

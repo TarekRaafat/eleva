@@ -5,7 +5,7 @@ description: Eleva.js plugin best practices - error handling, edge cases, TypeSc
 
 # Plugin Best Practices
 
-> **Version:** 1.0.0 | Best practices for building robust, maintainable Eleva plugins.
+> **Version:** 1.0.1 | Best practices for building robust, maintainable Eleva plugins.
 
 ---
 
@@ -183,6 +183,94 @@ install(eleva, options) {
   };
 }
 ```
+
+---
+
+## Cleanup Best Practices
+
+Always implement `uninstall()` when your plugin:
+- Wraps existing Eleva methods (like `mount`, `component`, etc.)
+- Adds properties to the Eleva instance
+- Creates event listeners or timers
+- Allocates external resources
+
+### Complete Cleanup Pattern
+
+```js
+const CleanablePlugin = {
+  name: "cleanable",
+  version: "1.0.0",
+
+  install(eleva, options = {}) {
+    // 1. Store originals with namespaced keys
+    const originalMount = eleva.mount;
+    eleva._cleanable_originalMount = originalMount;
+
+    // 2. Wrap methods
+    eleva.mount = async function(...args) {
+      console.log("Enhanced mount");
+      return originalMount.call(this, ...args);
+    };
+
+    // 3. Add properties
+    eleva.cleanable = {
+      config: options,
+      doSomething: () => { /* ... */ }
+    };
+
+    // 4. Track installation
+    this._installed = true;
+  },
+
+  uninstall(eleva) {
+    // Guard against double uninstall
+    if (!this._installed) return;
+
+    // 1. Restore wrapped methods
+    if (eleva._cleanable_originalMount) {
+      eleva.mount = eleva._cleanable_originalMount;
+      delete eleva._cleanable_originalMount;
+    }
+
+    // 2. Remove added properties
+    delete eleva.cleanable;
+
+    // 3. Remove from plugin registry
+    if (eleva._plugins) {
+      eleva._plugins.delete(this.name);
+    }
+
+    // 4. Reset installation state
+    this._installed = false;
+  }
+};
+```
+
+### Cleanup Checklist
+
+| Resource Type | Store For Cleanup | Cleanup Action |
+|---------------|-------------------|----------------|
+| Wrapped methods | `eleva._pluginName_originalMethod` | Restore original |
+| Added properties | N/A | `delete eleva.property` |
+| Event listeners | Store unsubscribe function | Call unsubscribe |
+| Timers | Store timer ID | `clearTimeout/clearInterval` |
+| Plugin registry | N/A | `eleva._plugins.delete(name)` |
+
+### Uninstall Order (LIFO)
+
+If multiple plugins wrap the same methods, uninstall in **reverse order**:
+
+```js
+// Install order
+app.use(PluginA);  // First
+app.use(PluginB);  // Second (wraps PluginA's wrapper)
+
+// Uninstall in reverse
+PluginB.uninstall(app);  // Remove outer wrapper first
+PluginA.uninstall(app);  // Then inner wrapper
+```
+
+> **Note:** See the [Plugin System documentation](../../plugin-system.md#plugin-vs-component-cleanup) for how plugin cleanup differs from component cleanup.
 
 ---
 

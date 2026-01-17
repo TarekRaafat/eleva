@@ -5,7 +5,7 @@ description: Eleva.js performance best practices - preventing unnecessary re-ren
 
 # Performance Optimization
 
-> **Version:** 1.0.0 | Techniques for optimizing render performance in Eleva applications.
+> **Version:** 1.0.1 | Techniques for optimizing render performance in Eleva applications.
 
 ---
 

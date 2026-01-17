@@ -1,6 +1,7 @@
 ---
-title: Attr Plugin - Intelligent Attribute Binding
+title: Eleva.js Attr Plugin - Intelligent Attribute Binding
 description: Eleva.js Attr plugin for ARIA accessibility, data attributes, boolean attributes, and dynamic property binding. 2.2KB, zero-config.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Attr Plugin

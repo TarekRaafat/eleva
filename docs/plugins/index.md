@@ -1,11 +1,12 @@
 ---
-title: Plugins - Router, Store & Attr
+title: Eleva.js Plugins - Router, Store & Attr
 description: Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Eleva Plugins
 
-> **Version:** 1.0.0 | **All plugins are optional and tree-shakeable**
+> **Version:** 1.0.1 | **All plugins are optional and tree-shakeable**
 
 Eleva's plugin system extends the core framework with powerful optional features. Plugins come in two types: **Core Plugins** maintained by the Eleva team, and **External Plugins** created by the community.
 

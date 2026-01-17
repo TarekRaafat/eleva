@@ -1,6 +1,7 @@
 ---
-title: Store Plugin - Centralized State Management
+title: Eleva.js Store Plugin - Centralized State Management
 description: Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in 6KB.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Store Plugin

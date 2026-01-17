@@ -3,9 +3,85 @@ title: Migrate from Vue
 description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to templates.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Migrate from Vue to Eleva.js",
+  "description": "Learn how to migrate your Vue 3 application to Eleva.js, converting ref/reactive to signals, directives to template expressions, and Pinia to Eleva Store.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT30M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Existing Vue 3 application"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Eleva.js (~2.3KB gzipped)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Replace ref and reactive with signal",
+      "text": "Convert Vue's ref() and reactive() to Eleva's signal(). Use signal() for both primitives and objects, accessing values via .value property.",
+      "url": "https://elevajs.com/migration/from-vue.html#reactivity-refreactive--signal"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert computed to plain functions",
+      "text": "Replace Vue's computed() with regular JavaScript functions. Functions are called during template execution and Eleva's batching handles optimization.",
+      "url": "https://elevajs.com/migration/from-vue.html#computed-properties"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace watch with signal.watch",
+      "text": "Convert Vue's watch() and watchEffect() to signal.watch() calls. The watch method is called directly on the signal instance.",
+      "url": "https://elevajs.com/migration/from-vue.html#watchers-watch--signalwatch"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert SFC to component objects",
+      "text": "Transform Vue Single File Components into Eleva component objects with setup function and template string. Move styles to CSS files or inline.",
+      "url": "https://elevajs.com/migration/from-vue.html#single-file-components--component-objects"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace directives with template expressions",
+      "text": "Convert v-if to ternary expressions, v-for to .map().join(''), v-show to inline styles, and v-model to value + @input pattern.",
+      "url": "https://elevajs.com/migration/from-vue.html#directives--template-expressions"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace Vue Router with Eleva Router",
+      "text": "Migrate from Vue Router to Eleva Router plugin. Configure routes and use router.navigate() for programmatic navigation.",
+      "url": "https://elevajs.com/migration/from-vue.html#vue-router--eleva-router"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace Vuex/Pinia with Eleva Store",
+      "text": "Convert Pinia stores to Eleva Store plugin. Define state and actions, then access via setup({ store }) in components.",
+      "url": "https://elevajs.com/migration/from-vue.html#vuexpinia--eleva-store"
+    }
+  ]
+}
+</script>
+
 # Migrating from Vue
 
-> **Version:** 1.0.0 | A comprehensive guide for Vue developers transitioning to Eleva
+> **Version:** 1.0.1 | A comprehensive guide for Vue developers transitioning to Eleva
 
 This guide helps Vue developers understand Eleva by mapping familiar Vue concepts to their Eleva equivalents.
 
@@ -287,7 +363,7 @@ const MyComponent = {
 - `setup()` runs during initialization (before DOM mount)
 - `onMount` runs after component is mounted to DOM (like Vue's `onMounted`)
 - Return lifecycle hooks (`onMount`, `onUnmount`, `onBeforeUpdate`, `onUpdate`) from setup
-- All hooks receive `{ container, context }` with access to DOM and reactive state
+- All hooks receive `{ container, context }` with access to DOM and reactive state (onUnmount also receives `cleanup`)
 
 ---
 

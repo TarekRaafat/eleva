@@ -5,7 +5,7 @@ description: Complete guide to Eleva components - registration, mounting, childr
 
 # Components Guide
 
-> **Version:** 1.0.0 | This guide covers component registration, mounting, children, props, styles, and communication patterns.
+> **Version:** 1.0.1 | This guide covers component registration, mounting, children, props, styles, and communication patterns.
 
 ---
 
@@ -118,14 +118,122 @@ app.mount(document.getElementById("app"), "UserProfile", {
 
 ### Unmounting Components
 
+The `mount()` method returns a `MountResult` object that includes an `unmount()` function:
+
 ```javascript
 const instance = await app.mount(document.getElementById("app"), "MyComponent");
 
-// Later...
+// Later, when you need to remove the component...
 await instance.unmount();
 ```
 
-The container element receives a `_eleva_instance` property that references the mounted instance.
+#### MountResult Object
+
+The object returned by `mount()` contains:
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `container` | `HTMLElement` | The DOM element where the component is mounted |
+| `data` | `Object` | The component's reactive state and context |
+| `unmount` | `Function` | Async function to clean up and remove the component |
+
+```javascript
+const instance = await app.mount(container, "Counter", { initial: 5 });
+
+console.log(instance.container);  // The mounted DOM element
+console.log(instance.data);       // { count: Signal, increment: Function, ... }
+await instance.unmount();         // Clean up and remove
+```
+
+#### What Happens During Unmount
+
+When you call `instance.unmount()`, Eleva performs cleanup in this order:
+
+1. **Calls `onUnmount` hook** - Your cleanup code runs first with access to the `cleanup` object
+2. **Removes signal watchers** - All reactive subscriptions are cleaned up
+3. **Removes event listeners** - Template event handlers (`@click`, etc.) are removed
+4. **Unmounts child components** - All nested components are recursively unmounted
+5. **Clears the container** - The container's innerHTML is emptied
+6. **Removes instance reference** - The `_eleva_instance` property is deleted
+
+```javascript
+app.component("Timer", {
+  setup: ({ signal }) => {
+    const seconds = signal(0);
+    let intervalId = null;
+
+    return {
+      seconds,
+      onMount: () => {
+        intervalId = setInterval(() => seconds.value++, 1000);
+      },
+      onUnmount: ({ cleanup }) => {
+        // Your manual cleanup
+        clearInterval(intervalId);
+
+        // cleanup object shows what Eleva will auto-clean:
+        console.log(`Watchers: ${cleanup.watchers.length}`);
+        console.log(`Listeners: ${cleanup.listeners.length}`);
+        console.log(`Children: ${cleanup.children.length}`);
+      }
+    };
+  },
+  template: (ctx) => `<p>Seconds: ${ctx.seconds.value}</p>`
+});
+
+const timer = await app.mount(document.getElementById("app"), "Timer");
+
+// After 10 seconds, unmount the timer
+setTimeout(() => timer.unmount(), 10000);
+```
+
+#### Managing Multiple Mounted Components
+
+If you mount multiple components, track their instances for later cleanup:
+
+```javascript
+const app = new Eleva("MyApp");
+const mountedInstances = [];
+
+// Mount multiple components
+mountedInstances.push(
+  await app.mount(document.getElementById("header"), "Header")
+);
+mountedInstances.push(
+  await app.mount(document.getElementById("sidebar"), "Sidebar")
+);
+mountedInstances.push(
+  await app.mount(document.getElementById("main"), "MainContent")
+);
+
+// Unmount all components
+async function unmountAll() {
+  for (const instance of mountedInstances) {
+    await instance.unmount();
+  }
+  mountedInstances.length = 0;  // Clear the array
+}
+
+// Call when needed (e.g., before page unload or app reset)
+window.addEventListener("beforeunload", unmountAll);
+```
+
+#### Accessing Mounted Instance from Container
+
+The container element stores a reference to its mounted instance:
+
+```javascript
+const container = document.getElementById("app");
+await app.mount(container, "MyComponent");
+
+// Later, access the instance from the container
+const instance = container._eleva_instance;
+if (instance) {
+  await instance.unmount();
+}
+```
+
+> **Note:** `_eleva_instance` is an internal property. While it works, prefer storing the `MountResult` returned by `mount()` for cleaner code.
 
 ---
 

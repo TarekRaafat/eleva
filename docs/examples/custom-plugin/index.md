@@ -3,6 +3,74 @@ title: Creating Custom Plugins
 description: Complete guide to building Eleva.js plugins. Learn plugin architecture, registration, and the basics of extending Eleva.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Create a Custom Eleva.js Plugin",
+  "description": "Learn how to create, register, and use custom plugins for Eleva.js to extend the framework's functionality.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT15M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Eleva.js application"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Node.js (v18 or higher)"
+    },
+    {
+      "@type": "HowToTool",
+      "name": "npm (v9 or higher)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Define the plugin object",
+      "text": "Create a JavaScript object with required properties: name (unique identifier), version (semantic version string), and install function that receives the Eleva instance and options.",
+      "url": "https://elevajs.com/examples/custom-plugin/#plugin-basics"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Implement the install method",
+      "text": "Add your plugin's functionality inside the install(eleva, options) method. This can include adding methods, wrapping existing methods, or creating new services on the Eleva instance.",
+      "url": "https://elevajs.com/examples/custom-plugin/#quick-start"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Register the plugin with app.use()",
+      "text": "Call app.use(MyPlugin) or app.use(MyPlugin, options) to register your plugin. The install method is called immediately with the Eleva instance.",
+      "url": "https://elevajs.com/examples/custom-plugin/#registering-plugins"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Use the plugin in components",
+      "text": "Access your plugin's features via the app instance in component setup functions. For example: app.myFeature.someMethod().",
+      "url": "https://elevajs.com/examples/custom-plugin/#accessing-plugin-features"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Implement uninstall for cleanup (optional)",
+      "text": "Add an uninstall(eleva) method to restore original methods and remove added properties. This enables proper cleanup when the plugin is removed.",
+      "url": "https://elevajs.com/examples/custom-plugin/#plugin-cleanup-uninstall"
+    }
+  ]
+}
+</script>
+
 # Creating a Custom Plugin for Eleva
 
 This comprehensive guide walks you through creating, testing, and publishing plugins for Eleva.
@@ -179,6 +247,84 @@ await router.start();  // Direct access to returned API
 2. The plugin modifies the Eleva instance (adds methods, wraps existing methods, etc.)
 3. The plugin is stored internally (prevents duplicate registration)
 4. The return value of `install()` is returned to the caller
+
+---
+
+## Plugin Cleanup (Uninstall)
+
+Plugins can implement an optional `uninstall()` method for proper cleanup. This is recommended when your plugin wraps existing methods or adds properties to the Eleva instance.
+
+### Basic Cleanup Pattern
+
+```js
+const MyPlugin = {
+  name: "myPlugin",
+  version: "1.0.0",
+
+  install(eleva, options) {
+    // Store original method for later restoration
+    const originalMount = eleva.mount;
+    eleva._myPlugin_originalMount = originalMount;
+
+    // Wrap the method
+    eleva.mount = function(...args) {
+      console.log("Enhanced mount");
+      return originalMount.call(this, ...args);
+    };
+
+    // Add new properties
+    eleva.myFeature = { /* ... */ };
+  },
+
+  uninstall(eleva) {
+    // Restore original method
+    if (eleva._myPlugin_originalMount) {
+      eleva.mount = eleva._myPlugin_originalMount;
+      delete eleva._myPlugin_originalMount;
+    }
+
+    // Remove added properties
+    delete eleva.myFeature;
+
+    // Remove from plugin registry
+    if (eleva._plugins) {
+      eleva._plugins.delete(this.name);
+    }
+  }
+};
+
+// Usage
+app.use(MyPlugin);
+
+// Later, to uninstall:
+MyPlugin.uninstall(app);
+```
+
+### What to Clean Up
+
+| Resource | Cleanup Action |
+|----------|----------------|
+| Wrapped methods | Restore to original functions |
+| Added properties | Delete from Eleva instance |
+| Event listeners | Remove all subscriptions |
+| Timers/intervals | Clear all timers |
+| Plugin registry entry | Remove from `_plugins` Map |
+
+### Uninstall Order (LIFO)
+
+When multiple plugins wrap the same methods, uninstall in **reverse order** (Last In, First Out):
+
+```js
+// Installation order
+app.use(PluginA);  // Wraps mount first
+app.use(PluginB);  // Wraps mount second
+
+// Uninstall in reverse order
+PluginB.uninstall(app);  // Uninstall last plugin first
+PluginA.uninstall(app);  // Then earlier plugins
+```
+
+> **Note:** See the [Plugin System documentation](../../plugin-system.md#plugin-vs-component-cleanup) for details on how plugin cleanup differs from component cleanup.
 
 ---
 

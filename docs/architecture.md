@@ -5,7 +5,7 @@ description: Understand Eleva's internal architecture, data flow patterns, and h
 
 # Architecture & Data Flow
 
-> **Version:** 1.0.0 | This guide explains how data flows through the framework and how its key components interact.
+> **Version:** 1.0.1 | This guide explains how data flows through the framework and how its key components interact.
 
 Eleva's design emphasizes clarity, modularity, and performance.
 

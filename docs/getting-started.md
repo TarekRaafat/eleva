@@ -1,7 +1,72 @@
 ---
 title: Getting Started with Eleva.js
 description: Learn how to install and create your first Eleva.js application. Step-by-step tutorial covering installation, components, signals, and basic patterns.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Get Started with Eleva.js",
+  "description": "Learn how to install Eleva.js and create your first reactive component in minutes.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT10M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Modern web browser (Chrome, Firefox, Safari, Edge)"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "npm, yarn, pnpm, or bun (optional)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Install Eleva.js",
+      "text": "Install Eleva via npm (npm install eleva), yarn, pnpm, bun, or include it directly via CDN.",
+      "url": "https://elevajs.com/getting-started.html#installation"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create an HTML file",
+      "text": "Create an HTML file with a div element that will serve as the mount point for your Eleva application.",
+      "url": "https://elevajs.com/getting-started.html#your-first-component-dynamic-greeting"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Create the Eleva app instance",
+      "text": "Import Eleva and create a new app instance: const app = new Eleva('MyApp');",
+      "url": "https://elevajs.com/getting-started.html#your-first-component-dynamic-greeting"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Define a component with reactive state",
+      "text": "Use app.component() to define a component with setup function containing signals for reactive state and a template function for the UI.",
+      "url": "https://elevajs.com/getting-started.html#your-first-component-dynamic-greeting"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Mount the component",
+      "text": "Use app.mount() to render your component into the DOM element: app.mount(document.getElementById('app'), 'MyComponent');",
+      "url": "https://elevajs.com/getting-started.html#your-first-component-dynamic-greeting"
+    }
+  ]
+}
+</script>
 
 # Getting Started
 
@@ -24,6 +89,12 @@ Eleva is designed to offer a simple yet powerful way to build frontend applicati
 - **Configurability:** Extend functionality with a simple API and plugins.
 - **Freedom:** Build both simple and complex applications without unnecessary constraints.
 
+### Core Philosophy
+
+> **💡 Vanilla JavaScript. Elevated.**
+
+Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JS, it works in Eleva.**
+
 ---
 
 ## Core Principles
@@ -37,7 +108,7 @@ At the heart of Eleva are a few fundamental principles that guide its design and
   With its signal-based reactivity, Eleva updates only the parts of the UI that change, ensuring smooth and efficient DOM updates.
 
 - **Simplicity:**
-  Built using pure vanilla JavaScript, Eleva offers a shallow learning curve and seamless integration with existing projects.
+  Built using pure vanilla JavaScript, Eleva offers a shallow learning curve and seamless integration with existing projects. **If it works in native JavaScript, it works in Eleva** — native DOM events, browser APIs, and standard JS patterns all apply.
 
 - **Modularity:**
   Each component is self-contained, making your application scalable and maintainable.
@@ -47,6 +118,24 @@ At the heart of Eleva are a few fundamental principles that guide its design and
 
 - **Performance:**
   Designed to be lightweight and efficient, Eleva is ideal for performance-critical applications.
+
+---
+
+## Perfect For
+
+Eleva is an excellent choice for specific use cases where its strengths shine:
+
+| Use Case | Why Eleva Excels |
+|----------|------------------|
+| **Minimal bundle size requirements** | At ~2.3KB gzipped, Eleva won't bloat your application |
+| **Teams preferring simplicity** | No build step, no complex configuration, just JavaScript |
+| **Learning reactive programming** | Clean, understandable reactivity without framework magic |
+| **No build step environments** | Drop in via CDN and start building immediately |
+| **Micro-frontends & widgets** | Tiny footprint, self-contained components, no conflicts |
+| **Performance-critical applications** | Direct DOM diffing, efficient batched updates |
+| **Progressive enhancement** | Add interactivity to existing pages without rewrites |
+
+> **Quick Check:** If you need a framework that works directly in the browser, has zero dependencies, and respects your architecture decisions, Eleva is designed for you.
 
 ---
 
@@ -261,6 +350,26 @@ app.mount(document.getElementById("app"), "HelloWorld");
 app.mount(document.getElementById("app"), "HelloWorld")
   .then((instance) => console.log("Mounted:", instance));
 ```
+
+**Unmounting Components:**
+
+The `mount()` method returns an instance with an `unmount()` function for cleanup:
+
+```javascript
+// Mount and store the instance
+const instance = await app.mount(document.getElementById("app"), "HelloWorld");
+
+// Later, when you need to remove the component
+await instance.unmount();
+```
+
+Calling `unmount()` will:
+- Trigger the `onUnmount` lifecycle hook
+- Clean up signal watchers and event listeners
+- Unmount any child components
+- Clear the container element
+
+> **Learn more:** See [Components - Unmounting](./components.md#unmounting-components) for managing multiple components.
 
 For interactive demos, check out the [CodePen Example](https://codepen.io/tarekraafat/pen/GgRrxdY?editors=1010).
 

@@ -1,12 +1,204 @@
 ---
 title: Best DX for Building the Best UX
-description: Eleva.js - 6KB pure vanilla JavaScript framework with signal-based reactivity, zero dependencies, and TypeScript support. The React/Vue alternative.
+description: Eleva.js - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Eleva.js",
+  "alternateName": ["Eleva", "ElevaJS"],
+  "description": "Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "url": "https://elevajs.com",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "JavaScript Framework",
+  "operatingSystem": "Cross-platform (Web Browser)",
+  "softwareVersion": "1.0.1",
+  "datePublished": "2026-01-12",
+  "releaseNotes": "First official stable release with production-ready API",
+  "downloadUrl": "https://www.npmjs.com/package/eleva",
+  "installUrl": "https://www.npmjs.com/package/eleva",
+  "fileSize": "6KB",
+  "memoryRequirements": "Minimal",
+  "storageRequirements": "6KB minified, 2.3KB gzipped",
+  "softwareRequirements": "Modern web browser (Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+)",
+  "permissions": "None required",
+  "featureList": [
+    "Signal-based reactivity",
+    "Zero dependencies",
+    "No build step required",
+    "Built-in TypeScript support",
+    "Component-based architecture",
+    "Direct DOM manipulation",
+    "Plugin system (Router, Store, Attr)",
+    "Lifecycle hooks",
+    "Event handling",
+    "Template literals"
+  ],
+  "screenshot": "https://elevajs.com/imgs/eleva.js Full Logo.png",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://www.tarekraafat.com",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "maintainer": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://www.tarekraafat.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "codeRepository": "https://github.com/TarekRaafat/eleva",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Web Browser",
+  "keywords": "javascript framework, frontend framework, react alternative, vue alternative, angular alternative, signal-based reactivity, lightweight framework, vanilla javascript elevated, eleva"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Eleva.js?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and React?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva require a build step?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use Eleva with TypeScript?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Absolutely! Eleva includes built-in TypeScript declarations (.d.ts files). No additional @types packages are needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva use Virtual DOM?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory, Eleva directly patches the real DOM. This reduces memory overhead and delivers 240fps-capable performance."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva a React alternative?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, Eleva can serve as a lightweight React alternative for projects that don't need React's full ecosystem. Eleva offers similar component-based architecture and reactivity patterns but with a much smaller footprint."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What plugins are available with Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva comes with three powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), and Store (reactive state management with persistence and namespacing)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva suitable for large applications?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva's performance scales well—it handles 10K+ rows efficiently via virtual scrolling, achieves 240fps rendering, and its Router/Store plugins support complex SPAs. The main consideration for large applications is ecosystem maturity compared to React, Vue, and Angular."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Vue?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Svelte?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is Eleva production-ready?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Eleva's reactivity work?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva include routing capabilities?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva includes a powerful Router plugin that provides client-side routing with navigation guards, reactive state, lazy loading, and component resolution. Import it from eleva/plugins."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I create custom plugins for Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva has a simple plugin API. Plugins are objects with an install(eleva, options) method that receives the Eleva instance and can extend it with new functionality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I migrate from React to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Migration involves replacing useState with Eleva's signal(), converting JSX components to template string components, replacing useEffect with signal watchers or lifecycle hooks, and replacing React Router with Eleva's Router plugin."
+      }
+    }
+  ]
+}
+</script>
+
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.0` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.0.1` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -46,12 +238,19 @@ Unlike React, Vue, or Angular, Eleva:
 - **Uses real DOM** - No virtual DOM overhead for simple apps
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
+- **Is just JavaScript** - If it works in vanilla JS, it works in Eleva
 
 Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
 
+### Core Philosophy
+
+> **💡 Vanilla JavaScript. Elevated.**
+
+Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JS, it works in Eleva.**
+
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **Stable Release**: This is the official documentation for Eleva v1.0.0 - the first stable release! The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
+> **Stable Release**: This is the official documentation for Eleva v1.0.1. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
 
 ---
 
@@ -297,140 +496,3 @@ Eleva is open-source and available under the [MIT License](https://github.com/Ta
 ---
 
 [Getting Started →](./getting-started.md)
-
-<!-- JSON-LD Structured Data for SEO and GEO -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Eleva.js",
-  "alternateName": ["Eleva", "ElevaJS"],
-  "description": "A 6KB minimalist pure vanilla JavaScript frontend framework designed for exceptional Developer Experience. Signal-based reactivity and zero dependencies.",
-  "url": "https://elevajs.com",
-  "applicationCategory": "DeveloperApplication",
-  "applicationSubCategory": "JavaScript Framework",
-  "operatingSystem": "Cross-platform (Web Browser)",
-  "softwareVersion": "1.0.0",
-  "datePublished": "2026-01-12",
-  "releaseNotes": "First official stable release with production-ready API",
-  "downloadUrl": "https://www.npmjs.com/package/eleva",
-  "installUrl": "https://www.npmjs.com/package/eleva",
-  "fileSize": "6KB",
-  "memoryRequirements": "Minimal",
-  "storageRequirements": "6KB minified, 2.3KB gzipped",
-  "softwareRequirements": "Modern web browser (Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+)",
-  "permissions": "None required",
-  "featureList": [
-    "Signal-based reactivity",
-    "Zero dependencies",
-    "No build step required",
-    "Built-in TypeScript support",
-    "Component-based architecture",
-    "Direct DOM manipulation",
-    "Plugin system (Router, Store, Attr)",
-    "Lifecycle hooks",
-    "Event handling",
-    "Template literals"
-  ],
-  "screenshot": "https://elevajs.com/imgs/eleva.js Full Logo.png",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD",
-    "availability": "https://schema.org/InStock"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Tarek Raafat",
-    "url": "https://www.tarekraafat.com",
-    "email": "tarek.m.raafat@gmail.com"
-  },
-  "maintainer": {
-    "@type": "Person",
-    "name": "Tarek Raafat",
-    "url": "https://www.tarekraafat.com"
-  },
-  "license": "https://opensource.org/licenses/MIT",
-  "isAccessibleForFree": true,
-  "codeRepository": "https://github.com/TarekRaafat/eleva",
-  "programmingLanguage": {
-    "@type": "ComputerLanguage",
-    "name": "JavaScript"
-  },
-  "runtimePlatform": "Web Browser",
-  "keywords": "javascript framework, frontend framework, react alternative, vue alternative, signal-based reactivity, lightweight framework, vanilla javascript"
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "What is Eleva.js?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Is Eleva production-ready?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Yes! Eleva v1.0.0 is the first official stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What is the difference between Eleva and React?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does Eleva use Virtual DOM?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Eleva uses real DOM manipulation with an efficient diffing algorithm. Instead of maintaining a virtual DOM tree in memory and comparing it to compute changes, Eleva directly patches the real DOM. This approach reduces memory overhead and delivers 240fps-capable performance."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Does Eleva require a build step?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "No. Eleva can be used directly via CDN without any build tools, bundlers, or transpilers. Simply include the script tag and start coding. However, you can also use Eleva with bundlers like Vite, Webpack, or Rollup if you prefer."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I use Eleva with TypeScript?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Absolutely! Eleva includes built-in TypeScript declarations (.d.ts files) to help keep your codebase strongly typed. No additional @types packages are needed."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "What plugins are available with Eleva?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Eleva comes with three powerful built-in plugins: Attr for advanced attribute handling (ARIA, data attributes, boolean attributes), Router for client-side routing with navigation guards and reactive state, and Store for reactive state management with persistence and namespacing."
-      }
-    },
-    {
-      "@type": "Question",
-      "name": "How does Eleva's reactivity work?",
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": "Eleva uses a signal-based reactivity system similar to Solid.js. Signals are reactive containers that hold values. When a signal's value changes, any component or watcher subscribed to that signal automatically updates. This provides fine-grained reactivity without the overhead of virtual DOM diffing."
-      }
-    }
-  ]
-}
-</script>

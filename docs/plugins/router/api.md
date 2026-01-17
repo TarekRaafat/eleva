@@ -201,7 +201,7 @@ function onLogout() {
 }
 ```
 
-### start() / stop()
+### start() / stop() / destroy()
 
 Control the router lifecycle.
 
@@ -225,10 +225,77 @@ async function initApp() {
   await router.start();
 }
 
-// Cleanup on app destroy
+// Pause router (can restart later)
+await router.stop();
+
+// Destroy router (full cleanup, calls destroy on router plugins)
+await router.destroy();
+```
+
+### Router.uninstall(app)
+
+Completely remove the Router plugin from an Eleva instance. This is different from `stop()` or `destroy()`:
+
+| Method | Purpose | Can Restart? | Removes from App? |
+|--------|---------|:------------:|:-----------------:|
+| `router.stop()` | Pause navigation | Yes | No |
+| `router.destroy()` | Full router cleanup | No | No |
+| `Router.uninstall(app)` | Remove plugin entirely | No | Yes |
+
+**When to use `uninstall()`:**
+- Completely removing routing from your app
+- Switching to a different routing solution
+- Full app teardown/cleanup
+
+**Example:**
+
+```javascript
+import Eleva from "eleva";
+import { Router } from "eleva/plugins";
+
+const app = new Eleva("MyApp");
+const router = app.use(Router, {
+  mode: "hash",
+  mount: "#app",
+  routes: [/* ... */]
+});
+
+await router.start();
+
+// Later, to completely remove the router plugin:
+await Router.uninstall(app);
+
+// After uninstall, these are removed:
+// - app.router (undefined)
+// - app.navigate (undefined)
+// - app.getCurrentRoute (undefined)
+// - app.getRouteParams (undefined)
+// - app.getRouteQuery (undefined)
+```
+
+**What `Router.uninstall()` does:**
+
+1. Calls `router.destroy()` which:
+   - Calls `destroy()` on any router-level plugins
+   - Removes event listeners (popstate, click handlers)
+   - Unmounts the current layout component
+   - Resets router state
+
+2. Removes router from Eleva instance:
+   - Deletes `app.router`
+   - Deletes utility methods (`navigate`, `getCurrentRoute`, etc.)
+   - Removes from plugin registry
+
+```javascript
+// Full app cleanup example
 async function destroyApp() {
-  await router.stop();
-  // Router listeners removed, navigation disabled
+  // Uninstall plugins in reverse order (LIFO)
+  await Router.uninstall(app);
+  Store.uninstall(app);
+  Attr.uninstall(app);
+
+  // Unmount any remaining components
+  // ...
 }
 ```
 

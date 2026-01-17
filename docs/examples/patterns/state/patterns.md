@@ -5,7 +5,7 @@ description: Eleva.js state patterns - shopping cart with computed totals, undo/
 
 # State Patterns
 
-> **Version:** 1.0.0 | Advanced state management patterns for complex applications.
+> **Version:** 1.0.1 | Advanced state management patterns for complex applications.
 
 ---
 

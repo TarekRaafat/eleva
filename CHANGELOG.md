@@ -6,6 +6,59 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.0.1 🔧 (17-01-2026)
+
+### 🐛 Fixed
+
+- **Router Plugin** - Fixed `viewSelector` default value from `'root'` to `'view'` to match documented behavior
+  - The JSDoc documentation correctly stated `'view'` as the default, but the code incorrectly used `'root'`
+  - This is a **breaking change** for users relying on the undocumented `'root'` default
+  - **Migration**: If your layouts use `#root` for the view container, either rename to `#view` or explicitly set `viewSelector: 'root'` in router options
+
+### 📝 Documentation
+
+- **Router JSDoc** - Ensured `viewSelector` default value is consistent across all documentation
+
+- **Lifecycle Hooks** - Clarified that `onUnmount` receives `{ container, context, cleanup }` where `cleanup` contains `{ watchers, listeners, children }` arrays
+  - Updated in: `core-concepts.md`, `setup-lifecycle.md`, `glossary.md`, `cheatsheet.md`
+
+- **Component Unmounting** - Comprehensive documentation for unmounting components
+  - Added `MountResult` object documentation (`container`, `data`, `unmount`)
+  - Documented unmount cleanup process (lifecycle order, what gets cleaned up)
+  - Added examples for managing multiple mounted components
+  - Updated in: `components.md`, `core-concepts.md`, `getting-started.md`, `cheatsheet.md`
+
+- **Plugin Uninstall Methods** - Documented `uninstall()` for all built-in plugins
+  - **Router**: `Router.uninstall(app)` - calls `destroy()`, removes router instance and utility methods
+  - **Store**: `Store.uninstall(app)` - restores original `mount()`, removes store instance and shortcuts
+  - **Attr**: `Attr.uninstall(app)` - restores original `_patchNode()`, removes utility methods
+  - Documented difference between `stop()`, `destroy()`, and `uninstall()` for Router
+  - Updated in: `plugin-system.md`, `router/index.md`, `router/api.md`, `store/api.md`, `attr/api.md`
+
+- **Plugin Cleanup Architecture** - Explained plugin vs component cleanup separation
+  - Component cleanup: `onUnmount({ cleanup })` for component-level resources (auto-cleaned)
+  - Plugin cleanup: `plugin.uninstall(app)` for app-level resources (manual)
+  - Added architecture diagram showing cleanup levels
+  - Updated in: `plugin-system.md`, `custom-plugin/index.md`, `custom-plugin/best-practices.md`
+
+- **LIFO Uninstall Order** - Comprehensive warning about plugin uninstall order
+  - Explained what goes wrong without LIFO (key collision, orphaned wrappers, inconsistent state)
+  - Documented consequences (silent bypass, reference errors, memory leaks)
+  - Added best practice for namespaced storage keys in custom plugins
+  - Warning that Store plugin uses generic keys (`_originalMount`)
+  - Updated in: `plugin-system.md`
+
+### 📦 Version Updates
+
+| Component | Version |
+|-----------|---------|
+| Eleva (core) | 1.0.1 |
+| Router Plugin | 1.0.1 |
+| Attr Plugin | 1.0.0 (unchanged) |
+| Store Plugin | 1.0.0 (unchanged) |
+
+---
+
 ## v1.0.0 🎉 (12-01-2026)
 
 ### 🚀 Official Stable Release

@@ -92,8 +92,8 @@ const NavComponent = {
   },
   template: (ctx) => `
     <nav>
-      <button @click="goToUser('123')">View User 123</button>
-      <button @click="goToSearch('eleva')">Search Eleva</button>
+      <button @click="() => goToUser('123')">View User 123</button>
+      <button @click="() => goToSearch('eleva')">Search Eleva</button>
     </nav>
   `
 };
@@ -181,32 +181,48 @@ unsubQuery();
 
 ### In Components
 
+When navigating between `/users/123` and `/users/456`, the component may **not** unmount/remount—only the params change. Use `.watch()` to react to param changes:
+
 ```javascript
 const UserPage = {
   setup(ctx) {
-    // Get initial value
-    const userId = ctx.router.currentParams.value.id;
     const user = ctx.signal(null);
     const loading = ctx.signal(true);
+    let unwatchParams = null;
 
-    // Fetch initial data
-    fetchUser(userId).then(data => {
-      user.value = data;
-      loading.value = false;
-    });
+    // Function to load user data
+    const loadUser = (id) => {
+      if (!id) return;
+      loading.value = true;
+      fetchUser(id).then(data => {
+        user.value = data;
+        loading.value = false;
+      });
+    };
 
-    // Watch for param changes (same component, different user)
-    ctx.router.currentParams.watch((params) => {
-      if (params.id !== user.value?.id) {
-        loading.value = true;
-        fetchUser(params.id).then(data => {
-          user.value = data;
-          loading.value = false;
+    return {
+      user,
+      loading,
+
+      onMount: () => {
+        // Load initial data
+        loadUser(ctx.router.currentParams.value.id);
+
+        // Watch for param changes (same component, different user)
+        unwatchParams = ctx.router.currentParams.watch((params) => {
+          if (params.id && params.id !== user.value?.id) {
+            loadUser(params.id);
+          }
         });
-      }
-    });
+      },
 
-    return { user, loading };
+      onUnmount: () => {
+        // Always clean up watchers!
+        if (unwatchParams) {
+          unwatchParams();
+        }
+      }
+    };
   },
 
   template: (ctx) => `
@@ -219,6 +235,8 @@ const UserPage = {
   `
 };
 ```
+
+> **Important:** When using `.watch()` on router state, always store the unsubscribe function and call it in `onUnmount` to prevent memory leaks.
 
 ---
 

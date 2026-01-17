@@ -3,9 +3,79 @@ title: Migrate from jQuery
 description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components and $.ajax with fetch + signals.
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to Migrate from jQuery to Eleva.js",
+  "description": "Learn how to migrate from jQuery to Eleva.js, replacing DOM manipulation with reactive components, $.ajax with fetch + signals, and plugins with components.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "totalTime": "PT30M",
+  "estimatedCost": {
+    "@type": "MonetaryAmount",
+    "currency": "USD",
+    "value": "0"
+  },
+  "supply": [
+    {
+      "@type": "HowToSupply",
+      "name": "Existing jQuery application"
+    },
+    {
+      "@type": "HowToSupply",
+      "name": "Text editor or IDE"
+    }
+  ],
+  "tool": [
+    {
+      "@type": "HowToTool",
+      "name": "Eleva.js (~2.3KB gzipped)"
+    }
+  ],
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Replace DOM selection with component templates",
+      "text": "Convert jQuery DOM selectors like $('#id') and manipulation methods to declarative template strings. Define what the DOM should look like based on state.",
+      "url": "https://elevajs.com/migration/from-jquery.html#dom-selection--component-templates"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert .on() event handlers to @event syntax",
+      "text": "Replace jQuery's .on('click', fn) event binding with Eleva's @click=\"handler\" declarative event syntax in templates.",
+      "url": "https://elevajs.com/migration/from-jquery.html#event-handling-on--event"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace global variables with signals",
+      "text": "Convert global var/let state variables to Eleva signals. Use signal(initialValue) and access/modify via .value property for automatic DOM updates.",
+      "url": "https://elevajs.com/migration/from-jquery.html#state-management-variables--signals"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Replace $.ajax with fetch + signals",
+      "text": "Convert jQuery's $.ajax() calls to native fetch() API combined with signals for loading, data, and error states.",
+      "url": "https://elevajs.com/migration/from-jquery.html#ajax-ajax--fetch--signals"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert animations to CSS transitions",
+      "text": "Replace jQuery's .slideDown(), .fadeOut() and .animate() with CSS transitions and signal-driven class toggling.",
+      "url": "https://elevajs.com/migration/from-jquery.html#animations-and-effects"
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Convert jQuery plugins to Eleva components",
+      "text": "Transform jQuery plugins ($.fn.pluginName) into reusable Eleva component objects with setup() and template().",
+      "url": "https://elevajs.com/migration/from-jquery.html#plugins--components"
+    }
+  ]
+}
+</script>
+
 # Migrating from jQuery
 
-> **Version:** 1.0.0 | A comprehensive guide for jQuery developers transitioning to Eleva
+> **Version:** 1.0.1 | A comprehensive guide for jQuery developers transitioning to Eleva
 
 This guide helps jQuery developers understand Eleva by mapping familiar jQuery patterns to their Eleva equivalents. Eleva offers modern component architecture while maintaining the simplicity you love about jQuery.
 

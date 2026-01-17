@@ -5,7 +5,7 @@ description: Eleva.js list fundamentals - rendering dynamic lists, event binding
 
 # List Operations - Basics
 
-> **Version:** 1.0.0 | Learn how to render dynamic lists, bind events, and choose keys for optimal performance.
+> **Version:** 1.0.1 | Learn how to render dynamic lists, bind events, and choose keys for optimal performance.
 
 ---
 

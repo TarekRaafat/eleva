@@ -1,11 +1,12 @@
 ---
-title: Migration Guides
+title: Eleva.js Migration Guides
 description: Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping and code comparisons.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
 # Migration Guides
 
-> **Version:** 1.0.0 | Comprehensive guides for migrating to Eleva from other frameworks
+> **Version:** 1.0.1 | Comprehensive guides for migrating to Eleva from other frameworks
 
 Welcome to the Eleva migration guides. These guides help you transition from popular frameworks to Eleva while leveraging your existing knowledge.
 

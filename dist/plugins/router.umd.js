@@ -1,4 +1,4 @@
-/*! Eleva Router Plugin v1.0.0 | MIT License | https://elevajs.com */
+/*! Eleva Router Plugin v1.0.1 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -1385,7 +1385,7 @@
           /** @type {RouterOptions} The merged router options. */ this.options = {
               mode: "hash",
               queryParam: "view",
-              viewSelector: "root",
+              viewSelector: "view",
               ...options
           };
           /** @private @type {RouteDefinition[]} The processed list of route definitions. */ this.routes = this._processRoutes(options.routes || []);
@@ -1461,7 +1461,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.0.0",
+     */ version: "1.0.1",
       /**
      * Plugin description
      * @type {string}
