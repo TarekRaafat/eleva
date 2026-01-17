@@ -4,6 +4,40 @@ description: Eleva.js Store plugin for reactive global state with actions, names
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store Plugin - Centralized State Management",
+  "description": "Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in 6KB.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Plugins",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "store plugin", "state management", "reactive state", "actions", "persistence"]
+}
+</script>
+
 # Store Plugin
 
 > **Version:** 1.0.0 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)

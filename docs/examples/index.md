@@ -1,7 +1,42 @@
 ---
 title: Code Examples - Patterns, Apps & Plugins
 description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, async data. Complete apps and plugin development guide.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Code Examples - Patterns, Apps & Plugins",
+  "description": "Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, async data. Complete apps and plugin development guide.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/examples/"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Examples",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "code examples", "patterns", "forms", "lists", "async data", "apps"]
+}
+</script>
 
 # Code Examples
 

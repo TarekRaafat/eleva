@@ -73,6 +73,40 @@ description: jQuery to Eleva.js migration guide. Replace DOM manipulation with r
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Migrate from jQuery to Eleva.js",
+  "description": "jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components and $.ajax with fetch + signals.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/migration/from-jquery.html"
+  },
+  "proficiencyLevel": "Beginner",
+  "articleSection": "Migration",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "jQuery migration", "DOM manipulation", "events", "AJAX", "components"]
+}
+</script>
+
 # Migrating from jQuery
 
 > **Migration Guide** | For jQuery developers transitioning to Eleva.

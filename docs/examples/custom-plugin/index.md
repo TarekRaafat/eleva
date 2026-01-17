@@ -71,6 +71,40 @@ description: Complete guide to building Eleva.js plugins. Learn plugin architect
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Creating Custom Plugins for Eleva.js",
+  "description": "Complete guide to building Eleva.js plugins. Learn plugin architecture, registration, and the basics of extending Eleva.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/examples/custom-plugin/"
+  },
+  "proficiencyLevel": "Advanced",
+  "articleSection": "Examples",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "custom plugins", "plugin development", "extensibility", "framework extension"]
+}
+</script>
+
 # Creating a Custom Plugin for Eleva
 
 > **Version:** 1.0.1 | Complete guide to creating, testing, and publishing Eleva plugins.

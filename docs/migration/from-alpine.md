@@ -79,6 +79,40 @@ description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Migrate from Alpine.js to Eleva.js",
+  "description": "Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/migration/from-alpine.html"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Migration",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "Alpine.js migration", "x-data", "x-show", "x-model", "directives"]
+}
+</script>
+
 # Migrating from Alpine.js
 
 > **Migration Guide** | For Alpine.js developers transitioning to Eleva.

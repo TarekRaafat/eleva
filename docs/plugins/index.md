@@ -4,6 +4,40 @@ description: Extend Eleva.js with official plugins for routing, state management
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Plugins - Router, Store & Attr",
+  "description": "Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Plugins",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "plugins", "router", "store", "attr", "state management", "routing"]
+}
+</script>
+
 # Eleva Plugins
 
 > **Version:** 1.0.1 | **All plugins are optional and tree-shakeable**

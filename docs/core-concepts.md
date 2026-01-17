@@ -4,6 +4,40 @@ description: Deep dive into Eleva's core modules - Signals, TemplateEngine, Emit
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Core Concepts",
+  "description": "Deep dive into Eleva's core modules - Signals, TemplateEngine, Emitters, Renderer, and Lifecycle Hooks. Learn reactivity and event handling.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/core-concepts.html"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Documentation",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "signals", "reactivity", "template engine", "emitter", "renderer", "lifecycle hooks"]
+}
+</script>
+
 # Core Concepts
 
 > **Core Docs** | Signals, templates, emitters, renderer, and lifecycle hooks.

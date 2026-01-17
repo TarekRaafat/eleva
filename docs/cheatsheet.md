@@ -4,6 +4,40 @@ description: Quick reference for Eleva.js syntax - signals, templates, lifecycle
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Cheat Sheet",
+  "description": "Quick reference for Eleva.js syntax - signals, templates, lifecycle hooks, events, props, and common patterns. Print-friendly.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/cheatsheet.html"
+  },
+  "proficiencyLevel": "Beginner",
+  "articleSection": "Reference",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "cheat sheet", "quick reference", "syntax", "signals", "templates", "lifecycle"]
+}
+</script>
+
 # Eleva.js Cheat Sheet
 
 > **Quick Reference** | Syntax, patterns, and common operations. | [Full Docs](./index.md)

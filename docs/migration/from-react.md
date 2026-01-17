@@ -73,6 +73,40 @@ description: React to Eleva.js migration guide. Learn how useState maps to signa
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Migrate from React to Eleva.js",
+  "description": "React to Eleva.js migration guide. Learn how useState maps to signals, useEffect to watchers, and JSX to template strings.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/migration/from-react.html"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Migration",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "React migration", "useState", "signals", "JSX", "template strings"]
+}
+</script>
+
 # Migrating from React
 
 > **Migration Guide** | For React developers transitioning to Eleva.

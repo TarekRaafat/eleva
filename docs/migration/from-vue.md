@@ -79,6 +79,40 @@ description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to s
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Migrate from Vue to Eleva.js",
+  "description": "Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to templates.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/migration/from-vue.html"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Migration",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "Vue migration", "ref", "reactive", "signals", "SFC", "Pinia"]
+}
+</script>
+
 # Migrating from Vue
 
 > **Migration Guide** | For Vue developers transitioning to Eleva.

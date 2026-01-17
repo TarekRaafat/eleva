@@ -68,6 +68,41 @@ image: /imgs/eleva.js%20Full%20Logo.png
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Getting Started with Eleva.js",
+  "description": "Learn how to install and create your first Eleva.js application. Step-by-step tutorial covering installation, components, signals, and basic patterns.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/getting-started.html"
+  },
+  "proficiencyLevel": "Beginner",
+  "dependencies": "Modern web browser, Text editor",
+  "articleSection": "Documentation",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "JavaScript framework", "getting started", "installation", "components", "signals", "reactivity"]
+}
+</script>
+
 # Getting Started
 
 > **Getting Started** | Installation, first component, and fundamentals.

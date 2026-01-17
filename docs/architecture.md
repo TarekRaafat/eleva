@@ -1,7 +1,42 @@
 ---
 title: Eleva.js Architecture & Data Flow
 description: Understand Eleva's internal architecture, data flow patterns, and how components interact. Visual diagrams and detailed explanations.
+image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Architecture & Data Flow",
+  "description": "Understand Eleva's internal architecture, data flow patterns, and how components interact. Visual diagrams and detailed explanations.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2025-01-01",
+  "dateModified": "2025-01-17",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "email": "tarek.m.raaf@gmail.com",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/architecture.html"
+  },
+  "proficiencyLevel": "Intermediate",
+  "articleSection": "Documentation",
+  "keywords": ["eleva", "elevajs", "Eleva.js", "architecture", "data flow", "component interaction", "signals", "renderer"]
+}
+</script>
 
 # Architecture & Data Flow
 
