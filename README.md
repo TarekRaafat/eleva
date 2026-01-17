@@ -17,7 +17,7 @@
 <br>
 
 <p align="center">
-  <a href="https://elevajs.com/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="Eleva.js - Lightweight JavaScript Framework Logo" width="50%"></a>
+  <a href="https://elevajs.com/"><img src="./docs/imgs/eleva.js Full Logo.png" alt="Eleva.js Logo - A minimalist, lightweight pure vanilla JavaScript frontend framework" width="50%"></a>
 </p>
 
 <p align="center">
