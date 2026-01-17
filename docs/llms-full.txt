@@ -63,10 +63,16 @@ class Eleva {
     container: HTMLElement,
     componentName: string,
     props?: Record<string, any>
-  ): Promise<ComponentInstance>;
+  ): Promise<MountResult>;
 
   // Install a plugin
   use(plugin: Plugin, options?: Record<string, any>): any;
+}
+
+interface MountResult {
+  container: HTMLElement;
+  data: Record<string, any>;  // Component's reactive state and context
+  unmount: () => Promise<void>;
 }
 
 interface ElevaConfig {
