@@ -640,10 +640,10 @@ router.currentRoute.watch(route => {
   console.log("Route changed:", route);
 });
 
-// Access in components
+// Access in components (ctx.router provides convenience getters)
 setup({ router }) {
   return {
-    userId: router.currentParams.value.id,
+    userId: router.params.id,  // Direct getter (not a signal)
     goToUser: (id) => router.navigate(`/users/${id}`)
   };
 }
