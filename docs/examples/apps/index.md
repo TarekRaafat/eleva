@@ -3,6 +3,15 @@ title: Complete App Examples
 description: Full Eleva.js app examples - task manager, weather dashboard, and blog. Learn component composition and localStorage persistence.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Complete Application Examples
 
 > **Version:** 1.0.1 | Full mini-applications demonstrating Eleva features.

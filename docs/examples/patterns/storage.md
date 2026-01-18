@@ -3,6 +3,15 @@ title: Local Storage - Persistence & Caching
 description: Eleva.js localStorage patterns for data persistence, session storage, caching strategies, and auto-save functionality. Keep user data across browser sessions.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Local Storage Examples
 
 > **UI Patterns** | Persistence, session storage, and caching.

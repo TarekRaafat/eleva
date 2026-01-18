@@ -3,6 +3,15 @@ title: Store Configuration
 description: Configure Eleva Store with persistence, DevTools, and error handling options.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Store Configuration
 
 > **Store Plugin** | Persistence, DevTools, and configuration options.

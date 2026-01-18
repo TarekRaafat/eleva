@@ -3,6 +3,15 @@ title: Migrate from Alpine.js
 description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

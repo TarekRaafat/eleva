@@ -3,6 +3,15 @@ title: Task Manager App
 description: Build a task manager with Eleva.js featuring filtering, sorting, priorities, due dates, and localStorage. Complete source code.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Task Manager
 
 > **Example App** | Task manager with filtering, sorting, and persistence.

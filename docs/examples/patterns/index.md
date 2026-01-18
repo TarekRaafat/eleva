@@ -3,6 +3,15 @@ title: UI Patterns - Forms, Lists, Async & More
 description: Reusable Eleva.js patterns for forms, async data, conditional rendering, lists, and state management. Copy-paste ready solutions.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # UI Patterns
 
 > **Version:** 1.0.1 | Reusable code patterns for common UI scenarios.

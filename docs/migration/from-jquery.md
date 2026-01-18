@@ -3,6 +3,15 @@ title: Migrate from jQuery
 description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components and $.ajax with fetch + signals.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

@@ -3,6 +3,15 @@ title: List Operations - Basics, Events & Keys
 description: Eleva.js list fundamentals - rendering dynamic lists, event binding, and key-based reconciliation for optimal performance.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # List Operations - Basics
 
 > **Version:** 1.0.1 | Learn how to render dynamic lists, bind events, and choose keys for optimal performance.

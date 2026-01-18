@@ -3,6 +3,15 @@ title: Selectors & Component Structure
 description: Eleva.js best practices for selector performance and component property ordering.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Selectors & Component Structure
 
 > **Best Practices** | Selector performance and component organization.

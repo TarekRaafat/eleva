@@ -3,6 +3,15 @@ title: Signals, Templates & Communication
 description: Eleva.js best practices for signal reactivity, template syntax, children composition, and component communication.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Signals, Templates & Communication
 
 > **Best Practices** | Signal usage, template syntax, and component communication.

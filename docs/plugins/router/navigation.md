@@ -3,6 +3,15 @@ title: Router Navigation
 description: Programmatic navigation, reactive state, events, dynamic routes, and scroll behavior in Eleva Router.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Router Navigation
 
 > **Router Plugin** | Programmatic navigation, reactive state, events, and scroll behavior.

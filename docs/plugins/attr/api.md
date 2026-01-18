@@ -3,6 +3,15 @@ title: Attr Plugin API Reference
 description: Complete API reference for Eleva Attr plugin including methods, troubleshooting, and best practices.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Attr Plugin API Reference
 
 > **Attr Plugin** | Complete API reference.

@@ -3,6 +3,15 @@ title: Resilience Patterns
 description: Eleva.js async patterns for request cancellation, timeouts, retries, and error handling.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Resilience Patterns
 
 > **Async Data** | Cancellation, timeouts, and retry strategies.

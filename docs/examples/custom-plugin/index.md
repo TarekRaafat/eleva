@@ -3,6 +3,15 @@ title: Creating Custom Plugins
 description: Complete guide to building Eleva.js plugins. Learn plugin architecture, registration, and the basics of extending Eleva.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

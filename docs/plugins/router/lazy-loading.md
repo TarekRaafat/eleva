@@ -3,6 +3,15 @@ title: Lazy Loading & Code Splitting
 description: Reduce bundle size with lazy loading and code splitting strategies in Eleva Router.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Lazy Loading & Code Splitting
 
 > **Router Plugin** | Reduce bundle size with on-demand component loading.

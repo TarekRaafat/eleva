@@ -3,6 +3,15 @@ title: State Management
 description: Eleva.js state management patterns - signals, reactive state, counters, and computed values. Master signal-based reactivity with practical examples.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # State Management Examples
 
 > **Version:** 1.0.1 | Reactive state, computed values, and complex state patterns.

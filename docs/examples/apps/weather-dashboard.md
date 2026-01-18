@@ -3,6 +3,15 @@ title: Weather Dashboard App
 description: Build a weather dashboard with Eleva.js featuring API fetching, city search, unit toggle, and search history. Full source code.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Weather Dashboard
 
 > **Example App** | Weather app with API fetching, search history, and unit conversion.

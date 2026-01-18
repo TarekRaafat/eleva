@@ -3,6 +3,15 @@ title: Form Handling - Input Binding & Validation
 description: Eleva.js form examples with two-way data binding, real-time validation, and form submission. Build accessible reactive forms.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Form Handling Examples
 
 > **UI Patterns** | Input binding, validation, and form submission.

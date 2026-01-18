@@ -3,6 +3,15 @@ title: Attr Plugin Features
 description: ARIA attributes, data attributes, boolean attributes, and dynamic properties in Eleva Attr plugin.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Attr Plugin Features
 
 > **Attr Plugin** | ARIA, data, boolean attributes, and dynamic properties.

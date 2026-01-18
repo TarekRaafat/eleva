@@ -3,6 +3,15 @@ title: Best Practices Overview
 description: Eleva.js best practices for writing efficient, maintainable components with proper selectors, structure, and guidelines.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Best Practices
 
 > **Version:** 1.0.1 | Comprehensive guide to writing efficient, maintainable Eleva components.

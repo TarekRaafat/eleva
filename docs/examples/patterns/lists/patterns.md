@@ -3,6 +3,15 @@ title: List Patterns - Drag-Drop, CRUD & Grouped
 description: Eleva.js patterns for drag-and-drop reordering, CRUD operations, and grouped lists.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # List Patterns
 
 > **List Patterns** | Drag-drop, CRUD operations, and grouped lists.

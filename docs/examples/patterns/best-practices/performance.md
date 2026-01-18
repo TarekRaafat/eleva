@@ -3,6 +3,15 @@ title: Performance Optimization
 description: Eleva.js performance best practices - preventing unnecessary re-renders, large list handling, and virtual scrolling for 10K+ rows.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Performance Optimization
 
 > **Best Practices** | Techniques for optimizing render performance.

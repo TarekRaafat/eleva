@@ -3,6 +3,15 @@ title: Navigation Guards
 description: Control navigation flow with guards and lifecycle hooks in Eleva Router.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Navigation Guards
 
 > **Router Plugin** | Control navigation flow with guards and lifecycle hooks.

@@ -3,6 +3,15 @@ title: Migrate from Vue
 description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to templates.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

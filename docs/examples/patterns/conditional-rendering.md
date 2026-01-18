@@ -3,6 +3,15 @@ title: Conditional Rendering - Show/Hide & Tabs
 description: Eleva.js conditional rendering patterns. Build accordions, tabs, modals, skeleton loaders, and dynamic content with ternary operators and template strings.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Conditional Rendering Examples
 
 > **UI Patterns** | Show/hide, tabs, modals, and dynamic content.

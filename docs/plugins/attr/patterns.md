@@ -3,6 +3,15 @@ title: Attr Plugin Usage Patterns
 description: Real-world examples of using Eleva Attr plugin for accessible forms, accordions, tabs, tables, and modals.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Attr Plugin Usage Patterns
 
 > **Attr Plugin** | Practical examples for accessible, interactive components.

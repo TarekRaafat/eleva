@@ -3,6 +3,15 @@ title: Router API Reference
 description: Complete API reference for Eleva Router including methods, properties, plugins, TypeScript support, and troubleshooting.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Router API Reference
 
 > **Router Plugin** | Complete API reference.

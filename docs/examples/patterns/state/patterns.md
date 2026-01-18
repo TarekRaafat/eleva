@@ -3,6 +3,15 @@ title: State Patterns
 description: Eleva.js state patterns - shopping cart with computed totals, undo/redo, form state machines, and multi-step wizards.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # State Patterns
 
 > **State Patterns** | Shopping cart, undo/redo, forms, and wizards.

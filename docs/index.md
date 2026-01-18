@@ -4,6 +4,15 @@ description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A 6KB 
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

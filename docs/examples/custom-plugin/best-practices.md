@@ -3,6 +3,15 @@ title: Plugin Best Practices
 description: Eleva.js plugin best practices - error handling, edge cases, TypeScript support, and publishing to npm.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Plugin Best Practices
 
 > **Plugin Guide** | Best practices for robust, maintainable plugins.

@@ -3,6 +3,15 @@ title: Project Structure
 description: Eleva.js multi-file application structure, component organization, and testing patterns.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Multi-File Application Structure
 
 > **State Patterns** | Organizing larger applications into separate files.

@@ -3,6 +3,15 @@ title: Searchable & Filterable Lists
 description: Eleva.js patterns for building searchable, filterable lists with sorting and multiple filter criteria.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Searchable & Filterable Lists
 
 > **List Patterns** | Search, category filters, and sorting.

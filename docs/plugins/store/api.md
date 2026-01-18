@@ -3,6 +3,15 @@ title: Store API Reference
 description: Complete API reference for Eleva Store plugin including methods, TypeScript support, troubleshooting, and migration guide.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Store API Reference
 
 > **Store Plugin** | Complete API reference.

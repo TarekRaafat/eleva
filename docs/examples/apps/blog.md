@@ -3,6 +3,15 @@ title: Simple Blog App
 description: Build a blog with Eleva.js featuring posts, comments, and nested components. Learn component composition, scoped styling, and reactive state management.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Simple Blog
 
 > **Example App** | Blog with posts and comments demonstrating component composition.

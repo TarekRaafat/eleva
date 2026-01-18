@@ -3,6 +3,15 @@ title: Store Usage Patterns
 description: Real-world examples of using Eleva Store plugin for counter, todo list, authentication, and shopping cart.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Store Usage Patterns
 
 > **Store Plugin** | Real-world examples for counters, todos, auth, and carts.

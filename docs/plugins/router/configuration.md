@@ -3,6 +3,15 @@ title: Router Configuration
 description: Configure Eleva Router with routing modes, route definitions, layouts, and options.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Router Configuration
 
 > **Router Plugin** | Routing modes, route definitions, and layout configuration.

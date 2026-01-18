@@ -3,6 +3,15 @@ title: Store Advanced Topics
 description: Dynamic modules, async patterns, complex state organization, and debugging strategies for Eleva Store.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Store Advanced Topics
 
 > **Store Plugin** | Dynamic modules, async patterns, and complex state.

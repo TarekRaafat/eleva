@@ -3,6 +3,15 @@ title: Setup & Lifecycle Hooks
 description: Eleva.js best practices for setup function organization and lifecycle hook usage.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Setup & Lifecycle Hooks
 
 > **Best Practices** | Setup patterns, lifecycle hooks, and cleanup.

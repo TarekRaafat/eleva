@@ -3,6 +3,15 @@ title: Virtual Scrolling for Large Lists
 description: Eleva.js virtual scrolling pattern for rendering 10K+ rows efficiently with minimal memory and maximum performance.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Virtual Scrolling
 
 > **List Patterns** | Render only visible rows for 10K+ row performance.

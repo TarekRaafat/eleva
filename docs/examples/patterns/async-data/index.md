@@ -3,6 +3,15 @@ title: Async Data Fetching
 description: Eleva.js async patterns for API fetching, loading states, pagination, and debounced search.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Async Data Fetching
 
 > **Version:** 1.0.1 | API fetching, loading states, and pagination patterns.

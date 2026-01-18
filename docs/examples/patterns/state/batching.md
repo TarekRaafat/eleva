@@ -3,6 +3,15 @@ title: Batching & Performance
 description: Eleva.js automatic render batching, performance optimization, and 240fps+ animation capabilities.
 ---
 
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag("js", new Date());
+  gtag("config", "G-S4L689921Q");
+</script>
+
 # Batching & Performance
 
 > **State Patterns** | Automatic render batching and high-performance capabilities.
