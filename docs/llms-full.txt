@@ -80,8 +80,10 @@ interface ElevaConfig {
 }
 
 interface ComponentDefinition {
-  setup?: (context: SetupContext) => SetupReturn;
-  template: (ctx: TemplateContext) => string;
+  setup?: (context: SetupContext) => SetupReturn | Promise<SetupReturn>;
+  template: ((ctx: TemplateContext) => string | Promise<string>) | string;
+  style?: ((ctx: TemplateContext) => string) | string;  // Same ctx as template
+  children?: Record<string, ComponentDefinition | string>;  // Maps selectors to components
 }
 
 interface SetupContext {
@@ -89,6 +91,7 @@ interface SetupContext {
   props: Record<string, any>;
   emitter: Emitter;
   // Note: 'store' is added if StorePlugin is installed
+  // Note: 'router' is added if RouterPlugin is installed
 }
 
 interface SetupReturn {
@@ -99,6 +102,10 @@ interface SetupReturn {
   onUpdate?: (info: { container: HTMLElement; context: any }) => void;
   onUnmount?: (info: { container: HTMLElement; context: any; cleanup: any }) => void;
 }
+
+// TemplateContext is the merged context passed to template() and style()
+// It combines SetupContext with everything returned from setup()
+type TemplateContext = SetupContext & SetupReturn;
 ```
 
 ### Signal Class
@@ -630,16 +637,18 @@ const router = app.use(Router, {
     }
   ],
 
-  // Global guards
-  onBeforeEach: (to, from) => true,
-  onAfterEach: (to, from) => {}
+  // Global navigation guard
+  onBeforeEach: (to, from) => true
+});
+
+// Register afterEach hook
+router.onAfterEach((to, from) => {
+  console.log("Navigation complete:", to.path);
 });
 
 // Programmatic navigation
 router.navigate("/users/123");
-router.navigate("/users/123", { replace: true });
-router.back();
-router.forward();
+router.navigate({ path: "/users/123", replace: true });
 
 // Reactive state
 router.currentRoute.watch(route => {
