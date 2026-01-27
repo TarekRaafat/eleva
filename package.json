@@ -1,7 +1,7 @@
 {
   "name": "eleva",
   "version": "1.1.0",
-  "description": "Eleva.js - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "description": "Eleva.js - Best DX for Building the Best UX. A lightweight (~6KB) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
   "type": "module",
   "private": false,
   "license": "MIT",

@@ -1,6 +1,6 @@
 # Eleva.js v1.1.0 (LLM Quick Reference)
 
-> Compact rules and patterns for generating correct Eleva.js code. ~6KB min, zero dependencies. For full details, see `https://elevajs.com/llms-full.txt`.
+> Lightweight (~6KB) JavaScript framework. Compact rules and patterns for generating correct Eleva.js code. Zero dependencies. For full details, see `https://elevajs.com/llms-full.txt`.
 
 ## LLM Contract (Strict Summary)
 > **Sync note:** This file is curated by maintainers; keep it aligned with core docs and release notes.

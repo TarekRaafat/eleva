@@ -1,6 +1,6 @@
 ---
 title: Best DX for Building the Best UX
-description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
+description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A lightweight (~6KB) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -19,7 +19,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@type": "SoftwareApplication",
   "name": "Eleva.js",
   "alternateName": ["Eleva", "ElevaJS", "eleva.js", "elevajs"],
-  "description": "Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "description": "Best DX for Building the Best UX. A lightweight (~6KB) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
   "url": "https://elevajs.com",
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript Framework",
