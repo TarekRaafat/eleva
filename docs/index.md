@@ -409,7 +409,7 @@ app.mount(document.getElementById("app"), "Counter");
 
 How does Eleva compare to popular JavaScript frameworks?
 
-| Feature | Eleva 1.1 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
+| Feature | Eleva 1 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
 |---------|-----------|----------|---------|----------|------------|
 | **Bundle Size** | ~6KB | ~44KB | ~45KB | ~3KB* | ~90KB |
 | **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
