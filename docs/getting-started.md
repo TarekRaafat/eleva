@@ -462,7 +462,7 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework** | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** | **~2.5KB** | **~25** | ~86 | **~0.5** |
+| **Eleva 1.1** | **~2.5KB** | **~25** | ~86 | **~0.5** |
 | **React 19** | ~44KB | 40-70 | 10-20 | 2-5 |
 | **Vue 3.5** | ~45KB | 25-45 | 5-15 | 2-4 |
 | **Angular 19** | ~90KB | 50-80 | 15-25 | 3-6 |
