@@ -63,7 +63,7 @@ Components are plain JavaScript objects that describe a UI segment:
 
 - **`template`** function - Returns HTML with interpolation placeholders
 - **`setup()`** function - Initializes state using reactive signals (optional)
-- **`style`** function - Scoped CSS (optional)
+- **`style`** function - Component CSS (optional)
 - **`children`** object - Nested components (optional)
 
 ### 2. Signals (Reactivity)
@@ -97,6 +97,7 @@ Implements a publish-subscribe pattern to allow components to communicate by emi
 - JavaScript template literals (`${}`) interpolate values directly
 - The **TemplateEngine** evaluates `@events` and `:props` expressions
 - The **Renderer** patches the resulting HTML into the DOM
+- Orphaned child components (removed host elements) are scheduled for cleanup immediately after patching
 
 ### 3. Reactivity
 
@@ -136,7 +137,7 @@ Implements a publish-subscribe pattern to allow components to communicate by emi
 [Process @events & :props]
          │
          ▼
-[Inject Scoped Styles]
+  [Inject Styles]
          │
          ▼
 [Mount Child Components]
@@ -216,7 +217,7 @@ For contributors or developers seeking a deeper understanding:
             • Evaluates :prop expressions
                          │
                          ▼
-               [Inject Scoped Styles]
+                  [Inject Styles]
                          │
                          ▼
               [Mount Child Components]
@@ -317,7 +318,7 @@ For contributors or developers seeking a deeper understanding:
 │  │  [Renderer.patchDOM()]                             │   │ │
 │  │        │                                           │   │ │
 │  │        ▼                                           │   │ │
-│  │  [TemplateEngine] ──► Re-bind @events              │   │ │
+│  │  [TemplateEngine] ──► Process @events (new nodes)  │   │ │
 │  │        │                                           │   │ │
 │  │        ▼                                           │   │ │
 │  │  [onUpdate] ───────────────────────────────────────┘   │ │
@@ -366,6 +367,97 @@ For contributors or developers seeking a deeper understanding:
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+---
+
+## Security Model
+
+### Template Expression Evaluation
+
+Eleva's TemplateEngine evaluates expressions in `@events` and `:props` attributes using JavaScript's `Function` constructor with `with` statement:
+
+```javascript
+// Internal implementation (simplified)
+new Function("data", `with(data) { return ${expression}; }`);
+```
+
+This is a **standard pattern** used by major frameworks including Vue, Angular, and Svelte for template expressions. It enables powerful, flexible templates while maintaining a clear security boundary.
+
+### Security Boundary: Trusted Templates
+
+Eleva's security model assumes **templates are developer-authored code**, not user-generated content.
+
+| Template Source | Trusted | Security Status |
+|-----------------|---------|-----------------|
+| Developer-written components | Yes | Safe |
+| Build-time compiled templates | Yes | Safe |
+| User-supplied strings | **No** | Do not use |
+| Database-stored user content | **No** | Escape before display |
+
+### Safe Patterns
+
+```javascript
+// SAFE: Developer-authored template with dynamic data
+app.component("UserGreeting", {
+  setup: ({ signal }) => {
+    const userName = signal("Alice");
+    return { userName };
+  },
+  template: (ctx) => `
+    <h1>Hello, ${ctx.userName.value}</h1>
+  `
+});
+
+// SAFE: Displaying user content (data, not template)
+app.component("Comment", {
+  setup: ({ props }) => ({
+    // User content is DATA, safely interpolated as text
+    content: props.content
+  }),
+  template: (ctx) => `
+    <div class="comment">${ctx.content}</div>
+  `
+});
+
+// SAFE: Event handlers defined by developer
+app.component("Button", {
+  setup: ({ signal }) => {
+    const handleClick = () => console.log("Clicked");
+    return { handleClick };
+  },
+  template: (ctx) => `
+    <button @click="handleClick">Click me</button>
+  `
+});
+```
+
+### Patterns to Avoid
+
+```javascript
+// UNSAFE: Never construct templates from user input
+const userTemplate = getUserInput(); // From form, URL, etc.
+app.component("Dangerous", {
+  template: () => userTemplate  // XSS vulnerability!
+});
+
+// UNSAFE: Never interpolate user strings into event handlers
+const userHandler = getUserInput();
+template: () => `<button @click="${userHandler}">Click</button>`  // Code injection!
+
+// UNSAFE: Never use user input in :props expressions
+const userExpression = getUserInput();
+template: () => `<child-comp :data="${userExpression}"></child-comp>`  // Code injection!
+```
+
+### Guidelines for Secure Development
+
+1. **Templates are code** - Treat template strings with the same security consideration as JavaScript
+2. **Data vs. code separation** - User content should only appear as data values, never as template structure
+3. **Sanitize display content** - If displaying user HTML, use a sanitization library (DOMPurify, sanitize-html)
+4. **CSP headers** - For additional protection, configure Content-Security-Policy headers in production
+5. **Review third-party components** - Ensure imported components follow the same security practices
+
+> **Note:** This security model is identical to Vue's template expressions, Angular's property binding, and React's JSX. The pattern is safe when templates are part of your application's source code, which is the standard and intended use case.
 
 ---
 

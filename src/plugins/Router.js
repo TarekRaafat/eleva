@@ -1,75 +1,234 @@
 "use strict";
 
 /**
+ * @module eleva/plugins/router
+ * @fileoverview Client-side router plugin with hash, history, and query modes,
+ * navigation guards, and lifecycle hooks.
+ */
+
+// ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+
+// -----------------------------------------------------------------------------
+// External Type Imports
+// -----------------------------------------------------------------------------
+
+/**
+ * Type imports from the Eleva core library.
  * @typedef {import('eleva').Eleva} Eleva
- * @typedef {import('eleva').Signal} Signal
  * @typedef {import('eleva').ComponentDefinition} ComponentDefinition
  * @typedef {import('eleva').Emitter} Emitter
  * @typedef {import('eleva').MountResult} MountResult
+ * @typedef {import('eleva').UnsubscribeFunction} UnsubscribeFunction
  */
 
-// ============================================
-// Core Type Definitions
-// ============================================
+/**
+ * Generic type import.
+ * @template T
+ * @typedef {import('eleva').Signal<T>} Signal
+ */
+
+// -----------------------------------------------------------------------------
+// Router Events
+// -----------------------------------------------------------------------------
 
 /**
- * @typedef {'hash' | 'history' | 'query'} RouterMode
+ * Fired when the router initialization completes successfully.
+ * @event router:ready
+ * @type {Router}
+ */
+
+/**
+ * Fired when an error occurs during navigation or route handling.
+ * @event router:error
+ * @type {Error}
+ */
+
+/**
+ * Fired when no matching route is found for the requested path.
+ * @event router:notFound
+ * @type {{to: RouteLocation, from: RouteLocation | null, path: string}}
+ */
+
+/**
+ * Fired before guards run, allowing plugins to block or redirect navigation.
+ * @event router:beforeEach
+ * @type {NavigationContext}
+ */
+
+/**
+ * Fired before component resolution, allowing plugins to modify the resolve context.
+ * @event router:beforeResolve
+ * @type {ResolveContext}
+ */
+
+/**
+ * Fired after components are resolved successfully.
+ * @event router:afterResolve
+ * @type {ResolveContext}
+ */
+
+/**
+ * Fired after leaving the previous route.
+ * @event router:afterLeave
+ * @type {{to: RouteLocation, from: RouteLocation}}
+ */
+
+/**
+ * Fired before DOM rendering begins.
+ * @event router:beforeRender
+ * @type {RenderContext}
+ */
+
+/**
+ * Fired after DOM rendering completes.
+ * @event router:afterRender
+ * @type {RenderContext}
+ */
+
+/**
+ * Fired after render for scroll behavior handling.
+ * @event router:scroll
+ * @type {ScrollContext}
+ */
+
+/**
+ * Fired after entering the new route.
+ * @event router:afterEnter
+ * @type {{to: RouteLocation, from: RouteLocation | null}}
+ */
+
+/**
+ * Fired after navigation completes successfully.
+ * @event router:afterEach
+ * @type {{to: RouteLocation, from: RouteLocation | null}}
+ */
+
+/**
+ * Fired when a route is dynamically added.
+ * @event router:routeAdded
+ * @type {RouteDefinition}
+ */
+
+/**
+ * Fired when a route is dynamically removed.
+ * @event router:routeRemoved
+ * @type {RouteDefinition}
+ */
+
+// -----------------------------------------------------------------------------
+// Router Data Types
+// -----------------------------------------------------------------------------
+
+/**
  * The routing mode determines how the router manages URL state.
  * - `hash`: Uses URL hash (e.g., `/#/path`) - works without server config
  * - `history`: Uses HTML5 History API (e.g., `/path`) - requires server config
  * - `query`: Uses query parameters (e.g., `?view=/path`) - useful for embedded apps
+ * @typedef {'hash' | 'history' | 'query'} RouterMode
  */
 
 /**
+ * Route parameters extracted from the URL path.
+ * @typedef {Record<string, string>} RouteParams
+ * @description Key-value pairs extracted from dynamic route segments (e.g., `/users/:id` → `{ id: '123' }`).
+ */
+
+/**
+ * Query parameters from the URL query string.
+ * @typedef {Record<string, string>} QueryParams
+ * @description Key-value pairs from the URL query string (e.g., `?page=1&sort=name`).
+ */
+
+/**
+ * Navigation input parameters supporting multiple value types.
+ * @typedef {Record<string, string | number | boolean>} NavigationParams
+ * @description Parameters passed to navigation functions, automatically converted to strings in URLs.
+ */
+
+/**
+ * Function signature for programmatic navigation.
+ * @typedef {(location: string | NavigationTarget, params?: NavigationParams) => Promise<boolean>} NavigateFunction
+ * @description Returns true if navigation succeeded, false if blocked by a guard.
+ */
+
+/**
+ * Router configuration options.
  * @typedef {Object} RouterOptions
- * @property {RouterMode} [mode='hash'] - The routing mode to use.
- * @property {string} [queryParam='view'] - Query parameter name for 'query' mode.
- * @property {string} [viewSelector='root'] - Selector for the view container element.
- * @property {string} mount - CSS selector for the mount point element.
- * @property {RouteDefinition[]} routes - Array of route definitions.
- * @property {string | ComponentDefinition} [globalLayout] - Default layout for all routes.
- * @property {NavigationGuard} [onBeforeEach] - Global navigation guard.
+ * @property {RouterMode} [mode='hash']
+ *           The routing mode to use.
+ * @property {string} [queryParam='view']
+ *           Query parameter name for 'query' mode.
+ * @property {string} [viewSelector='view']
+ *           Base selector for the view element.
+ * @property {string} mount
+ *           CSS selector for the mount point element.
+ * @property {RouteDefinition[]} routes
+ *           Array of route definitions.
+ * @property {RouteComponent} [globalLayout]
+ *           Default layout for all routes.
+ * @property {NavigationGuard} [onBeforeEach]
+ *           Global navigation guard.
+ * @property {boolean} [autoStart=true]
+ *           Whether to start the router automatically.
  * @description Configuration options for the Router plugin.
  */
 
 /**
+ * Object describing a navigation target for `router.navigate()`.
  * @typedef {Object} NavigationTarget
- * @property {string} path - The target path (can include params like '/users/:id').
- * @property {Record<string, string>} [params] - Route parameters to inject into the path.
- * @property {Record<string, string>} [query] - Query parameters to append.
- * @property {boolean} [replace=false] - Whether to replace current history entry.
- * @property {Record<string, any>} [state] - State object to pass to history.
+ * @property {string} path
+ *           The target path (can include params like '/users/:id').
+ * @property {NavigationParams} [params]
+ *           Route parameters to inject.
+ * @property {NavigationParams} [query]
+ *           Query parameters to append.
+ * @property {boolean} [replace=false]
+ *           Whether to replace current history entry.
+ * @property {unknown} [state]
+ *           History state to pass.
  * @description Object describing a navigation target for `router.navigate()`.
  */
 
 /**
+ * Saved scroll position.
  * @typedef {Object} ScrollPosition
- * @property {number} x - Horizontal scroll position.
- * @property {number} y - Vertical scroll position.
+ * @property {number} x
+ *           Horizontal scroll position.
+ * @property {number} y
+ *           Vertical scroll position.
  * @description Represents a saved scroll position.
  */
 
 /**
+ * Internal representation of a parsed route path segment.
  * @typedef {Object} RouteSegment
- * @property {'static' | 'param'} type - The segment type.
- * @property {string} value - The segment value (for static) or empty string (for param).
- * @property {string} [name] - The parameter name (for param segments).
+ * @property {'static' | 'param'} type
+ *           The segment type.
+ * @property {string} [value]
+ *           The segment value (static segments).
+ * @property {string} [name]
+ *           The parameter name (param segments).
  * @description Internal representation of a parsed route path segment.
  * @private
  */
 
 /**
+ * Result of matching a path against route definitions.
  * @typedef {Object} RouteMatch
- * @property {RouteDefinition} route - The matched route definition.
- * @property {Record<string, string>} params - The extracted route parameters.
+ * @property {RouteDefinition} route
+ *           The matched route definition.
+ * @property {RouteParams} params
+ *           The extracted route parameters.
  * @description Result of matching a path against route definitions.
  * @private
  */
 
 /**
- * @typedef {Record<string, any>} RouteMeta
- * @description Arbitrary metadata attached to routes for use in guards and components.
- * Common properties include:
+ * Arbitrary metadata attached to routes for use in guards and components.
+ * @typedef {Record<string, unknown>} RouteMeta
+ * @description Common properties include:
  * - `requiresAuth: boolean` - Whether the route requires authentication
  * - `title: string` - Page title for the route
  * - `roles: string[]` - Required user roles
@@ -82,91 +241,136 @@
  */
 
 /**
+ * Interface for the router's error handling system.
  * @typedef {Object} RouterErrorHandler
- * @property {(error: Error, context: string, details?: Record<string, any>) => void} handle - Throws a formatted error.
- * @property {(message: string, details?: Record<string, any>) => void} warn - Logs a warning.
- * @property {(message: string, error: Error, details?: Record<string, any>) => void} log - Logs an error without throwing.
+ * @property {(error: Error, context: string, details?: Record<string, unknown>) => void} handle
+ *           Throws a formatted error.
+ * @property {(message: string, details?: Record<string, unknown>) => void} warn
+ *           Logs a warning.
+ * @property {(message: string, error: Error, details?: Record<string, unknown>) => void} log
+ *           Logs an error without throwing.
  * @description Interface for the router's error handling system.
  */
 
-// ============================================
-// Event Callback Type Definitions
-// ============================================
+// -----------------------------------------------------------------------------
+// Event Callback Types
+// -----------------------------------------------------------------------------
 
 /**
+ * Callback for `router:beforeEach` event.
  * @callback NavigationContextCallback
- * @param {NavigationContext} context - The navigation context (can be modified to block/redirect).
+ * @param {NavigationContext} context
+ *        The navigation context (can be modified to block/redirect).
  * @returns {void | Promise<void>}
- * @description Callback for `router:beforeEach` event. Modify context to control navigation.
+ * @description Modify context to control navigation flow.
  */
 
 /**
+ * Callback for `router:beforeResolve` and `router:afterResolve` events.
  * @callback ResolveContextCallback
- * @param {ResolveContext} context - The resolve context (can be modified to block/redirect).
+ * @param {ResolveContext} context
+ *        The resolve context (can be modified to block/redirect).
  * @returns {void | Promise<void>}
  * @description Callback for `router:beforeResolve` and `router:afterResolve` events.
  */
 
 /**
+ * Callback for `router:beforeRender` and `router:afterRender` events.
  * @callback RenderContextCallback
- * @param {RenderContext} context - The render context.
+ * @param {RenderContext} context
+ *        The render context.
  * @returns {void | Promise<void>}
  * @description Callback for `router:beforeRender` and `router:afterRender` events.
  */
 
 /**
+ * Callback for `router:scroll` event.
  * @callback ScrollContextCallback
- * @param {ScrollContext} context - The scroll context with saved position info.
+ * @param {ScrollContext} context
+ *        The scroll context with saved position info.
  * @returns {void | Promise<void>}
- * @description Callback for `router:scroll` event. Use to implement scroll behavior.
+ * @description Use to implement custom scroll behavior.
  */
 
 /**
+ * Callback for `router:afterEnter`, `router:afterLeave`, `router:afterEach` events.
  * @callback RouteChangeCallback
- * @param {RouteLocation} to - The target route location.
- * @param {RouteLocation | null} from - The source route location.
+ * @param {RouteLocation} to
+ *        The target route location.
+ * @param {RouteLocation | null} from
+ *        The source route location.
  * @returns {void | Promise<void>}
  * @description Callback for `router:afterEnter`, `router:afterLeave`, `router:afterEach` events.
  */
 
 /**
- * @callback RouterErrorCallback
- * @param {Error} error - The error that occurred.
- * @param {RouteLocation} [to] - The target route (if available).
- * @param {RouteLocation | null} [from] - The source route (if available).
- * @returns {void | Promise<void>}
- * @description Callback for `router:onError` event.
+ * Router context injected into component setup as `ctx.router`.
+ * @typedef {Object} RouterContext
+ * @property {NavigateFunction} navigate
+ *           Programmatic navigation function.
+ * @property {Signal<RouteLocation | null>} current
+ *           Reactive signal for current route.
+ * @property {Signal<RouteLocation | null>} previous
+ *           Reactive signal for previous route.
+ * @property {RouteParams} params
+ *           Current route params (getter).
+ * @property {QueryParams} query
+ *           Current route query (getter).
+ * @property {string} path
+ *           Current route path (getter).
+ * @property {string} fullUrl
+ *           Current routed URL string (getter).
+ * @property {RouteMeta} meta
+ *           Current route meta (getter).
+ * @description Injected into component setup as `ctx.router`.
  */
 
 /**
+ * Callback for `router:error` event.
+ * @callback RouterErrorCallback
+ * @param {Error} error
+ *        The error that occurred.
+ * @param {RouteLocation} [to]
+ *        The target route (if available).
+ * @param {RouteLocation | null} [from]
+ *        The source route (if available).
+ * @returns {void | Promise<void>}
+ * @description Callback for `router:error` event.
+ */
+
+/**
+ * Callback for `router:ready` event.
  * @callback RouterReadyCallback
- * @param {Router} router - The router instance.
+ * @param {Router} router
+ *        The router instance.
  * @returns {void | Promise<void>}
  * @description Callback for `router:ready` event.
  */
 
 /**
+ * Callback for `router:routeAdded` event.
  * @callback RouteAddedCallback
- * @param {RouteDefinition} route - The added route definition.
+ * @param {RouteDefinition} route
+ *        The added route definition.
  * @returns {void | Promise<void>}
  * @description Callback for `router:routeAdded` event.
  */
 
 /**
+ * Callback for `router:routeRemoved` event.
  * @callback RouteRemovedCallback
- * @param {RouteDefinition} route - The removed route definition.
+ * @param {RouteDefinition} route
+ *        The removed route definition.
  * @returns {void | Promise<void>}
  * @description Callback for `router:routeRemoved` event.
  */
 
-// ============================================
-// Core Type Definitions (continued)
-// ============================================
+// ============================================================================
+// CORE IMPLEMENTATION
+// ============================================================================
 
 /**
  * Simple error handler for the core router.
- * Can be overridden by error handling plugins.
- * Provides consistent error formatting and logging for router operations.
  * @private
  */
 const CoreErrorHandler = {
@@ -174,7 +378,7 @@ const CoreErrorHandler = {
    * Handles router errors with basic formatting.
    * @param {Error} error - The error to handle.
    * @param {string} context - The context where the error occurred.
-   * @param {Object} details - Additional error details.
+   * @param {Record<string, unknown>} details - Additional error details.
    * @throws {Error} The formatted error.
    */
   handle(error, context, details = {}) {
@@ -193,7 +397,7 @@ const CoreErrorHandler = {
   /**
    * Logs a warning without throwing an error.
    * @param {string} message - The warning message.
-   * @param {Object} details - Additional warning details.
+   * @param {Record<string, unknown>} details - Additional warning details.
    */
   warn(message, details = {}) {
     console.warn(`[ElevaRouter] ${message}`, details);
@@ -203,7 +407,7 @@ const CoreErrorHandler = {
    * Logs an error without throwing.
    * @param {string} message - The error message.
    * @param {Error} error - The original error.
-   * @param {Object} details - Additional error details.
+   * @param {Record<string, unknown>} details - Additional error details.
    */
   log(message, error, details = {}) {
     console.error(`[ElevaRouter] ${message}`, { error, details });
@@ -211,30 +415,41 @@ const CoreErrorHandler = {
 };
 
 /**
+ * Represents the current or target location in the router.
  * @typedef {Object} RouteLocation
- * @property {string} path - The path of the route (e.g., '/users/123').
- * @property {Record<string, string>} query - Query parameters as key-value pairs.
- * @property {string} fullUrl - The complete URL including hash, path, and query string.
- * @property {Record<string, string>} params - Dynamic route parameters (e.g., `{ id: '123' }`).
- * @property {RouteMeta} meta - Metadata associated with the matched route.
- * @property {string} [name] - The optional name of the matched route.
- * @property {RouteDefinition} matched - The raw route definition object that was matched.
+ * @property {string} path
+ *           The path of the route (e.g., '/users/123').
+ * @property {QueryParams} query
+ *           Query parameters as key-value pairs.
+ * @property {string} fullUrl
+ *           The routed URL string (path plus query).
+ * @property {RouteParams} params
+ *           Dynamic route parameters.
+ * @property {RouteMeta} meta
+ *           Metadata associated with the matched route.
+ * @property {string} [name]
+ *           The optional name of the matched route.
+ * @property {RouteDefinition} matched
+ *           The raw route definition that was matched.
  * @description Represents the current or target location in the router.
  */
 
 /**
- * @typedef {boolean | string | NavigationTarget | void} NavigationGuardResult
- * The return value of a navigation guard.
+ * Return value of a navigation guard.
  * - `true` or `undefined/void`: Allow navigation
  * - `false`: Abort navigation
  * - `string`: Redirect to path
  * - `NavigationTarget`: Redirect with options
+ * @typedef {boolean | string | NavigationTarget | void} NavigationGuardResult
  */
 
 /**
+ * Navigation guard function that controls navigation flow.
  * @callback NavigationGuard
- * @param {RouteLocation} to - The target route location.
- * @param {RouteLocation | null} from - The source route location (null on initial navigation).
+ * @param {RouteLocation} to
+ *        The target route location.
+ * @param {RouteLocation | null} from
+ *        The source route location (null on initial).
  * @returns {NavigationGuardResult | Promise<NavigationGuardResult>}
  * @description A function that controls navigation flow. Runs before navigation is confirmed.
  * @example
@@ -248,9 +463,12 @@ const CoreErrorHandler = {
  */
 
 /**
+ * Navigation hook for side effects. Does not affect navigation flow.
  * @callback NavigationHook
- * @param {RouteLocation} to - The target route location.
- * @param {RouteLocation | null} from - The source route location.
+ * @param {RouteLocation} to
+ *        The target route location.
+ * @param {RouteLocation | null} from
+ *        The source route location.
  * @returns {void | Promise<void>}
  * @description A lifecycle hook for side effects. Does not affect navigation flow.
  * @example
@@ -261,11 +479,16 @@ const CoreErrorHandler = {
  */
 
 /**
+ * Interface for router plugins.
  * @typedef {Object} RouterPlugin
- * @property {string} name - Unique plugin identifier.
- * @property {string} [version] - Plugin version (recommended to match router version).
- * @property {(router: Router, options?: Record<string, any>) => void} install - Installation function.
- * @property {(router: Router) => void | Promise<void>} [destroy] - Cleanup function called on router.destroy().
+ * @property {string} name
+ *           Unique plugin identifier.
+ * @property {string} [version]
+ *           Plugin version (recommended to match router version).
+ * @property {(router: Router, options?: Record<string, unknown>) => void} install
+ *           Installation function.
+ * @property {(router: Router) => void | Promise<void>} [destroy]
+ *           Cleanup function called on router.destroy().
  * @description Interface for router plugins. Plugins can extend router functionality.
  * @example
  * const AnalyticsPlugin = {
@@ -280,67 +503,103 @@ const CoreErrorHandler = {
  */
 
 /**
+ * Context object for navigation events that plugins can modify.
  * @typedef {Object} NavigationContext
- * @property {RouteLocation} to - The target route location.
- * @property {RouteLocation | null} from - The source route location.
- * @property {boolean} cancelled - Whether navigation has been cancelled.
- * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
- * @description A context object passed to navigation events that plugins can modify to control navigation flow.
+ * @property {RouteLocation} to
+ *           The target route location.
+ * @property {RouteLocation | null} from
+ *           The source route location.
+ * @property {boolean} cancelled
+ *           Whether navigation has been cancelled.
+ * @property {string | NavigationTarget | null} redirectTo
+ *           Redirect target if set.
+ * @description Passed to navigation events. Plugins can modify to control navigation flow.
  */
 
 /**
+ * Context object for component resolution events.
  * @typedef {Object} ResolveContext
- * @property {RouteLocation} to - The target route location.
- * @property {RouteLocation | null} from - The source route location.
- * @property {RouteDefinition} route - The matched route definition.
- * @property {ComponentDefinition | null} layoutComponent - The resolved layout component (available in afterResolve).
- * @property {ComponentDefinition | null} pageComponent - The resolved page component (available in afterResolve).
- * @property {boolean} cancelled - Whether navigation has been cancelled.
- * @property {string | {path: string} | null} redirectTo - Redirect target if navigation should redirect.
- * @description A context object passed to component resolution events.
+ * @property {RouteLocation} to
+ *           The target route location.
+ * @property {RouteLocation | null} from
+ *           The source route location.
+ * @property {RouteDefinition} route
+ *           The matched route definition.
+ * @property {ComponentDefinition | null} layoutComponent
+ *           The resolved layout component (available in afterResolve).
+ * @property {ComponentDefinition | null} pageComponent
+ *           The resolved page component (available in afterResolve).
+ * @property {boolean} cancelled
+ *           Whether navigation has been cancelled.
+ * @property {string | NavigationTarget | null} redirectTo
+ *           Redirect target if set.
+ * @description Passed to component resolution events.
  */
 
 /**
+ * Context object for render events.
  * @typedef {Object} RenderContext
- * @property {RouteLocation} to - The target route location.
- * @property {RouteLocation | null} from - The source route location.
- * @property {ComponentDefinition | null} layoutComponent - The layout component being rendered.
- * @property {ComponentDefinition} pageComponent - The page component being rendered.
- * @description A context object passed to render events.
+ * @property {RouteLocation} to
+ *           The target route location.
+ * @property {RouteLocation | null} from
+ *           The source route location.
+ * @property {ComponentDefinition | null} layoutComponent
+ *           The layout component being rendered.
+ * @property {ComponentDefinition} pageComponent
+ *           The page component being rendered.
+ * @description Passed to render events.
  */
 
 /**
+ * Context object for scroll events.
  * @typedef {Object} ScrollContext
- * @property {RouteLocation} to - The target route location.
- * @property {RouteLocation | null} from - The source route location.
- * @property {{x: number, y: number} | null} savedPosition - The saved scroll position (if navigating via back/forward).
- * @description A context object passed to scroll events for plugins to handle scroll behavior.
+ * @property {RouteLocation} to
+ *           The target route location.
+ * @property {RouteLocation | null} from
+ *           The source route location.
+ * @property {{x: number, y: number} | null} savedPosition
+ *           Saved position (back/forward nav).
+ * @description Passed to scroll events for plugins to handle scroll behavior.
  */
 
 /**
- * @typedef {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} RouteComponent
  * A component that can be rendered for a route.
  * - `string`: Name of a registered component
  * - `ComponentDefinition`: Inline component definition
- * - `() => Promise<{default: ComponentDefinition}>`: Lazy-loaded component (e.g., `() => import('./Page.js')`)
+ * - `() => ComponentDefinition`: Factory function returning a component
+ * - `() => Promise<ComponentDefinition>`: Async factory function
+ * - `() => Promise<{default: ComponentDefinition}>`: Lazy-loaded module (e.g., `() => import('./Page.js')`)
+ * @typedef {string | ComponentDefinition | (() => ComponentDefinition | Promise<ComponentDefinition | {default: ComponentDefinition}>)} RouteComponent
  */
 
 /**
+ * Defines a route in the application.
  * @typedef {Object} RouteDefinition
- * @property {string} path - URL path pattern. Supports:
- *   - Static: `'/about'`
- *   - Dynamic params: `'/users/:id'`
- *   - Wildcard: `'*'` (catch-all, must be last)
- * @property {RouteComponent} component - The component to render for this route.
- * @property {RouteComponent} [layout] - Optional layout component to wrap the route component.
- * @property {string} [name] - Optional route name for programmatic navigation.
- * @property {RouteMeta} [meta] - Optional metadata (auth flags, titles, etc.).
- * @property {NavigationGuard} [beforeEnter] - Route-specific guard before entering.
- * @property {NavigationHook} [afterEnter] - Hook after entering and component is mounted.
- * @property {NavigationGuard} [beforeLeave] - Guard before leaving this route.
- * @property {NavigationHook} [afterLeave] - Hook after leaving and component is unmounted.
- * @property {RouteSegment[]} [segments] - Internal: parsed path segments (added by router).
+ * @property {string} path
+ *           URL path pattern. Supports:
+ *           - Static: '/about'
+ *           - Dynamic params: '/users/:id'
+ *           - Wildcard: '*' (catch-all, conventionally last)
+ * @property {RouteComponent} component
+ *           The component to render for this route.
+ * @property {RouteComponent} [layout]
+ *           Optional layout component to wrap the route component.
+ * @property {string} [name]
+ *           Optional route name for programmatic navigation.
+ * @property {RouteMeta} [meta]
+ *           Optional metadata (auth flags, titles, etc.).
+ * @property {NavigationGuard} [beforeEnter]
+ *           Route-specific guard before entering.
+ * @property {NavigationHook} [afterEnter]
+ *           Hook after entering and component is mounted.
+ * @property {NavigationGuard} [beforeLeave]
+ *           Guard before leaving this route.
+ * @property {NavigationHook} [afterLeave]
+ *           Hook after leaving and component is unmounted.
+ * @property {RouteSegment[]} [segments]
+ *           Internal: parsed path segments (added by router).
  * @description Defines a route in the application.
+ * @note Nested routes are not supported. Use shared layouts with flat routes instead.
  * @example
  * // Static route
  * { path: '/about', component: AboutPage }
@@ -356,12 +615,12 @@ const CoreErrorHandler = {
  *   beforeEnter: (to, from) => isLoggedIn() || '/login'
  * }
  *
- * // Catch-all 404 route (must be last)
+ * // Catch-all 404 route (conventionally last)
  * { path: '*', component: NotFoundPage }
  */
 
 /**
- * @class Router
+ * @class 🛤️ Router
  * @classdesc A powerful, reactive, and flexible Router Plugin for Eleva.
  * This class manages all routing logic, including state, navigation, and rendering.
  *
@@ -387,15 +646,15 @@ const CoreErrorHandler = {
  * | `router:scroll` | {@link ScrollContextCallback} | No | For scroll behavior |
  * | `router:afterEnter` | {@link RouteChangeCallback} | No | After entering route |
  * | `router:afterEach` | {@link RouteChangeCallback} | No | Navigation complete |
- * | `router:onError` | {@link RouterErrorCallback} | No | Navigation error |
+ * | `router:error` | {@link RouterErrorCallback} | No | Navigation error |
  * | `router:routeAdded` | {@link RouteAddedCallback} | No | Dynamic route added |
  * | `router:routeRemoved` | {@link RouteRemovedCallback} | No | Dynamic route removed |
  *
  * ## Reactive Signals
  * - `currentRoute: Signal<RouteLocation | null>` - Current route info
  * - `previousRoute: Signal<RouteLocation | null>` - Previous route info
- * - `currentParams: Signal<Record<string, string>>` - Current route params
- * - `currentQuery: Signal<Record<string, string>>` - Current query params
+ * - `currentParams: Signal<RouteParams>` - Current route params
+ * - `currentQuery: Signal<QueryParams>` - Current query params
  * - `currentLayout: Signal<MountResult | null>` - Mounted layout instance
  * - `currentView: Signal<MountResult | null>` - Mounted view instance
  * - `isReady: Signal<boolean>` - Router readiness state
@@ -436,6 +695,7 @@ class Router {
    * Creates an instance of the Router.
    * @param {Eleva} eleva - The Eleva framework instance.
    * @param {RouterOptions} options - The configuration options for the router.
+   * @throws {Error} If the routing mode is invalid.
    */
   constructor(eleva, options = {}) {
     /** @type {Eleva} The Eleva framework instance. */
@@ -452,7 +712,7 @@ class Router {
     /** @private @type {RouteDefinition[]} The processed list of route definitions. */
     this.routes = this._processRoutes(options.routes || []);
 
-    /** @private @type {import('eleva').Emitter} The shared Eleva event emitter for global hooks. */
+    /** @private @type {Emitter} The shared Eleva event emitter for global hooks. */
     this.emitter = this.eleva.emitter;
 
     /** @private @type {boolean} A flag indicating if the router has been started. */
@@ -464,7 +724,7 @@ class Router {
     /** @private @type {number} Counter for tracking navigation operations to prevent race conditions. */
     this._navigationId = 0;
 
-    /** @private @type {Array<() => void>} A collection of cleanup functions for event listeners. */
+    /** @private @type {UnsubscribeFunction[]} A collection of cleanup functions for event listeners. */
     this.eventListeners = [];
 
     /** @type {Signal<RouteLocation | null>} A reactive signal holding the current route's information. */
@@ -473,16 +733,16 @@ class Router {
     /** @type {Signal<RouteLocation | null>} A reactive signal holding the previous route's information. */
     this.previousRoute = new this.eleva.signal(null);
 
-    /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's parameters. */
+    /** @type {Signal<RouteParams>} A reactive signal holding the current route's parameters. */
     this.currentParams = new this.eleva.signal({});
 
-    /** @type {Signal<Object<string, string>>} A reactive signal holding the current route's query parameters. */
+    /** @type {Signal<QueryParams>} A reactive signal holding the current route's query parameters. */
     this.currentQuery = new this.eleva.signal({});
 
-    /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted layout instance. */
+    /** @type {Signal<MountResult | null>} A reactive signal for the currently mounted layout instance. */
     this.currentLayout = new this.eleva.signal(null);
 
-    /** @type {Signal<import('eleva').MountResult | null>} A reactive signal for the currently mounted view (page) instance. */
+    /** @type {Signal<MountResult | null>} A reactive signal for the currently mounted view (page) instance. */
     this.currentView = new this.eleva.signal(null);
 
     /** @type {Signal<boolean>} A reactive signal indicating if the router is ready (started and initial navigation complete). */
@@ -491,7 +751,7 @@ class Router {
     /** @private @type {Map<string, RouterPlugin>} Map of registered plugins by name. */
     this.plugins = new Map();
 
-    /** @private @type {Array<NavigationGuard>} Array of global before-each navigation guards. */
+    /** @private @type {NavigationGuard[]} Array of global before-each navigation guards. */
     this._beforeEachGuards = [];
 
     // If onBeforeEach was provided in options, add it to the guards array
@@ -499,7 +759,7 @@ class Router {
       this._beforeEachGuards.push(options.onBeforeEach);
     }
 
-    /** @type {Object} The error handler instance. Can be overridden by plugins. */
+    /** @type {RouterErrorHandler} The error handler instance. Can be overridden by plugins. */
     this.errorHandler = CoreErrorHandler;
 
     /** @private @type {Map<string, {x: number, y: number}>} Saved scroll positions by route path. */
@@ -552,7 +812,7 @@ class Router {
    * Parses a route path string into an array of static and parameter segments.
    * @private
    * @param {string} path - The path pattern to parse.
-   * @returns {Array<{type: 'static' | 'param', value?: string, name?: string}>} An array of segment objects.
+   * @returns {{type: 'static' | 'param', value?: string, name?: string}[]} An array of segment objects.
    * @throws {Error} If the route path is not a valid string.
    */
   _parsePathIntoSegments(path) {
@@ -609,6 +869,11 @@ class Router {
   /**
    * Starts the router, initializes event listeners, and performs the initial navigation.
    * @returns {Promise<Router>} The router instance for method chaining.
+   * @listens window:hashchange In hash mode, triggers route changes.
+   * @listens window:popstate In history/query mode, triggers route changes.
+   * @emits router:ready When initialization completes successfully.
+   * @see destroy - Stop the router and clean up listeners.
+   * @see navigate - Programmatically navigate to a route.
    *
    * @example
    * // Basic usage
@@ -665,8 +930,11 @@ class Router {
   }
 
   /**
-   * Stops the router and cleans up all event listeners and mounted components.
+   * Stops the router and cleans up event listeners.
+   * Unmounts the current layout instance if present.
+   * @async
    * @returns {Promise<void>}
+   * @see start - Restart the router after destroying.
    */
   async destroy() {
     if (!this.isStarted) return;
@@ -694,6 +962,7 @@ class Router {
   /**
    * Alias for destroy(). Stops the router and cleans up all resources.
    * Provided for semantic consistency (start/stop pattern).
+   * @async
    * @returns {Promise<void>}
    *
    * @example
@@ -707,9 +976,13 @@ class Router {
 
   /**
    * Programmatically navigates to a new route.
+   * @async
    * @param {string | NavigationTarget} location - The target location as a path string or navigation target object.
-   * @param {Record<string, string>} [params] - Route parameters (only used when location is a string).
+   * @param {NavigationParams} [params] - Route parameters (only used when location is a string).
    * @returns {Promise<boolean>} True if navigation succeeded, false if blocked by guards or failed.
+   * @emits router:error When navigation fails due to an exception.
+   * @see start - Initialize the router before navigating.
+   * @see currentRoute - Access the current route after navigation.
    *
    * @example
    * // Basic navigation
@@ -780,7 +1053,7 @@ class Router {
       return navigationSuccessful;
     } catch (error) {
       this.errorHandler.log("Navigation failed", error);
-      await this.emitter.emit("router:onError", error);
+      await this.emitter.emit("router:error", error);
       return false;
     }
   }
@@ -803,7 +1076,7 @@ class Router {
    * @param {string} path - The target path with query string.
    * @param {object} params - The target params.
    * @param {object} query - The target query.
-   * @returns {boolean} - True if the routes are the same.
+   * @returns {boolean} True if the routes are the same.
    */
   _isSameRoute(path, params, query) {
     const current = this.currentRoute.value;
@@ -819,7 +1092,16 @@ class Router {
 
   /**
    * Injects dynamic parameters into a path string.
+   * Replaces `:param` placeholders with URL-encoded values from the params object.
+   *
    * @private
+   * @param {string} path - The path pattern containing `:param` placeholders.
+   * @param {RouteParams} params - Key-value pairs to inject into the path.
+   * @returns {string} The path with all parameters replaced.
+   *
+   * @example
+   * this._buildPath('/users/:id/posts/:postId', { id: '123', postId: '456' });
+   * // Returns: '/users/123/posts/456'
    */
   _buildPath(path, params) {
     let result = path;
@@ -833,8 +1115,12 @@ class Router {
 
   /**
    * The handler for browser-initiated route changes (e.g., back/forward buttons).
+   *
    * @private
+   * @async
    * @param {boolean} [isPopState=true] - Whether this is a popstate event (back/forward navigation).
+   * @returns {Promise<void>}
+   * @emits router:error When route change handling fails.
    */
   async _handleRouteChange(isPopState = true) {
     if (this._isNavigating) return;
@@ -856,27 +1142,31 @@ class Router {
       this.errorHandler.log("Route change handling failed", error, {
         currentUrl: typeof window !== "undefined" ? window.location.href : "",
       });
-      await this.emitter.emit("router:onError", error);
+      await this.emitter.emit("router:error", error);
     }
   }
 
   /**
    * Manages the core navigation lifecycle. Runs guards before committing changes.
-   * Emits lifecycle events that plugins can hook into:
-   * - router:beforeEach - Before guards run (can block/redirect via context)
-   * - router:beforeResolve - Before component resolution (can block/redirect)
-   * - router:afterResolve - After components are resolved
-   * - router:beforeRender - Before DOM rendering
-   * - router:afterRender - After DOM rendering
-   * - router:scroll - After render, for scroll behavior
-   * - router:afterEnter - After entering a route
-   * - router:afterLeave - After leaving a route
-   * - router:afterEach - After navigation completes
    *
    * @private
+   * @async
    * @param {string} fullPath - The full path (e.g., '/users/123?foo=bar') to navigate to.
    * @param {boolean} [isPopState=false] - Whether this navigation was triggered by popstate (back/forward).
-   * @returns {Promise<boolean>} - `true` if navigation succeeded, `false` if aborted.
+   * @returns {Promise<boolean>} `true` if navigation succeeded, `false` if aborted.
+   * @emits router:notFound When no matching route is found.
+   * @emits router:beforeResolve Before component resolution (can block/redirect).
+   * @emits router:afterResolve After components are resolved.
+   * @emits router:afterLeave After leaving the previous route.
+   * @emits router:beforeRender Before DOM rendering.
+   * @emits router:afterRender After DOM rendering completes.
+   * @emits router:scroll After render, for scroll behavior handling.
+   * @emits router:afterEnter After entering the new route.
+   * @emits router:afterEach After navigation completes successfully.
+   * @emits router:error When an error occurs during navigation.
+   * @see _runGuards - Guard execution.
+   * @see _resolveComponents - Component resolution.
+   * @see _render - DOM rendering.
    */
   async _proceedWithNavigation(fullPath, isPopState = false) {
     const from = this.currentRoute.value;
@@ -900,7 +1190,7 @@ class Router {
         };
       } else {
         await this.emitter.emit(
-          "router:onError",
+          "router:error",
           new Error(`Route not found: ${toLocation.path}`),
           toLocation,
           from
@@ -1010,7 +1300,7 @@ class Router {
       await this.emitter.emit("router:beforeRender", renderContext);
 
       // 9. Render the new components.
-      await this._render(layoutComponent, pageComponent, to);
+      await this._render(layoutComponent, pageComponent);
 
       // 10. Emit afterRender event - plugins can trigger animations
       await this.emitter.emit("router:afterRender", renderContext);
@@ -1036,7 +1326,7 @@ class Router {
       return true;
     } catch (error) {
       this.errorHandler.log("Error during navigation", error, { to, from });
-      await this.emitter.emit("router:onError", error, to, from);
+      await this.emitter.emit("router:error", error, to, from);
       return false;
     }
   }
@@ -1053,7 +1343,8 @@ class Router {
    * @param {RouteLocation} to - The target route location.
    * @param {RouteLocation | null} from - The current route location (null on initial navigation).
    * @param {RouteDefinition} route - The matched route definition.
-   * @returns {Promise<boolean>} - `false` if navigation should be aborted.
+   * @returns {Promise<boolean>} `false` if navigation should be aborted.
+   * @emits router:beforeEach Before guards run (can block/redirect via context).
    */
   async _runGuards(to, from, route) {
     // Create navigation context that plugins can modify to block navigation
@@ -1123,7 +1414,8 @@ class Router {
   /**
    * Resolves a function component definition to a component object.
    * @private
-   * @param {Function} def - The function to resolve.
+   * @async
+   * @param {() => ComponentDefinition | Promise<ComponentDefinition | { default: ComponentDefinition }>} def - The function to resolve.
    * @returns {Promise<ComponentDefinition>} The resolved component.
    * @throws {Error} If the function fails to load the component.
    */
@@ -1147,7 +1439,7 @@ class Router {
   /**
    * Validates a component definition object.
    * @private
-   * @param {any} def - The component definition to validate.
+   * @param {unknown} def - The component definition to validate.
    * @returns {ComponentDefinition} The validated component.
    * @throws {Error} If the component definition is invalid.
    */
@@ -1177,7 +1469,7 @@ class Router {
   /**
    * Resolves a component definition to a component object.
    * @private
-   * @param {any} def - The component definition to resolve.
+   * @param {unknown} def - The component definition to resolve.
    * @returns {Promise<ComponentDefinition | null>} The resolved component or null.
    */
   async _resolveComponent(def) {
@@ -1207,8 +1499,10 @@ class Router {
   /**
    * Asynchronously resolves the layout and page components for a route.
    * @private
+   * @async
    * @param {RouteDefinition} route - The route to resolve components for.
    * @returns {Promise<{layoutComponent: ComponentDefinition | null, pageComponent: ComponentDefinition}>}
+   * @throws {Error} If page component cannot be resolved.
    */
   async _resolveComponents(route) {
     const effectiveLayout = route.layout || this.options.globalLayout;
@@ -1242,9 +1536,24 @@ class Router {
 
   /**
    * Renders the components for the current route into the DOM.
+   *
+   * Rendering algorithm:
+   * 1. Find the mount element using options.mount selector
+   * 2. If layoutComponent exists:
+   *    a. Mount layout to mount element
+   *    b. Find view element within layout (using viewSelector)
+   *    c. Mount page component to view element
+   * 3. If no layoutComponent:
+   *    a. Mount page component directly to mount element
+   *    b. Set currentLayout to null
+   *
    * @private
+   * @async
    * @param {ComponentDefinition | null} layoutComponent - The pre-loaded layout component.
    * @param {ComponentDefinition} pageComponent - The pre-loaded page component.
+   * @returns {Promise<void>}
+   * @throws {Error} If mount element is not found in the DOM.
+   * @throws {Error} If component mounting fails (propagated from eleva.mount).
    */
   async _render(layoutComponent, pageComponent) {
     const mountEl = document.querySelector(this.options.mount);
@@ -1281,8 +1590,8 @@ class Router {
    * Creates a getter function for router context properties.
    * @private
    * @param {string} property - The property name to access.
-   * @param {any} defaultValue - The default value if property is undefined.
-   * @returns {Function} A getter function.
+   * @param {unknown} defaultValue - The default value if property is undefined.
+   * @returns {() => unknown} A getter function.
    */
   _createRouteGetter(property, defaultValue) {
     return () => this.currentRoute.value?.[property] ?? defaultValue;
@@ -1301,6 +1610,7 @@ class Router {
     return {
       ...component,
       async setup(ctx) {
+        /** @type {RouterContext} */
         ctx.router = {
           navigate: self.navigate.bind(self),
           current: self.currentRoute,
@@ -1331,9 +1641,13 @@ class Router {
 
   /**
    * Recursively wraps all child components to ensure they have access to router context.
+   * String component references are returned as-is (context injected during mount).
+   * Objects are wrapped with router context and their children are recursively wrapped.
+   *
    * @private
    * @param {ComponentDefinition | string} component - The component to wrap (can be a definition object or a registered component name).
    * @returns {ComponentDefinition | string} The wrapped component definition or the original string reference.
+   * @see _wrapComponent - Single component wrapping.
    */
   _wrapComponentWithChildren(component) {
     // If the component is a string (registered component name), return as-is
@@ -1401,7 +1715,15 @@ class Router {
 
   /**
    * Parses a query string into a key-value object.
+   * Uses URLSearchParams for robust parsing of encoded values.
+   *
    * @private
+   * @param {string} queryString - The query string to parse (without leading '?').
+   * @returns {QueryParams} Key-value pairs from the query string.
+   *
+   * @example
+   * this._parseQuery('foo=bar&baz=qux');
+   * // Returns: { foo: 'bar', baz: 'qux' }
    */
   _parseQuery(queryString) {
     const query = {};
@@ -1455,10 +1777,12 @@ class Router {
   /**
    * Adds a new route dynamically at runtime.
    * The route will be processed and available for navigation immediately.
+   * Routes are inserted before the wildcard (*) route if one exists.
    *
    * @param {RouteDefinition} route - The route definition to add.
    * @param {RouteDefinition} [parentRoute] - Optional parent route to add as a child (not yet implemented).
-   * @returns {() => void} A function to remove the added route.
+   * @returns {() => void} A function to remove the added route (returns no-op if route was invalid).
+   * @emits router:routeAdded When a route is successfully added.
    *
    * @example
    * // Add a route dynamically
@@ -1511,6 +1835,7 @@ class Router {
    *
    * @param {string} path - The path of the route to remove.
    * @returns {boolean} True if the route was removed, false if not found.
+   * @emits router:routeRemoved When a route is successfully removed.
    *
    * @example
    * router.removeRoute('/dynamic');
@@ -1609,6 +1934,7 @@ class Router {
    * Registers a global hook that runs after a new route component has been mounted.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
+   * @listens router:afterEnter
    */
   onAfterEnter(hook) {
     return this.emitter.on("router:afterEnter", hook);
@@ -1618,6 +1944,7 @@ class Router {
    * Registers a global hook that runs after a route component has been unmounted.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
+   * @listens router:afterLeave
    */
   onAfterLeave(hook) {
     return this.emitter.on("router:afterLeave", hook);
@@ -1627,6 +1954,7 @@ class Router {
    * Registers a global hook that runs after a navigation has been confirmed and all hooks have completed.
    * @param {NavigationHook} hook - The hook function to register.
    * @returns {() => void} A function to unregister the hook.
+   * @listens router:afterEach
    */
   onAfterEach(hook) {
     return this.emitter.on("router:afterEach", hook);
@@ -1636,14 +1964,20 @@ class Router {
    * Registers a global error handler for navigation errors.
    * @param {(error: Error, to?: RouteLocation, from?: RouteLocation) => void} handler - The error handler function.
    * @returns {() => void} A function to unregister the handler.
+   * @listens router:error
    */
   onError(handler) {
-    return this.emitter.on("router:onError", handler);
+    return this.emitter.on("router:error", handler);
   }
 
   /**
    * Registers a plugin with the router.
-   * @param {RouterPlugin} plugin - The plugin to register.
+   * Logs a warning if the plugin is already registered.
+   *
+   * @param {RouterPlugin} plugin - The plugin to register (must have install method).
+   * @param {Record<string, unknown>} [options={}] - Options to pass to plugin.install().
+   * @returns {void}
+   * @throws {Error} If plugin does not have an install method.
    */
   use(plugin, options = {}) {
     if (typeof plugin.install !== "function") {
@@ -1706,7 +2040,9 @@ class Router {
 
   /**
    * Sets a custom error handler. Used by error handling plugins.
-   * @param {Object} errorHandler - The error handler object with handle, warn, and log methods.
+   * Logs a warning if the provided handler is invalid (missing required methods).
+   * @param {RouterErrorHandler} errorHandler - The error handler object with handle, warn, and log methods.
+   * @returns {void}
    */
   setErrorHandler(errorHandler) {
     if (
@@ -1723,18 +2059,6 @@ class Router {
     }
   }
 }
-
-/**
- * @typedef {Object} RouterOptions
- * @property {string} mount - A CSS selector for the main element where the app is mounted.
- * @property {RouteDefinition[]} routes - An array of route definitions.
- * @property {'hash' | 'query' | 'history'} [mode='hash'] - The routing mode.
- * @property {string} [queryParam='page'] - The query parameter to use in 'query' mode.
- * @property {string} [viewSelector='view'] - The selector for the view element within a layout.
- * @property {boolean} [autoStart=true] - Whether to start the router automatically.
- * @property {NavigationGuard} [onBeforeEach] - A global guard executed before every navigation.
- * @property {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} [globalLayout] - A global layout for all routes. Can be overridden by a route's specific layout.
- */
 
 /**
  * @class 🚀 RouterPlugin
@@ -1779,7 +2103,7 @@ export const RouterPlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.0.1",
+  version: "1.1.0",
 
   /**
    * Plugin description
@@ -1790,16 +2114,25 @@ export const RouterPlugin = {
   /**
    * Installs the RouterPlugin into an Eleva instance.
    *
-   * @param {Eleva} eleva - The Eleva instance
-   * @param {RouterOptions} options - Router configuration options
-   * @param {string} options.mount - A CSS selector for the main element where the app is mounted
-   * @param {RouteDefinition[]} options.routes - An array of route definitions
-   * @param {'hash' | 'query' | 'history'} [options.mode='hash'] - The routing mode
-   * @param {string} [options.queryParam='page'] - The query parameter to use in 'query' mode
-   * @param {string} [options.viewSelector='view'] - The selector for the view element within a layout
-   * @param {boolean} [options.autoStart=true] - Whether to start the router automatically
-   * @param {NavigationGuard} [options.onBeforeEach] - A global guard executed before every navigation
-   * @param {string | ComponentDefinition | (() => Promise<{default: ComponentDefinition}>)} [options.globalLayout] - A global layout for all routes
+   * @public
+   * @param {Eleva} eleva - The Eleva instance.
+   * @param {RouterOptions} options - Router configuration options.
+   * @param {string} options.mount - A CSS selector for the main element where the app is mounted.
+   * @param {RouteDefinition[]} options.routes - An array of route definitions.
+   * @param {'hash' | 'query' | 'history'} [options.mode='hash'] - The routing mode.
+   * @param {string} [options.queryParam='view'] - The query parameter to use in 'query' mode.
+   * @param {string} [options.viewSelector='view'] - Base selector for the view element (matched as #id, .class, [data-*], or raw selector).
+   * @param {boolean} [options.autoStart=true] - Whether to start the router automatically.
+   * @param {NavigationGuard} [options.onBeforeEach] - A global guard executed before every navigation.
+   * @param {RouteComponent} [options.globalLayout] - A global layout for all routes.
+   * @returns {Router} The created router instance.
+   * @throws {Error} If 'mount' option is not provided.
+   * @throws {Error} If 'routes' option is not an array.
+   * @throws {Error} If component registration fails during route processing.
+   * @description
+   * Registers route/layout components, sets `eleva.router`, and adds helpers
+   * (`eleva.navigate`, `eleva.getCurrentRoute`, `eleva.getRouteParams`, `eleva.getRouteQuery`).
+   * When `autoStart` is enabled, startup is scheduled via microtask.
    *
    * @example
    * // main.js
@@ -1832,9 +2165,10 @@ export const RouterPlugin = {
      * Registers a component definition with the Eleva instance.
      * This method handles both inline component objects and pre-registered component names.
      *
-     * @param {any} def - The component definition to register
-     * @param {string} type - The type of component for naming (e.g., "Route", "Layout")
-     * @returns {string | null} The registered component name or null if no definition provided
+     * @inner
+     * @param {unknown} def - The component definition to register.
+     * @param {string} type - The type of component for naming (e.g., "Route", "Layout").
+     * @returns {string | null} The registered component name or null if no definition provided.
      */
     const register = (def, type) => {
       if (!def) return null;
@@ -1868,6 +2202,7 @@ export const RouterPlugin = {
     });
 
     const router = new Router(eleva, options);
+    /** @type {Router} */
     eleva.router = router;
 
     if (options.autoStart !== false) {
@@ -1886,18 +2221,28 @@ export const RouterPlugin = {
     });
 
     // Add utility methods for manual router access
+    /** @type {NavigateFunction} */
     eleva.navigate = router.navigate.bind(router);
+    /** @type {() => RouteLocation | null} */
     eleva.getCurrentRoute = () => router.currentRoute.value;
+    /** @type {() => RouteParams} */
     eleva.getRouteParams = () => router.currentParams.value;
+    /** @type {() => QueryParams} */
     eleva.getRouteQuery = () => router.currentQuery.value;
 
     return router;
   },
 
   /**
-   * Uninstalls the plugin from the Eleva instance
+   * Uninstalls the plugin from the Eleva instance.
    *
-   * @param {Eleva} eleva - The Eleva instance
+   * @public
+   * @async
+   * @param {Eleva} eleva - The Eleva instance.
+   * @returns {Promise<void>}
+   * @description
+   * Destroys the router instance, removes `eleva.router`, and deletes helper methods
+   * (`eleva.navigate`, `eleva.getCurrentRoute`, `eleva.getRouteParams`, `eleva.getRouteQuery`).
    */
   async uninstall(eleva) {
     if (eleva.router) {

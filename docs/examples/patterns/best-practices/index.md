@@ -14,7 +14,7 @@ description: Eleva.js best practices for writing efficient, maintainable compone
 
 # Best Practices
 
-> **Version:** 1.0.1 | Comprehensive guide to writing efficient, maintainable Eleva components.
+> **Version:** 1.1.0 | Comprehensive guide to writing efficient, maintainable Eleva components.
 
 ---
 

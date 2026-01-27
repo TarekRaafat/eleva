@@ -368,16 +368,16 @@ app.component("MyPage", {
 
   template: (ctx) => `
     <h2>Users (${ctx.users.value.length})</h2>
-    <VirtualList
-      :items="users.value"
+    <virtual-list
+      :items="users"
       :labelKey="'name'"
       :height="400"
       :rowHeight="50"
-    />
+    ></virtual-list>
   `,
 
   children: {
-    "VirtualList": "VirtualList"
+    "virtual-list": "VirtualList"
   }
 });
 ```

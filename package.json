@@ -1,6 +1,6 @@
 {
   "name": "eleva",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Eleva.js - Best DX for Building the Best UX. A 6KB React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
   "type": "module",
   "private": false,
@@ -19,86 +19,138 @@
     "url": "https://github.com/TarekRaafat/eleva/issues",
     "email": "tarek.m.raafat@gmail.com"
   },
-  "readme": "https://github.com/TarekRaafat/eleva#readme",
-  "main": "./dist/eleva.cjs.js",
-  "module": "./dist/eleva.esm.js",
+  "main": "./dist/eleva.cjs",
+  "module": "./dist/eleva.js",
   "browser": "./dist/eleva.umd.min.js",
   "types": "./dist/eleva.d.ts",
   "unpkg": "./dist/eleva.umd.min.js",
   "jsdelivr": "./dist/eleva.umd.min.js",
   "exports": {
     ".": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva.esm.js",
-      "require": "./dist/eleva.cjs.js",
-      "node": "./dist/eleva.cjs.js",
-      "browser": "./dist/eleva.umd.min.js",
-      "default": "./dist/eleva.umd.min.js"
+      "import": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.js"
+      },
+      "require": {
+        "types": "./dist/eleva.d.cts",
+        "default": "./dist/eleva.cjs"
+      },
+      "default": "./dist/eleva.js"
     },
     "./esm": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva.esm.js",
-      "require": "./dist/eleva.esm.js",
-      "browser": "./dist/eleva.umd.min.js"
+      "import": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.js"
+      },
+      "default": "./dist/eleva.js"
     },
     "./cjs": {
-      "types": "./dist/eleva.d.ts",
-      "require": "./dist/eleva.cjs.js"
+      "require": {
+        "types": "./dist/eleva.d.cts",
+        "default": "./dist/eleva.cjs"
+      },
+      "default": "./dist/eleva.cjs"
     },
     "./umd": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva.umd.js",
-      "browser": "./dist/eleva.umd.js"
+      "browser": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.umd.js"
+      },
+      "default": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.umd.js"
+      }
     },
     "./browser": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva.umd.min.js",
-      "browser": "./dist/eleva.umd.min.js"
+      "browser": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.umd.min.js"
+      },
+      "default": {
+        "types": "./dist/eleva.d.ts",
+        "default": "./dist/eleva.umd.min.js"
+      }
     },
     "./plugins": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva-plugins.esm.js",
-      "require": "./dist/eleva-plugins.cjs.js",
-      "browser": "./dist/eleva-plugins.umd.min.js",
-      "default": "./dist/eleva-plugins.umd.min.js"
+      "import": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.js"
+      },
+      "require": {
+        "types": "./dist/eleva-plugins.d.cts",
+        "default": "./dist/eleva-plugins.cjs"
+      },
+      "default": "./dist/eleva-plugins.js"
     },
     "./plugins/esm": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva-plugins.esm.js",
-      "require": "./dist/eleva-plugins.esm.js",
-      "browser": "./dist/eleva-plugins.umd.min.js"
+      "import": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.js"
+      },
+      "default": "./dist/eleva-plugins.js"
     },
     "./plugins/cjs": {
-      "types": "./dist/eleva.d.ts",
-      "require": "./dist/eleva-plugins.cjs.js"
+      "require": {
+        "types": "./dist/eleva-plugins.d.cts",
+        "default": "./dist/eleva-plugins.cjs"
+      },
+      "default": "./dist/eleva-plugins.cjs"
     },
     "./plugins/umd": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva-plugins.umd.js",
-      "browser": "./dist/eleva-plugins.umd.js"
+      "browser": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.umd.js"
+      },
+      "default": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.umd.js"
+      }
     },
     "./plugins/browser": {
-      "types": "./dist/eleva.d.ts",
-      "import": "./dist/eleva-plugins.umd.min.js",
-      "browser": "./dist/eleva-plugins.umd.min.js"
+      "browser": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.umd.min.js"
+      },
+      "default": {
+        "types": "./dist/eleva-plugins.d.ts",
+        "default": "./dist/eleva-plugins.umd.min.js"
+      }
     },
     "./plugins/attr": {
-      "types": "./types/plugins/Attr.d.ts",
-      "import": "./dist/plugins/attr.umd.min.js",
+      "import": {
+        "types": "./dist/plugins/attr.d.ts",
+        "default": "./dist/plugins/attr.js"
+      },
+      "require": {
+        "types": "./dist/plugins/attr.d.cts",
+        "default": "./dist/plugins/attr.cjs"
+      },
       "browser": "./dist/plugins/attr.umd.min.js",
-      "default": "./dist/plugins/attr.umd.min.js"
+      "default": "./dist/plugins/attr.js"
     },
     "./plugins/router": {
-      "types": "./types/plugins/Router.d.ts",
-      "import": "./dist/plugins/router.umd.min.js",
+      "import": {
+        "types": "./dist/plugins/router.d.ts",
+        "default": "./dist/plugins/router.js"
+      },
+      "require": {
+        "types": "./dist/plugins/router.d.cts",
+        "default": "./dist/plugins/router.cjs"
+      },
       "browser": "./dist/plugins/router.umd.min.js",
-      "default": "./dist/plugins/router.umd.min.js"
+      "default": "./dist/plugins/router.js"
     },
     "./plugins/store": {
-      "types": "./types/plugins/Store.d.ts",
-      "import": "./dist/plugins/store.umd.min.js",
+      "import": {
+        "types": "./dist/plugins/store.d.ts",
+        "default": "./dist/plugins/store.js"
+      },
+      "require": {
+        "types": "./dist/plugins/store.d.cts",
+        "default": "./dist/plugins/store.cjs"
+      },
       "browser": "./dist/plugins/store.umd.min.js",
-      "default": "./dist/plugins/store.umd.min.js"
+      "default": "./dist/plugins/store.js"
     },
     "./package.json": "./package.json"
   },
@@ -107,23 +159,15 @@
     "types",
     "src"
   ],
-  "directories": {
-    "doc": "docs",
-    "example": "examples",
-    "test": "test",
-    "dist": "dist",
-    "src": "src",
-    "types": "types"
-  },
   "sideEffects": false,
   "devDependencies": {
     "@babel/core": "^7.28.6",
     "@babel/preset-env": "^7.28.6",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@happy-dom/global-registrator": "^20.3.1",
+    "@happy-dom/global-registrator": "^20.3.9",
     "@rollup/plugin-node-resolve": "^16.0.3",
-    "@swc/core": "^1.15.8",
-    "@types/bun": "latest",
+    "@swc/core": "^1.15.10",
+    "@types/bun": "^1.3.6",
     "babel-jest": "^30.2.0",
     "eslint": "^9.39.2",
     "eslint-plugin-prettier": "^5.5.5",
@@ -134,9 +178,9 @@
     "jest-watch-typeahead": "^3.0.1",
     "jsdoc": "^4.0.5",
     "lint-staged": "^16.2.7",
-    "prettier": "^3.8.0",
+    "prettier": "^3.8.1",
     "rimraf": "^6.1.2",
-    "rollup": "^4.55.1",
+    "rollup": "^4.57.0",
     "rollup-plugin-dts": "^6.3.0",
     "rollup-plugin-swc3": "^0.12.1",
     "typescript": "^5.9.3"
@@ -166,11 +210,12 @@
     "format": "npx prettier \"src/**/*\" \"types/**/*\" --write",
     "clean": "rimraf dist types test/coverage",
     "serve": "bunx serve . -l 3000",
-    "prepublishOnly": "bun run format && bun run lint && bun run test:coverage && bun run build:all",
+    "validate": "npx publint; npx @arethetypeswrong/cli --pack . || echo '\n⚠️  Type validation warnings (non-blocking)'",
+    "prepublishOnly": "bun run format && bun run lint && bun run build:all && bun run test:coverage && bun run validate",
     "prepare": "bun run build:all"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "node": ">=18.0.0"
   },
   "browserslist": [
     "> 0.25%",
@@ -188,11 +233,6 @@
       "eslint --fix",
       "prettier --write"
     ]
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
   },
   "keywords": [
     "eleva",

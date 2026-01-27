@@ -46,8 +46,8 @@ Manually synchronize attributes from one element to another. This method is expo
 ```javascript
 /**
  * Update element attributes
- * @param {HTMLElement} oldElement - The source element
- * @param {HTMLElement} newElement - The target element to update
+ * @param {HTMLElement} oldElement - The element to update (modified in-place)
+ * @param {HTMLElement} newElement - The reference element with desired attributes
  * @returns {void}
  */
 app.updateElementAttributes(oldElement, newElement);
@@ -224,15 +224,15 @@ Use consistent, descriptive data attribute names:
 
 ### 4. Boolean Attribute Clarity
 
-Be explicit about boolean attribute conditions:
+Be explicit about boolean attribute conditions and use actual boolean values:
 
 ```javascript
-// Good - Clear condition
+// Good - Boolean expression produces "true" or "false" string
 `<button disabled="${ctx.isLoading.value || !ctx.isValid.value}">
   Submit
 </button>`
 
-// Good - Computed property
+// Good - Computed property returning boolean
 const canSubmit = () => !isLoading.value && isValid.value;
 `<button disabled="${!ctx.canSubmit()}">Submit</button>`
 
@@ -240,6 +240,11 @@ const canSubmit = () => !isLoading.value && isValid.value;
 `<button disabled="${!(ctx.data.value && ctx.data.value.name && !ctx.errors.value.name)}">
   Submit
 </button>`
+
+// Important: Only these string values are recognized as truthy:
+// - "true"
+// - "" (empty string)
+// - attribute name (e.g., disabled="disabled")
 ```
 
 ### 5. Performance Considerations
@@ -268,17 +273,21 @@ const errorMessage = signal("");
 
 #### Boolean Attribute Not Toggling
 
-**Problem**: Boolean attribute stays present regardless of value.
+**Problem**: Boolean attribute doesn't behave as expected.
 
 ```javascript
-// Wrong - String "false" is truthy
-`<button disabled="false">`  // Still disabled!
+// These work correctly with Attr plugin:
+`<button disabled="${ctx.isDisabled.value}">`  // true/false signals work
+`<button disabled="true">`   // attribute present
+`<button disabled="false">`  // attribute removed
+`<button disabled="">`       // attribute present (empty = true)
 
-// Correct - Use template binding
-`<button disabled="${ctx.isDisabled.value}">`
+// These do NOT work as you might expect:
+`<button disabled="1">`      // attribute REMOVED (not recognized as truthy)
+`<button disabled="yes">`    // attribute REMOVED (not recognized as truthy)
 ```
 
-**Solution**: Always use template binding `${}` for dynamic boolean attributes.
+**Solution**: The Attr plugin only recognizes `"true"`, `""` (empty), or matching attribute name (e.g., `disabled="disabled"`) as truthy values. Use boolean signals that produce `true`/`false` strings.
 
 #### ARIA Attributes Not Updating
 
@@ -313,7 +322,7 @@ const safeMessage = () => encodeURIComponent(message.value);
 // Ensure two-way binding
 `<input
   value="${ctx.inputValue.value}"
-  @input="inputValue.value = $event.target.value"
+  @input="(e) => inputValue.value = e.target.value"
 />`
 ```
 
@@ -444,7 +453,7 @@ checked.value = true;
 
 ### Plugin Statistics
 
-- **Size**: ~2.4KB minified
+- **Size**: ~2.2KB minified
 - **Dependencies**: None (uses core Eleva only)
 - **Browser Support**: All modern browsers
 - **Configuration Options**: 4

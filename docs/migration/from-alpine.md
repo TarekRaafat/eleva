@@ -38,7 +38,7 @@ description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x
   "tool": [
     {
       "@type": "HowToTool",
-      "name": "Eleva.js (~2.3KB gzipped)"
+      "name": "Eleva.js (~2.5KB gzipped)"
     }
   ],
   "step": [

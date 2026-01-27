@@ -1853,6 +1853,87 @@ describe("Eleva Unmount Behavior", () => {
     expect(childUnmount).toHaveBeenCalledTimes(1);
   });
 
+  test("should unmount child when parent re-render removes child host element", async () => {
+    const childUnmount = mock(() => {});
+    let showSignal: any;
+
+    const Child = {
+      setup: () => ({ onUnmount: childUnmount }),
+      template: () => "<span>Child Content</span>",
+    };
+
+    const Parent = {
+      setup: ({ signal }: any) => {
+        const show = signal(true);
+        showSignal = show;
+        return { show };
+      },
+      template: (ctx: any) =>
+        ctx.show.value
+          ? `<child-comp></child-comp>`
+          : `<div>No child</div>`,
+      children: { "child-comp": Child },
+    };
+
+    app.component("conditional-child-parent", Parent);
+    const instance = await app.mount(container, "conditional-child-parent");
+
+    expect(container.innerHTML).toContain("Child Content");
+    expect(childUnmount).not.toHaveBeenCalled();
+
+    // Re-render parent without child (removes child host element)
+    showSignal.value = false;
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(container.innerHTML).toContain("No child");
+    expect(container.innerHTML).not.toContain("Child Content");
+    expect(childUnmount).toHaveBeenCalledTimes(1);
+
+    await instance.unmount();
+  });
+
+  test("should not block parent render when child unmount is async", async () => {
+    const order: string[] = [];
+    const childUnmount = mock(async () => {
+      order.push("unmount-start");
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      order.push("unmount-end");
+    });
+    let showSignal: any;
+
+    const Child = {
+      setup: () => ({ onUnmount: childUnmount }),
+      template: () => "<span>Child Content</span>",
+    };
+
+    const Parent = {
+      setup: ({ signal }: any) => {
+        const show = signal(true);
+        showSignal = show;
+        return { show };
+      },
+      template: (ctx: any) =>
+        ctx.show.value
+          ? `<child-comp></child-comp>`
+          : `<div>No child</div>`,
+      children: { "child-comp": Child },
+    };
+
+    app.component("async-unmount-parent", Parent);
+    const instance = await app.mount(container, "async-unmount-parent");
+
+    showSignal.value = false;
+
+    // Allow render + queued unmount to run, but not the delayed completion.
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(container.innerHTML).toContain("No child");
+    expect(order).toContain("unmount-start");
+    expect(order).not.toContain("unmount-end");
+
+    await instance.unmount();
+  });
+
   test("should clear container innerHTML", async () => {
     const component = { template: () => "<div>Content</div>" };
 

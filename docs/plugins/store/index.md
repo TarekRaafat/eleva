@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Store Plugin
 
-> **Version:** 1.0.0 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
+> **Version:** 1.1.0 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
 
 The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
 
@@ -98,18 +98,18 @@ app.mount(document.getElementById("app"), "Counter");
 | `store.state` | Reactive state object | `Object<Signal>` |
 | `store.dispatch(action, payload?)` | Execute an action | `Promise<any>` |
 | `store.subscribe(callback)` | Listen to all mutations | `() => void` |
-| `store.getState()` | Get non-reactive snapshot | `Object` |
+| `store.getState()` | Get non-reactive snapshot (filtered by persistence config) | `Object` |
 | `store.registerModule(name, module)` | Add dynamic module | `void` |
 | `store.unregisterModule(name)` | Remove module | `void` |
 | `store.createState(key, value)` | Add state property | `Signal` |
 | `store.createAction(name, fn)` | Add action | `void` |
-| `store.signal` | Signal constructor | `Function` |
+| `store.signal` | Signal class (use with `new`) | `Class` |
 
 **App instance only (`app.store`):**
 
 | Method | Description | Returns |
 |--------|-------------|---------|
-| `store.replaceState(newState)` | Replace entire state | `void` |
+| `store.replaceState(newState)` | Replace state (filtered by persistence config) | `void` |
 | `store.clearPersistedState()` | Clear storage | `void` |
 
 ### State Access Patterns

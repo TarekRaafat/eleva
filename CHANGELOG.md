@@ -6,6 +6,108 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.1.0 ✨ (27-01-2026)
+
+### ⚠️ Breaking Changes
+
+- **Build Output Filenames** - Changed to follow modern ESM package conventions
+  - `dist/eleva.esm.js` → `dist/eleva.js`
+  - `dist/eleva.cjs.js` → `dist/eleva.cjs`
+  - `dist/eleva-plugins.esm.js` → `dist/eleva-plugins.js`
+  - `dist/eleva-plugins.cjs.js` → `dist/eleva-plugins.cjs`
+  - **Migration**: Update any direct file path imports (standard `import 'eleva'` is unchanged)
+
+- **Node.js Version** - Minimum required version is now **Node.js 18+** (was 16+)
+  - Node.js 16 reached end-of-life in April 2024
+
+- **Package Exports** - Removed `browser` condition from main exports for better bundler tree-shaking
+  - Bundlers now always receive ESM instead of UMD (smaller bundles)
+  - **Migration**: If you need UMD explicitly, use `import 'eleva/browser'` or `import 'eleva/plugins/browser'`
+
+- **Router Plugin** - Renamed `router:onError` event to `router:error`
+  - The `on` prefix was inconsistent with all other router events (`router:ready`, `router:beforeEach`, etc.)
+  - Update your code: `router.emitter.on("router:onError", ...)` → `router.emitter.on("router:error", ...)`
+
+### ✨ Enhanced
+
+- **Store Plugin** - `createAction()` now supports dot-notation for namespaced actions
+  - Previously, `createAction("auth.login", fn)` stored the action with a literal key, but `dispatch("auth.login")` used path traversal, causing "Action not found" errors
+  - Now `createAction("auth.login", fn)` correctly creates nested structure at `actions.auth.login`
+  - Supports unlimited nesting levels (e.g., `"admin.users.roles.add"`)
+  - Optimized with fast path for simple action names (avoids array allocation)
+  - Both `store.createAction()` and `app.createAction()` shortcuts are fixed
+
+- **TypeScript & IDE Support** - Comprehensive JSDoc type definitions for better autocomplete and type checking
+  - **Store Plugin**: Added `StoreMutation`, `StoreOptions`, `StoreModule`, `StorePersistenceOptions`, `StoreApi`, `ActionFunction`, `DispatchFunction`, `SubscribeCallback` types
+  - **Router Plugin**: Added `RouteParams`, `QueryParams`, `NavigationParams`, `NavigateFunction`, `RouteMeta`, `RouterContext`, `NavigationGuardResult` types; documented all 15 router lifecycle events
+  - **Core**: Added `SignalFactory`, `DOMEventHandler`; improved `ComponentContext` and lifecycle hook types
+
+### 🐛 Fixed
+
+- **Eleva Core** - Fixed child component memory leak on parent re-render
+  - Child components whose host elements were removed by DOM patching were not being unmounted
+  - This caused signal watchers, event listeners, and component state to persist (memory leak)
+  - `onUnmount` lifecycle hooks were never called for orphaned children
+  - Added cleanup check after `patchDOM()` to unmount children no longer within the parent container
+  - **Synchronous cleanup**: Old children fully unmount before new children mount (like Vue/Svelte)
+  - Eliminates race conditions with shared resources (WebSockets, focus, scroll position, etc.)
+  - Simpler mental model with predictable lifecycle ordering
+
+- **Store Plugin** - Fixed `_mountComponents` override missing `context` parameter
+  - The override was not passing the `context` parameter to the original method
+  - This caused component context to be lost when mounting child components with the Store plugin
+  - Child components using prop expressions like `:prop="value"` would fail to evaluate correctly
+
+- **Router Plugin** - Removed unused `to` argument from internal `_render` call
+  - The `_render` method was being called with 3 arguments but only accepted 2
+  - The `to` parameter was passed but never used (route data is already available via `this.currentRoute`)
+
+### 📝 Documentation
+
+- **JSDoc Accuracy** - Fixed type definitions across core and plugins for accurate TypeScript generation
+- **Router Docs** - Added `autoStart` option; fixed redundant `start()` examples
+- **Attr Docs** - Fixed event handler syntax to use arrow functions (`@click="() => ..."`)
+- **Lifecycle Docs** - Clarified `onBeforeUpdate` and `onBeforeMount` behavior
+- **Security Note** - Clarified that TemplateEngine evaluates trusted templates (not sandboxed)
+
+### 📦 Build & Packaging
+
+- **Package Exports** - Restructured following modern best practices
+  - Nested types inside `import`/`require` conditions for better TypeScript resolution
+  - `default` condition now points to ESM for improved bundler tree-shaking
+  - Removed `browser` condition from main exports (use `eleva/browser` for UMD builds)
+  - Standard imports (`import 'eleva'`, `require('eleva')`) work exactly the same
+
+- **File Extensions** - Aligned with `"type": "module"` package convention
+  - ESM builds use `.js` extension
+  - CJS builds use `.cjs` extension
+  - Better compatibility with Node.js module resolution
+
+- **Tree-Shaking** - Improved bundler optimization
+  - Enabled `treeshake.annotations` in Rollup for better dead code elimination
+  - Bundlers now always receive ESM by default (not UMD)
+
+- **Individual Plugin ESM/CJS Builds** - Added ESM and CJS exports for individual plugin subpaths
+  - `eleva/plugins/attr`, `eleva/plugins/router`, `eleva/plugins/store` now provide ESM, CJS, and UMD builds
+  - Previously these subpaths only provided UMD (not tree-shakable)
+  - ESM users now get proper tree-shaking when importing individual plugins
+  - CJS users get proper CommonJS modules with correct TypeScript resolution
+  - Browser/CDN users still get minified UMD via the `browser` condition
+  - Separate `.d.ts` (ESM) and `.d.cts` (CJS) type declarations for accurate TypeScript resolution
+
+### 📦 Version Updates
+
+> **Note:** Core plugins are versioned together with Eleva for compatibility clarity.
+
+| Component | Version |
+|-----------|---------|
+| Eleva (core) | 1.1.0 |
+| Router Plugin | 1.1.0 |
+| Store Plugin | 1.1.0 |
+| Attr Plugin | 1.1.0 |
+
+---
+
 ## v1.0.1 🔧 (17-01-2026)
 
 ### 🐛 Fixed

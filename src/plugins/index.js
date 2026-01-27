@@ -1,6 +1,7 @@
 "use strict";
 
 /**
+ * @module eleva/plugins
  * @fileoverview Eleva Plugin System
  *
  * This module exports all official Eleva plugins. Plugins provide optional

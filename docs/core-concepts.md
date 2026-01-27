@@ -139,17 +139,26 @@ z.value = 30;
 | API response (5 state updates) | 5 renders | 1 render |
 
 **Key Features:**
-- Microtask-based update batching
-- Automatic watcher cleanup
+- Signals returned from setup are auto-watched for re-rendering
+- Microtask-based update batching (via `queueMicrotask`)
+- Automatic watcher cleanup on unmount
 - Type-safe value handling
 - Efficient update propagation
 - Memory leak prevention through unsubscribe
+
+> **Timing Note:** Render updates are batched using `queueMicrotask()`. This means DOM updates happen after synchronous code completes but before the next event loop tick. If you need to read the updated DOM immediately after a state change, use `queueMicrotask(() => { /* DOM is updated here */ })`.
 
 ---
 
 ## TemplateEngine
 
 The **TemplateEngine** evaluates expressions in `@events` and `:props` attributes against the component context.
+
+> ⚠️ **Security Warning**
+>
+> TemplateEngine uses `new Function()` internally and is **NOT sandboxed**. Only use with developer-defined template strings. **Never** use with user-provided input or untrusted data, as this could enable code injection or XSS attacks.
+>
+> **Mitigation:** Always sanitize user-generated content before rendering. Use Content Security Policy (CSP) headers. Keep expressions simple (property access, method calls).
 
 ### How It Works
 
@@ -452,6 +461,8 @@ const Parent = {
 
 **Key benefit:** No need for `JSON.stringify` — objects and arrays are passed directly!
 
+> **Props are static by design.** Values are evaluated once at mount time. For reactive updates, pass the signal itself (`:user="user"`) instead of its value (`:user="user.value"`). See [Components Guide](./components.md#props-behavior-static-vs-reactive) for details.
+
 ### Context Reference Rules
 
 | Syntax | Uses `ctx.`? | Example |
@@ -498,7 +509,7 @@ template: (ctx) => `<input value="${ctx.name.value}" />`
 
 ### Displaying Code Examples in Templates
 
-When displaying code that contains `${...}` syntax within your templates (e.g., in a code playground or documentation), the template engine will try to evaluate those expressions. Use HTML entities to escape:
+When displaying code that contains `${...}` syntax within your templates (e.g., in a code playground or documentation), JavaScript template literals will evaluate those expressions. Use HTML entities to escape:
 
 ```javascript
 // WRONG: Inner ${...} gets evaluated by template engine
@@ -631,6 +642,8 @@ setup({ emitter }) {
 - Automatic event cleanup
 - Memory-efficient handler management
 
+> **Error Handling:** If a handler throws synchronously, the error propagates immediately and remaining handlers are NOT called. Async handlers (returning Promises) are fire-and-forget — rejections won't stop other handlers but will result in unhandled Promise rejections. Wrap async handlers in try/catch for proper error handling.
+
 ---
 
 ## Renderer (DOM Diffing)
@@ -654,6 +667,8 @@ renderer.patchDOM(container, newHtml);
 - Smart node comparison and replacement
 - Support for key-based reconciliation
 - Handles text nodes and element nodes appropriately
+
+> **Algorithm Complexity:** The diff algorithm uses a two-pointer approach. With `key` attributes, it achieves O(n) for common operations (append, prepend, remove). Without keys or with complex reorderings, worst case is O(n²). Always use `key` on list items for optimal performance.
 
 ---
 
@@ -739,6 +754,46 @@ await instance.unmount();
 
 > **Tip:** See the [Components documentation](./components.md#unmounting-components) for more details on managing multiple mounted instances.
 
+### Orphaned Child Cleanup
+
+When a parent component re-renders and its DOM patching removes a child component's host element, Eleva automatically detects and unmounts the orphaned child. This prevents memory leaks from stale signal watchers, event listeners, and component state.
+
+**How It Works:**
+1. After `patchDOM()`, Eleva checks if each child's container is still in the parent DOM
+2. Orphaned children are unmounted synchronously (awaited)
+3. New children mount after cleanup completes
+4. Predictable sequence: old cleanup → new mount
+
+**Behavior:**
+
+| Aspect | Behavior | Implication |
+|--------|----------|-------------|
+| **Timing** | Sync (awaited) | `onUnmount` completes before new children mount |
+| **Order** | Sequential | Old child cleans up, then new child mounts |
+| **Performance** | O(n) check per re-render | Minor overhead with many children |
+| **Predictability** | Deterministic | No race conditions with shared resources |
+
+**Example Scenario:**
+```javascript
+// Parent conditionally renders ChildA or ChildB
+template: (ctx) => `
+  <div class="slot">
+    ${ctx.showA.value ? '<div class="child-a"></div>' : '<div class="child-b"></div>'}
+  </div>
+`,
+children: {
+  ".child-a": "ChildA",
+  ".child-b": "ChildB"
+}
+
+// When showA changes from true to false:
+// 1. DOM patches: .child-a removed, .child-b added
+// 2. ChildA.onUnmount() runs (sync, awaited)
+// 3. ChildB mounts
+```
+
+> **Note:** Cleanup is synchronous—`onUnmount` completes before new children mount. This predictable ordering eliminates race conditions with shared resources (WebSockets, focus, etc.).
+
 ---
 
 ## Lifecycle Hooks
@@ -749,11 +804,15 @@ Eleva provides lifecycle hooks that allow you to execute code at specific stages
 
 | Hook | When Called | Common Use Cases |
 |------|-------------|------------------|
-| `onBeforeMount` | Before component renders to DOM | Validate props, prepare data |
+| `onBeforeMount` | Before component renders to DOM | Normalize props, prepare data |
 | `onMount` | After component renders to DOM | Fetch data, set up subscriptions, DOM access |
-| `onBeforeUpdate` | Before component re-renders | Compare old/new state, cancel updates |
+| `onBeforeUpdate` | Before component re-renders | Compare old/new state, logging, analytics |
 | `onUpdate` | After component re-renders | DOM measurements, third-party library sync |
 | `onUnmount` | Before component is destroyed | Cleanup subscriptions, timers, listeners |
+
+> **Hook Parameters:** All hooks receive `{ container, context }`. Only `onUnmount` receives an additional `cleanup` object: `{ container, context, cleanup }` where `cleanup` contains `{ watchers, listeners, children }` arrays.
+
+> **Note:** `onUnmount` is called when: (1) `unmount()` is called explicitly, (2) the parent component unmounts, or (3) a parent re-render removes the child's host element from the DOM. For parent-driven removals, `onUnmount` is awaited synchronously after the DOM patch, ensuring the old component fully cleans up before the new one mounts.
 
 ### Execution Order
 
@@ -762,7 +821,7 @@ Eleva provides lifecycle hooks that allow you to execute code at specific stages
          │
          ▼
 ┌─────────────────┐
-│ onBeforeMount   │  ← Props validated, initial data ready
+│ onBeforeMount   │  ← Props available, initial data ready
 └────────┬────────┘
          │
    (DOM renders)

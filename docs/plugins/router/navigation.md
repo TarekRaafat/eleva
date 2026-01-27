@@ -52,6 +52,8 @@ await router.navigate({
 // Result: URL changes to /#/users/123?tab=profile&sort=name
 ```
 
+> **Note:** The `replace`, `query`, and `state` options are only available when using the object syntax. When using `router.navigate(path, params)`, the second argument is only for path parameter substitution (e.g., replacing `:id` with a value).
+
 ### Check Navigation Result
 ```javascript
 const success = await router.navigate("/protected-page");
@@ -190,7 +192,7 @@ unsubQuery();
 
 ### In Components
 
-When navigating between `/users/123` and `/users/456`, the component may **not** unmount/remount—only the params change. Use `.watch()` on `ctx.router.current` to react to route changes:
+When navigating between `/users/123` and `/users/456`, the view component is unmounted and remounted. If you want to react to route changes within the same instance (for example, with custom caching), you can watch `ctx.router.current`:
 
 ```javascript
 const UserPage = {
@@ -342,7 +344,8 @@ User triggers navigation
 | `router:scroll` | `(context)` | No | For scroll behavior |
 | `router:afterEnter` | `(to, from)` | No | After new component mounted |
 | `router:afterEach` | `(to, from)` | No | Navigation complete |
-| `router:onError` | `(error, to, from)` | No | Navigation error |
+| `router:notFound` | `(to, from, path)` | No | No matching route (when no `*` route) |
+| `router:error` | `(error, to, from)` | No | Navigation error |
 | `router:routeAdded` | `(route)` | No | Dynamic route added |
 | `router:routeRemoved` | `(route)` | No | Dynamic route removed |
 
@@ -408,9 +411,9 @@ router.emitter.on("router:scroll", ({ to, from, savedPosition }) => {
   if (savedPosition) {
     // Back/forward navigation - restore position
     window.scrollTo(savedPosition.x, savedPosition.y);
-  } else if (to.fullUrl.includes("#")) {
+  } else if (window.location.hash) {
     // Anchor link - scroll to element
-    const id = to.fullUrl.split("#")[1];
+    const id = window.location.hash.slice(1);
     document.getElementById(id)?.scrollIntoView();
   } else {
     // New navigation - scroll to top
@@ -532,9 +535,9 @@ router.emitter.on("router:scroll", ({ to, from, savedPosition }) => {
       top: savedPosition.y,
       behavior: "instant"
     });
-  } else if (to.fullUrl.includes("#")) {
+  } else if (window.location.hash) {
     // Hash/anchor navigation
-    const hash = to.fullUrl.split("#")[1];
+    const hash = window.location.hash.slice(1);
     const element = document.getElementById(hash);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });

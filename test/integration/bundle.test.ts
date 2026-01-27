@@ -2,7 +2,7 @@
  * @fileoverview Integration tests for the Eleva.js production bundle
  *
  * These tests verify that the built/bundled version of Eleva.js works correctly.
- * They test the dist/eleva.esm.js file to ensure the build process doesn't break
+ * They test the dist/eleva.js file to ensure the build process doesn't break
  * any functionality.
  *
  * Tests cover:
@@ -21,7 +21,7 @@
  */
 
 import { describe, test, expect, beforeEach, mock } from "bun:test";
-import Eleva from "../../dist/eleva.esm.js";
+import Eleva from "../../dist/eleva.js";
 
 describe("Eleva.js Bundle Integration", () => {
   let app: any;

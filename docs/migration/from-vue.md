@@ -38,7 +38,7 @@ description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to s
   "tool": [
     {
       "@type": "HowToTool",
-      "name": "Eleva.js (~2.3KB gzipped)"
+      "name": "Eleva.js (~2.5KB gzipped)"
     }
   ],
   "step": [

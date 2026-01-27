@@ -70,7 +70,7 @@ app.component("MyComponent", {
     <div>${ctx.state.value}</div>
   `,
 
-  // 3. Style - Component-scoped CSS (optional)
+  // 3. Style - Component CSS (optional, not auto-scoped)
   style: `
     div { color: blue; }
   `,
@@ -319,7 +319,7 @@ setup: ({ signal }) => {
 | Task | Recommended Hook |
 |------|------------------|
 | Fetch initial data | `onMount` |
-| Validate props | `onBeforeMount` |
+| Normalize props | `onBeforeMount` |
 | Set up event listeners | `onMount` |
 | Remove event listeners | `onUnmount` |
 | Clear timers/intervals | `onUnmount` |
@@ -329,6 +329,8 @@ setup: ({ signal }) => {
 | Focus an input element | `onMount` |
 | Measure DOM elements | `onMount` or `onUpdate` |
 | Sync state with external system | `onUpdate` |
+
+> **Note:** When a parent re-render removes a child component, Eleva waits for the child's `onUnmount` to complete before continuing. This synchronous cleanup ensures predictable ordering—the old component fully cleans up before the new one mounts.
 
 ### Lifecycle Anti-Patterns
 
@@ -367,6 +369,45 @@ return {
   }
 };
 ```
+
+### Cancelling Fetch Requests
+
+When making API requests, use `AbortController` to cancel pending requests when the component unmounts. This prevents stale responses from updating state after the component is gone:
+
+```javascript
+setup: ({ signal }) => {
+  const data = signal(null);
+  let controller;
+
+  async function loadData() {
+    controller?.abort();
+    controller = new AbortController();
+    try {
+      const res = await fetch('/api/data', { signal: controller.signal });
+      data.value = await res.json();
+    } catch (e) {
+      if (e.name !== 'AbortError') throw e;
+    }
+  }
+
+  return {
+    data,
+    loadData,
+    onMount: loadData,
+    onUnmount: () => controller?.abort()
+  };
+}
+```
+
+> **Tip:** For slow async operations in `onUnmount` that don't need to block cleanup (like analytics), you can fire-and-forget:
+>
+> ```javascript
+> onUnmount: () => {
+>   clearInterval(timer);           // Fast sync cleanup
+>   analytics.flush();              // No await - runs in background
+>   navigator.sendBeacon('/log');   // Survives page unload
+> }
+> ```
 
 ---
 

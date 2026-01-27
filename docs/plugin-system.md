@@ -103,7 +103,7 @@ app.use(MyPlugin, { /* optional configuration */ });
 The `use` method:
 - Calls the plugin's `install` function with the Eleva instance and options
 - Stores the plugin in an internal registry
-- Returns the Eleva instance for method chaining
+- Returns the plugin's result (if provided) or the Eleva instance for chaining
 
 ---
 
@@ -510,7 +510,7 @@ Eleva comes with three powerful built-in plugins:
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attributes | ~2.4KB | [View →](./plugins/attr/) |
+| **Attr** | ARIA, data-*, boolean attributes | ~2.2KB | [View →](./plugins/attr/) |
 | **Router** | Client-side routing & guards | ~15KB | [View →](./plugins/router/) |
 | **Store** | Global state management | ~6KB | [View →](./plugins/store/) |
 
@@ -553,8 +553,7 @@ const router = app.use(Router, {
     { path: '/users/:id', component: UserPage }
   ]
 });
-
-await router.start();
+// Router starts automatically (autoStart: true by default)
 ```
 
 **Features:**
@@ -636,8 +635,8 @@ Attr.uninstall(app);
 
 | Plugin | Minified | Gzipped |
 |--------|----------|---------|
-| Core | ~6KB | ~2.3KB |
-| Attr | ~2.4KB | ~1KB |
+| Core | ~6KB | ~2.5KB |
+| Attr | ~2.2KB | ~1KB |
 | Router | ~15KB | ~5KB |
 | Store | ~6KB | ~2KB |
 

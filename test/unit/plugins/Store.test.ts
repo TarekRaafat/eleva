@@ -258,6 +258,73 @@ describe("StorePlugin", () => {
       await app.store.dispatch("increment");
       expect(app.store.state.counter.value).toBe(10);
     });
+
+    test("should create namespaced actions with dot notation", async () => {
+      // Register a namespace first
+      app.store.registerModule("auth", {
+        state: { user: null, token: null },
+        actions: {
+          setUser: (state: any, user: any) => {
+            state.auth.user.value = user;
+          },
+        },
+      });
+
+      // Create a new action using dot notation
+      app.store.createAction("auth.login", (state: any, credentials: any) => {
+        state.auth.user.value = credentials.user;
+        state.auth.token.value = credentials.token;
+      });
+
+      await app.store.dispatch("auth.login", { user: { name: "John" }, token: "abc123" });
+
+      expect(app.store.state.auth.user.value).toEqual({ name: "John" });
+      expect(app.store.state.auth.token.value).toBe("abc123");
+    });
+
+    test("should create deeply nested actions with dot notation", async () => {
+      // Create nested structure
+      app.store.registerModule("admin", {
+        state: { settings: null },
+        actions: {},
+      });
+
+      // Create deeply nested action
+      app.store.createAction("admin.users.create", (state: any, user: any) => {
+        state.admin.settings.value = { lastCreated: user };
+      });
+
+      await app.store.dispatch("admin.users.create", { name: "Jane" });
+
+      expect(app.store.state.admin.settings.value).toEqual({ lastCreated: { name: "Jane" } });
+    });
+
+    test("should create action in new namespace via dot notation", async () => {
+      // createAction should create the namespace structure if it doesn't exist
+      app.store.createAction("newNamespace.doSomething", (state: any) => {
+        state.counter.value = 999;
+      });
+
+      await app.store.dispatch("newNamespace.doSomething");
+
+      expect(app.store.state.counter.value).toBe(999);
+    });
+
+    test("should allow app.createAction with dot notation", async () => {
+      app.store.registerModule("cart", {
+        state: { total: 0 },
+        actions: {},
+      });
+
+      // Use the global shortcut
+      app.createAction("cart.calculate", (state: any, amount: number) => {
+        state.cart.total.value = amount;
+      });
+
+      await app.dispatch("cart.calculate", 100);
+
+      expect(app.store.state.cart.total.value).toBe(100);
+    });
   });
 
   // ===========================================================================

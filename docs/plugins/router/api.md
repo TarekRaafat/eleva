@@ -82,12 +82,11 @@ await router.navigate("/search?q=hello&page=1");
 await router.navigate({
   path: "/users/:id",
   params: { id: "123" },
-  query: { tab: "settings" },
-  hash: "#section"
+  query: { tab: "settings" }
 });
 
 // Navigate with replace (no history entry)
-await router.navigate("/dashboard", { replace: true });
+await router.navigate({ path: "/dashboard", replace: true });
 ```
 
 **Return Value:** `Promise<boolean>` - `true` if navigation succeeded, `false` if blocked by guard.
@@ -217,13 +216,13 @@ Control the router lifecycle.
 **Examples:**
 
 ```javascript
-// Basic startup
+// Basic startup (autoStart: true by default, no manual start needed)
 const router = app.use(Router, { /* config */ });
-await router.start();
+// Router starts automatically
 
-// Conditional startup
+// Manual startup (set autoStart: false for full control)
 async function initApp() {
-  const router = app.use(Router, { routes });
+  const router = app.use(Router, { routes, autoStart: false });
 
   // Wait for auth check before starting router
   const user = await checkAuthStatus();
@@ -231,8 +230,15 @@ async function initApp() {
     setupAuthenticatedRoutes(router, user.permissions);
   }
 
-  await router.start();
+  await router.start(); // Start manually after setup
 }
+
+// Promise chaining - start() returns Promise<Router>
+const router = app.use(Router, { routes, autoStart: false });
+router.start().then((r) => {
+  console.log("Router is ready!");
+  r.navigate("/home");
+});
 
 // Pause router (can restart later)
 await router.stop();
@@ -247,8 +253,8 @@ Completely remove the Router plugin from an Eleva instance. This is different fr
 
 | Method | Purpose | Can Restart? | Removes from App? |
 |--------|---------|:------------:|:-----------------:|
-| `router.stop()` | Pause navigation | Yes | No |
-| `router.destroy()` | Full router cleanup | No | No |
+| `router.stop()` | Stop router (alias of `destroy()`) | Yes | No |
+| `router.destroy()` | Full router cleanup | Yes | No |
 | `Router.uninstall(app)` | Remove plugin entirely | No | Yes |
 
 **When to use `uninstall()`:**
@@ -268,8 +274,7 @@ const router = app.use(Router, {
   mount: "#app",
   routes: [/* ... */]
 });
-
-await router.start();
+// Router starts automatically (autoStart: true by default)
 
 // Later, to completely remove the router plugin:
 await Router.uninstall(app);
@@ -408,7 +413,7 @@ router.setErrorHandler({
 ### Error Event
 
 ```javascript
-router.emitter.on("router:onError", (error, to, from) => {
+router.emitter.on("router:error", (error, to, from) => {
   // Log to analytics
   analytics.trackError({
     type: "navigation_error",
@@ -418,6 +423,24 @@ router.emitter.on("router:onError", (error, to, from) => {
   });
 });
 ```
+
+### Not Found Event
+
+Fired when no route matches and there's no catch-all (`*`) route defined:
+
+```javascript
+router.emitter.on("router:notFound", (to, from, path) => {
+  console.log(`Route not found: ${path}`);
+
+  // Custom 404 handling
+  showNotFoundPage(path);
+
+  // Or redirect to a custom 404 page
+  router.navigate("/404");
+});
+```
+
+> **Note:** If you define a catch-all route (`{ path: "*", component: NotFoundPage }`), the `router:notFound` event will not fire because the wildcard route matches all paths.
 
 ### Error Types Reference
 
@@ -506,7 +529,7 @@ const AnalyticsPlugin = {
     });
 
     // Track errors
-    router.emitter.on("router:onError", (error, to, from) => {
+    router.emitter.on("router:error", (error, to, from) => {
       trackException({
         description: error.message,
         fatal: false
@@ -639,6 +662,7 @@ interface RouterOptions {
   viewSelector?: string;
   globalLayout?: RouteComponent;
   queryParam?: string;
+  autoStart?: boolean;
   onBeforeEach?: NavigationGuard;
 }
 
@@ -659,6 +683,8 @@ interface RouteDefinition {
 type RouteComponent =
   | string                                           // Registered name
   | ComponentDefinition                              // Inline definition
+  | (() => ComponentDefinition)                      // Sync factory
+  | (() => Promise<ComponentDefinition>)             // Async factory
   | (() => Promise<{ default: ComponentDefinition }>); // Lazy import
 
 // Current route information
@@ -668,7 +694,7 @@ interface RouteLocation {
   query: Record<string, string>;
   meta: Record<string, any>;
   name?: string;
-  fullUrl: string;
+  fullUrl: string; // app-relative path + query (empty in SSR fallback)
   matched: RouteDefinition;
 }
 
@@ -683,10 +709,10 @@ type NavigationGuardResult = boolean | string | NavigationTarget | void;
 // Navigation target
 interface NavigationTarget {
   path: string;
-  params?: Record<string, string>;
-  query?: Record<string, string>;
+  params?: Record<string, string | number | boolean>;
+  query?: Record<string, string | number | boolean>;
   replace?: boolean;
-  state?: Record<string, any>;
+  state?: any;
 }
 
 // Event contexts
@@ -848,9 +874,10 @@ router.onAfterEach((to) => {
   document.title = to.meta.title || "My App";
 });
 
-// Start router
-router.start().then(() => {
-  console.log("App ready!");
+// Router starts automatically (autoStart: true by default)
+// Use isReady signal to know when router is ready
+router.isReady.watch((ready) => {
+  if (ready) console.log("App ready!");
 });
 ```
 
@@ -901,9 +928,16 @@ router.start().then(() => {
 [ElevaRouter] Mount element "#app" was not found in the DOM.
 ```
 
-**Solution:** Ensure the mount element exists before calling `router.start()`:
+**Solution:** Ensure the mount element exists before the router starts:
 ```javascript
-// Wait for DOM
+// Option 1: Wait for DOM before creating router
+document.addEventListener("DOMContentLoaded", () => {
+  const router = app.use(Router, { mount: "#app", routes });
+  // Router starts automatically after DOM is ready
+});
+
+// Option 2: Use autoStart: false for manual control
+const router = app.use(Router, { mount: "#app", routes, autoStart: false });
 document.addEventListener("DOMContentLoaded", async () => {
   await router.start();
 });
@@ -1031,7 +1065,7 @@ The Eleva Router Plugin provides:
 - **7 reactive signals**: currentRoute, previousRoute, currentParams, currentQuery, currentLayout, currentView, isReady
 - **13 events**: Full navigation lifecycle coverage
 - **2 blocking events**: beforeEach, beforeResolve
-- **4 hook methods**: onBeforeEach, onAfterEnter, onAfterLeave, onAfterEach, onError
+- **5 hook methods**: onBeforeEach, onAfterEnter, onAfterLeave, onAfterEach, onError
 - **5 route management methods**: addRoute, removeRoute, hasRoute, getRoutes, getRoute
 - **Plugin system**: Extensible architecture for custom functionality
 

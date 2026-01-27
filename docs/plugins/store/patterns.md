@@ -242,7 +242,7 @@ app.use(Store, {
   }
 });
 
-// Create a login action that orchestrates the flow
+// Create an orchestrating action that coordinates the login flow
 app.store.createAction("auth.login", async (state, credentials) => {
   await app.dispatch("auth.loginStart");
 

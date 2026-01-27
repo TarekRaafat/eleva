@@ -58,6 +58,8 @@ app.store.clearPersistedState();   // Only available on app.store
 
 Executes an action to mutate state.
 
+> **Note:** Always returns a Promise regardless of whether the action is sync or async. Subscriber callbacks that throw are caught and passed to the `onError` handler.
+
 ```javascript
 // Signature
 store.dispatch(actionName: string, payload?: any): Promise<any>
@@ -91,7 +93,9 @@ unsubscribe();
 
 ### getState()
 
-Returns a deep copy of current state values (non-reactive snapshot).
+Returns current state values (non-reactive snapshot).
+
+> **Note:** When persistence `include`/`exclude` filters are configured, this returns only the filtered subset of state, not the full state.
 
 ```javascript
 // Signature
@@ -108,7 +112,9 @@ localStorage.setItem("debug-state", JSON.stringify(store.getState()));
 
 ### replaceState(newState)
 
-Replaces the entire state. Useful for hydration or time-travel debugging.
+Replaces state values. Useful for hydration or time-travel debugging.
+
+> **Note:** When persistence `include`/`exclude` filters are configured, this only updates the filtered subset of state, not all properties.
 
 ```javascript
 // Signature
@@ -179,19 +185,47 @@ console.log(store.state.theme.value); // "dark"
 
 ### createAction(name, actionFn)
 
-Creates a new action at runtime.
+Creates a new action at runtime. Supports dot-notation for namespaced actions.
 
 ```javascript
 // Signature
-store.createAction(name: string, actionFn: (state, payload?) => void): void
+store.createAction(name: string, actionFn: (state, payload?) => any | Promise<any>): void
 
-// Example
+// Example - root-level action
 store.createAction("toggleTheme", (state) => {
   state.theme.value = state.theme.value === "dark" ? "light" : "dark";
 });
-
 store.dispatch("toggleTheme");
+
+// Namespaced action using dot-notation
+store.createAction("auth.logout", (state) => {
+  state.auth.user.value = null;
+  state.auth.token.value = null;
+});
+store.dispatch("auth.logout");
 ```
+
+### signal
+
+Reference to the Signal class, available for creating local reactive state within components.
+
+```javascript
+// Signature
+store.signal: typeof Signal
+
+// Example - Create local reactive state using store's signal reference
+setup({ store }) {
+  // Use store.signal to create local reactive state (requires 'new')
+  const localCount = new store.signal(0);
+
+  return {
+    localCount,
+    increment: () => localCount.value++
+  };
+}
+```
+
+> **Important:** `store.signal` is the Signal **class** and requires the `new` keyword. This differs from `ctx.signal` which is a factory function that doesn't require `new`. Use `ctx.signal(0)` for convenience, or `new store.signal(0)` when you only have access to the store object.
 
 ### clearPersistedState()
 
@@ -632,7 +666,7 @@ store.state.count.watch((value) => {
 | Metric | Value |
 |--------|-------|
 | **Bundle Size** | ~6KB minified |
-| **API Methods** | 10 (dispatch, subscribe, getState, etc.) |
+| **API Methods** | 11 (dispatch, subscribe, getState, signal, etc.) |
 | **Storage Options** | 2 (localStorage, sessionStorage) |
 | **State Access** | Direct via Signals |
 | **Async Support** | Native (actions can be async) |
@@ -644,12 +678,13 @@ store.state.count.watch((value) => {
 | `store.state` | Access reactive state |
 | `store.dispatch(action, payload)` | Execute action |
 | `store.subscribe(callback)` | Listen to mutations |
-| `store.getState()` | Get state snapshot |
-| `store.replaceState(state)` | Replace all state |
+| `store.getState()` | Get state snapshot (respects persistence filters) |
+| `store.replaceState(state)` | Replace state (respects persistence filters) |
 | `store.registerModule(name, module)` | Add module |
 | `store.unregisterModule(name)` | Remove module |
 | `store.createState(key, value)` | Add state property |
 | `store.createAction(name, fn)` | Add action |
+| `store.signal` | Signal class (use with `new`) |
 | `store.clearPersistedState()` | Clear storage |
 
 ### Key Concepts

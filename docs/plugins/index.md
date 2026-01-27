@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva Plugins
 
-> **Version:** 1.0.1 | **All plugins are optional and tree-shakeable**
+> **Version:** 1.1.0 | **All plugins are optional and tree-shakeable**
 
 Eleva's plugin system extends the core framework with powerful optional features. Plugins come in two types: **Core Plugins** maintained by the Eleva team, and **External Plugins** created by the community.
 
@@ -126,7 +126,7 @@ app.use(Router, { routes: [...] });
 
 | Plugin | Purpose | Size | Docs |
 |--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attribute handling | ~2.4KB | [View →](./attr/) |
+| **Attr** | ARIA, data-*, boolean attribute handling | ~2.2KB | [View →](./attr/) |
 | **Router** | Client-side routing & navigation guards | ~15KB | [View →](./router/) |
 | **Store** | Global state management & persistence | ~6KB | [View →](./store/) |
 
@@ -177,8 +177,7 @@ const router = app.use(Router, {
     { path: "*", component: NotFoundPage }
   ]
 });
-
-await router.start();
+// Router starts automatically (autoStart: true by default)
 
 // Navigate programmatically
 await router.navigate("/users/123");

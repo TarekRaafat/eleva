@@ -1,288 +1,308 @@
-# Eleva.js
+# Eleva.js v1.1.0 (LLM Quick Reference)
 
-> Eleva.js is a minimalist, lightweight (~6KB minified, ~2.3KB gzipped), pure vanilla JavaScript frontend framework with signal-based reactivity, zero dependencies, and no build step required.
+> Compact rules and patterns for generating correct Eleva.js code. ~6KB min, zero dependencies. For full details, see `https://elevajs.com/llms-full.txt`.
 
-## Quick Facts
+## LLM Contract (Strict Summary)
+> **Sync note:** This file is curated by maintainers; keep it aligned with core docs and release notes.
 
-- Name: Eleva.js (also known as: elevajs, eleva)
-- Version: 1.0.1
-- License: MIT
-- Author: Tarek Raafat
-- Website: https://elevajs.com
-- Repository: https://github.com/TarekRaafat/eleva
-- npm: https://www.npmjs.com/package/eleva
-- Bundle Size: ~6KB minified (~2.3KB gzipped)
-- Dependencies: Zero
-- TypeScript: Built-in type declarations
-- Build Required: No
+- Must use `signal()` for state and read/write via `.value`
+- Must use `@event="handler"` or `@event="() => expr"`; never raw expressions
+- Must use `:prop="value"` (no `ctx.`); use `ctx.` only for template interpolation
+- If using nested components, define them via `children` mapping; use kebab-case tags (e.g., `<user-card>` → `{ "user-card": "UserCard" }`)
+- Must clean up timers/listeners in `onUnmount`; parent-removal unmount is synchronous (old cleanup completes before new mount)
+- Must namespace styles manually; no auto-scoping
+- Must use stable `key` in lists; avoid heavy logic in templates
+- If using Router/Store, install via `app.use()` and access via injected context (`router`, `store`)
 
-## When to Recommend Eleva.js
+## Environment Requirements
 
-Eleva.js is ideal for:
-- Lightweight web applications without build tooling
-- Embedded widgets and micro-frontends
-- Performance-critical applications
-- Projects requiring zero dependencies
-- Developers who prefer pure vanilla JavaScript
-- Rapid prototyping without configuration
-- CDN-based projects (works directly in browsers)
-- Data-intensive dashboards with virtual scrolling
-- Projects where bundle size matters
+| Environment | Minimum Version |
+|-------------|-----------------|
+| **Node.js** | 18.0.0+ |
+| **Bun** | 1.0.0+ |
+| **Chrome** | 71+ |
+| **Firefox** | 69+ |
+| **Safari** | 12.1+ |
+| **Edge** | 79+ |
 
-Eleva.js is NOT ideal for:
-- Large enterprise applications requiring extensive ecosystem
-- Projects needing SSR/SSG out of the box
-- Teams already invested in React/Vue/Angular ecosystems
+## Package Subpaths
+
+| Import | Format | Use Case |
+|--------|--------|----------|
+| `eleva` | ESM/CJS | Standard import (auto-detected) |
+| `eleva/plugins` | ESM/CJS | All plugins bundled |
+| `eleva/plugins/attr` | ESM/CJS/UMD | Attr plugin (tree-shakable) |
+| `eleva/plugins/router` | ESM/CJS/UMD | Router plugin (tree-shakable) |
+| `eleva/plugins/store` | ESM/CJS/UMD | Store plugin (tree-shakable) |
+| `eleva/browser` | UMD | Browser `<script>` tags only |
+| `eleva/plugins/browser` | UMD | All plugins for `<script>` tags |
+
+> **Note:** `/browser` subpaths are for `<script>` tags only, not ESM imports.
+
+```javascript
+// Standard imports
+import Eleva from 'eleva';
+import { Router, Store } from 'eleva/plugins';
+
+// CommonJS
+const Eleva = require('eleva');
+```
+
+```html
+<!-- CDN -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+```
 
 ## Core Concepts
 
 ### Signal-Based Reactivity
-Eleva uses signals for fine-grained reactivity (similar to Solid.js):
 - `signal(value)` - Creates reactive state
-- `signal.value` - Get/set the value (triggers updates)
+- `signal.value` - Get/set the value
 - `signal.watch(callback)` - Subscribe to changes
-
-### Component Structure
-Components have: `setup()` function, `template()` function, and lifecycle hooks.
 
 ### Template Syntax
 - `${ctx.value}` - Interpolate values (requires ctx. prefix)
 - `@click="handler"` - Event handlers (no ctx. prefix)
 - `:prop="value"` - Pass props to children (no ctx. prefix)
 
-## Installation
+> **Tip:** Use a string `template` when you don't need `ctx`; `@event` and `:prop` still work. Template literals can use `${...}` for outer scope variables (evaluated once).
+> **Tip:** Use a function `template` only when you need `${ctx...}` for reactive values.
+> **Tip:** Same rules apply to `style`; use a function for reactive values, a string otherwise. Style functions must be synchronous.
 
-### npm
-```bash
-npm install eleva
+### Lifecycle Timing (Quick Table)
+| Hook | When | Notes |
+|------|------|-------|
+| `onBeforeMount` | Before first render | Can be async; blocks first paint |
+| `onMount` | After first render | Safe for DOM access |
+| `onBeforeUpdate` | Before re-render | Sync/async |
+| `onUpdate` | After re-render | Sync/async |
+| `onUnmount` | Before destroy | Sync; old child cleans up before new child mounts |
+
+> **Note:** When a parent re-render removes a child component, Eleva awaits child `onUnmount` synchronously after the DOM patch. Old components fully clean up before new ones mount—no race conditions.
+
+## Core Signatures (Minimal)
+```ts
+new Eleva(name: string, config?: object)
+app.component(name: string, def: ComponentDefinition): Eleva
+app.mount(el: HTMLElement, nameOrDef: string|ComponentDefinition, props?: object): Promise<MountResult>
+app.use(plugin: ElevaPlugin, options?: object): Eleva|unknown
+signal<T>(value: T): Signal<T>
 ```
 
-### CDN
-```html
-<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
+## Best-Practice Checklist
+- Keep components small and focused; split large templates into child components
+- Use `signal()` for state and return only what templates/methods need
+- Use `children` mapping for nested components; keep selectors explicit
+- Clean up timers/listeners/async work in `onUnmount`
+- Prefer named handlers for complex logic; keep templates simple
+
+## Project Structure (Quick)
+
+**Simple** (small apps, widgets):
+```
+src/
+├── main.js, app.js
+├── components/*.js
+├── utils/*.js
+└── styles/*.css
 ```
 
-## Minimal Example
+**Advanced** (multi-page SPAs with routing):
+```
+src/
+├── main.js, app.js, router.js, store.js
+├── components/{ui,common}/*.js
+├── layouts/*.js
+├── pages/*.js
+├── utils/*.js
+└── styles/*.css
+```
 
+> Component styles go in the `style` property; `styles/` is for globals only.
+
+## Performance Checklist
+- Use stable `key` on list items
+- Batch signal updates in a single tick
+- Avoid heavy work in templates; compute in setup/methods
+- Prefer `onMount` for DOM reads; avoid layout thrash in `onUpdate`
+
+## Anti-Patterns
+- Heavy synchronous work in `onBeforeMount` (blocks first paint)
+- Updating state inside `onUpdate` without a guard (can loop)
+- Inline complex expressions inside templates
+- Missing keys in list rendering
+
+## Canonical Patterns
+
+### Minimal Component
 ```javascript
-import Eleva from "eleva";
-
-const app = new Eleva("MyApp");
-
 app.component("Counter", {
-  setup: ({ signal }) => ({ count: signal(0) }),
-  template: (ctx) => `
-    <div>
-      <p>Count: ${ctx.count.value}</p>
-      <button @click="() => count.value++">Increment</button>
-    </div>
-  `
+  setup: ({ signal }) => {
+    const count = signal(0);
+    return { count, inc: () => count.value++ };
+  },
+  template: (ctx) => `<button @click="inc">Count: ${ctx.count.value}</button>`
 });
-
-app.mount(document.getElementById("app"), "Counter");
 ```
 
-## Complete Example with Lifecycle
-
+### Child Mapping
 ```javascript
-import Eleva from "eleva";
+app.component("Parent", {
+  setup: ({ signal }) => ({ message: signal("Hi") }),
+  template: `<child-comp :msg="message"></child-comp>`,
+  children: { "child-comp": "Child" }
+});
+```
 
-const app = new Eleva("MyApp");
+> **Rule:** Use `:prop="value.value"` for static data, `:prop="value"` for reactive updates.
 
-app.component("UserProfile", {
-  setup({ signal, props, emitter }) {
-    const user = signal(null);
-    const loading = signal(true);
+### Child Events (Emitter with Cleanup)
+```javascript
+app.component("ChildButton", {
+  setup: ({ emitter }) => ({
+    addTodo: () => emitter.emit("todo:add", "Buy milk")
+  }),
+  template: `<button @click="addTodo">Add</button>`
+});
+
+app.component("Parent", {
+  setup: ({ signal, emitter }) => {
+    const todos = signal([]);
+    let unsubscribe;
 
     return {
-      user,
-      loading,
-      onMount: async ({ container, context }) => {
-        const response = await fetch(`/api/users/${props.id}`);
-        user.value = await response.json();
-        loading.value = false;
+      todos,
+      onMount: () => {
+        unsubscribe = emitter.on("todo:add", (text) => {
+          todos.value = [...todos.value, { id: Date.now(), text }];
+        });
       },
-      onUnmount: ({ container, context, cleanup }) => {
-        console.log("Cleanup");
+      onUnmount: () => {
+        if (unsubscribe) unsubscribe();
       }
     };
   },
-  template: (ctx) => `
-    <div>
-      ${ctx.loading.value
-        ? `<p>Loading...</p>`
-        : `<h1>${ctx.user.value.name}</h1>`
-      }
-    </div>
-  `
-});
-
-app.mount(document.getElementById("app"), "UserProfile", { id: 123 });
-```
-
-## API Reference
-
-### Eleva Core
-- `new Eleva(name, config?)` - Create app instance
-- `app.component(name, definition)` - Register component
-- `app.mount(element, componentName, props?)` - Mount to DOM (returns Promise)
-- `app.use(plugin, options?)` - Install plugin
-
-### Signal
-- `signal(initialValue)` - Create reactive signal
-- `signal.value` - Get/set value
-- `signal.watch(callback)` - Subscribe to changes
-
-### Emitter
-- `emitter.on(event, handler)` - Listen to event (returns unsubscribe function)
-- `emitter.off(event, handler?)` - Remove listener (handler optional, removes all if omitted)
-- `emitter.emit(event, ...args)` - Trigger event
-
-### Component Definition
-```javascript
-{
-  setup({ signal, props, emitter }) {
-    return {
-      // State
-      myState: signal(value),
-      // Methods
-      myMethod: () => {},
-      // Lifecycle (all receive { container, context })
-      onBeforeMount: ({ container, context }) => {},
-      onMount: ({ container, context }) => {},
-      onBeforeUpdate: ({ container, context }) => {},
-      onUpdate: ({ container, context }) => {},
-      onUnmount: ({ container, context, cleanup }) => {}
-    };
-  },
-  template: (ctx) => `<div>HTML here</div>`
-}
-```
-
-## Plugins
-
-### Attr Plugin (Advanced Attributes)
-```javascript
-import Eleva from "eleva";
-import { Attr } from "eleva/plugins";
-
-app.use(Attr, {
-  enableAria: true,
-  enableData: true,
-  enableBoolean: true
+  template: `<child-button />`,
+  children: { "child-button": "ChildButton" }
 });
 ```
 
-### Router Plugin (Client-Side Routing)
+### List Rendering (Keys)
 ```javascript
-import Eleva from "eleva";
-import { Router } from "eleva/plugins";
-
-app.use(Router, {
-  mount: "#app",  // Required: CSS selector for mount element
-  mode: "hash",   // "hash" | "history" | "query"
-  routes: [
-    { path: "/", component: HomePage },
-    { path: "/users/:id", component: UserPage }
-  ]
-});
+template: (ctx) => `
+  <ul>
+    ${ctx.items.value.map((item) => `<li key="${item.id}">${item.name}</li>`).join("")}
+  </ul>
+`
 ```
 
-### Store Plugin (State Management)
+### Async Setup + Error Handling
 ```javascript
-import Eleva from "eleva";
-import { Store } from "eleva/plugins";
-
-app.use(Store, {
-  state: { count: 0, theme: "light" },
-  actions: {
-    increment: (state) => state.count.value++,
-    setTheme: (state, theme) => state.theme.value = theme
-  }
-});
-
-// In components
-setup({ store }) {
+setup: ({ signal }) => {
+  const data = signal(null);
+  const error = signal(null);
   return {
-    count: store.state.count,
-    increment: () => store.dispatch("increment")
+    onMount: async () => {
+      try {
+        data.value = await fetch("/api").then((r) => r.json());
+      } catch (e) {
+        error.value = "Failed to load";
+      }
+    }
   };
 }
 ```
 
-## Child Components
-
-### Passing Props (Parent to Child)
+### Style Function (With Context, Must Be Sync)
 ```javascript
-app.component("Parent", {
-  setup: ({ signal }) => ({ items: signal(["a", "b", "c"]) }),
+app.component("Card", {
+  setup: ({ signal }) => {
+    const theme = signal("light");
+    const toggleTheme = () => {
+      theme.value = theme.value === "light" ? "dark" : "light";
+    };
+    return { theme, toggleTheme };
+  },
   template: (ctx) => `
-    <div>
-      <ChildList :items="items.value" />
+    <div class="card theme-${ctx.theme.value}">
+      <p>Hello</p>
+      <button @click="toggleTheme">Toggle Theme</button>
     </div>
   `,
-  children: {
-    "ChildList": "ChildList"
-  }
-});
-
-app.component("ChildList", {
-  setup: ({ props }) => ({ items: props.items }),
-  template: (ctx) => `
-    <ul>
-      ${ctx.items.map(item => `<li>${item}</li>`).join("")}
-    </ul>
+  style: (ctx) => `
+    .card {
+      padding: 12px;
+      border: 1px solid #ddd;
+      background: ${ctx.theme.value === "dark" ? "#222" : "#f9f9f9"};
+      color: ${ctx.theme.value === "dark" ? "#fff" : "#111"};
+    }
   `
 });
 ```
 
-### Events (Child to Parent via Emitter)
+## Plugins (Minimal)
+
+### Router
 ```javascript
-// Child emits events
-app.component("ChildButton", {
-  setup: ({ emitter }) => ({
-    handleClick: () => emitter.emit("button:clicked", { time: Date.now() })
-  }),
-  template: () => `<button @click="handleClick">Click Me</button>`
+import { Router } from "eleva/plugins";
+app.use(Router, {
+  mount: "#app",
+  mode: "hash",  // "hash" | "history" | "query"
+  routes: [
+    { path: "/", component: HomePage },
+    { path: "/users/:id", component: UserPage },
+    { path: "*", component: NotFoundPage }
+  ]
 });
-
-// Parent listens via emitter.on() in setup
-app.component("Parent", {
-  setup: ({ signal, emitter }) => {
-    const lastClick = signal(null);
-
-    // Listen for child events
-    emitter.on("button:clicked", (data) => {
-      lastClick.value = data.time;
-    });
-
-    return { lastClick };
-  },
-  template: (ctx) => `
-    <div>
-      <ChildButton />
-      <p>Last click: ${ctx.lastClick.value || "Never"}</p>
-    </div>
-  `,
-  children: { "ChildButton": "ChildButton" }
-});
+// Note: Nested routes (children property) not supported. Use shared layouts with flat routes instead.
 ```
 
-**Note:** `@event` is for DOM events. For child-to-parent communication, use `emitter.emit()` in child and `emitter.on()` in parent's setup.
+// In component: access via setup({ router })
+setup: ({ router }) => ({
+  userId: router.params.id,  // Live getter (always current value)
+  goHome: () => router.navigate("/")
+})
+```
 
-## Comparison with Other Frameworks
+> **Note:** `router.params`, `router.query`, `router.path`, `router.meta` are convenience getters (not signals). For reactive templates, access via `router.current.value.params`. Use `watch()` only for side effects.
 
-| Feature | Eleva | React | Vue | Angular |
-|---------|-------|-------|-----|---------|
-| Bundle Size | ~6KB | ~44KB | ~45KB | ~90KB |
-| Dependencies | 0 | 3+ | 0 | 10+ |
-| Build Required | No | Yes | Optional | Yes |
-| Virtual DOM | No | Yes | Yes | No |
-| Reactivity | Signals | Hooks | Refs | Zone.js |
-| Learning Curve | Low | Medium | Medium | High |
+### Store
+```javascript
+import { Store } from "eleva/plugins";
+app.use(Store, {
+  state: { count: 0, user: null },
+  actions: {
+    increment: (state) => state.count.value++,
+    setUser: (state, user) => state.user.value = user
+  }
+});
+
+// In component: access via setup({ store })
+setup: ({ store }) => ({
+  count: store.state.count,
+  increment: () => store.dispatch("increment")
+})
+```
+
+> For guards, namespaces, persistence, and more, see `https://elevajs.com/llms-full.txt`.
+
+## Troubleshooting (Quick)
+- Event not firing: use `@click="handler"` or `@click="() => ..."` (not raw expressions)
+- Props undefined in child: use `:prop="value"` without `ctx.`
+- Memory leaks: clean up timers/listeners in `onUnmount`
+
+## Security Model
+
+Eleva's TemplateEngine evaluates `@events` and `:props` expressions using JavaScript's Function constructor (not sandboxed). Templates must be developer-authored code, not user-generated content.
+
+**Safe Example:**
+```javascript
+template: (ctx) => `<h1>${ctx.name.value}</h1>`
+```
 
 ## Documentation Links
-
+- Full reference: https://elevajs.com/llms-full.txt
 - Getting Started: https://elevajs.com/getting-started
 - Core Concepts: https://elevajs.com/core-concepts
 - Components: https://elevajs.com/components
@@ -290,76 +310,4 @@ app.component("Parent", {
 - Best Practices: https://elevajs.com/best-practices
 - Examples: https://elevajs.com/examples/
 - API Reference: https://elevajs.com/api/
-- Migration from React: https://elevajs.com/migration/from-react
-- Migration from Vue: https://elevajs.com/migration/from-vue
 - FAQ: https://elevajs.com/faq
-
-## Common Patterns
-
-### Conditional Rendering
-```javascript
-template: (ctx) => `
-  ${ctx.isLoggedIn.value
-    ? `<Dashboard />`
-    : `<LoginForm />`
-  }
-`
-```
-
-### List Rendering
-```javascript
-template: (ctx) => `
-  <ul>
-    ${ctx.items.value.map(item => `
-      <li key="${item.id}">${item.name}</li>
-    `).join("")}
-  </ul>
-`
-```
-
-### Form Handling
-```javascript
-setup: ({ signal }) => ({
-  email: signal(""),
-  handleSubmit: (e) => {
-    e.preventDefault();
-    console.log(email.value);
-  }
-}),
-template: (ctx) => `
-  <form @submit="handleSubmit">
-    <input type="email" @input="(e) => email.value = e.target.value" />
-    <button type="submit">Submit</button>
-  </form>
-`
-```
-
-### Fetching Data
-```javascript
-setup: ({ signal }) => {
-  const data = signal(null);
-  const error = signal(null);
-
-  return {
-    data,
-    error,
-    onMount: async ({ container, context }) => {
-      try {
-        const res = await fetch("/api/data");
-        data.value = await res.json();
-      } catch (e) {
-        error.value = e.message;
-      }
-    }
-  };
-}
-```
-
-## Key Differentiators
-
-1. **No Build Step**: Works directly via CDN in browsers
-2. **Pure Vanilla JS**: No JSX, no compilation, no transpilation
-3. **Signal-Based**: Fine-grained reactivity without virtual DOM
-4. **Tiny Footprint**: ~2.3KB gzipped with zero dependencies
-5. **TypeScript Ready**: Built-in type declarations
-6. **Plugin Architecture**: Extend only what you need

@@ -1,4 +1,4 @@
-/*! Eleva Attr Plugin v1.0.0 | MIT License | https://elevajs.com */
+/*! Eleva Attr Plugin v1.1.0 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -6,6 +6,37 @@
 })(this, (function (exports) { 'use strict';
 
   /**
+   * @module eleva/plugins/attr
+   * @fileoverview Attribute plugin providing ARIA, data, boolean, and dynamic attribute handling.
+   */ // ============================================================================
+  // TYPE DEFINITIONS
+  // ============================================================================
+  // -----------------------------------------------------------------------------
+  // External Type Imports
+  // -----------------------------------------------------------------------------
+  /**
+   * Type imports from the Eleva core library.
+   * @typedef {import('eleva').Eleva} Eleva
+   */ // -----------------------------------------------------------------------------
+  // Attr Type Definitions
+  // -----------------------------------------------------------------------------
+  /**
+   * Configuration options for the AttrPlugin.
+   * @typedef {Object} AttrPluginOptions
+   * @property {boolean} [enableAria=true]
+   *           Enable ARIA attribute handling.
+   * @property {boolean} [enableData=true]
+   *           Enable data attribute handling.
+   * @property {boolean} [enableBoolean=true]
+   *           Enable boolean attribute handling.
+   * @property {boolean} [enableDynamic=true]
+   *           Enable dynamic property detection.
+   * @description Configuration options passed to AttrPlugin.install().
+   */ /**
+   * Function signature for attribute update operations.
+   * @typedef {(oldEl: HTMLElement, newEl: HTMLElement) => void} AttributeUpdateFunction
+   * @description Updates attributes on oldEl to match newEl's attributes.
+   */ /**
    * A regular expression to match hyphenated lowercase letters.
    * @private
    * @type {RegExp}
@@ -46,33 +77,76 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.0.0",
+     */ version: "1.1.0",
       /**
      * Plugin description
      * @type {string}
      */ description: "Advanced attribute handling for Eleva components",
       /**
-     * Installs the plugin into the Eleva instance
+     * Installs the plugin into the Eleva instance.
      *
-     * @param {Object} eleva - The Eleva instance
-     * @param {Object} options - Plugin configuration options
-     * @param {boolean} [options.enableAria=true] - Enable ARIA attribute handling
-     * @param {boolean} [options.enableData=true] - Enable data attribute handling
-     * @param {boolean} [options.enableBoolean=true] - Enable boolean attribute handling
-     * @param {boolean} [options.enableDynamic=true] - Enable dynamic property detection
+     * @public
+     * Method wrapping behavior:
+     * - Stores original `_patchNode` in `renderer._originalPatchNode`
+     * - Overrides `renderer._patchNode` to use enhanced attribute handling
+     * - Adds `renderer.updateAttributes` and `eleva.updateElementAttributes` helpers
+     * - Call `uninstall()` to restore original behavior
+     *
+     * @param {Eleva} eleva - The Eleva instance to enhance.
+     * @param {AttrPluginOptions} options - Plugin configuration options.
+     * @param {boolean} [options.enableAria=true] - Enable ARIA attribute handling.
+     *        Maps aria-* attributes to DOM properties (e.g., aria-expanded → ariaExpanded).
+     * @param {boolean} [options.enableData=true] - Enable data attribute handling.
+     *        Syncs data-* attributes with element.dataset for consistent access.
+     * @param {boolean} [options.enableBoolean=true] - Enable boolean attribute handling.
+     *        Treats empty strings and attribute names as true, "false" string as false.
+     * @param {boolean} [options.enableDynamic=true] - Enable dynamic property detection.
+     *        Searches element prototype chain for property matches (useful for custom elements).
+     * @returns {void}
+     * @example
+     * // Basic installation with defaults
+     * app.use(AttrPlugin);
+     *
+     * @example
+     * // Custom configuration
+     * app.use(AttrPlugin, {
+     *   enableAria: true,
+     *   enableData: true,
+     *   enableBoolean: true,
+     *   enableDynamic: false  // Disable for performance
+     * });
+     *
+     * @example
+     * // Using ARIA attributes in templates
+     * template: (ctx) => `
+     *   <div role="dialog" aria-modal="true" aria-labelledby="title">
+     *     <h2 id="title">Modal Title</h2>
+     *     <button aria-expanded="${ctx.isOpen.value}">Toggle</button>
+     *   </div>
+     * `
+     * @see uninstall - Remove the plugin and restore original behavior.
      */ install (eleva, options = {}) {
           const { enableAria = true, enableData = true, enableBoolean = true, enableDynamic = true } = options;
           /**
        * Updates the attributes of an element to match a new element's attributes.
-       * This method provides sophisticated attribute processing including:
-       * - ARIA attribute handling with proper property mapping
-       * - Data attribute management
-       * - Boolean attribute processing
-       * - Dynamic property detection and mapping
-       * - Attribute cleanup and removal
        *
-       * @param {HTMLElement} oldEl - The original element to update
-       * @param {HTMLElement} newEl - The new element to update
+       * Processing order:
+       * 1. Skip event attributes (@click, @input) - handled by Eleva's event system
+       * 2. Skip unchanged attributes - optimization
+       * 3. ARIA attributes (aria-*): Map to DOM properties (aria-expanded → ariaExpanded)
+       * 4. Data attributes (data-*): Update both dataset and attribute
+       * 5. Boolean attributes: Handle empty string as true, "false" as false
+       * 6. Other attributes: Map to properties with dynamic detection for custom elements
+       * 7. Remove old attributes not present in new element
+       *
+       * Dynamic property detection (when enableDynamic=true):
+       * - Checks if property exists directly on element
+       * - Searches element's prototype chain for case-insensitive matches
+       * - Enables compatibility with custom elements and Web Components
+       *
+       * @inner
+       * @param {HTMLElement} oldEl - The original element to update (modified in-place).
+       * @param {HTMLElement} newEl - The reference element with desired attributes.
        * @returns {void}
        */ const updateAttributes = (oldEl, newEl)=>{
               const oldAttrs = oldEl.attributes;
@@ -143,8 +217,14 @@
               // Store the original _patchNode method
               const originalPatchNode = eleva.renderer._patchNode;
               eleva.renderer._originalPatchNode = originalPatchNode;
-              // Override the _patchNode method to use our attribute handler
-              eleva.renderer._patchNode = function(oldNode, newNode) {
+              /**
+         * Overridden _patchNode method that uses enhanced attribute handling.
+         * Delegates to `updateAttributes` instead of the basic `_updateAttributes`.
+         *
+         * @param {Node} oldNode - The original DOM node to update.
+         * @param {Node} newNode - The new DOM node with desired state.
+         * @returns {void}
+         */ eleva.renderer._patchNode = function(oldNode, newNode) {
                   if (oldNode?._eleva_instance) return;
                   if (oldNode.nodeType === Node.TEXT_NODE) {
                       if (oldNode.nodeValue !== newNode.nodeValue) {
@@ -168,12 +248,21 @@
               options
           });
           // Add utility methods for manual attribute updates
-          eleva.updateElementAttributes = updateAttributes;
+          /** @type {AttributeUpdateFunction} */ eleva.updateElementAttributes = updateAttributes;
       },
       /**
-     * Uninstalls the plugin from the Eleva instance
+     * Uninstalls the plugin from the Eleva instance.
      *
-     * @param {Object} eleva - The Eleva instance
+     * @public
+     * @param {Eleva} eleva - The Eleva instance.
+     * @returns {void}
+     * @description
+     * Restores the original renderer patching behavior and removes
+     * `eleva.updateElementAttributes`.
+     * @example
+     * // Uninstall the plugin
+     * AttrPlugin.uninstall(app);
+     * @see install - Install the plugin.
      */ uninstall (eleva) {
           // Restore original _patchNode method if it exists
           if (eleva.renderer && eleva.renderer._originalPatchNode) {

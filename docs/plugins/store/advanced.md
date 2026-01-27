@@ -195,7 +195,7 @@ namespaces: {
   }
 }
 
-// Orchestrating action
+// Orchestrating action using createAction with dot-notation
 app.store.createAction("products.fetch", async (state) => {
   await app.dispatch("products.fetchStart");
 

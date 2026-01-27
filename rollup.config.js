@@ -70,32 +70,73 @@ const commonPlugins = [
   swc(swcConfig),
 ];
 
-// Core framework configuration
-const coreConfig = {
+// Core framework configurations
+const coreEsmConfig = {
   input: "src/index.js",
+  output: [
+    {
+      sourcemap: true,
+      banner: coreBanner,
+      file: "./dist/eleva.js",
+      format: "es",
+    },
+  ],
+  treeshake: {
+    moduleSideEffects: false,
+    propertyReadSideEffects: false,
+    tryCatchDeoptimization: false,
+    annotations: true,
+    unknownGlobalSideEffects: false,
+  },
+  plugins: [
+    ...commonPlugins,
+    codecovRollupPlugin({
+      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      bundleName: name,
+      uploadToken: process.env.CODECOV_TOKEN,
+    }),
+  ],
+};
+
+const coreCjsConfig = {
+  input: "src/index.cjs",
   output: [
     {
       name,
       sourcemap: true,
       banner: coreBanner,
-      file: "./dist/eleva.cjs.js",
+      file: "./dist/eleva.cjs",
       format: "cjs",
       exports: "default",
     },
-    {
-      name,
-      sourcemap: true,
-      banner: coreBanner,
-      file: "./dist/eleva.esm.js",
-      format: "es",
-      exports: "default",
-    },
+  ],
+  treeshake: {
+    moduleSideEffects: false,
+    propertyReadSideEffects: false,
+    tryCatchDeoptimization: false,
+    annotations: true,
+    unknownGlobalSideEffects: false,
+  },
+  plugins: [
+    ...commonPlugins,
+    codecovRollupPlugin({
+      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      bundleName: name,
+      uploadToken: process.env.CODECOV_TOKEN,
+    }),
+  ],
+};
+
+const coreUmdConfig = {
+  input: "src/index.cjs",
+  output: [
     {
       name,
       sourcemap: true,
       banner: coreBanner,
       file: "./dist/eleva.umd.js",
       format: "umd",
+      exports: "default",
     },
     {
       name,
@@ -103,6 +144,7 @@ const coreConfig = {
       banner: coreBanner,
       file: "./dist/eleva.umd.min.js",
       format: "umd",
+      exports: "default",
       plugins: [minify(swcMinifyConfig)],
     },
   ],
@@ -110,7 +152,7 @@ const coreConfig = {
     moduleSideEffects: false,
     propertyReadSideEffects: false,
     tryCatchDeoptimization: false,
-    annotations: false,
+    annotations: true,
     unknownGlobalSideEffects: false,
   },
   plugins: [
@@ -131,15 +173,14 @@ const pluginConfig = {
       name: "ElevaPlugins",
       sourcemap: true,
       banner: pluginsBanner,
-      file: "./dist/eleva-plugins.cjs.js",
+      file: "./dist/eleva-plugins.cjs",
       format: "cjs",
       exports: "named",
     },
     {
-      name: "ElevaPlugins",
       sourcemap: true,
       banner: pluginsBanner,
-      file: "./dist/eleva-plugins.esm.js",
+      file: "./dist/eleva-plugins.js",
       format: "es",
       exports: "named",
     },
@@ -163,10 +204,8 @@ const pluginConfig = {
     moduleSideEffects: false,
     propertyReadSideEffects: false,
     tryCatchDeoptimization: false,
-    annotations: false,
+    annotations: true,
     unknownGlobalSideEffects: false,
-    // Enable more aggressive tree-shaking for plugins
-    pureExternalModules: true,
   },
   plugins: [
     ...commonPlugins,
@@ -178,10 +217,23 @@ const pluginConfig = {
   ],
 };
 
-// Individual plugin configurations for CDN usage
+// Individual plugin configurations for ESM, CJS, and UMD usage
 const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
   input: inputFile,
   output: [
+    {
+      sourcemap: true,
+      banner: banner,
+      file: `./dist/plugins/${pluginName.toLowerCase()}.js`,
+      format: "es",
+    },
+    {
+      sourcemap: true,
+      banner: banner,
+      file: `./dist/plugins/${pluginName.toLowerCase()}.cjs`,
+      format: "cjs",
+      exports: "named",
+    },
     {
       name: `Eleva${pluginName}Plugin`,
       sourcemap: true,
@@ -202,7 +254,7 @@ const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
     moduleSideEffects: false,
     propertyReadSideEffects: false,
     tryCatchDeoptimization: false,
-    annotations: false,
+    annotations: true,
     unknownGlobalSideEffects: false,
   },
   plugins: [
@@ -236,7 +288,9 @@ const storePluginConfig = createIndividualPluginConfig(
 
 // Export all configurations
 export default [
-  coreConfig,
+  coreEsmConfig,
+  coreCjsConfig,
+  coreUmdConfig,
   pluginConfig,
   attrPluginConfig,
   routerPluginConfig,

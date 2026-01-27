@@ -116,7 +116,7 @@ description: Complete guide to building Eleva.js plugins. Learn plugin architect
 
 # Creating a Custom Plugin for Eleva
 
-> **Version:** 1.0.1 | Complete guide to creating, testing, and publishing Eleva plugins.
+> **Version:** 1.1.0 | Complete guide to creating, testing, and publishing Eleva plugins.
 
 ---
 
@@ -282,8 +282,9 @@ const RouterPlugin = {
 };
 
 // Usage
-const router = app.use(RouterPlugin, { routes: [...] });
-await router.start();  // Direct access to returned API
+const router = app.use(RouterPlugin, { mount: "#app", routes: [...] });
+await router.start();
+// The returned router instance provides direct API access
 ```
 
 ### What Happens During Registration

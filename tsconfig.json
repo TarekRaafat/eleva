@@ -7,7 +7,9 @@
     "moduleResolution": "node", // Resolve modules in a Node.js-style
     "baseUrl": ".", // Set the base URL for resolving imports
     "paths": {
-      "@/*": ["src/*"] // Map aliases to source files
+      "@/*": ["src/*"], // Map aliases to source files
+      "eleva": ["src/index.js"],
+      "eleva/*": ["src/*"]
     },
     "rootDir": "./src", // Root directory for source files
     "outDir": "./types", // Output directory for declaration files

@@ -1,6 +1,6 @@
 ---
 title: Eleva.js Router Plugin - Client-Side Routing
-description: Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and nested routes. 15KB.
+description: Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and layouts. 15KB.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "Eleva.js Router Plugin - Client-Side Routing",
-  "description": "Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and nested routes. 15KB.",
+  "description": "Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and layouts. 15KB.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
   "dateModified": "2026-01-17T00:00:00Z",
@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Router Plugin
 
-> **Version:** 1.0.1 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
+> **Version:** 1.1.0 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
 
 The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
 
@@ -72,7 +72,7 @@ const router = app.use(Router, {
     { path: "*", component: NotFoundPage }
   ]
 });
-await router.start();
+// Router starts automatically (autoStart: true by default)
 ```
 
 > ⚠️ **No Manual Mount Needed**
@@ -84,10 +84,9 @@ await router.start();
 > app.use(Router, { mount: '#app', routes });
 > app.mount('#app', 'HomePage'); // Not needed!
 >
-> // ✅ Correct - Router handles mounting
+> // ✅ Correct - Router handles mounting automatically
 > app.use(Router, { mount: '#app', routes });
-> await router.start();
-> // That's it! Router will mount the matched component
+> // That's it! Router will mount the matched component (autoStart: true)
 > ```
 
 ### Common Operations
@@ -130,6 +129,8 @@ await Router.uninstall(app);
 { path: "/settings", component: Page, meta: { auth: true } } // With metadata
 ```
 
+> **Note:** Nested routes (`children` property) are not supported. Use shared layouts with flat routes instead. See [Configuration](./configuration.md#nested-routes).
+
 ### Guard Return Values
 | Return | Effect |
 |--------|--------|
@@ -148,7 +149,8 @@ await Router.uninstall(app);
 | `router:afterRender` | No | Animations |
 | `router:scroll` | No | Scroll restoration |
 | `router:afterEach` | No | Analytics |
-| `router:onError` | No | Error reporting |
+| `router:notFound` | No | Custom 404 handling |
+| `router:error` | No | Error reporting |
 
 > **Template Context:** Use `${ctx.router.xxx}` in templates, but `@click="handler"` for events (no `ctx.`).
 
@@ -301,20 +303,23 @@ const routes = [
   { path: "/", component: HomePage },
   { path: "/about", component: AboutPage },
   { path: "/users/:id", component: UserPage },
-  { path: "*", component: NotFoundPage }  // Must be last
+  { path: "*", component: NotFoundPage }  // Catch-all (conventionally last)
 ];
 
-// 3. Install router plugin
+// 3. Install router plugin (starts automatically by default)
 const router = app.use(Router, {
   mode: "hash",      // Use hash-based routing
   mount: "#app",     // Mount point in HTML
   routes: routes
 });
 
-// 4. Start the router
-router.start().then(() => {
-  console.log("Router started!");
-  console.log("Current route:", router.currentRoute.value?.path);
+// Router starts automatically (autoStart: true by default)
+// Use isReady signal to know when router is ready
+router.isReady.watch((ready) => {
+  if (ready) {
+    console.log("Router started!");
+    console.log("Current route:", router.currentRoute.value?.path);
+  }
 });
 ```
 

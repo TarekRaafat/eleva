@@ -19,7 +19,7 @@ import fs from "fs";
 import path from "path";
 import { gzipSync } from "zlib";
 
-import Eleva from "../../dist/eleva.esm.js";
+import Eleva from "../../dist/eleva.js";
 
 // ============================================================================
 // Types
@@ -76,11 +76,30 @@ const WARMUP_RUNS = 10;
  * Get memory usage in MB (Bun-specific)
  */
 function getMemoryUsage(): number {
-  if (typeof Bun !== "undefined" && Bun.gc) {
-    Bun.gc(true); // Force garbage collection for accurate measurement
-  }
   const usage = process.memoryUsage();
   return usage.heapUsed / (1024 * 1024);
+}
+
+async function settleAndSampleMemoryMB(
+  samples: number = 5,
+  delayMs: number = 25
+): Promise<number> {
+  if (typeof Bun !== "undefined" && Bun.gc) {
+    Bun.gc(true);
+  }
+  await new Promise((r) => setTimeout(r, delayMs));
+  if (typeof Bun !== "undefined" && Bun.gc) {
+    Bun.gc(true);
+  }
+  await new Promise((r) => setTimeout(r, delayMs));
+
+  const readings: number[] = [];
+  for (let i = 0; i < samples; i++) {
+    readings.push(getMemoryUsage());
+    await new Promise((r) => setTimeout(r, delayMs));
+  }
+
+  return median(readings);
 }
 
 /**
@@ -143,7 +162,7 @@ function measureBundleSize(): DocumentationMetrics["bundleSize"] {
   const distPath = path.join(process.cwd(), "dist");
 
   // Measure ESM bundle (primary bundle for modern usage)
-  const esmPath = path.join(distPath, "eleva.esm.js");
+  const esmPath = path.join(distPath, "eleva.js");
   const umdMinPath = path.join(distPath, "eleva.umd.min.js");
 
   let raw = 0;
@@ -281,20 +300,11 @@ async function measureDOMUpdate(): Promise<DocumentationMetrics["domUpdate"]> {
 // ============================================================================
 
 async function measureMemory(): Promise<DocumentationMetrics["memory"]> {
-  // Force GC and get clean baseline
-  if (typeof Bun !== "undefined" && Bun.gc) {
-    Bun.gc(true);
-  }
-  await new Promise((r) => setTimeout(r, 50));
-  const baseline = getMemoryUsage();
+  const baseline = await settleAndSampleMemoryMB();
 
   // Measure framework-only overhead (no components)
   const app = new Eleva("MemoryApp");
-  if (typeof Bun !== "undefined" && Bun.gc) {
-    Bun.gc(true);
-  }
-  await new Promise((r) => setTimeout(r, 50));
-  const afterInit = getMemoryUsage();
+  const afterInit = await settleAndSampleMemoryMB();
 
   // Measure with a minimal realistic component (typical usage)
   document.body.innerHTML = `<div id="memory-app"></div>`;
@@ -318,22 +328,14 @@ async function measureMemory(): Promise<DocumentationMetrics["memory"]> {
   });
 
   await app.mount(container, "memory-test");
-  if (typeof Bun !== "undefined" && Bun.gc) {
-    Bun.gc(true);
-  }
-  await new Promise((r) => setTimeout(r, 50));
-  const afterMount = getMemoryUsage();
+  const afterMount = await settleAndSampleMemoryMB();
 
   // Simulate typical usage pattern (not stress test)
   for (let i = 0; i < 10; i++) {
     countSignal.value++;
     await new Promise((r) => setTimeout(r, 5));
   }
-  if (typeof Bun !== "undefined" && Bun.gc) {
-    Bun.gc(true);
-  }
-  await new Promise((r) => setTimeout(r, 50));
-  const peak = getMemoryUsage();
+  const peak = await settleAndSampleMemoryMB();
 
   // Calculate Eleva-specific memory usage
   // Use afterMount - baseline for realistic footprint (framework + one component)

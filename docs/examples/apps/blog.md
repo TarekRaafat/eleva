@@ -1,6 +1,6 @@
 ---
 title: Simple Blog App
-description: Build a blog with Eleva.js featuring posts, comments, and nested components. Learn component composition, scoped styling, and reactive state management.
+description: Build a blog with Eleva.js featuring posts, comments, and nested components. Learn component composition, styling, and reactive state management.
 ---
 
 <!-- Google Analytics -->
@@ -24,7 +24,7 @@ description: Build a blog with Eleva.js featuring posts, comments, and nested co
 - Toggle comments visibility
 - Add new comments
 - Nested component structure
-- Scoped styling
+- Component styling
 
 ---
 
@@ -226,7 +226,7 @@ This demonstrates Eleva's component composition:
 - **Conditional rendering** - Toggle comments visibility
 - **List rendering** - Map over posts and comments
 - **Event handling** - Add comments, toggle sections
-- **Scoped styling** - Component-specific CSS
+- **Component styling** - CSS for each component
 
 ---
 

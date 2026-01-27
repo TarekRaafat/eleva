@@ -27,6 +27,24 @@ describe("FPS Benchmark", () => {
   let container: any;
   let app: InstanceType<typeof Eleva>;
 
+  const calculateMedian = (values: number[]): number => {
+    if (values.length === 0) return 0;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 !== 0
+      ? sorted[mid]
+      : (sorted[mid - 1] + sorted[mid]) / 2;
+  };
+
+  const removeOutliers = (values: number[], threshold: number): number[] => {
+    if (values.length < 4) return values;
+    const mean = values.reduce((a, b) => a + b, 0) / values.length;
+    const variance =
+      values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+    const stdDev = Math.sqrt(variance);
+    return values.filter((v) => Math.abs(v - mean) <= threshold * stdDev);
+  };
+
   beforeEach(() => {
     container = document.createElement("div");
     (document.body as any).appendChild(container);
@@ -50,10 +68,11 @@ describe("FPS Benchmark", () => {
    */
   const measureThroughput = async (
     updateFn: () => void,
-    iterations: number
+    iterations: number,
+    warmupIterations: number = 10
   ): Promise<{ totalTime: number; opsPerSecond: number; avgOpTime: number }> => {
     // Warm up
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < warmupIterations; i++) {
       updateFn();
       await new Promise((r) => queueMicrotask(r));
     }
@@ -73,6 +92,41 @@ describe("FPS Benchmark", () => {
     return { totalTime, opsPerSecond, avgOpTime };
   };
 
+  const runThroughputBenchmark = async (
+    updateFn: () => void,
+    iterations: number,
+    runs: number = 5,
+    warmupRuns: number = 2,
+    outlierThreshold: number = 2
+  ): Promise<{ totalTime: number; opsPerSecond: number; avgOpTime: number; runs: number }> => {
+    const warmupIterations = Math.min(iterations, 200);
+    for (let i = 0; i < warmupRuns; i++) {
+      await measureThroughput(updateFn, warmupIterations, 10);
+    }
+
+    const totals: number[] = [];
+    const ops: number[] = [];
+    const avgTimes: number[] = [];
+
+    for (let i = 0; i < runs; i++) {
+      const result = await measureThroughput(updateFn, iterations, 0);
+      totals.push(result.totalTime);
+      ops.push(result.opsPerSecond);
+      avgTimes.push(result.avgOpTime);
+    }
+
+    const cleanedOps = removeOutliers(ops, outlierThreshold);
+    const cleanedTotals = removeOutliers(totals, outlierThreshold);
+    const cleanedAvg = removeOutliers(avgTimes, outlierThreshold);
+
+    return {
+      totalTime: calculateMedian(cleanedTotals),
+      opsPerSecond: calculateMedian(cleanedOps),
+      avgOpTime: calculateMedian(cleanedAvg),
+      runs: cleanedOps.length,
+    };
+  };
+
   test("Throughput: Simple counter", async () => {
     const component = {
       setup: ({ signal }: any) => ({
@@ -89,15 +143,16 @@ describe("FPS Benchmark", () => {
     const count = (instance as any).data.count;
 
     const iterations = 1000;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       count.value++;
     }, iterations);
 
     console.log("\n📊 Simple Counter:");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
-    console.log(`   Avg Op Time: ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Avg Op Time (median): ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Runs: ${result.runs}`);
     console.log(`   Max FPS potential: ${Math.min(result.opsPerSecond, 1000 / 16.67).toFixed(0)} (at 60fps budget)`);
 
     expect(result.opsPerSecond).toBeGreaterThan(500);
@@ -122,7 +177,7 @@ describe("FPS Benchmark", () => {
 
     let angle = 0;
     const iterations = 1000;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       angle += 0.1;
       x.value = Math.round(Math.cos(angle) * 100);
       y.value = Math.round(Math.sin(angle) * 100);
@@ -130,9 +185,10 @@ describe("FPS Benchmark", () => {
 
     console.log("\n📊 Position Animation (2 signals batched):");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
-    console.log(`   Avg Op Time: ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Avg Op Time (median): ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Runs: ${result.runs}`);
 
     expect(result.opsPerSecond).toBeGreaterThan(500);
     await instance.unmount();
@@ -163,7 +219,7 @@ describe("FPS Benchmark", () => {
 
     let tick = 0;
     const iterations = 1000;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       tick++;
       a.value = tick;
       b.value = tick * 2;
@@ -174,10 +230,11 @@ describe("FPS Benchmark", () => {
 
     console.log("\n📊 Batched Updates (5 signals → 1 render):");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
     console.log(`   Signal updates: ${iterations * 5}`);
     console.log(`   Renders: ${iterations} (batched)`);
+    console.log(`   Runs: ${result.runs}`);
 
     expect(result.opsPerSecond).toBeGreaterThan(500);
     await instance.unmount();
@@ -201,7 +258,7 @@ describe("FPS Benchmark", () => {
     const items = (instance as any).data.items;
 
     const iterations = 100;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       items.value = items.value.map((item: any) => ({
         ...item,
         value: item.value + 1,
@@ -210,9 +267,10 @@ describe("FPS Benchmark", () => {
 
     console.log("\n📊 List Update (100 items):");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
-    console.log(`   Avg Op Time: ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Avg Op Time (median): ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Runs: ${result.runs}`);
 
     expect(result.opsPerSecond).toBeGreaterThan(10);
     await instance.unmount();
@@ -232,15 +290,16 @@ describe("FPS Benchmark", () => {
     const value = (instance as any).data.value;
 
     const iterations = 10000;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       value.value = 42; // Same value - Signal skips notification
     }, iterations);
 
     console.log("\n📊 No-Change Updates (Signal optimization):");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
     console.log(`   Note: Signal skips notify when value unchanged`);
+    console.log(`   Runs: ${result.runs}`);
 
     expect(result.opsPerSecond).toBeGreaterThan(10000);
     await instance.unmount();
@@ -285,7 +344,7 @@ describe("FPS Benchmark", () => {
 
     let tick = 0;
     const iterations = 500;
-    const result = await measureThroughput(() => {
+    const result = await runThroughputBenchmark(() => {
       tick++;
       data.value = {
         ...data.value,
@@ -299,9 +358,10 @@ describe("FPS Benchmark", () => {
 
     console.log("\n📊 Complex Nested Template:");
     console.log(`   Iterations: ${iterations}`);
-    console.log(`   Total Time: ${result.totalTime.toFixed(2)}ms`);
-    console.log(`   Ops/Second: ${result.opsPerSecond.toFixed(0)}`);
-    console.log(`   Avg Op Time: ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Total Time (median): ${result.totalTime.toFixed(2)}ms`);
+    console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
+    console.log(`   Avg Op Time (median): ${result.avgOpTime.toFixed(3)}ms`);
+    console.log(`   Runs: ${result.runs}`);
 
     expect(result.opsPerSecond).toBeGreaterThan(100);
     await instance.unmount();
@@ -332,18 +392,22 @@ describe("FPS Benchmark", () => {
       renderTimes.push(performance.now() - start);
     }
 
-    const avgRenderTime = renderTimes.reduce((a, b) => a + b, 0) / renderTimes.length;
-    const maxRenderTime = Math.max(...renderTimes);
-    const minRenderTime = Math.min(...renderTimes);
-    const potentialFPS = 1000 / avgRenderTime;
+    const cleanedRenderTimes = removeOutliers(renderTimes, 2);
+    const avgRenderTime =
+      cleanedRenderTimes.reduce((a, b) => a + b, 0) / cleanedRenderTimes.length;
+    const medianRenderTime = calculateMedian(cleanedRenderTimes);
+    const maxRenderTime = Math.max(...cleanedRenderTimes);
+    const minRenderTime = Math.min(...cleanedRenderTimes);
+    const potentialFPS = 1000 / medianRenderTime;
 
     console.log(`   Avg Render Time: ${avgRenderTime.toFixed(3)}ms`);
+    console.log(`   Median Render Time: ${medianRenderTime.toFixed(3)}ms`);
     console.log(`   Min Render Time: ${minRenderTime.toFixed(3)}ms`);
     console.log(`   Max Render Time: ${maxRenderTime.toFixed(3)}ms`);
     console.log(`   Theoretical Max FPS: ${potentialFPS.toFixed(0)}`);
     console.log("");
     console.log("   60fps budget: 16.67ms per frame");
-    console.log(`   Renders possible per frame: ${Math.floor(16.67 / avgRenderTime)}`);
+    console.log(`   Renders possible per frame: ${Math.floor(16.67 / medianRenderTime)}`);
     console.log("");
     console.log("   ✅ Framework does NOT limit FPS");
     console.log("   ✅ Batching reduces unnecessary renders");

@@ -27,7 +27,7 @@ Choosing the right selector impacts performance, especially when mounting many c
 | Selector Type | Performance | DOM Method Used | Best For |
 |---------------|-------------|-----------------|----------|
 | **ID** `#app` | Fastest | `getElementById()` | Root components, unique elements |
-| **Component Name** `UserCard` | Very Fast | Direct element matching | Child component mounting |
+| **Custom Element Tag** `user-card` | Very Fast | Direct element matching | Child component mounting |
 | **Class** `.container` | Fast | `getElementsByClassName()` | Lists, multiple instances |
 | **Tag** `div` | Fast | `getElementsByTagName()` | Rare, not recommended |
 | **Attribute** `[data-component]` | Moderate | `querySelectorAll()` | Dynamic/generated elements |
@@ -39,9 +39,9 @@ Choosing the right selector impacts performance, especially when mounting many c
 // Best - ID selector for root mounting (uses getElementById)
 app.mount(document.getElementById("app"), "App");
 
-// Good - Component name for children (direct matching)
+// Good - Custom element tag for children (direct matching)
 children: {
-  "UserCard": "UserCard"
+  "user-card": "UserCard"
 }
 
 // Good - Simple class for lists
@@ -96,7 +96,7 @@ app.component("MyComponent", {
     <div>${ctx.state.value}</div>
   `,
 
-  // 3. Style - Component-scoped CSS (optional)
+  // 3. Style - Component CSS (optional, not auto-scoped)
   style: `
     div { color: blue; }
   `,

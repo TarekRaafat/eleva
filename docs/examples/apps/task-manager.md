@@ -159,6 +159,14 @@ app.component("TaskManager", {
       showForm.value = false;
     }
 
+    function submitTask() {
+      if (editingTask.value) {
+        updateTask();
+      } else {
+        addTask();
+      }
+    }
+
     function startEdit(task) {
       editingTask.value = task;
       newTask.value = {
@@ -192,7 +200,7 @@ app.component("TaskManager", {
     return {
       tasks, filter, sortBy, searchQuery, showForm, newTask, editingTask,
       getFilteredTasks, getStats,
-      addTask, updateTask, startEdit, toggleTask, deleteTask, clearCompleted, cancelForm
+      addTask, updateTask, submitTask, startEdit, toggleTask, deleteTask, clearCompleted, cancelForm
     };
   },
   template: (ctx) => {
@@ -257,7 +265,7 @@ app.component("TaskManager", {
               />
             </div>
             <div class="form-actions">
-              <button @click="${ctx.editingTask.value ? 'updateTask' : 'addTask'}">
+              <button @click="submitTask">
                 ${ctx.editingTask.value ? 'Update' : 'Add'}
               </button>
               <button class="cancel" @click="cancelForm">Cancel</button>
@@ -343,7 +351,7 @@ app.mount(document.getElementById("app"), "TaskManager");
 - **CRUD operations** - Create, read, update, delete
 - **Form handling** - Input binding and validation
 - **Conditional rendering** - Show/hide based on state
-- **Scoped styling** - Component-specific CSS
+- **Component styling** - CSS for each component
 
 ---
 

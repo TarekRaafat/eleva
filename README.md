@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.0.1` | **Size:** ~6KB min (~2.3KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.1.0` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 >
 > *Also known as: elevajs, eleva*
 
@@ -33,7 +33,7 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stable Release**: This is `v1.0.1` - The latest stable release of Eleva.js!
+> **Stable Release**: This is `v1.1.0` - The latest stable release of Eleva.js!
 
 
 
@@ -189,7 +189,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
@@ -205,7 +205,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 - **🧩 Component-Based Architecture:** Create reusable UI components with a rich context API
 - **⚡ Signal-Based Reactivity:** Fine-grained reactivity that updates only what's needed
 - **🔔 Event Handling:** Built-in event emitter for robust inter-component communication
-- **📝 Template Parsing:** Secure and dynamic interpolation with a custom TemplateEngine
+- **📝 Template Parsing:** Dynamic interpolation with a custom TemplateEngine (trusted templates only)
 - **🔄 DOM Diffing & Patching:** High-performance updates without a virtual DOM
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
@@ -258,7 +258,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6 KB minified and ~2.3 KB gzipped.
+- **Lightweight:** Approximately ~6 KB minified and ~2.5 KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -273,13 +273,13 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB)* |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | ---------------- |
-| **Eleva** (Direct DOM)        | **~2.3 KB**                | **~25**                 | ~86                     | **~0.5** (Chrome) |
+| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~25**                 | ~86                     | **~0.5** (Chrome) |
 | **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5              |
 | **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4              |
 | **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6              |
 
 **Eleva's Strengths:**
-- **Smallest bundle size** (~2.3 KB vs 35-90 KB)
+- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
 - **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead
@@ -449,10 +449,18 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 
 ## API Reference
 
+### Named Exports
+
+Eleva exposes the core utilities as named exports for direct use and typing:
+
+```javascript
+import Eleva, { Signal, Emitter, Renderer, TemplateEngine } from "eleva";
+```
+
 ### TemplateEngine
 
 - **`TemplateEngine.evaluate(expr, data)`**
-  Safely evaluates JavaScript expressions within a given context. Used internally for `@events` and `:props` attribute processing.
+  Evaluates JavaScript expressions within a given context (not sandboxed). Used internally for `@events` and `:props` attribute processing.
 
 ### Signal
 
@@ -470,7 +478,7 @@ Interactive Demo: [CodePen](https://codepen.io/tarekraafat/pen/jEOyzYN?editors=1
 - **`.on(event, handler)`**
   Listen to events.
 - **`.off(event, handler)`**
-  Remove event listeners.
+  Remove event listeners (omit `handler` to remove all listeners for the event).
 - **`.emit(event, ...args)`**
   Trigger events with additional arguments.
 
@@ -504,6 +512,7 @@ Eleva's plugin system allows you to extend functionality as needed. Plugins are 
 | **External Plugins** | Community/Ecosystem | `npm install eleva-plugin-x` |
 
 > **Core plugins** (Attr, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](https://elevajs.com/plugins/) for details.
+> **TypeScript:** Use `import type { ... } from "eleva"` for core types and `import { Attr, Router, Store } from "eleva/plugins"` for plugin types — no deep imports needed.
 
 #### Core Framework Only (Lightweight)
 

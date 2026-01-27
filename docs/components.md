@@ -70,7 +70,7 @@ app.component("MyComponent", {
     <div>${ctx.state.value}</div>
   `,
 
-  // 3. Style - Component-scoped CSS (optional)
+  // 3. Style - Component CSS (optional, not auto-scoped)
   style: `
     div { color: blue; }
   `,
@@ -135,7 +135,9 @@ app
 
 ### Mounting with Props
 
-Pass initial data when mounting:
+Pass initial data when mounting.
+
+> **Important:** Props are **static by design** — they are evaluated once at mount time. To create reactive data flow between parent and child, use signals or emitters. See [Props Behavior](#props-behavior) for details.
 
 ```javascript
 app.component("UserProfile", {
@@ -196,7 +198,7 @@ When you call `instance.unmount()`, Eleva performs cleanup in this order:
 1. **Calls `onUnmount` hook** - Your cleanup code runs first with access to the `cleanup` object
 2. **Removes signal watchers** - All reactive subscriptions are cleaned up
 3. **Removes event listeners** - Template event handlers (`@click`, etc.) are removed
-4. **Unmounts child components** - All nested components are recursively unmounted
+4. **Unmounts child components** - All nested components are recursively unmounted (child cleanup scheduled immediately after DOM patching). See [Orphaned Child Cleanup](core-concepts.md#orphaned-child-cleanup) for timing and performance considerations.
 5. **Clears the container** - The container's innerHTML is emptied
 6. **Removes instance reference** - The `_eleva_instance` property is deleted
 
@@ -277,7 +279,7 @@ if (instance) {
 }
 ```
 
-> **Note:** `_eleva_instance` is an internal property. While it works, prefer storing the `MountResult` returned by `mount()` for cleaner code.
+> **Note:** `_eleva_instance` is an internal property set during mounting. If you call `mount()` on a container that already has an instance, the existing instance is returned without re-mounting. To remount, call `unmount()` first. Prefer storing the `MountResult` returned by `mount()` for cleaner code.
 
 ---
 
@@ -344,7 +346,7 @@ app.component("TodoList", {
 
 | Type | Syntax | Use Case |
 |------|--------|----------|
-| **Direct** | `"UserCard": "UserCard"` | Simple component composition |
+| **Direct** | `"user-card": "UserCard"` | Simple component composition |
 | **Container-Based** | `"#container": "UserCard"` | Layout control needed |
 | **Dynamic** | `".container": { setup, template, children }` | Dynamic component behavior |
 | **Variable-Based** | `".container": ComponentVar` | Component from variable |
@@ -353,7 +355,7 @@ app.component("TodoList", {
 
 ```javascript
 children: {
-  "UserCard": "UserCard"  // Direct mounting without container
+  "user-card": "UserCard"  // Direct mounting without container
 }
 ```
 - **Use when:** Simple component composition
@@ -377,8 +379,8 @@ children: {
     setup: ({ signal }) => ({
       userData: signal({ name: "John", role: "admin" })
     }),
-    template: (ctx) => `<UserCard :user="userData.value" :editable="true" />`,
-    children: { "UserCard": "UserCard" }
+    template: (ctx) => `<user-card :user="userData.value" :editable="true"></user-card>`,
+    children: { "user-card": "UserCard" }
   }
 }
 ```
@@ -414,6 +416,7 @@ app.component("UserList", {
 | **Class** | `".item"` | Multiple elements, list items |
 | **ID** | `"#sidebar"` | Single unique element |
 | **Data attribute** | `"[data-component]"` | Explicit component markers |
+| **Custom element** | `"user-card"` | Kebab-case tags (like web components) |
 | **Nested** | `".container .item"` | Scoped selection |
 
 ```javascript
@@ -429,6 +432,16 @@ children: {
   "#footer": "Footer"
 }
 
+// Custom element tags - kebab-case (like web components)
+template: () => `
+  <user-card></user-card>
+  <nav-menu></nav-menu>
+`,
+children: {
+  "user-card": "UserCard",
+  "nav-menu": "NavMenu"
+}
+
 // Data attribute - explicit and clear
 template: () => `
   <div data-component="sidebar"></div>
@@ -440,7 +453,9 @@ children: {
 }
 ```
 
-**Recommendation:** Use classes for lists, IDs for unique elements, and data attributes when you want explicit component markers.
+**Recommendation:** Use custom elements for semantic component composition, classes for lists, IDs for unique elements, and data attributes when you want explicit markers.
+
+**Why kebab-case?** Custom element tags in HTML must include a hyphen and are case-insensitive in parsing, so `user-card` is standards-compliant and maps cleanly to Eleva's selector-based `children` resolution. `UserCard` reads like a component name but is not a valid custom element tag.
 
 ---
 
@@ -508,11 +523,74 @@ What the child receives depends on what you pass:
 - `:user="user.value"` → child receives the **evaluated value**
 - `:user="user"` → child receives the **Signal itself**
 
+### Props Behavior: Static vs Reactive
+
+Props are **evaluated once at mount time** by design. This architectural decision gives developers explicit control over data flow and reactivity.
+
+| Approach | Behavior | Use Case |
+|----------|----------|----------|
+| `:value="data.name"` | Static snapshot at mount | Configuration, initial state |
+| `:counter="counter"` | Reactive (pass signal reference) | Live updates from parent |
+
+**Why Static by Default?**
+
+- **Predictable rendering** - No hidden re-renders from prop changes
+- **Explicit data flow** - Reactivity is intentional and visible
+- **Performance control** - Developers choose when updates propagate
+- **Flexibility** - Use static for config, signals for reactive data
+
+```javascript
+// STATIC: Value captured at mount time
+app.component("Parent", {
+  setup: ({ signal }) => {
+    const user = signal({ name: "Alice" });
+    return { user };
+  },
+  template: (ctx) => `
+    <!-- Child receives "Alice" once; won't update if user.value changes -->
+    <user-card :name="user.value.name"></user-card>
+  `,
+  children: { "user-card": "UserCard" }
+});
+
+// REACTIVE: Pass the signal itself
+app.component("Parent", {
+  setup: ({ signal }) => {
+    const user = signal({ name: "Alice" });
+    const updateName = () => { user.value = { name: "Bob" }; };
+    return { user, updateName };
+  },
+  template: (ctx) => `
+    <!-- Child receives the signal reference -->
+    <user-card :user="user"></user-card>
+    <button @click="updateName">Change Name</button>
+  `,
+  children: { "user-card": "UserCard" }
+});
+
+// Child component - use signal directly in template
+app.component("UserCard", {
+  setup: ({ props }) => {
+    // Return the signal reference; Eleva auto-watches it
+    return { user: props.user };
+  },
+  template: (ctx) => `
+    <div class="user-card">
+      <h3>${ctx.user?.value?.name || "Guest"}</h3>
+    </div>
+  `
+});
+```
+
+> **Design Rationale:** Static props avoid implicit coupling between parent and child render cycles. When reactivity is needed, passing signals makes the dependency explicit and traceable.
+
 ---
 
-## Style Injection & Scoped CSS
+## Style Injection
 
-Eleva supports both static and dynamic styles:
+Eleva supports both static and dynamic styles. Styles are injected into a `<style>` element within the component's container.
+
+> **Note:** Styles are **not automatically scoped**. Use unique class names, component-specific prefixes, or CSS nesting to prevent style conflicts between components.
 
 ### Static Styles
 
@@ -557,6 +635,8 @@ app.component("ThemableButton", {
 });
 ```
 
+> **Note:** Style functions must be synchronous. If a style function returns a Promise, it will be coerced to a string (e.g., `"[object Promise]"`) and fail silently. Use a function for reactive `ctx` values, or a string for static styles.
+
 ---
 
 ## Inter-Component Communication
@@ -585,9 +665,9 @@ setup({ props }) {
   return { user: props.user, items: props.items, onSelect: props.onSelect };
 }
 
-// For reactive props in child, pass the signal itself (not .value)
+// For reactive props, pass the signal itself (not .value)
 // Parent: :counter="counter"
-// Child: props.counter.watch(() => { /* react to changes */ })
+// Child: return { counter: props.counter } → use ctx.counter.value in template
 ```
 
 **Use when:** Passing data from parent to child.
@@ -710,7 +790,7 @@ store.dispatch("setUser", newUser);  // Correct
 
 ```javascript
 // Good: 2 levels deep
-// App → UserList → UserCard
+// App → UserList → user-card
 
 // Acceptable: 3 levels
 // App → Dashboard → WidgetList → Widget

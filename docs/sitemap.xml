@@ -3,7 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://elevajs.com/</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -11,13 +11,13 @@
   <!-- LLM Documentation (AI-optimized) -->
   <url>
     <loc>https://elevajs.com/llms.txt</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/llms-full.txt</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -25,55 +25,55 @@
   <!-- Core Documentation -->
   <url>
     <loc>https://elevajs.com/getting-started.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/cheatsheet.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/glossary.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/core-concepts.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/components.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/architecture.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugin-system.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/best-practices.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/faq.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -81,7 +81,7 @@
   <!-- Plugins Section -->
   <url>
     <loc>https://elevajs.com/plugins/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -89,25 +89,25 @@
   <!-- Attr Plugin -->
   <url>
     <loc>https://elevajs.com/plugins/attr/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/attr/features.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/attr/patterns.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/attr/api.html</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -115,19 +115,19 @@
   <!-- Router Plugin -->
   <url>
     <loc>https://elevajs.com/plugins/router/</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/router/configuration.html</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/router/navigation.html</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -145,7 +145,7 @@
   </url>
   <url>
     <loc>https://elevajs.com/plugins/router/api.html</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -153,7 +153,7 @@
   <!-- Store Plugin -->
   <url>
     <loc>https://elevajs.com/plugins/store/</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -171,19 +171,19 @@
   </url>
   <url>
     <loc>https://elevajs.com/plugins/store/patterns.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/store/advanced.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/plugins/store/api.html</loc>
-    <lastmod>2026-01-18</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -191,7 +191,7 @@
   <!-- Examples Section -->
   <url>
     <loc>https://elevajs.com/examples/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
@@ -199,7 +199,7 @@
   <!-- Custom Plugin Guide -->
   <url>
     <loc>https://elevajs.com/examples/custom-plugin/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -219,7 +219,7 @@
   <!-- Example Patterns -->
   <url>
     <loc>https://elevajs.com/examples/patterns/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -245,25 +245,25 @@
   <!-- Best Practices Patterns -->
   <url>
     <loc>https://elevajs.com/examples/patterns/best-practices/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/best-practices/selectors-structure.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/best-practices/setup-lifecycle.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/best-practices/signals-templates.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -277,7 +277,7 @@
   <!-- Async Data Patterns -->
   <url>
     <loc>https://elevajs.com/examples/patterns/async-data/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -297,7 +297,7 @@
   <!-- List Patterns -->
   <url>
     <loc>https://elevajs.com/examples/patterns/lists/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -315,7 +315,7 @@
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/lists/virtual-scrolling.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -323,13 +323,13 @@
   <!-- State Patterns -->
   <url>
     <loc>https://elevajs.com/examples/patterns/state/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/state/project-structure.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -341,7 +341,7 @@
   </url>
   <url>
     <loc>https://elevajs.com/examples/patterns/state/batching.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -349,13 +349,13 @@
   <!-- Example Apps -->
   <url>
     <loc>https://elevajs.com/examples/apps/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/examples/apps/task-manager.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -367,7 +367,7 @@
   </url>
   <url>
     <loc>https://elevajs.com/examples/apps/blog.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -375,31 +375,31 @@
   <!-- Migration Guides -->
   <url>
     <loc>https://elevajs.com/migration/</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://elevajs.com/migration/from-react.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/migration/from-vue.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/migration/from-alpine.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://elevajs.com/migration/from-jquery.html</loc>
-    <lastmod>2026-01-17</lastmod>
+    <lastmod>2026-01-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

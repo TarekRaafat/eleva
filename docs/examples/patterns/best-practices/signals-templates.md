@@ -125,17 +125,63 @@ user.value = { ...user.value, name: "Jane" };      // Update property
 
 ### Template as Function vs String
 
-| Type | Use When | Example |
-|------|----------|---------|
-| Function (ctx) | Component has state or props | `(ctx) => \`<p>${ctx.name.value}</p>\`` |
-| String | Purely static content | `"<p>Hello World</p>"` |
+| Type | Use When | `${...}` Access |
+|------|----------|-----------------|
+| Function | Need reactive `ctx` values | `ctx` (signals, props) - evaluated each render |
+| Template literal | Static or outer scope values | Outer scope variables - evaluated once at definition |
+| Normal string | No interpolation | N/A |
+
+> **Tip:** Use a function template when you need `${ctx...}` to access signals, props, or computed values that update on re-render.
+> **Tip:** Use a string template (with or without `${...}`) when you don't need `ctx`; `@event` and `:prop` bindings still work.
 
 ```javascript
-// Function - most common, recommended
-template: (ctx) => `<div>${ctx.count.value}</div>`
+// Function - access ctx (signals, props) - re-evaluated on each render
+template: (ctx) => `<div>Count: ${ctx.count.value}</div>`
 
-// String - static only
-template: "<header><h1>Site Title</h1></header>"
+// Template literal with ${...} - access outer scope - evaluated ONCE at definition
+const version = "1.0.0";
+template: `<footer>Version ${version}</footer>`
+
+// Template literal - multi-line HTML, @event and :prop still work
+template: `
+  <div class="card">
+    <button @click="increment">Add</button>
+    <child-component :items="items" />
+  </div>
+`
+
+// Normal string - single-line HTML
+template: "<button @click=\"increment\">Add</button>"
+```
+
+### Style as Function vs String
+
+The same rules apply to `style` as to `template`:
+
+| Type | Use When | `${...}` Access |
+|------|----------|-----------------|
+| Function | Need reactive `ctx` values | `ctx` (signals, props) - evaluated each render |
+| Template literal | Static or outer scope values | Outer scope variables - evaluated once at definition |
+| Normal string | No interpolation | N/A |
+
+> **Note:** Unlike `template`, `style` functions must be synchronous (not async).
+
+```javascript
+// Function - access ctx for dynamic styles - re-evaluated on each render
+style: (ctx) => `.card { background: ${ctx.theme.value === 'dark' ? '#333' : '#fff'}; }`
+
+// Template literal with ${...} - access outer scope - evaluated ONCE at definition
+const primaryColor = "#007bff";
+style: `.btn { background: ${primaryColor}; }`
+
+// Template literal - multi-line CSS
+style: `
+  .card { padding: 1rem; }
+  .btn { cursor: pointer; }
+`
+
+// Normal string - simple CSS
+style: ".card { padding: 1rem; }"
 ```
 
 ### Event Handlers
@@ -154,9 +200,9 @@ template: (ctx) => `
   <button @click="handleClick">${ctx.count.value}</button>
 `
 
-// Inline - for simple one-liners
+// Inline - for simple one-liners (must be arrow function)
 template: (ctx) => `
-  <button @click="count.value++">${ctx.count.value}</button>
+  <button @click="() => count.value++">${ctx.count.value}</button>
 `
 ```
 

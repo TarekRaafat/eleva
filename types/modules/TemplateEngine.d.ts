@@ -1,14 +1,26 @@
 /**
+ * @module eleva/template-engine
+ * @fileoverview Expression evaluator for directive attributes and property bindings.
+ */
+/**
+ * Data context object for expression evaluation.
  * @typedef {Record<string, unknown>} ContextData
- *           Data context for expression evaluation
+ * @description Contains variables and functions available during template evaluation.
  */
 /**
+ * JavaScript expression string to be evaluated.
  * @typedef {string} Expression
- *           A JavaScript expression to be evaluated in the data context
+ * @description A JavaScript expression evaluated against a ContextData object.
  */
 /**
+ * Result of evaluating an expression.
  * @typedef {unknown} EvaluationResult
- *           The result of evaluating an expression (string, number, boolean, object, function, etc.)
+ * @description Can be string, number, boolean, object, function, or any JavaScript value.
+ */
+/**
+ * Compiled expression function cached for performance.
+ * @typedef {(data: ContextData) => EvaluationResult} CompiledExpressionFunction
+ * @description Pre-compiled function that evaluates an expression against context data.
  */
 /**
  * @class 🔒 TemplateEngine
@@ -42,25 +54,44 @@ export class TemplateEngine {
     /**
      * Cache for compiled expression functions.
      * Stores compiled Function objects keyed by expression string for O(1) lookup.
+     * The cache persists for the application lifetime and is never cleared.
+     * This improves performance for repeated evaluations of the same expression.
+     *
+     * Memory consideration: For applications with highly dynamic expressions
+     * (e.g., user-generated), memory usage grows unbounded. This is typically
+     * not an issue for static templates where expressions are finite.
      *
      * @static
      * @private
-     * @type {Map<string, Function>}
+     * @type {Map<string, CompiledExpressionFunction>}
      */
     private static _functionCache;
     /**
      * Evaluates an expression in the context of the provided data object.
      * Used for resolving `@event` handlers and `:prop` bindings.
+     * Non-string expressions are returned as-is.
      *
-     * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
-     * The use of the `with` statement is necessary for expression evaluation but has security implications.
-     * Only use with trusted templates. User input should never be directly interpolated.
+     * @security CRITICAL SECURITY WARNING
+     * This method is NOT sandboxed. It uses `new Function()` and `with` statement,
+     * allowing full access to the global scope. Potential attack vectors include:
+     * - Code injection via malicious expressions
+     * - XSS attacks if user input is used as expressions
+     * - Access to sensitive globals (window, document, fetch, etc.)
+     *
+     * ONLY use with developer-defined template strings.
+     * NEVER use with user-provided input or untrusted data.
+     *
+     * Mitigation strategies:
+     * - Always sanitize any user-generated content before rendering in templates
+     * - Use Content Security Policy (CSP) headers to restrict script execution
+     * - Keep expressions simple (property access, method calls) - avoid complex logic
      *
      * @public
      * @static
-     * @param {Expression|unknown} expression - The expression to evaluate.
+     * @param {Expression | unknown} expression - The expression to evaluate.
      * @param {ContextData} data - The data context for evaluation.
      * @returns {EvaluationResult} The result of the evaluation, or empty string if evaluation fails.
+     * @note Evaluation failures return an empty string without throwing.
      *
      * @example
      * // Property access
@@ -95,15 +126,19 @@ export class TemplateEngine {
     public static evaluate(expression: Expression | unknown, data: ContextData): EvaluationResult;
 }
 /**
- * Data context for expression evaluation
+ * Data context object for expression evaluation.
  */
 export type ContextData = Record<string, unknown>;
 /**
- * A JavaScript expression to be evaluated in the data context
+ * JavaScript expression string to be evaluated.
  */
 export type Expression = string;
 /**
- * The result of evaluating an expression (string, number, boolean, object, function, etc.)
+ * Result of evaluating an expression.
  */
 export type EvaluationResult = unknown;
+/**
+ * Compiled expression function cached for performance.
+ */
+export type CompiledExpressionFunction = (data: ContextData) => EvaluationResult;
 //# sourceMappingURL=TemplateEngine.d.ts.map

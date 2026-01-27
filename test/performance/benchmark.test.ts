@@ -1,7 +1,7 @@
 /**
  * @fileoverview Performance Benchmarks for Eleva.js (Production Build)
  *
- * This benchmark suite tests the production build (dist/eleva.esm.js) and
+ * This benchmark suite tests the production build (dist/eleva.js) and
  * tracks performance across versions to monitor framework progression.
  *
  * Features:
@@ -30,7 +30,7 @@ import {
 import fs from "fs";
 import path from "path";
 
-import Eleva from "../../dist/eleva.esm.js";
+import Eleva from "../../dist/eleva.js";
 
 // ============================================================================
 // Types
@@ -407,7 +407,7 @@ ${summaryTable}
 | **Measured Runs** | 10 per benchmark |
 | **Outlier Removal** | >2 standard deviations |
 | **Primary Metric** | Median (robust to outliers) |
-| **Test Target** | Production build (\`dist/eleva.esm.js\`) |
+| **Test Target** | Production build (\`dist/eleva.js\`) |
 
 ## Detailed Results
 

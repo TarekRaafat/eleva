@@ -31,7 +31,7 @@ import fs from "fs";
 import path from "path";
 import { gzipSync } from "zlib";
 
-import Eleva from "../../dist/eleva.esm.js";
+import Eleva from "../../dist/eleva.js";
 
 // ============================================================================
 // Types
@@ -137,10 +137,29 @@ function resetId(): void {
 // ============================================================================
 
 function getMemoryMB(): number {
+  return process.memoryUsage().heapUsed / (1024 * 1024);
+}
+
+async function settleAndSampleMemoryMB(
+  samples: number = 5,
+  delayMs: number = 25
+): Promise<number> {
   if (typeof Bun !== "undefined" && Bun.gc) {
     Bun.gc(true);
   }
-  return process.memoryUsage().heapUsed / (1024 * 1024);
+  await new Promise((r) => setTimeout(r, delayMs));
+  if (typeof Bun !== "undefined" && Bun.gc) {
+    Bun.gc(true);
+  }
+  await new Promise((r) => setTimeout(r, delayMs));
+
+  const readings: number[] = [];
+  for (let i = 0; i < samples; i++) {
+    readings.push(getMemoryMB());
+    await new Promise((r) => setTimeout(r, delayMs));
+  }
+
+  return median(readings);
 }
 
 function formatMs(ms: number): string {
@@ -370,28 +389,8 @@ describe("js-framework-benchmark Style Performance Test", () => {
   let rowsSignal: any;
   let selectedSignal: any;
 
-  beforeAll(() => {
-    // Ensure results directory exists
-    if (!fs.existsSync(RESULTS_DIR)) {
-      fs.mkdirSync(RESULTS_DIR, { recursive: true });
-    }
-
-    // Get baseline memory
-    if (typeof Bun !== "undefined" && Bun.gc) {
-      Bun.gc(true);
-    }
-    baselineMemory = getMemoryMB();
-    console.log(`\nBaseline memory: ${baselineMemory.toFixed(2)} MB\n`);
-  });
-
-  beforeEach(() => {
-    resetId();
-    document.body.innerHTML = `<div id="app"></div>`;
-    container = document.getElementById("app")!;
-    app = new Eleva("BenchmarkApp");
-
-    // Register the benchmark component (similar to js-framework-benchmark structure)
-    app.component("benchmark-table", {
+  const setupBenchmarkApp = (appInstance: any) => {
+    appInstance.component("benchmark-table", {
       setup: ({ signal }: any) => {
         rowsSignal = signal([]);
         selectedSignal = signal(null);
@@ -461,6 +460,27 @@ describe("js-framework-benchmark Style Performance Test", () => {
         </table>
       `,
     });
+  };
+
+  beforeAll(async () => {
+    // Ensure results directory exists
+    if (!fs.existsSync(RESULTS_DIR)) {
+      fs.mkdirSync(RESULTS_DIR, { recursive: true });
+    }
+
+    // Get baseline memory
+    baselineMemory = await settleAndSampleMemoryMB();
+    console.log(`\nBaseline memory: ${baselineMemory.toFixed(2)} MB\n`);
+  });
+
+  beforeEach(() => {
+    resetId();
+    document.body.innerHTML = `<div id="app"></div>`;
+    container = document.getElementById("app")!;
+    app = new Eleva("BenchmarkApp");
+
+    // Register the benchmark component (similar to js-framework-benchmark structure)
+    setupBenchmarkApp(app);
   });
 
   describe("Create Operations", () => {
@@ -634,14 +654,15 @@ describe("js-framework-benchmark Style Performance Test", () => {
   });
 
   describe("Memory Usage", () => {
-    test("pure DOM baseline (1,000 rows) - no framework", async () => {
+    test("memory after 1,000 rows (baseline + Eleva)", async () => {
       console.log("\n💾 Memory Measurements");
       console.log("  Measuring pure DOM baseline (no framework)...");
 
       // Create identical DOM structure WITHOUT Eleva to establish baseline
       resetId();
-      document.body.innerHTML = `<div id="pure-dom-test"></div>`;
-      const c = document.getElementById("pure-dom-test")!;
+      const pureDomContainer = document.createElement("div");
+      pureDomContainer.id = "pure-dom-test";
+      document.body.appendChild(pureDomContainer);
       const data = buildData(ROWS_1K);
 
       // Build DOM directly without any framework
@@ -685,35 +706,27 @@ describe("js-framework-benchmark Style Performance Test", () => {
         tbody.appendChild(tr);
       }
       table.appendChild(tbody);
-      c.appendChild(table);
+      pureDomContainer.appendChild(table);
 
       await new Promise((r) => setTimeout(r, 100));
 
-      if (typeof Bun !== "undefined" && Bun.gc) {
-        Bun.gc(true);
-      }
-      await new Promise((r) => setTimeout(r, 50));
-
-      pureDomMemory1k = getMemoryMB();
+      pureDomMemory1k = await settleAndSampleMemoryMB();
       console.log(`  Pure DOM (1k rows): ${pureDomMemory1k.toFixed(2)} MB`);
 
       // Clean up
-      document.body.innerHTML = "";
+      pureDomContainer.remove();
+      document.body.innerHTML = `<div id="app"></div>`;
+      container = document.getElementById("app")!;
+      app = new Eleva("BenchmarkApp");
+      setupBenchmarkApp(app);
 
       expect(pureDomMemory1k).toBeGreaterThan(baselineMemory);
-    });
 
-    test("memory after 1,000 rows (with Eleva)", async () => {
       await app.mount(container, "benchmark-table");
       rowsSignal.value = buildData(ROWS_1K);
       await new Promise((r) => setTimeout(r, 100));
 
-      if (typeof Bun !== "undefined" && Bun.gc) {
-        Bun.gc(true);
-      }
-      await new Promise((r) => setTimeout(r, 50));
-
-      const memory = getMemoryMB();
+      const memory = await settleAndSampleMemoryMB();
       const elevaOverhead = memory - pureDomMemory1k;
 
       console.log(`  Eleva + DOM (1k rows): ${memory.toFixed(2)} MB`);
@@ -726,12 +739,13 @@ describe("js-framework-benchmark Style Performance Test", () => {
       expect(elevaOverhead).toBeLessThan(150);
     });
 
-    test("pure DOM baseline (10,000 rows) - no framework", async () => {
+    test("memory after 10,000 rows (baseline + Eleva)", async () => {
       console.log("  Measuring pure DOM baseline 10k (no framework)...");
 
       resetId();
-      document.body.innerHTML = `<div id="pure-dom-test-10k"></div>`;
-      const c = document.getElementById("pure-dom-test-10k")!;
+      const pureDomContainer = document.createElement("div");
+      pureDomContainer.id = "pure-dom-test-10k";
+      document.body.appendChild(pureDomContainer);
       const data = buildData(ROWS_10K);
 
       // Build DOM directly without any framework
@@ -753,28 +767,23 @@ describe("js-framework-benchmark Style Performance Test", () => {
         tbody.appendChild(tr);
       }
       table.appendChild(tbody);
-      c.appendChild(table);
+      pureDomContainer.appendChild(table);
 
       await new Promise((r) => setTimeout(r, 100));
 
-      if (typeof Bun !== "undefined" && Bun.gc) {
-        Bun.gc(true);
-      }
-      await new Promise((r) => setTimeout(r, 50));
-
-      pureDomMemory10k = getMemoryMB();
+      pureDomMemory10k = await settleAndSampleMemoryMB();
       console.log(`  Pure DOM (10k rows): ${pureDomMemory10k.toFixed(2)} MB`);
 
       // Clean up
+      pureDomContainer.remove();
       document.body.innerHTML = "";
 
       expect(pureDomMemory10k).toBeGreaterThan(pureDomMemory1k);
-    });
 
-    test("memory after 10,000 rows (with Eleva)", async () => {
       resetId();
-      document.body.innerHTML = `<div id="mem-test"></div>`;
-      const c = document.getElementById("mem-test")!;
+      const memContainer = document.createElement("div");
+      memContainer.id = "mem-test";
+      document.body.appendChild(memContainer);
       const a = new Eleva("Memory10K");
       let sig: any;
 
@@ -787,16 +796,11 @@ describe("js-framework-benchmark Style Performance Test", () => {
           `<table><tbody>${ctx.rows.value.map((r: Row) => `<tr key="${r.id}"><td>${r.id}</td><td>${r.label}</td></tr>`).join("")}</tbody></table>`,
       });
 
-      await a.mount(c, "table");
+      await a.mount(memContainer, "table");
       sig.value = buildData(ROWS_10K);
       await new Promise((r) => setTimeout(r, 100));
 
-      if (typeof Bun !== "undefined" && Bun.gc) {
-        Bun.gc(true);
-      }
-      await new Promise((r) => setTimeout(r, 50));
-
-      const memory = getMemoryMB();
+      const memory = await settleAndSampleMemoryMB();
       const elevaOverhead = memory - pureDomMemory10k;
 
       console.log(`  Eleva + DOM (10k rows): ${memory.toFixed(2)} MB`);
@@ -807,6 +811,8 @@ describe("js-framework-benchmark Style Performance Test", () => {
       // Note: Overhead should scale roughly linearly with rows
       // The threshold is set to ensure memory doesn't grow unboundedly
       expect(elevaOverhead).toBeLessThan(500);
+
+      memContainer.remove();
     });
   });
 

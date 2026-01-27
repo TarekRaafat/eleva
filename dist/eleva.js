@@ -1,16 +1,32 @@
-/*! Eleva v1.0.1 | MIT License | https://elevajs.com */
-// ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
-// ============================================================================
+/*! Eleva v1.1.0 | MIT License | https://elevajs.com */
 /**
+ * @module eleva/template-engine
+ * @fileoverview Expression evaluator for directive attributes and property bindings.
+ */ // ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+// -----------------------------------------------------------------------------
+// Data Types
+// -----------------------------------------------------------------------------
+/**
+ * Data context object for expression evaluation.
  * @typedef {Record<string, unknown>} ContextData
- *           Data context for expression evaluation
+ * @description Contains variables and functions available during template evaluation.
  */ /**
+ * JavaScript expression string to be evaluated.
  * @typedef {string} Expression
- *           A JavaScript expression to be evaluated in the data context
+ * @description A JavaScript expression evaluated against a ContextData object.
  */ /**
+ * Result of evaluating an expression.
  * @typedef {unknown} EvaluationResult
- *           The result of evaluating an expression (string, number, boolean, object, function, etc.)
+ * @description Can be string, number, boolean, object, function, or any JavaScript value.
+ */ // -----------------------------------------------------------------------------
+// Function Types
+// -----------------------------------------------------------------------------
+/**
+ * Compiled expression function cached for performance.
+ * @typedef {(data: ContextData) => EvaluationResult} CompiledExpressionFunction
+ * @description Pre-compiled function that evaluates an expression against context data.
  */ /**
  * @class 🔒 TemplateEngine
  * @classdesc A minimal expression evaluator for Eleva's directive attributes.
@@ -42,16 +58,29 @@
     /**
    * Evaluates an expression in the context of the provided data object.
    * Used for resolving `@event` handlers and `:prop` bindings.
+   * Non-string expressions are returned as-is.
    *
-   * Note: This does not provide a true sandbox and evaluated expressions may access global scope.
-   * The use of the `with` statement is necessary for expression evaluation but has security implications.
-   * Only use with trusted templates. User input should never be directly interpolated.
+   * @security CRITICAL SECURITY WARNING
+   * This method is NOT sandboxed. It uses `new Function()` and `with` statement,
+   * allowing full access to the global scope. Potential attack vectors include:
+   * - Code injection via malicious expressions
+   * - XSS attacks if user input is used as expressions
+   * - Access to sensitive globals (window, document, fetch, etc.)
+   *
+   * ONLY use with developer-defined template strings.
+   * NEVER use with user-provided input or untrusted data.
+   *
+   * Mitigation strategies:
+   * - Always sanitize any user-generated content before rendering in templates
+   * - Use Content Security Policy (CSP) headers to restrict script execution
+   * - Keep expressions simple (property access, method calls) - avoid complex logic
    *
    * @public
    * @static
-   * @param {Expression|unknown} expression - The expression to evaluate.
+   * @param {Expression | unknown} expression - The expression to evaluate.
    * @param {ContextData} data - The data context for evaluation.
    * @returns {EvaluationResult} The result of the evaluation, or empty string if evaluation fails.
+   * @note Evaluation failures return an empty string without throwing.
    *
    * @example
    * // Property access
@@ -104,28 +133,51 @@
 /**
    * Cache for compiled expression functions.
    * Stores compiled Function objects keyed by expression string for O(1) lookup.
+   * The cache persists for the application lifetime and is never cleared.
+   * This improves performance for repeated evaluations of the same expression.
+   *
+   * Memory consideration: For applications with highly dynamic expressions
+   * (e.g., user-generated), memory usage grows unbounded. This is typically
+   * not an issue for static templates where expressions are finite.
    *
    * @static
    * @private
-   * @type {Map<string, Function>}
+   * @type {Map<string, CompiledExpressionFunction>}
    */ TemplateEngine._functionCache = new Map();
 
-// ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
-// ============================================================================
 /**
- * @template T
+ * @module eleva/signal
+ * @fileoverview Reactive Signal primitive for fine-grained state management and change notification.
+ */ // ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+// -----------------------------------------------------------------------------
+// Callback Types
+// -----------------------------------------------------------------------------
+/**
+ * Callback function invoked when a signal's value changes.
+ * @template T The type of value held by the signal.
  * @callback SignalWatcher
- * @param {T} value - The new value of the signal
+ * @param {T} value
+ *        The new value of the signal.
  * @returns {void}
  */ /**
+ * Function to unsubscribe a watcher from a signal.
  * @callback SignalUnsubscribe
- * @returns {boolean} True if the watcher was successfully removed
- */ /**
- * @template T
+ * @returns {boolean}
+ *          True if the watcher was successfully removed, false if already removed.
+ *          Safe to call multiple times (idempotent).
+ */ // -----------------------------------------------------------------------------
+// Interface Types
+// -----------------------------------------------------------------------------
+/**
+ * Interface describing the public API of a Signal.
+ * @template T The type of value held by the signal.
  * @typedef {Object} SignalLike
- * @property {T} value - The current value
- * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch - Subscribe to changes
+ * @property {T} value
+ *           The current value of the signal.
+ * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch
+ *           Subscribe to value changes.
  */ /**
  * @class ⚡ Signal
  * @classdesc A reactive data holder that enables fine-grained reactivity in the Eleva framework.
@@ -135,7 +187,7 @@
  * Render batching is handled at the component level, not the signal level.
  * The class is generic, allowing type-safe handling of any value type T.
  *
- * @template T The type of value held by this signal
+ * @template T The type of value held by the signal.
  *
  * @example
  * // Basic usage
@@ -153,7 +205,6 @@
  *
  * @example
  * // With objects
- * /** @type {Signal<{x: number, y: number}>} *\/
  * const position = new Signal({ x: 0, y: 0 });
  * position.value = { x: 10, y: 20 }; // Triggers watchers
  *
@@ -171,6 +222,10 @@
    * Sets a new value for the signal and synchronously notifies all registered watchers if the value has changed.
    * Synchronous notification preserves stack traces and ensures immediate value consistency.
    *
+   * Uses strict equality (===) for comparison. For objects/arrays, watchers are only notified
+   * if the reference changes, not if properties are mutated. To trigger updates with objects,
+   * assign a new reference: `signal.value = { ...signal.value, updated: true }`.
+   *
    * @public
    * @param {T} newVal - The new value to set.
    * @returns {void}
@@ -187,6 +242,8 @@
    * @public
    * @param {SignalWatcher<T>} fn - The callback function to invoke on value change.
    * @returns {SignalUnsubscribe} A function to unsubscribe the watcher.
+   *          Returns true if watcher was removed, false if it wasn't registered.
+   *          Safe to call multiple times (idempotent after first call).
    *
    * @example
    * // Basic watching
@@ -195,6 +252,7 @@
    * @example
    * // Stop watching
    * unsubscribe(); // Returns true if watcher was removed
+   * unsubscribe(); // Returns false (already removed, safe to call again)
    *
    * @example
    * // Multiple watchers
@@ -210,6 +268,9 @@
    * This preserves stack traces for debugging and ensures immediate
    * value consistency. Render batching is handled at the component level.
    *
+   * @note If a watcher throws, subsequent watchers are NOT called.
+   * The error propagates to the caller (the setter).
+   *
    * @private
    * @returns {void}
    */ _notify() {
@@ -219,6 +280,7 @@
    * Creates a new Signal instance with the specified initial value.
    *
    * @public
+   * @constructor
    * @param {T} value - The initial value of the signal.
    *
    * @example
@@ -228,12 +290,9 @@
    * const active = new Signal(true);    // Signal<boolean>
    *
    * @example
-   * // Complex types (use JSDoc for type inference)
-   * /** @type {Signal<string[]>} *\/
-   * const items = new Signal([]);
-   *
-   * /** @type {Signal<{id: number, name: string} | null>} *\/
-   * const user = new Signal(null);
+   * // Complex types
+   * const items = new Signal([]);          // Signal holding an array
+   * const user = new Signal(null);         // Signal holding nullable object
    */ constructor(value){
         /**
      * Internal storage for the signal's current value.
@@ -248,25 +307,56 @@
     }
 }
 
-// ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
-// ============================================================================
 /**
- * @template T
+ * @module eleva/emitter
+ * @fileoverview Event emitter for publish-subscribe communication between components.
+ */ // ============================================================================
+// TYPE DEFINITIONS
+// ============================================================================
+// -----------------------------------------------------------------------------
+// Callback Types
+// -----------------------------------------------------------------------------
+/**
+ * Callback function invoked when an event is emitted.
  * @callback EventHandler
- * @param {...T} args - Event arguments
- * @returns {void|Promise<void>}
+ * @param {...any} args
+ *        Event arguments passed to the handler.
+ * @returns {void | Promise<void>}
  */ /**
+ * Function to unsubscribe an event handler.
  * @callback EventUnsubscribe
  * @returns {void}
- */ /**
- * @typedef {`${string}:${string}`} EventName
- *           Event names follow the format 'namespace:action' (e.g., 'user:login', 'cart:update')
- */ /**
+ */ // -----------------------------------------------------------------------------
+// Event Types
+// -----------------------------------------------------------------------------
+/**
+ * Event name string identifier.
+ * @typedef {string} EventName
+ * @description
+ * Recommended convention: 'namespace:action' (e.g., 'user:login').
+ * This pattern prevents naming collisions and improves code readability.
+ *
+ * Common namespaces:
+ * - `user:` - User-related events (login, logout, update)
+ * - `component:` - Component lifecycle events (mount, unmount)
+ * - `router:` - Navigation events (beforeEach, afterEach)
+ * - `store:` - State management events (change, error)
+ * @example
+ * 'user:login'      // User logged in
+ * 'cart:update'     // Shopping cart updated
+ * 'component:mount' // Component was mounted
+ */ // -----------------------------------------------------------------------------
+// Interface Types
+// -----------------------------------------------------------------------------
+/**
+ * Interface describing the public API of an Emitter.
  * @typedef {Object} EmitterLike
- * @property {function(string, EventHandler<unknown>): EventUnsubscribe} on - Subscribe to an event
- * @property {function(string, EventHandler<unknown>=): void} off - Unsubscribe from an event
- * @property {function(string, ...unknown): void} emit - Emit an event
+ * @property {(event: string, handler: EventHandler) => EventUnsubscribe} on
+ *           Subscribe to an event.
+ * @property {(event: string, handler?: EventHandler) => void} off
+ *           Unsubscribe from an event.
+ * @property {(event: string, ...args: unknown[]) => void} emit
+ *           Emit an event with arguments.
  */ /**
  * @class 📡 Emitter
  * @classdesc A robust event emitter that enables inter-component communication through a publish-subscribe pattern.
@@ -304,6 +394,7 @@
  * // Lifecycle events
  * emitter.on('component:mount', (component) => {});
  * emitter.on('component:unmount', (component) => {});
+ * // Note: These lifecycle names are conventions; Eleva core does not emit them by default.
  * // State events
  * emitter.on('state:change', (newState, oldState) => {});
  * // Navigation events
@@ -317,9 +408,10 @@
    * Event names should follow the format 'namespace:action' for consistency.
    *
    * @public
-   * @template T
    * @param {string} event - The name of the event to listen for (e.g., 'user:login').
-   * @param {EventHandler<T>} handler - The callback function to invoke when the event occurs.
+   * @param {EventHandler} handler - The callback function to invoke when the event occurs.
+   *        Note: Handlers returning Promises are NOT awaited. For async operations,
+   *        handle promise resolution within your handler.
    * @returns {EventUnsubscribe} A function to unsubscribe the event handler.
    *
    * @example
@@ -327,8 +419,8 @@
    * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
    *
    * @example
-   * // Typed handler
-   * emitter.on('user:update', (/** @type {{id: number, name: string}} *\/ user) => {
+   * // Handler with typed parameter
+   * emitter.on('user:update', (user) => {
    *   console.log(`User ${user.id}: ${user.name}`);
    * });
    *
@@ -343,13 +435,15 @@
     }
     /**
    * Removes an event handler for the specified event name.
-   * If no handler is provided, all handlers for the event are removed.
    * Automatically cleans up empty event sets to prevent memory leaks.
    *
+   * Behavior varies based on whether handler is provided:
+   * - With handler: Removes only that specific handler function (O(1) Set deletion)
+   * - Without handler: Removes ALL handlers for the event (O(1) Map deletion)
+   *
    * @public
-   * @template T
    * @param {string} event - The name of the event to remove handlers from.
-   * @param {EventHandler<T>} [handler] - The specific handler function to remove.
+   * @param {EventHandler} [handler] - The specific handler to remove. If omitted, all handlers are removed.
    * @returns {void}
    *
    * @example
@@ -375,12 +469,19 @@
    * Emits an event with the specified data to all registered handlers.
    * Handlers are called synchronously in the order they were registered.
    * If no handlers are registered for the event, the emission is silently ignored.
+   * Handlers that return promises are not awaited.
+   *
+   * Error propagation behavior:
+   * - If a handler throws synchronously, the error propagates immediately
+   * - Remaining handlers in the iteration are NOT called after an error
+   * - For error-resilient emission, wrap your emit call in try/catch
+   * - Async handler rejections are not caught (fire-and-forget)
    *
    * @public
-   * @template T
    * @param {string} event - The name of the event to emit.
-   * @param {...T} args - Optional arguments to pass to the event handlers.
+   * @param {...any} args - Optional arguments to pass to the event handlers.
    * @returns {void}
+   * @throws {Error} If a handler throws synchronously, the error propagates to the caller.
    *
    * @example
    * // Emit an event with data
@@ -398,9 +499,10 @@
         if (handlers) for (const handler of handlers)handler(...args);
     }
     /**
-   * Creates a new Emitter instance.
+   * Creates a new Emitter instance with an empty event registry.
    *
    * @public
+   * @constructor
    *
    * @example
    * const emitter = new Emitter();
@@ -408,22 +510,47 @@
         /**
      * Map of event names to their registered handler functions
      * @private
-     * @type {Map<string, Set<EventHandler<unknown>>>}
+     * @type {Map<string, Set<EventHandler>>}
      */ this._events = new Map();
     }
 }
 
+/**
+ * @module eleva/renderer
+ * @fileoverview High-performance DOM renderer with two-pointer diffing and keyed reconciliation.
+ */ // ============================================================================
+// TYPE DEFINITIONS
 // ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// -----------------------------------------------------------------------------
+// Data Types
+// -----------------------------------------------------------------------------
+/**
+ * Map of key attribute values to their corresponding DOM nodes.
+ * @typedef {Map<string, Node>} KeyMap
+ * @description Enables O(1) lookup for keyed element reconciliation.
+ */ // -----------------------------------------------------------------------------
+// Interface Types
+// -----------------------------------------------------------------------------
+/**
+ * Interface describing the public API of a Renderer.
+ * @typedef {Object} RendererLike
+ * @property {function(HTMLElement, string): void} patchDOM
+ *           Patches the DOM with new HTML content.
+ * @description
+ * Plugins may extend renderer behavior by wrapping private methods (e.g., `_patchNode`),
+ * but those hooks are not part of the public API.
+ */ // ============================================================================
+// CONSTANTS
 // ============================================================================
 /**
- * @typedef {Map<string, Node>} KeyMap
- *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
- */ /**
- * @typedef {Object} RendererLike
- * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
- */ /**
- * Properties that can diverge from attributes via user interaction.
+ * Properties that can diverge from attributes after user interaction.
+ * These are synchronized during DOM patching to ensure element state
+ * matches the rendered HTML attributes.
+ *
+ * - `value`: Text input, textarea, select element values
+ * - `checked`: Checkbox and radio button states
+ * - `selected`: Option element selection states
+ *
  * @private
  * @type {string[]}
  */ const SYNC_PROPS = [
@@ -484,6 +611,9 @@
    * @example
    * // Empty the container
    * renderer.patchDOM(container, '');
+   *
+   * @see _diff - Low-level diffing algorithm.
+   * @see _patchNode - Individual node patching.
    */ patchDOM(container, newHtml) {
         this._tempContainer.innerHTML = newHtml;
         this._diff(container, this._tempContainer);
@@ -493,16 +623,26 @@
     /**
    * Performs a diff between two DOM nodes and patches the old node to match the new node.
    * Uses a two-pointer algorithm with key-based reconciliation for optimal performance.
+   * This method modifies oldParent in-place - it is not a pure function.
    *
-   * Algorithm overview:
-   * 1. Compare children from start using two pointers
-   * 2. For mismatches, build a key map lazily for O(1) lookup
-   * 3. Move or insert nodes as needed
-   * 4. Clean up remaining nodes at the end
+   * Algorithm details:
+   * 1. Early exit if both nodes have no children (O(1) leaf node optimization)
+   * 2. Convert NodeLists to arrays for indexed access
+   * 3. Initialize two-pointer indices (oldStart/oldEnd, newStart/newEnd)
+   * 4. While pointers haven't crossed:
+   *    a. Skip null entries (from previous moves)
+   *    b. If nodes match (same key+tag or same type+name): patch and advance
+   *    c. On mismatch: lazily build key→node map for O(1) lookup
+   *    d. If keyed match found: move existing node (preserves DOM identity)
+   *    e. Otherwise: clone and insert new node
+   * 5. After loop: append remaining new nodes or remove remaining old nodes
+   *
+   * Complexity: O(n) for most cases, O(n²) worst case with no keys.
+   * Non-keyed elements are matched by position and tag name.
    *
    * @private
-   * @param {HTMLElement} oldParent - The original DOM element to update.
-   * @param {HTMLElement} newParent - The new DOM element with desired state.
+   * @param {Element} oldParent - The original DOM element to update (modified in-place).
+   * @param {Element} newParent - The new DOM element with desired state.
    * @returns {void}
    */ _diff(oldParent, newParent) {
         // Early exit for leaf nodes (no children)
@@ -561,7 +701,8 @@
     }
     /**
    * Patches a single node, updating its content and attributes to match the new node.
-   * Handles text nodes by updating nodeValue, and element nodes by updating attributes
+   * Handles text nodes (nodeType 3 / Node.TEXT_NODE) by updating nodeValue,
+   * and element nodes (nodeType 1 / Node.ELEMENT_NODE) by updating attributes
    * and recursively diffing children.
    *
    * Skips nodes that are managed by Eleva component instances to prevent interference
@@ -586,12 +727,20 @@
     /**
    * Removes a node from its parent, with special handling for Eleva-managed elements.
    * Style elements with the `data-e-style` attribute are preserved to maintain
-   * component-scoped styles across re-renders.
+   * component styles across re-renders. Without this protection, component styles
+   * would be removed during DOM diffing and lost until the next full re-render.
+   *
+   * @note Style tags persist for the component's entire lifecycle. If the template
+   * conditionally removes elements that the CSS rules target (e.g., `.foo` elements),
+   * the style rules remain but simply have no matching elements. This is expected
+   * behavior - styles are cleaned up when the component unmounts, not when individual
+   * elements are removed.
    *
    * @private
    * @param {HTMLElement} parent - The parent element containing the node.
    * @param {Node} node - The node to remove.
    * @returns {void}
+   * @see _injectStyles - Where data-e-style elements are created.
    */ _removeNode(parent, node) {
         // Preserve Eleva-managed style elements
         if (node.nodeName === "STYLE" && node.hasAttribute("data-e-style")) return;
@@ -602,12 +751,16 @@
    * Adds new attributes, updates changed values, and removes attributes no longer present.
    * Also syncs DOM properties that can diverge from attributes after user interaction.
    *
-   * Event attributes (prefixed with `@`) are skipped as they are handled separately
-   * by Eleva's event binding system.
+   * Processing order:
+   * 1. Iterate new attributes, skip @ prefixed (event) attributes
+   * 2. Update attribute if value changed
+   * 3. Sync corresponding DOM property if writable (handles boolean conversion)
+   * 4. Iterate old attributes in reverse, remove if not in new element
+   * 5. Sync SYNC_PROPS (value, checked, selected) from new to old element
    *
    * @private
-   * @param {HTMLElement} oldEl - The original element to update.
-   * @param {HTMLElement} newEl - The new element with target attributes.
+   * @param {Element} oldEl - The original element to update.
+   * @param {Element} newEl - The new element with target attributes.
    * @returns {void}
    */ _updateAttributes(oldEl, newEl) {
         // Add/update attributes from new element
@@ -668,10 +821,11 @@
     /**
    * Extracts the key attribute from a node if it exists.
    * Only element nodes (nodeType === 1) can have key attributes.
+   * Uses optional chaining for null-safe access.
    *
    * @private
-   * @param {Node|null|undefined} node - The node to extract the key from.
-   * @returns {string|null} The key attribute value, or null if not an element or no key.
+   * @param {Node | null | undefined} node - The node to extract the key from.
+   * @returns {string | null} The key attribute value, or null if not an element or no key.
    */ _getNodeKey(node) {
         return node?.nodeType === 1 ? node.getAttribute("key") : null;
     }
@@ -680,7 +834,7 @@
    * The map is built lazily only when needed (when a mismatch occurs during diffing).
    *
    * @private
-   * @param {Array<ChildNode>} children - The array of child nodes to map.
+   * @param {ChildNode[]} children - The array of child nodes to map.
    * @param {number} start - The start index (inclusive) for mapping.
    * @param {number} end - The end index (inclusive) for mapping.
    * @returns {KeyMap} A Map of key strings to their corresponding DOM nodes.
@@ -694,8 +848,13 @@
     }
     /**
    * Creates a new Renderer instance.
+   * Initializes a reusable temporary container for HTML parsing.
+   *
+   * Performance: The temp container is reused across all patch operations,
+   * minimizing memory allocation overhead (O(1) memory per Renderer instance).
    *
    * @public
+   * @constructor
    *
    * @example
    * const renderer = new Renderer();
@@ -710,168 +869,195 @@
 }
 
 // ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// TYPE DEFINITIONS
 // ============================================================================
 // -----------------------------------------------------------------------------
 // Configuration Types
 // -----------------------------------------------------------------------------
 /**
- * @typedef {Object} ElevaConfig
- * @property {boolean} [debug=false]
- *           Enable debug mode for verbose logging
- * @property {string} [prefix='e']
- *           Prefix for component style scoping
- * @property {boolean} [async=true]
- *           Enable async component setup
+ * Configuration options for the Eleva instance (reserved for future use).
+ * @typedef {Record<string, unknown>} ElevaConfig
  */ // -----------------------------------------------------------------------------
 // Component Types
 // -----------------------------------------------------------------------------
 /**
+ * Component definition object.
  * @typedef {Object} ComponentDefinition
  * @property {SetupFunction} [setup]
- *           Optional setup function that initializes the component's state and returns reactive data
- * @property {TemplateFunction|string} template
- *           Required function or string that defines the component's HTML structure
- * @property {StyleFunction|string} [style]
- *           Optional function or string that provides component-scoped CSS styles
+ *           Optional setup function that initializes the component's state and returns reactive data.
+ * @property {TemplateFunction | string} template
+ *           Required function or string that defines the component's HTML structure.
+ * @property {StyleFunction | string} [style]
+ *           Optional function or string that provides CSS styles for the component.
+ *           Styles are preserved across DOM diffs via data-e-style markers.
  * @property {ChildrenMap} [children]
- *           Optional object defining nested child components
+ *           Optional object defining nested child components.
  */ /**
+ * Setup function that initializes component state.
  * @callback SetupFunction
- * @param {ComponentContext} ctx - The component context with props, emitter, and signal factory
- * @returns {SetupResult|Promise<SetupResult>} Reactive data and lifecycle hooks
+ * @param {ComponentContext} ctx
+ *        The component context with props, emitter, and signal factory.
+ * @returns {SetupResult | Promise<SetupResult>}
+ *          Reactive data and lifecycle hooks.
  */ /**
+ * Data returned from setup function, may include lifecycle hooks.
  * @typedef {Record<string, unknown> & LifecycleHooks} SetupResult
- *           Data returned from setup function, may include lifecycle hooks
  */ /**
+ * Template function that returns HTML markup.
  * @callback TemplateFunction
- * @param {ComponentContext} ctx - The component context
- * @returns {string|Promise<string>} HTML template string
+ * @param {ComponentContext & SetupResult} ctx
+ *        The merged component context and setup data.
+ * @returns {string | Promise<string>}
+ *          HTML template string.
  */ /**
+ * Style function that returns CSS styles.
  * @callback StyleFunction
- * @param {ComponentContext} ctx - The component context
- * @returns {string} CSS styles string
+ * @param {ComponentContext & SetupResult} ctx
+ *        The merged component context and setup data.
+ * @returns {string}
+ *          CSS styles string.
  */ /**
- * @typedef {Record<string, ComponentDefinition|string>} ChildrenMap
- *           Map of CSS selectors to component definitions or registered component names
+ * Map of CSS selectors to component definitions or registered component names.
+ * @typedef {Record<string, ComponentDefinition | string>} ChildrenMap
  */ // -----------------------------------------------------------------------------
 // Context Types
 // -----------------------------------------------------------------------------
 /**
+ * Context passed to component setup function.
  * @typedef {Object} ComponentContext
  * @property {ComponentProps} props
- *           Component properties passed during mounting
+ *           Component properties passed during mounting.
  * @property {Emitter} emitter
- *           Event emitter instance for component event handling
+ *           Event emitter instance for component event handling.
  * @property {SignalFactory} signal
- *           Factory function to create reactive Signal instances
+ *           Factory function to create reactive Signal instances.
+ * @description
+ * Plugins may extend this context with additional properties (e.g., `ctx.router`, `ctx.store`).
+ * @see RouterContext - Router plugin injected context.
+ * @see StoreApi - Store plugin injected context.
  */ /**
+ * Properties passed to a component during mounting.
  * @typedef {Record<string, unknown>} ComponentProps
- *           Properties passed to a component during mounting
  */ /**
- * @callback SignalFactory
- * @template T
- * @param {T} initialValue - The initial value for the signal
- * @returns {Signal<T>} A new Signal instance
+ * Factory function to create reactive Signal instances.
+ * @typedef {<T>(initialValue: T) => Signal<T>} SignalFactory
  */ // -----------------------------------------------------------------------------
 // Lifecycle Hook Types
 // -----------------------------------------------------------------------------
 /**
+ * Lifecycle hooks that can be returned from setup function.
  * @typedef {Object} LifecycleHooks
  * @property {LifecycleHook} [onBeforeMount]
- *           Hook called before component mounting
+ *           Called before component mounting.
  * @property {LifecycleHook} [onMount]
- *           Hook called after component mounting
+ *           Called after component mounting.
  * @property {LifecycleHook} [onBeforeUpdate]
- *           Hook called before component update
+ *           Called before component update.
  * @property {LifecycleHook} [onUpdate]
- *           Hook called after component update
+ *           Called after component update.
  * @property {UnmountHook} [onUnmount]
- *           Hook called during component unmounting
+ *           Called during component unmounting.
  */ /**
+ * Lifecycle hook function.
  * @callback LifecycleHook
- * @param {LifecycleHookContext} ctx - Context with container and component data
- * @returns {void|Promise<void>}
+ * @param {LifecycleHookContext} ctx
+ *        Context with container and component data.
+ * @returns {void | Promise<void>}
  */ /**
+ * Unmount hook function with cleanup resources.
  * @callback UnmountHook
- * @param {UnmountHookContext} ctx - Context with cleanup resources
- * @returns {void|Promise<void>}
+ * @param {UnmountHookContext} ctx
+ *        Context with cleanup resources.
+ * @returns {void | Promise<void>}
  */ /**
+ * Context passed to lifecycle hooks.
  * @typedef {Object} LifecycleHookContext
  * @property {HTMLElement} container
- *           The DOM element where the component is mounted
+ *           The DOM element where the component is mounted.
  * @property {ComponentContext & SetupResult} context
- *           The component's reactive state and context data
+ *           The component's reactive state and context data.
  */ /**
+ * Context passed to unmount hook with cleanup resources.
  * @typedef {Object} UnmountHookContext
  * @property {HTMLElement} container
- *           The DOM element where the component is mounted
+ *           The DOM element where the component is mounted.
  * @property {ComponentContext & SetupResult} context
- *           The component's reactive state and context data
+ *           The component's reactive state and context data.
  * @property {CleanupResources} cleanup
- *           Object containing cleanup functions and instances
+ *           Object containing cleanup functions and instances.
  */ /**
+ * Resources available for cleanup during unmount.
  * @typedef {Object} CleanupResources
- * @property {Array<UnsubscribeFunction>} watchers
- *           Signal watcher cleanup functions
- * @property {Array<UnsubscribeFunction>} listeners
- *           Event listener cleanup functions
- * @property {Array<MountResult>} children
- *           Child component instances
+ * @property {UnsubscribeFunction[]} watchers
+ *           Signal watcher cleanup functions.
+ * @property {UnsubscribeFunction[]} listeners
+ *           Event listener cleanup functions.
+ * @property {MountResult[]} children
+ *           Child component instances.
  */ // -----------------------------------------------------------------------------
 // Mount Result Types
 // -----------------------------------------------------------------------------
 /**
+ * Result of mounting a component.
  * @typedef {Object} MountResult
  * @property {HTMLElement} container
- *           The DOM element where the component is mounted
+ *           The DOM element where the component is mounted.
  * @property {ComponentContext & SetupResult} data
- *           The component's reactive state and context data
+ *           The component's reactive state and context data.
  * @property {UnmountFunction} unmount
- *           Function to clean up and unmount the component
+ *           Function to clean up and unmount the component.
  */ /**
+ * Function to unmount a component and clean up resources.
  * @callback UnmountFunction
  * @returns {Promise<void>}
  */ /**
+ * Function to unsubscribe from events or watchers.
  * @callback UnsubscribeFunction
- * @returns {void|boolean}
+ * @returns {void | boolean}
  */ // -----------------------------------------------------------------------------
 // Plugin Types
 // -----------------------------------------------------------------------------
 /**
+ * Plugin interface for extending Eleva.
  * @typedef {Object} ElevaPlugin
- * @property {PluginInstallFunction} install
- *           Function that installs the plugin into the Eleva instance
  * @property {string} name
- *           Unique identifier name for the plugin
+ *           Unique identifier name for the plugin.
+ * @property {string} [version]
+ *           Optional version string for the plugin.
+ * @property {PluginInstallFunction} install
+ *           Function that installs the plugin.
  * @property {PluginUninstallFunction} [uninstall]
- *           Optional function to uninstall the plugin
+ *           Optional function to uninstall the plugin.
  */ /**
+ * Plugin install function.
  * @callback PluginInstallFunction
- * @param {Eleva} eleva - The Eleva instance
- * @param {PluginOptions} options - Plugin configuration options
- * @returns {void|Eleva|unknown} Optionally returns the Eleva instance or plugin result
+ * @param {Eleva} eleva
+ *        The Eleva instance.
+ * @param {PluginOptions} [options]
+ *        Plugin configuration options.
+ * @returns {void | Eleva | unknown}
  */ /**
+ * Plugin uninstall function.
  * @callback PluginUninstallFunction
- * @param {Eleva} eleva - The Eleva instance
- * @returns {void}
+ * @param {Eleva} eleva
+ *        The Eleva instance.
+ * @returns {void | Promise<void>}
  */ /**
+ * Configuration options passed to a plugin during installation.
  * @typedef {Record<string, unknown>} PluginOptions
- *           Configuration options passed to a plugin during installation
  */ // -----------------------------------------------------------------------------
 // Event Types
 // -----------------------------------------------------------------------------
 /**
- * @callback EventHandler
- * @param {Event} event - The DOM event object
- * @returns {void}
+ * Handler function for DOM events (e.g., click, input, submit).
+ * @typedef {(event: Event) => void} DOMEventHandler
  */ /**
+ * Common DOM event names (prefixed with @ in templates).
  * @typedef {'click'|'submit'|'input'|'change'|'focus'|'blur'|'keydown'|'keyup'|'keypress'|'mouseenter'|'mouseleave'|'mouseover'|'mouseout'|'mousedown'|'mouseup'|'touchstart'|'touchend'|'touchmove'|'scroll'|'resize'|'load'|'error'|string} DOMEventName
- *           Common DOM event names (prefixed with @ in templates)
  */ /**
  * @class 🧩 Eleva
  * @classdesc A modern, signal-based component runtime framework that provides lifecycle hooks,
- * scoped styles, and plugin support. Eleva manages component registration, plugin integration,
+ * component styles, and plugin support. Eleva manages component registration, plugin integration,
  * event handling, and DOM rendering with a focus on performance and developer experience.
  *
  * @example
@@ -901,14 +1087,16 @@
    * The plugin's install function will be called with the Eleva instance and provided options.
    * After installation, the plugin will be available for use by components.
    *
-   * Note: Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
+   * @note Plugins that wrap core methods (e.g., mount) must be uninstalled in reverse order
    * of installation (LIFO - Last In, First Out) to avoid conflicts.
    *
    * @public
    * @param {ElevaPlugin} plugin - The plugin object which must have an `install` function.
-   * @param {Object<string, unknown>} [options={}] - Optional configuration options for the plugin.
-   * @returns {Eleva} The Eleva instance (for method chaining).
+   * @param {PluginOptions} [options={}] - Optional configuration options for the plugin.
+   * @returns {Eleva | unknown} The Eleva instance (for method chaining) or the result returned by the plugin.
    * @throws {Error} If plugin does not have an install function.
+   * @see component - Register components after installing plugins.
+   * @see mount - Mount components to the DOM.
    * @example
    * app.use(myPlugin, { option1: "value1" });
    *
@@ -936,6 +1124,7 @@
    * @param {ComponentDefinition} definition - The component definition including setup, template, style, and children.
    * @returns {Eleva} The Eleva instance (for method chaining).
    * @throws {Error} If name is not a non-empty string or definition has no template.
+   * @see mount - Mount this component to the DOM.
    * @example
    * app.component("myButton", {
    *   template: (ctx) => `<button>${ctx.props.text}</button>`,
@@ -954,21 +1143,25 @@
     /**
    * Mounts a registered component to a DOM element.
    * This will initialize the component, set up its reactive state, and render it to the DOM.
+   * If the container already has a mounted Eleva instance, it is returned as-is.
+   * Unmount clears the container contents and removes the internal instance marker.
    *
    * @public
+   * @async
    * @param {HTMLElement} container - The DOM element where the component will be mounted.
-   * @param {string|ComponentDefinition} compName - The name of the registered component or a direct component definition.
-   * @param {Object<string, unknown>} [props={}] - Optional properties to pass to the component.
+   * @param {string | ComponentDefinition} compName - The name of the registered component or a direct component definition.
+   * @param {ComponentProps} [props={}] - Optional properties to pass to the component.
    * @returns {Promise<MountResult>}
    *          A Promise that resolves to an object containing:
    *          - container: The mounted component's container element
    *          - data: The component's reactive state and context
    *          - unmount: Function to clean up and unmount the component
    * @throws {Error} If container is not a DOM element or component is not registered.
+   * @throws {Error} If setup function, template function, or style function throws.
    * @example
    * const instance = await app.mount(document.getElementById("app"), "myComponent", { text: "Click me" });
    * // Later...
-   * instance.unmount();
+   * await instance.unmount();
    */ async mount(container, compName, props = {}) {
         if (!container?.nodeType) {
             throw new Error("Eleva: container must be a DOM element");
@@ -981,13 +1174,13 @@
      * Destructure the component definition to access core functionality.
      * - setup: Optional function for component initialization and state management
      * - template: Required function or string that returns the component's HTML structure
-     * - style: Optional function or string for component-scoped CSS styles
+     * - style: Optional function or string for component CSS styles (not auto-scoped)
      * - children: Optional object defining nested child components
      */ const { setup, template, style, children } = definition;
         /** @type {ComponentContext} */ const context = {
             props,
             emitter: this.emitter,
-            /** @type {(v: unknown) => Signal<unknown>} */ signal: (v)=>new this.signal(v)
+            /** @type {SignalFactory} */ signal: (v)=>new this.signal(v)
         };
         /**
      * Processes the mounting of the component.
@@ -997,19 +1190,20 @@
      * 3. Rendering the component
      * 4. Managing component lifecycle
      *
-     * @param {Object<string, unknown>} data - Data returned from the component's setup function
+     * @inner
+     * @param {Record<string, unknown>} data - Data returned from the component's setup function.
      * @returns {Promise<MountResult>} An object containing:
      *   - container: The mounted component's container element
      *   - data: The component's reactive state and context
      *   - unmount: Function to clean up and unmount the component
      */ const processMount = async (data)=>{
-            /** @type {ComponentContext} */ const mergedContext = {
+            /** @type {ComponentContext & SetupResult} */ const mergedContext = {
                 ...context,
                 ...data
             };
-            /** @type {Array<() => void>} */ const watchers = [];
-            /** @type {Array<MountResult>} */ const childInstances = [];
-            /** @type {Array<() => void>} */ const listeners = [];
+            /** @type {UnsubscribeFunction[]} */ const watchers = [];
+            /** @type {MountResult[]} */ const childInstances = [];
+            /** @type {UnsubscribeFunction[]} */ const listeners = [];
             /** @private {boolean} Local mounted state for this component instance */ let isMounted = false;
             // ========================================================================
             // Render Batching
@@ -1021,7 +1215,10 @@
        * changes in the same synchronous block will each call this function,
        * but only one render will be scheduled via queueMicrotask.
        * This separates concerns: signals handle state, components handle scheduling.
+       *
+       * @inner
        * @private
+       * @returns {void}
        */ const scheduleRender = ()=>{
                 if (renderScheduled) return;
                 renderScheduled = true;
@@ -1036,6 +1233,10 @@
        * 2. Processing the template
        * 3. Updating the DOM
        * 4. Processing events, injecting styles, and mounting child components.
+       *
+       * @inner
+       * @private
+       * @returns {Promise<void>}
        */ const render = async ()=>{
                 const html = typeof template === "function" ? await template(mergedContext) : template;
                 // Execute before hooks
@@ -1051,6 +1252,18 @@
                     });
                 }
                 this.renderer.patchDOM(container, html);
+                // Unmount child components whose host elements were removed by patching.
+                const childrenToUnmount = [];
+                for(let i = childInstances.length - 1; i >= 0; i--){
+                    const child = childInstances[i];
+                    if (!container.contains(child.container)) {
+                        childInstances.splice(i, 1);
+                        childrenToUnmount.push(child);
+                    }
+                }
+                if (childrenToUnmount.length) {
+                    await Promise.allSettled(childrenToUnmount.map((child)=>child.unmount()));
+                }
                 this._processEvents(container, mergedContext, listeners);
                 if (style) this._injectStyles(container, compId, style, mergedContext);
                 if (children) await this._mountComponents(container, children, childInstances, mergedContext);
@@ -1073,6 +1286,10 @@
        * When a Signal's value changes, a batched render is scheduled.
        * Multiple changes within the same frame are collapsed into one render.
        * Stores unsubscribe functions to clean up watchers when component unmounts.
+       *
+       * @note Signal watchers are invoked synchronously when values change.
+       * Render batching is handled at the component level via queueMicrotask,
+       * not at the signal level. This preserves stack traces for debugging.
        */ for (const val of Object.values(data)){
                 if (val instanceof Signal) watchers.push(val.watch(scheduleRender));
             }
@@ -1082,15 +1299,16 @@
                 data: mergedContext,
                 /**
          * Unmounts the component, cleaning up watchers and listeners, child components, and clearing the container.
+         * Removes the internal instance marker from the container when complete.
          *
-         * @returns {void}
+         * @returns {Promise<void>}
          */ unmount: async ()=>{
-                    /** @type {UnmountHookContext} */ await mergedContext.onUnmount?.({
+                    await mergedContext.onUnmount?.({
                         container,
                         context: mergedContext,
                         cleanup: {
-                            watchers: watchers,
-                            listeners: listeners,
+                            watchers,
+                            listeners,
                             children: childInstances
                         }
                     });
@@ -1110,13 +1328,19 @@
     }
     /**
    * Processes DOM elements for event binding based on attributes starting with "@".
-   * This method handles the event delegation system and ensures proper cleanup of event listeners.
+   * This method attaches event listeners directly to elements and ensures proper cleanup.
+   * Bound `@event` attributes are removed after listeners are attached.
+   *
+   * Handler resolution order:
+   * 1. Direct context property lookup (e.g., context["handleClick"])
+   * 2. Template expression evaluation via TemplateEngine (e.g., "increment()")
    *
    * @private
    * @param {HTMLElement} container - The container element in which to search for event attributes.
-   * @param {ComponentContext} context - The current component context containing event handler definitions.
-   * @param {Array<() => void>} listeners - Array to collect cleanup functions for each event listener.
+   * @param {ComponentContext & SetupResult} context - The merged component context and setup data.
+   * @param {UnsubscribeFunction[]} listeners - Array to collect cleanup functions for each event listener.
    * @returns {void}
+   * @see TemplateEngine.evaluate - Expression evaluation. fallback.
    */ _processEvents(container, context, listeners) {
         /** @type {NodeListOf<Element>} */ const elements = container.querySelectorAll("*");
         for (const el of elements){
@@ -1126,7 +1350,7 @@
                 if (!attr.name.startsWith("@")) continue;
                 /** @type {keyof HTMLElementEventMap} */ const event = attr.name.slice(1);
                 /** @type {string} */ const handlerName = attr.value;
-                /** @type {(event: Event) => void} */ const handler = context[handlerName] || this.templateEngine.evaluate(handlerName, context);
+                /** @type {DOMEventHandler} */ const handler = context[handlerName] || this.templateEngine.evaluate(handlerName, context);
                 if (typeof handler === "function") {
                     el.addEventListener(event, handler);
                     el.removeAttribute(attr.name);
@@ -1136,18 +1360,22 @@
         }
     }
     /**
-   * Injects scoped styles into the component's container.
-   * The styles are automatically prefixed to prevent style leakage to other components.
+   * Injects styles into the component's container.
+   * Styles are placed in a `<style>` element with a `data-e-style` attribute for identification.
+   *
+   * @note Styles are not automatically scoped - use unique class names or CSS nesting for isolation.
+   *
+   * Optimization: Skips DOM update if style content hasn't changed.
    *
    * @private
    * @param {HTMLElement} container - The container element where styles should be injected.
    * @param {string} compId - The component ID used to identify the style element.
-   * @param {(function(ComponentContext): string)|string} styleDef - The component's style definition (function or string).
-   * @param {ComponentContext} context - The current component context for style interpolation.
+   * @param {StyleFunction | string} styleDef - The component's style definition (function or string).
+   * @param {ComponentContext & SetupResult} context - The merged component context and setup data.
    * @returns {void}
    */ _injectStyles(container, compId, styleDef, context) {
         /** @type {string} */ const newStyle = typeof styleDef === "function" ? styleDef(context) : styleDef;
-        /** @type {HTMLStyleElement|null} */ let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);
+        /** @type {HTMLStyleElement | null} */ let styleEl = container.querySelector(`style[data-e-style="${compId}"]`);
         if (styleEl && styleEl.textContent === newStyle) return;
         if (!styleEl) {
             styleEl = document.createElement("style");
@@ -1160,11 +1388,13 @@
    * Extracts and evaluates props from an element's attributes that start with `:`.
    * Prop values are evaluated as expressions against the component context,
    * allowing direct passing of objects, arrays, and other complex types.
+   * Processed attributes are removed from the element after extraction.
    *
    * @private
-   * @param {HTMLElement} element - The DOM element to extract props from
-   * @param {ComponentContext} context - The component context for evaluating prop expressions
-   * @returns {Record<string, string>} An object containing the evaluated props
+   * @param {HTMLElement} element - The DOM element to extract props from.
+   * @param {ComponentContext & SetupResult} context - The merged component context and setup data.
+   * @returns {ComponentProps} An object containing the evaluated props.
+   * @see TemplateEngine.evaluate - Expression evaluation.
    * @example
    * // For an element with attributes:
    * // <div :name="user.name" :data="items">
@@ -1189,20 +1419,21 @@
    * This method handles mounting of explicitly defined children components.
    *
    * The mounting process follows these steps:
-   * 1. Cleans up any existing component instances
+   * 1. Finds matching DOM nodes within the container
    * 2. Mounts explicitly defined children components
    *
    * @private
-   * @param {HTMLElement} container - The container element to mount components in
-   * @param {Object<string, ComponentDefinition>} children - Map of selectors to component definitions for explicit children
-   * @param {Array<MountResult>} childInstances - Array to store all mounted component instances
-   * @param {ComponentContext} context - The parent component context for evaluating prop expressions
+   * @async
+   * @param {HTMLElement} container - The container element to mount components in.
+   * @param {ChildrenMap} children - Map of selectors to component definitions for explicit children.
+   * @param {MountResult[]} childInstances - Array to store all mounted component instances.
+   * @param {ComponentContext & SetupResult} context - The merged component context and setup data.
    * @returns {Promise<void>}
    *
    * @example
    * // Explicit children mounting:
    * const children = {
-   *   'UserProfile': UserProfileComponent,
+   *   'user-profile': UserProfileComponent,
    *   '#settings-panel': "settings-panel"
    * };
    */ async _mountComponents(container, children, childInstances, context) {
@@ -1210,7 +1441,7 @@
             if (!selector) continue;
             for (const el of container.querySelectorAll(selector)){
                 if (!(el instanceof HTMLElement)) continue;
-                /** @type {Record<string, string>} */ const props = this._extractProps(el, context);
+                /** @type {ComponentProps} */ const props = this._extractProps(el, context);
                 /** @type {MountResult} */ const instance = await this.mount(el, component, props);
                 if (instance && !childInstances.includes(instance)) {
                     childInstances.push(instance);
@@ -1222,11 +1453,10 @@
    * Creates a new Eleva instance with the specified name and configuration.
    *
    * @public
+   * @constructor
    * @param {string} name - The unique identifier name for this Eleva instance.
-   * @param {Record<string, unknown>} [config={}] - Optional configuration object for the instance.
-   *        May include framework-wide settings and default behaviors.
+   * @param {ElevaConfig} [config={}] - Optional configuration object for the instance.
    * @throws {Error} If the name is not provided or is not a string.
-   * @returns {Eleva} A new Eleva instance.
    *
    * @example
    * const app = new Eleva("myApp");
@@ -1240,17 +1470,17 @@
         if (!name || typeof name !== "string") {
             throw new Error("Eleva: name must be a non-empty string");
         }
-        /** @public {string} The unique identifier name for this Eleva instance */ this.name = name;
-        /** @public {Object<string, unknown>} Optional configuration object for the Eleva instance */ this.config = config;
-        /** @public {Emitter} Instance of the event emitter for handling component events */ this.emitter = new Emitter();
-        /** @public {typeof Signal} Static reference to the Signal class for creating reactive state */ this.signal = Signal;
-        /** @public {typeof TemplateEngine} Static reference to the TemplateEngine class for template parsing */ this.templateEngine = TemplateEngine;
-        /** @public {Renderer} Instance of the renderer for handling DOM updates and patching */ this.renderer = new Renderer();
+        /** @public @readonly {string} The unique identifier name for this Eleva instance */ this.name = name;
+        /** @public @readonly {Record<string, unknown>} Configuration object for the Eleva instance */ this.config = config;
+        /** @public @readonly {Emitter} Event emitter for handling component events */ this.emitter = new Emitter();
+        /** @public @readonly {typeof Signal} Signal class for creating reactive state */ this.signal = Signal;
+        /** @public @readonly {typeof TemplateEngine} TemplateEngine class for template parsing */ this.templateEngine = TemplateEngine;
+        /** @public @readonly {Renderer} Renderer for handling DOM updates and patching */ this.renderer = new Renderer();
         /** @private {Map<string, ComponentDefinition>} Registry of all component definitions by name */ this._components = new Map();
         /** @private {Map<string, ElevaPlugin>} Collection of installed plugin instances by name */ this._plugins = new Map();
         /** @private {number} Counter for generating unique component IDs */ this._componentCounter = 0;
     }
 }
 
-export { Eleva as default };
-//# sourceMappingURL=eleva.esm.js.map
+export { Eleva, Emitter, Renderer, Signal, TemplateEngine, Eleva as default };
+//# sourceMappingURL=eleva.js.map

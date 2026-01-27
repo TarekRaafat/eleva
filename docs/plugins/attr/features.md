@@ -41,7 +41,7 @@ const AccessibleComponent = {
         <button
           aria-expanded="${isExpanded.value}"
           aria-controls="content-panel"
-          @click="isExpanded.value = !isExpanded.value"
+          @click="() => isExpanded.value = !isExpanded.value"
         >
           Toggle Content
         </button>
@@ -53,7 +53,7 @@ const AccessibleComponent = {
         <div
           role="option"
           aria-selected="${isSelected.value}"
-          @click="isSelected.value = !isSelected.value"
+          @click="() => isSelected.value = !isSelected.value"
         >
           Selectable Item
         </div>
@@ -251,13 +251,13 @@ const FormControls = {
           <input
             type="checkbox"
             checked="${agreeToTerms.value}"
-            @change="agreeToTerms.value = $event.target.checked"
+            @change="(e) => agreeToTerms.value = e.target.checked"
           />
           I agree to the terms
         </label>
 
         <!-- Select with selected option -->
-        <select @change="selectedPlan.value = $event.target.value">
+        <select @change="(e) => selectedPlan.value = e.target.value">
           <option value="basic" selected="${selectedPlan.value === 'basic'}">
             Basic Plan
           </option>
@@ -271,7 +271,7 @@ const FormControls = {
 
         <!-- Details element with open state -->
         <details open="${showDetails.value}">
-          <summary @click="showDetails.value = !showDetails.value">
+          <summary @click="() => showDetails.value = !showDetails.value">
             More Information
           </summary>
           <p>Additional details here...</p>
@@ -291,19 +291,29 @@ const FormControls = {
 
 ### How Boolean Attributes Work
 
-```javascript
-// When signal value is truthy:
-// disabled="${true}" → <button disabled>
-// disabled="${1}" → <button disabled>
-// disabled="${'yes'}" → <button disabled>
+The Attr plugin uses specific string matching for boolean attributes:
 
-// When signal value is falsy:
-// disabled="${false}" → <button>
-// disabled="${0}" → <button>
-// disabled="${''}" → <button>
-// disabled="${null}" → <button>
-// disabled="${undefined}" → <button>
+```javascript
+// These values are treated as TRUE (attribute present):
+// disabled="${true}"      → <button disabled>  (becomes "true" string)
+// disabled=""             → <button disabled>  (empty string)
+// disabled="disabled"     → <button disabled>  (value equals attribute name)
+// disabled="true"         → <button disabled>  (literal "true" string)
+
+// These values are treated as FALSE (attribute removed):
+// disabled="${false}"     → <button>  (becomes "false" string)
+// disabled="false"        → <button>  (literal "false" string)
+// disabled="1"            → <button>  (not recognized as truthy)
+// disabled="yes"          → <button>  (not recognized as truthy)
+// disabled="0"            → <button>  (not recognized as truthy)
 ```
+
+**Important:** The plugin only recognizes these as truthy:
+- `"true"` (string)
+- `""` (empty string)
+- Value matching the attribute name (e.g., `disabled="disabled"`)
+
+Any other string value (including `"1"`, `"yes"`, `"on"`) will be treated as falsy and the attribute will be removed.
 
 ---
 
@@ -313,17 +323,18 @@ Some DOM elements have properties that don't correspond directly to attributes. 
 
 ### Common Dynamic Properties
 
+The Attr plugin automatically detects properties that exist on the element's prototype chain and synchronizes them. Common examples include:
+
 | Property | Element(s) | Description |
 |----------|------------|-------------|
 | `value` | `input`, `textarea`, `select` | Current value |
 | `checked` | `input[type="checkbox/radio"]` | Checked state |
 | `selected` | `option` | Selection state |
 | `indeterminate` | `input[type="checkbox"]` | Indeterminate state |
-| `innerHTML` | Any element | Inner HTML content |
-| `textContent` | Any element | Text content |
-| `className` | Any element | CSS classes |
 | `src` | `img`, `video`, `audio`, `iframe` | Source URL |
 | `href` | `a`, `link` | Link URL |
+
+> **Note:** The plugin detects any property that exists on the element's prototype. Standard DOM properties like `innerHTML`, `textContent`, and `className` work through normal DOM mechanisms and don't require special handling from this plugin.
 
 ### Dynamic Property Examples
 
@@ -344,7 +355,7 @@ const DynamicInputs = {
         <input
           type="text"
           value="${textValue.value}"
-          @input="textValue.value = $event.target.value"
+          @input="(e) => textValue.value = e.target.value"
         />
         <p>Text: ${textValue.value}</p>
 
@@ -352,7 +363,7 @@ const DynamicInputs = {
         <input
           type="number"
           value="${numberValue.value}"
-          @input="numberValue.value = parseInt($event.target.value)"
+          @input="(e) => numberValue.value = parseInt(e.target.value)"
         />
         <p>Number: ${numberValue.value}</p>
 
@@ -362,7 +373,7 @@ const DynamicInputs = {
           min="0"
           max="100"
           value="${rangeValue.value}"
-          @input="rangeValue.value = parseInt($event.target.value)"
+          @input="(e) => rangeValue.value = parseInt(e.target.value)"
         />
         <p>Range: ${rangeValue.value}%</p>
 

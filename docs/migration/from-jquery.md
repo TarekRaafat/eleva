@@ -38,7 +38,7 @@ description: jQuery to Eleva.js migration guide. Replace DOM manipulation with r
   "tool": [
     {
       "@type": "HowToTool",
-      "name": "Eleva.js (~2.3KB gzipped)"
+      "name": "Eleva.js (~2.5KB gzipped)"
     }
   ],
   "step": [

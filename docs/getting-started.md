@@ -171,7 +171,7 @@ Eleva is an excellent choice for specific use cases where its strengths shine:
 
 | Use Case | Why Eleva Excels |
 |----------|------------------|
-| **Minimal bundle size requirements** | At ~2.3KB gzipped, Eleva won't bloat your application |
+| **Minimal bundle size requirements** | At ~2.5KB gzipped, Eleva won't bloat your application |
 | **Teams preferring simplicity** | No build step, no complex configuration, just JavaScript |
 | **Learning reactive programming** | Clean, understandable reactivity without framework magic |
 | **No build step environments** | Drop in via CDN and start building immediately |
@@ -212,7 +212,7 @@ const app = new Eleva("MyApp");
 **With Individual Plugins (Optional):**
 ```javascript
 import Eleva from 'eleva';
-import { Attr } from 'eleva/plugins/attr';      // ~2.4KB
+import { Attr } from 'eleva/plugins/attr';      // ~2.2KB
 import { Router } from 'eleva/plugins/router';  // ~15KB
 import { Store } from 'eleva/plugins/store';    // ~6KB
 
@@ -221,6 +221,19 @@ app.use(Attr);    // Only if needed
 app.use(Router);  // Only if needed
 app.use(Store);   // Only if needed
 ```
+
+### Named Exports
+
+Eleva exposes the core utilities as named exports for direct use and typing:
+
+```javascript
+import Eleva, { Signal, Emitter, Renderer, TemplateEngine } from "eleva";
+```
+
+This is useful for:
+- **TypeScript users** - Access types directly for type annotations
+- **Advanced usage** - Create signals or emitters outside of components
+- **Testing** - Import utilities for unit testing
 
 ### Via CDN
 
@@ -449,13 +462,13 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 | **Framework** | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
-| **Eleva 1.0** | **~2.3KB** | **~25** | ~86 | **~0.5** |
+| **Eleva 1.0** | **~2.5KB** | **~25** | ~86 | **~0.5** |
 | **React 19** | ~44KB | 40-70 | 10-20 | 2-5 |
 | **Vue 3.5** | ~45KB | 25-45 | 5-15 | 2-4 |
 | **Angular 19** | ~90KB | 50-80 | 15-25 | 3-6 |
 
 **Performance Tips:**
-- Use `key` attribute on list items for optimal diffing
+- Use `key` attribute on list items for optimal diffing (note: the `key` attribute persists in the rendered DOM)
 - Eleva excels at initial renders and memory efficiency
 - For large lists, use keyed reconciliation in a single template
 - For 10K+ rows, use [virtual scrolling](./examples/patterns/best-practices/performance.md#virtual-scrolling-10k-rows)
@@ -491,6 +504,72 @@ Eleva targets **modern evergreen browsers** and requires no polyfills for suppor
 | Spread Operator | Props and context merging |
 
 > **Note:** As of 2024, the supported browsers cover approximately **96%+ of global web traffic** according to [caniuse.com](https://caniuse.com/mdn-api_queuemicrotask).
+
+---
+
+## Node.js Support
+
+For server-side usage, build tools, or SSR contexts:
+
+| Environment | Minimum Version |
+|-------------|-----------------|
+| **Node.js** | 18.0.0+ |
+| **Bun** | 1.0.0+ |
+
+> **Note:** Node.js 16 reached end-of-life in April 2024. Eleva 1.1.0+ requires Node.js 18+.
+
+---
+
+## Package Subpaths
+
+Eleva provides multiple entry points for different environments and use cases:
+
+### Core Framework
+
+| Subpath | Format | Use Case |
+|---------|--------|----------|
+| `eleva` | ESM/CJS | Standard import (auto-detected) |
+| `eleva/esm` | ESM | Explicit ESM import |
+| `eleva/cjs` | CJS | Explicit CommonJS require |
+| `eleva/browser` | UMD | Browser `<script>` tags only |
+| `eleva/umd` | UMD | Browser `<script>` tags (unminified) |
+
+> **Note:** The `/browser` and `/umd` subpaths are for `<script>` tag usage only. For ESM projects, use `eleva` or `eleva/esm` instead.
+
+### Plugins
+
+| Subpath | Format | Use Case |
+|---------|--------|----------|
+| `eleva/plugins` | ESM/CJS | All plugins bundled |
+| `eleva/plugins/esm` | ESM | Explicit ESM |
+| `eleva/plugins/cjs` | CJS | Explicit CommonJS |
+| `eleva/plugins/browser` | UMD | Browser `<script>` tags only |
+| `eleva/plugins/attr` | ESM/CJS/UMD | Attr plugin (tree-shakable) |
+| `eleva/plugins/router` | ESM/CJS/UMD | Router plugin (tree-shakable) |
+| `eleva/plugins/store` | ESM/CJS/UMD | Store plugin (tree-shakable) |
+
+> **Note:** Individual plugin subpaths (`/attr`, `/router`, `/store`) provide ESM for bundlers, CJS for Node.js, and UMD for browsers. For `<script>` tags, use the full CDN URLs.
+
+### Usage Examples
+
+```javascript
+// Standard (recommended) - auto-detects ESM or CJS
+import Eleva from 'eleva';
+const Eleva = require('eleva');
+
+// Explicit format
+import Eleva from 'eleva/esm';
+const Eleva = require('eleva/cjs');
+
+// Plugins
+import { Router, Store } from 'eleva/plugins';
+```
+
+```html
+<!-- Browser via CDN -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+```
 
 ---
 

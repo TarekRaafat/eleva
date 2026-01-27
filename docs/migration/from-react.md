@@ -38,7 +38,7 @@ description: React to Eleva.js migration guide. Learn how useState maps to signa
   "tool": [
     {
       "@type": "HowToTool",
-      "name": "Eleva.js (~2.3KB gzipped)"
+      "name": "Eleva.js (~2.5KB gzipped)"
     }
   ],
   "step": [

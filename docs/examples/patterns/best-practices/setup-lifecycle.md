@@ -186,11 +186,13 @@ app.component("Counter", {
 
 | Hook | When Called | Common Use Cases |
 |------|-------------|------------------|
-| `onBeforeMount` | Before component renders to DOM | Validate props, prepare data |
+| `onBeforeMount` | Before component renders to DOM | Normalize props, prepare data |
 | `onMount` | After component renders to DOM | Fetch data, set up subscriptions |
 | `onBeforeUpdate` | Before component re-renders | Compare old/new state |
 | `onUpdate` | After component re-renders | DOM measurements, third-party sync |
 | `onUnmount` | Before component is destroyed | Cleanup subscriptions, timers |
+
+> **Note:** `onUnmount` is called when: (1) `unmount()` is called explicitly, (2) the parent component unmounts, or (3) a parent re-render removes the child's host element from the DOM.
 
 ### Execution Order
 
@@ -198,7 +200,7 @@ app.component("Counter", {
 Component Created
     |
     v
-onBeforeMount  <- Props validated, initial data ready
+onBeforeMount  <- Props available, initial data ready
     |
     v (DOM renders)
 onMount        <- DOM available, fetch data, set up listeners
@@ -369,17 +371,17 @@ return {
   }
 };
 
-// DON'T: Async in onBeforeMount (won't wait)
+// DON'T: Async in onBeforeMount (blocks first paint)
 return {
   onBeforeMount: async () => {
-    await fetchData();  // Render happens before this completes
+    await fetchData();  // Eleva waits, but this delays initial render
   }
 };
 
-// DO: Async in onMount
+// DO: Async in onMount (non-blocking)
 return {
   onMount: async () => {
-    await fetchData();  // Safe, DOM already rendered
+    await fetchData();  // DOM already rendered, user sees content faster
   }
 };
 
@@ -401,7 +403,7 @@ return {
 | Task | Recommended Hook |
 |------|------------------|
 | Fetch initial data | `onMount` |
-| Validate props | `onBeforeMount` |
+| Normalize props | `onBeforeMount` |
 | Set up event listeners | `onMount` |
 | Remove event listeners | `onUnmount` |
 | Clear timers/intervals | `onUnmount` |

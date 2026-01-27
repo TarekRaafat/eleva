@@ -36,15 +36,19 @@ const router = app.use(Router, {
   // - "query": Uses query params (?view=/path) - for embedded apps
   mode: "hash",
 
-  // Selector for view container within layout (default: "root")
-  // The router looks for: #root, .root, [data-root], or "root" element
-  viewSelector: "root",
+  // Selector for view container within layout (default: "view")
+  // The router looks for: #view, .view, [data-view], or "view" element
+  viewSelector: "view",
 
   // Default layout for all routes (optional)
   globalLayout: LayoutComponent,
 
   // Query parameter name for "query" mode (default: "view")
   queryParam: "view",
+
+  // Whether to start the router automatically (default: true)
+  // Set to false for manual control via router.start()
+  autoStart: true,
 
   // Global navigation guard (optional)
   onBeforeEach: (to, from) => {
@@ -189,11 +193,43 @@ setup(ctx) {
 
 #### Catch-All (Wildcard) Route
 ```javascript
-// IMPORTANT: Must be the LAST route in the array
+// Conventionally placed last in the routes array
 { path: "*", component: NotFoundPage }
 // Matches: /any/unknown/path
 // Params: { pathMatch: "any/unknown/path" }
 ```
+
+#### Nested Routes
+
+> **Note:** Nested route definitions (routes with a `children` property) are **not supported**. All routes must be defined as a flat array.
+
+To achieve similar functionality, use **shared layouts** with flat routes:
+
+```javascript
+// Define a shared layout
+const DashboardLayout = {
+  template: () => `
+    <div class="dashboard">
+      <nav class="dashboard-nav">
+        <a href="#/dashboard">Overview</a>
+        <a href="#/dashboard/settings">Settings</a>
+        <a href="#/dashboard/users">Users</a>
+      </nav>
+      <main id="view"></main>
+    </div>
+  `
+};
+
+// Define flat routes that share the layout
+const routes = [
+  { path: "/dashboard", component: DashboardHome, layout: DashboardLayout },
+  { path: "/dashboard/settings", component: DashboardSettings, layout: DashboardLayout },
+  { path: "/dashboard/users", component: DashboardUsers, layout: DashboardLayout },
+  { path: "/dashboard/users/:id", component: UserDetail, layout: DashboardLayout }
+];
+```
+
+This approach provides layout reuse without nested route definitions. The router renders the matched component inside the layout's view element (found via `viewSelector`).
 
 ### Component Types
 
@@ -271,7 +307,7 @@ router.onBeforeEach((to, from) => {
 
 // Access in components
 setup(ctx) {
-  const title = ctx.router.currentRoute.value.meta.title;
+  const title = ctx.router.meta.title;
   document.title = title;
 }
 ```
@@ -317,7 +353,7 @@ const MainLayout = {
         </nav>
       </header>
 
-      <main id="root">
+      <main id="view">
         <!-- Route components render here -->
       </main>
 
@@ -332,7 +368,7 @@ const MainLayout = {
 const router = app.use(Router, {
   mount: "#app",
   globalLayout: MainLayout,
-  viewSelector: "root",  // Matches <main id="root">
+  viewSelector: "view",  // Matches <main id="view">
   routes: [...]
 });
 ```
@@ -352,7 +388,7 @@ const AdminLayout = {
           <a href="#/admin/settings">Settings</a>
         </nav>
       </aside>
-      <main id="root"></main>
+      <main id="view"></main>
     </div>
   `
 };

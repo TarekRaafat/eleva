@@ -253,7 +253,7 @@ setup: ({ signal }) => {
 
 | Hook | When | Use For |
 |------|------|---------|
-| `onBeforeMount` | Before DOM insert | Validate props |
+| `onBeforeMount` | Before DOM insert | Normalize props |
 | `onMount` | After DOM ready | Fetch data, add listeners, focus |
 | `onUpdate` | After re-render | Sync external systems |
 | `onUnmount` | Before removal | Cleanup listeners, timers (receives `{ cleanup }`) |
@@ -280,7 +280,7 @@ app.component("MyComponent", {
     </div>
   `,
 
-  // 3. Style (optional) - scoped CSS
+  // 3. Style (optional) - CSS (not auto-scoped)
   style: `
     .my-component { padding: 1rem; }
     button { cursor: pointer; }
@@ -323,6 +323,8 @@ app.component("ChildList", {
   `
 });
 ```
+
+> **Props are static** (evaluated once at mount). For reactive props, pass signals: `:user="user"` instead of `:user="user.value"`.
 
 ---
 

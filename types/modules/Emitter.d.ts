@@ -1,22 +1,45 @@
 /**
- * @template T
- * @callback EventHandler
- * @param {...T} args - Event arguments
- * @returns {void|Promise<void>}
+ * @module eleva/emitter
+ * @fileoverview Event emitter for publish-subscribe communication between components.
  */
 /**
+ * Callback function invoked when an event is emitted.
+ * @callback EventHandler
+ * @param {...any} args
+ *        Event arguments passed to the handler.
+ * @returns {void | Promise<void>}
+ */
+/**
+ * Function to unsubscribe an event handler.
  * @callback EventUnsubscribe
  * @returns {void}
  */
 /**
- * @typedef {`${string}:${string}`} EventName
- *           Event names follow the format 'namespace:action' (e.g., 'user:login', 'cart:update')
+ * Event name string identifier.
+ * @typedef {string} EventName
+ * @description
+ * Recommended convention: 'namespace:action' (e.g., 'user:login').
+ * This pattern prevents naming collisions and improves code readability.
+ *
+ * Common namespaces:
+ * - `user:` - User-related events (login, logout, update)
+ * - `component:` - Component lifecycle events (mount, unmount)
+ * - `router:` - Navigation events (beforeEach, afterEach)
+ * - `store:` - State management events (change, error)
+ * @example
+ * 'user:login'      // User logged in
+ * 'cart:update'     // Shopping cart updated
+ * 'component:mount' // Component was mounted
  */
 /**
+ * Interface describing the public API of an Emitter.
  * @typedef {Object} EmitterLike
- * @property {function(string, EventHandler<unknown>): EventUnsubscribe} on - Subscribe to an event
- * @property {function(string, EventHandler<unknown>=): void} off - Unsubscribe from an event
- * @property {function(string, ...unknown): void} emit - Emit an event
+ * @property {(event: string, handler: EventHandler) => EventUnsubscribe} on
+ *           Subscribe to an event.
+ * @property {(event: string, handler?: EventHandler) => void} off
+ *           Unsubscribe from an event.
+ * @property {(event: string, ...args: unknown[]) => void} emit
+ *           Emit an event with arguments.
  */
 /**
  * @class 📡 Emitter
@@ -55,6 +78,7 @@
  * // Lifecycle events
  * emitter.on('component:mount', (component) => {});
  * emitter.on('component:unmount', (component) => {});
+ * // Note: These lifecycle names are conventions; Eleva core does not emit them by default.
  * // State events
  * emitter.on('state:change', (newState, oldState) => {});
  * // Navigation events
@@ -66,7 +90,7 @@ export class Emitter implements EmitterLike {
     /**
      * Map of event names to their registered handler functions
      * @private
-     * @type {Map<string, Set<EventHandler<unknown>>>}
+     * @type {Map<string, Set<EventHandler>>}
      */
     private _events;
     /**
@@ -75,9 +99,10 @@ export class Emitter implements EmitterLike {
      * Event names should follow the format 'namespace:action' for consistency.
      *
      * @public
-     * @template T
      * @param {string} event - The name of the event to listen for (e.g., 'user:login').
-     * @param {EventHandler<T>} handler - The callback function to invoke when the event occurs.
+     * @param {EventHandler} handler - The callback function to invoke when the event occurs.
+     *        Note: Handlers returning Promises are NOT awaited. For async operations,
+     *        handle promise resolution within your handler.
      * @returns {EventUnsubscribe} A function to unsubscribe the event handler.
      *
      * @example
@@ -85,8 +110,8 @@ export class Emitter implements EmitterLike {
      * const unsubscribe = emitter.on('user:login', (user) => console.log(user));
      *
      * @example
-     * // Typed handler
-     * emitter.on('user:update', (/** @type {{id: number, name: string}} *\/ user) => {
+     * // Handler with typed parameter
+     * emitter.on('user:update', (user) => {
      *   console.log(`User ${user.id}: ${user.name}`);
      * });
      *
@@ -94,16 +119,18 @@ export class Emitter implements EmitterLike {
      * // Cleanup
      * unsubscribe(); // Stops listening for the event
      */
-    public on<T>(event: string, handler: EventHandler<T>): EventUnsubscribe;
+    public on(event: string, handler: EventHandler): EventUnsubscribe;
     /**
      * Removes an event handler for the specified event name.
-     * If no handler is provided, all handlers for the event are removed.
      * Automatically cleans up empty event sets to prevent memory leaks.
      *
+     * Behavior varies based on whether handler is provided:
+     * - With handler: Removes only that specific handler function (O(1) Set deletion)
+     * - Without handler: Removes ALL handlers for the event (O(1) Map deletion)
+     *
      * @public
-     * @template T
      * @param {string} event - The name of the event to remove handlers from.
-     * @param {EventHandler<T>} [handler] - The specific handler function to remove.
+     * @param {EventHandler} [handler] - The specific handler to remove. If omitted, all handlers are removed.
      * @returns {void}
      *
      * @example
@@ -116,17 +143,24 @@ export class Emitter implements EmitterLike {
      * // Remove all handlers for an event
      * emitter.off('user:login');
      */
-    public off<T>(event: string, handler?: EventHandler<T>): void;
+    public off(event: string, handler?: EventHandler): void;
     /**
      * Emits an event with the specified data to all registered handlers.
      * Handlers are called synchronously in the order they were registered.
      * If no handlers are registered for the event, the emission is silently ignored.
+     * Handlers that return promises are not awaited.
+     *
+     * Error propagation behavior:
+     * - If a handler throws synchronously, the error propagates immediately
+     * - Remaining handlers in the iteration are NOT called after an error
+     * - For error-resilient emission, wrap your emit call in try/catch
+     * - Async handler rejections are not caught (fire-and-forget)
      *
      * @public
-     * @template T
      * @param {string} event - The name of the event to emit.
-     * @param {...T} args - Optional arguments to pass to the event handlers.
+     * @param {...any} args - Optional arguments to pass to the event handlers.
      * @returns {void}
+     * @throws {Error} If a handler throws synchronously, the error propagates to the caller.
      *
      * @example
      * // Emit an event with data
@@ -140,26 +174,35 @@ export class Emitter implements EmitterLike {
      * // Emit without data
      * emitter.emit('app:ready');
      */
-    public emit<T>(event: string, ...args: T[]): void;
+    public emit(event: string, ...args: any[]): void;
 }
-export type EventHandler<T> = (...args: T[]) => void | Promise<void>;
+/**
+ * Callback function invoked when an event is emitted.
+ */
+export type EventHandler = (...args: any[]) => void | Promise<void>;
+/**
+ * Function to unsubscribe an event handler.
+ */
 export type EventUnsubscribe = () => void;
 /**
- * Event names follow the format 'namespace:action' (e.g., 'user:login', 'cart:update')
+ * Event name string identifier.
  */
-export type EventName = `${string}:${string}`;
+export type EventName = string;
+/**
+ * Interface describing the public API of an Emitter.
+ */
 export type EmitterLike = {
     /**
-     * - Subscribe to an event
+     *           Subscribe to an event.
      */
-    on: (arg0: string, arg1: EventHandler<unknown>) => EventUnsubscribe;
+    on: (event: string, handler: EventHandler) => EventUnsubscribe;
     /**
-     * - Unsubscribe from an event
+     *           Unsubscribe from an event.
      */
-    off: (arg0: string, arg1: EventHandler<unknown> | undefined) => void;
+    off: (event: string, handler?: EventHandler) => void;
     /**
-     * - Emit an event
+     *           Emit an event with arguments.
      */
-    emit: (arg0: string, ...args: unknown[]) => void;
+    emit: (event: string, ...args: unknown[]) => void;
 };
 //# sourceMappingURL=Emitter.d.ts.map

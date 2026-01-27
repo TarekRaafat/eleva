@@ -24,14 +24,14 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript Framework",
   "operatingSystem": "Cross-platform (Web Browser)",
-  "softwareVersion": "1.0.1",
+  "softwareVersion": "1.1.0",
   "datePublished": "2026-01-12",
   "releaseNotes": "First official stable release with production-ready API",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
   "installUrl": "https://www.npmjs.com/package/eleva",
   "fileSize": "6KB",
   "memoryRequirements": "Minimal",
-  "storageRequirements": "6KB minified, 2.3KB gzipped",
+  "storageRequirements": "6KB minified, 2.5KB gzipped",
   "softwareRequirements": "Modern web browser (Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+)",
   "permissions": "None required",
   "featureList": [
@@ -180,7 +180,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
+        "text": "Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
       }
     },
     {
@@ -241,7 +241,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.0.1` | **Bundle Size:** ~6KB minified (~2.3KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.1.0` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -293,7 +293,7 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **Stable Release**: This is the official documentation for Eleva v1.0.1. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
+> **Stable Release**: This is the official documentation for Eleva v1.1.0. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
 
 ---
 
@@ -452,7 +452,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Pure JavaScript** | No JSX, no compilation — what you write is what runs |
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
-| **Tiny Bundle** | ~2.3KB gzipped means instant page loads for your users |
+| **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
 | **No Hidden Magic** | Debug easily with transparent, predictable behavior |
 
 ### DX-First Design Principles
@@ -477,7 +477,7 @@ Eleva is built for high-performance applications. With an average render time of
 
 **Performance Highlights:**
 - **240fps+ capable** - Framework never limits frame rate
-- **Smallest bundle size** (~2.3 KB vs 35-90 KB)
+- **Smallest bundle size** (~2.5KB vs 35-90KB)
 - **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render

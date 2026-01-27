@@ -111,7 +111,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (273 tests, 100% line coverage)."
+        "text": "Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
       }
     },
     {
@@ -136,6 +136,14 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes! Eleva has a simple plugin API. Plugins are objects with an install(eleva, options) method that receives the Eleva instance and can extend it with new functionality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the Router support nested routes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Nested route definitions (routes with a children property) are not supported. All routes must be defined as a flat array. To achieve similar functionality, use shared layouts with flat routes."
       }
     },
     {
@@ -254,7 +262,7 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 **Q: Is Eleva production-ready?**
 
-Yes! Eleva v1.0.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
+Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
 
 **Q: How do I report issues or request features?**
 
@@ -329,6 +337,21 @@ Eleva comes with three powerful built-in plugins:
 **Q: Can I create custom plugins for Eleva?**
 
 Yes! Eleva has a simple plugin API. Plugins are objects with an `install(eleva, options)` method. See the [Plugin System](./plugin-system.md) guide for details.
+
+**Q: Does the Router support nested routes?**
+
+No. Nested route definitions (routes with a `children` property) are not supported. All routes must be defined as a flat array.
+
+To achieve similar functionality, use **shared layouts** with flat routes:
+```javascript
+const routes = [
+  { path: "/dashboard", component: DashboardHome, layout: DashboardLayout },
+  { path: "/dashboard/settings", component: Settings, layout: DashboardLayout },
+  { path: "/dashboard/users/:id", component: UserDetail, layout: DashboardLayout }
+];
+```
+
+See the [Router Configuration](./plugins/router/configuration.md#nested-routes) guide for more details.
 
 ---
 
@@ -620,6 +643,8 @@ describe("MyComponent", () => {
    ```
 2. Unsubscribe from emitter events
 3. Abort pending fetch requests
+
+> **Note:** If a parent re-render removes a child component, Eleva schedules child `onUnmount` cleanup right after the DOM patch. Treat child cleanup as potentially async in those cases.
 
 ### Debugging Tips
 

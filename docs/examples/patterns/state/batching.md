@@ -195,7 +195,7 @@ When using plugins with batching:
 
 | Plugin | Tip |
 |--------|-----|
-| **Store** | Multiple `store.set()` calls are batched |
+| **Store** | Multiple `store.state.*.value` updates are batched |
 | **Router** | DOM updates after `navigate()` are async |
 | **Props** | Child component updates are batched with parent |
 

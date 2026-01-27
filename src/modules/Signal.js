@@ -1,26 +1,47 @@
 "use strict";
 
+/**
+ * @module eleva/signal
+ * @fileoverview Reactive Signal primitive for fine-grained state management and change notification.
+ */
+
 // ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// TYPE DEFINITIONS
 // ============================================================================
 
+// -----------------------------------------------------------------------------
+// Callback Types
+// -----------------------------------------------------------------------------
+
 /**
- * @template T
+ * Callback function invoked when a signal's value changes.
+ * @template T The type of value held by the signal.
  * @callback SignalWatcher
- * @param {T} value - The new value of the signal
+ * @param {T} value
+ *        The new value of the signal.
  * @returns {void}
  */
 
 /**
+ * Function to unsubscribe a watcher from a signal.
  * @callback SignalUnsubscribe
- * @returns {boolean} True if the watcher was successfully removed
+ * @returns {boolean}
+ *          True if the watcher was successfully removed, false if already removed.
+ *          Safe to call multiple times (idempotent).
  */
 
+// -----------------------------------------------------------------------------
+// Interface Types
+// -----------------------------------------------------------------------------
+
 /**
- * @template T
+ * Interface describing the public API of a Signal.
+ * @template T The type of value held by the signal.
  * @typedef {Object} SignalLike
- * @property {T} value - The current value
- * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch - Subscribe to changes
+ * @property {T} value
+ *           The current value of the signal.
+ * @property {function(SignalWatcher<T>): SignalUnsubscribe} watch
+ *           Subscribe to value changes.
  */
 
 /**
@@ -32,7 +53,7 @@
  * Render batching is handled at the component level, not the signal level.
  * The class is generic, allowing type-safe handling of any value type T.
  *
- * @template T The type of value held by this signal
+ * @template T The type of value held by the signal.
  *
  * @example
  * // Basic usage
@@ -50,7 +71,6 @@
  *
  * @example
  * // With objects
- * /** @type {Signal<{x: number, y: number}>} *\/
  * const position = new Signal({ x: 0, y: 0 });
  * position.value = { x: 10, y: 20 }; // Triggers watchers
  *
@@ -61,6 +81,7 @@ export class Signal {
    * Creates a new Signal instance with the specified initial value.
    *
    * @public
+   * @constructor
    * @param {T} value - The initial value of the signal.
    *
    * @example
@@ -70,12 +91,9 @@ export class Signal {
    * const active = new Signal(true);    // Signal<boolean>
    *
    * @example
-   * // Complex types (use JSDoc for type inference)
-   * /** @type {Signal<string[]>} *\/
-   * const items = new Signal([]);
-   *
-   * /** @type {Signal<{id: number, name: string} | null>} *\/
-   * const user = new Signal(null);
+   * // Complex types
+   * const items = new Signal([]);          // Signal holding an array
+   * const user = new Signal(null);         // Signal holding nullable object
    */
   constructor(value) {
     /**
@@ -106,6 +124,10 @@ export class Signal {
    * Sets a new value for the signal and synchronously notifies all registered watchers if the value has changed.
    * Synchronous notification preserves stack traces and ensures immediate value consistency.
    *
+   * Uses strict equality (===) for comparison. For objects/arrays, watchers are only notified
+   * if the reference changes, not if properties are mutated. To trigger updates with objects,
+   * assign a new reference: `signal.value = { ...signal.value, updated: true }`.
+   *
    * @public
    * @param {T} newVal - The new value to set.
    * @returns {void}
@@ -124,6 +146,8 @@ export class Signal {
    * @public
    * @param {SignalWatcher<T>} fn - The callback function to invoke on value change.
    * @returns {SignalUnsubscribe} A function to unsubscribe the watcher.
+   *          Returns true if watcher was removed, false if it wasn't registered.
+   *          Safe to call multiple times (idempotent after first call).
    *
    * @example
    * // Basic watching
@@ -132,6 +156,7 @@ export class Signal {
    * @example
    * // Stop watching
    * unsubscribe(); // Returns true if watcher was removed
+   * unsubscribe(); // Returns false (already removed, safe to call again)
    *
    * @example
    * // Multiple watchers
@@ -148,6 +173,9 @@ export class Signal {
    * Synchronously notifies all registered watchers of the value change.
    * This preserves stack traces for debugging and ensures immediate
    * value consistency. Render batching is handled at the component level.
+   *
+   * @note If a watcher throws, subsequent watchers are NOT called.
+   * The error propagates to the caller (the setter).
    *
    * @private
    * @returns {void}

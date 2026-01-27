@@ -1,21 +1,51 @@
 "use strict";
 
+/**
+ * @module eleva/renderer
+ * @fileoverview High-performance DOM renderer with two-pointer diffing and keyed reconciliation.
+ */
+
 // ============================================================================
-// TYPE DEFINITIONS - TypeScript-friendly JSDoc types for IDE support
+// TYPE DEFINITIONS
 // ============================================================================
 
+// -----------------------------------------------------------------------------
+// Data Types
+// -----------------------------------------------------------------------------
+
 /**
+ * Map of key attribute values to their corresponding DOM nodes.
  * @typedef {Map<string, Node>} KeyMap
- *          Map of key attribute values to their corresponding DOM nodes for O(1) lookup
+ * @description Enables O(1) lookup for keyed element reconciliation.
  */
 
+// -----------------------------------------------------------------------------
+// Interface Types
+// -----------------------------------------------------------------------------
+
 /**
+ * Interface describing the public API of a Renderer.
  * @typedef {Object} RendererLike
- * @property {function(HTMLElement, string): void} patchDOM - Patches the DOM with new HTML
+ * @property {function(HTMLElement, string): void} patchDOM
+ *           Patches the DOM with new HTML content.
+ * @description
+ * Plugins may extend renderer behavior by wrapping private methods (e.g., `_patchNode`),
+ * but those hooks are not part of the public API.
  */
 
+// ============================================================================
+// CONSTANTS
+// ============================================================================
+
 /**
- * Properties that can diverge from attributes via user interaction.
+ * Properties that can diverge from attributes after user interaction.
+ * These are synchronized during DOM patching to ensure element state
+ * matches the rendered HTML attributes.
+ *
+ * - `value`: Text input, textarea, select element values
+ * - `checked`: Checkbox and radio button states
+ * - `selected`: Option element selection states
+ *
  * @private
  * @type {string[]}
  */
@@ -55,8 +85,13 @@ const SYNC_PROPS = ["value", "checked", "selected"];
 export class Renderer {
   /**
    * Creates a new Renderer instance.
+   * Initializes a reusable temporary container for HTML parsing.
+   *
+   * Performance: The temp container is reused across all patch operations,
+   * minimizing memory allocation overhead (O(1) memory per Renderer instance).
    *
    * @public
+   * @constructor
    *
    * @example
    * const renderer = new Renderer();
@@ -93,6 +128,9 @@ export class Renderer {
    * @example
    * // Empty the container
    * renderer.patchDOM(container, '');
+   *
+   * @see _diff - Low-level diffing algorithm.
+   * @see _patchNode - Individual node patching.
    */
   patchDOM(container, newHtml) {
     this._tempContainer.innerHTML = newHtml;
@@ -104,16 +142,26 @@ export class Renderer {
   /**
    * Performs a diff between two DOM nodes and patches the old node to match the new node.
    * Uses a two-pointer algorithm with key-based reconciliation for optimal performance.
+   * This method modifies oldParent in-place - it is not a pure function.
    *
-   * Algorithm overview:
-   * 1. Compare children from start using two pointers
-   * 2. For mismatches, build a key map lazily for O(1) lookup
-   * 3. Move or insert nodes as needed
-   * 4. Clean up remaining nodes at the end
+   * Algorithm details:
+   * 1. Early exit if both nodes have no children (O(1) leaf node optimization)
+   * 2. Convert NodeLists to arrays for indexed access
+   * 3. Initialize two-pointer indices (oldStart/oldEnd, newStart/newEnd)
+   * 4. While pointers haven't crossed:
+   *    a. Skip null entries (from previous moves)
+   *    b. If nodes match (same key+tag or same type+name): patch and advance
+   *    c. On mismatch: lazily build key→node map for O(1) lookup
+   *    d. If keyed match found: move existing node (preserves DOM identity)
+   *    e. Otherwise: clone and insert new node
+   * 5. After loop: append remaining new nodes or remove remaining old nodes
+   *
+   * Complexity: O(n) for most cases, O(n²) worst case with no keys.
+   * Non-keyed elements are matched by position and tag name.
    *
    * @private
-   * @param {HTMLElement} oldParent - The original DOM element to update.
-   * @param {HTMLElement} newParent - The new DOM element with desired state.
+   * @param {Element} oldParent - The original DOM element to update (modified in-place).
+   * @param {Element} newParent - The new DOM element with desired state.
    * @returns {void}
    */
   _diff(oldParent, newParent) {
@@ -184,7 +232,8 @@ export class Renderer {
 
   /**
    * Patches a single node, updating its content and attributes to match the new node.
-   * Handles text nodes by updating nodeValue, and element nodes by updating attributes
+   * Handles text nodes (nodeType 3 / Node.TEXT_NODE) by updating nodeValue,
+   * and element nodes (nodeType 1 / Node.ELEMENT_NODE) by updating attributes
    * and recursively diffing children.
    *
    * Skips nodes that are managed by Eleva component instances to prevent interference
@@ -212,12 +261,20 @@ export class Renderer {
   /**
    * Removes a node from its parent, with special handling for Eleva-managed elements.
    * Style elements with the `data-e-style` attribute are preserved to maintain
-   * component-scoped styles across re-renders.
+   * component styles across re-renders. Without this protection, component styles
+   * would be removed during DOM diffing and lost until the next full re-render.
+   *
+   * @note Style tags persist for the component's entire lifecycle. If the template
+   * conditionally removes elements that the CSS rules target (e.g., `.foo` elements),
+   * the style rules remain but simply have no matching elements. This is expected
+   * behavior - styles are cleaned up when the component unmounts, not when individual
+   * elements are removed.
    *
    * @private
    * @param {HTMLElement} parent - The parent element containing the node.
    * @param {Node} node - The node to remove.
    * @returns {void}
+   * @see _injectStyles - Where data-e-style elements are created.
    */
   _removeNode(parent, node) {
     // Preserve Eleva-managed style elements
@@ -230,12 +287,16 @@ export class Renderer {
    * Adds new attributes, updates changed values, and removes attributes no longer present.
    * Also syncs DOM properties that can diverge from attributes after user interaction.
    *
-   * Event attributes (prefixed with `@`) are skipped as they are handled separately
-   * by Eleva's event binding system.
+   * Processing order:
+   * 1. Iterate new attributes, skip @ prefixed (event) attributes
+   * 2. Update attribute if value changed
+   * 3. Sync corresponding DOM property if writable (handles boolean conversion)
+   * 4. Iterate old attributes in reverse, remove if not in new element
+   * 5. Sync SYNC_PROPS (value, checked, selected) from new to old element
    *
    * @private
-   * @param {HTMLElement} oldEl - The original element to update.
-   * @param {HTMLElement} newEl - The new element with target attributes.
+   * @param {Element} oldEl - The original element to update.
+   * @param {Element} newEl - The new element with target attributes.
    * @returns {void}
    */
   _updateAttributes(oldEl, newEl) {
@@ -315,10 +376,11 @@ export class Renderer {
   /**
    * Extracts the key attribute from a node if it exists.
    * Only element nodes (nodeType === 1) can have key attributes.
+   * Uses optional chaining for null-safe access.
    *
    * @private
-   * @param {Node|null|undefined} node - The node to extract the key from.
-   * @returns {string|null} The key attribute value, or null if not an element or no key.
+   * @param {Node | null | undefined} node - The node to extract the key from.
+   * @returns {string | null} The key attribute value, or null if not an element or no key.
    */
   _getNodeKey(node) {
     return node?.nodeType === 1 ? node.getAttribute("key") : null;
@@ -329,7 +391,7 @@ export class Renderer {
    * The map is built lazily only when needed (when a mismatch occurs during diffing).
    *
    * @private
-   * @param {Array<ChildNode>} children - The array of child nodes to map.
+   * @param {ChildNode[]} children - The array of child nodes to map.
    * @param {number} start - The start index (inclusive) for mapping.
    * @param {number} end - The end index (inclusive) for mapping.
    * @returns {KeyMap} A Map of key strings to their corresponding DOM nodes.

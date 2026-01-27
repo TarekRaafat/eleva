@@ -66,7 +66,7 @@ actions: {
 ```
 
 ### Attr Plugin
-An official Eleva plugin (~2.4KB) that provides intelligent attribute binding for ARIA accessibility, data attributes, boolean attributes, and dynamic properties. [Learn more →](./plugins/attr/index.md)
+An official Eleva plugin (~2.2KB) that provides intelligent attribute binding for ARIA accessibility, data attributes, boolean attributes, and dynamic properties. [Learn more →](./plugins/attr/index.md)
 
 ---
 
@@ -106,7 +106,7 @@ A self-contained, reusable building block of an Eleva application. Components en
 app.component("MyComponent", {
   setup,    // State and logic
   template, // HTML structure
-  style,    // Scoped CSS
+  style,    // Component CSS
   children  // Nested components
 });
 ```
@@ -322,15 +322,19 @@ app.use(Router, { routes: [...] });
 ```
 
 ### Props
-Data passed from a parent component to a child component. Props flow down the component tree.
+Data passed from a parent component to a child component. Props flow down the component tree and are **evaluated once at mount time** (static by design). For reactive props, pass signals instead of values.
 
 ```javascript
-// Parent template
+// Parent template - static prop (value snapshot)
 <child :name="user.value.name" :onSave="handleSave"></child>
 
-// Child setup
+// Parent template - reactive prop (pass signal itself)
+<child :user="user" :onSave="handleSave"></child>
+
+// Child setup - use signal.value in template for reactivity
 setup: ({ props }) => ({
-  userName: props.name,
+  userName: props.name,           // Static value
+  user: props.user,               // Signal reference (auto-watched)
   save: () => props.onSave()
 })
 ```
@@ -366,12 +370,12 @@ An official Eleva plugin (~15KB) for client-side navigation with support for has
 
 ## S
 
-### Scoped Styles
-CSS styles that only apply to a specific component, preventing style conflicts. Defined in the component's `style` property.
+### Component Styles
+CSS styles defined in a component's `style` property. Styles are injected into a `<style>` element but are **not automatically scoped**. Use unique class names or CSS nesting for isolation.
 
 ```javascript
 style: `
-  .button { color: blue; }  /* Only affects this component */
+  .my-component .button { color: blue; }  /* Use specific selectors */
 `
 ```
 
