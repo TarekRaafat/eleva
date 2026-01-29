@@ -1,4 +1,4 @@
-/*! Eleva Store Plugin v1.1.0 | MIT License | https://elevajs.com */
+/*! Eleva Store Plugin v1.1.1 | MIT License | https://elevajs.com */
 /**
  * @module eleva/plugins/store
  * @fileoverview Reactive state management plugin with namespaced modules,
@@ -249,7 +249,7 @@
     /**
    * Plugin version
    * @type {string}
-   */ version: "1.1.0",
+   */ version: "1.1.1",
     /**
    * Plugin description
    * @type {string}

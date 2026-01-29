@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Code Examples
 
-> **Version:** 1.1.0 | Comprehensive, real-world examples to copy and adapt for your projects.
+> **Version:** 1.1.1 | Comprehensive, real-world examples to copy and adapt for your projects.
 
 ---
 

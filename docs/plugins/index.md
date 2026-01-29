@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva Plugins
 
-> **Version:** 1.1.0 | **All plugins are optional and tree-shakeable**
+> **Version:** 1.1.1 | **All plugins are optional and tree-shakeable**
 
 Eleva's plugin system extends the core framework with powerful optional features. Plugins come in two types: **Core Plugins** maintained by the Eleva team, and **External Plugins** created by the community.
 

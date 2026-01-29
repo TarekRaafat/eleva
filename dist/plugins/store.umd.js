@@ -1,4 +1,4 @@
-/*! Eleva Store Plugin v1.1.0 | MIT License | https://elevajs.com */
+/*! Eleva Store Plugin v1.1.1 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -255,7 +255,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.1.0",
+     */ version: "1.1.1",
       /**
      * Plugin description
      * @type {string}

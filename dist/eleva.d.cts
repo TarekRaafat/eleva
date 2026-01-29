@@ -442,7 +442,7 @@ declare class TemplateEngine {
      * @private
      * @type {Map<string, CompiledExpressionFunction>}
      */
-    private static _functionCache;
+    private static _cache;
     /**
      * Evaluates an expression in the context of the provided data object.
      * Used for resolving `@event` handlers and `:prop` bindings.
@@ -708,10 +708,6 @@ type RendererLike = {
 };
 
 /**
- * Configuration options for the Eleva instance (reserved for future use).
- * @typedef {Record<string, unknown>} ElevaConfig
- */
-/**
  * Component definition object.
  * @typedef {Object} ComponentDefinition
  * @property {SetupFunction} [setup]
@@ -924,12 +920,11 @@ type RendererLike = {
  */
 declare class Eleva {
     /**
-     * Creates a new Eleva instance with the specified name and configuration.
+     * Creates a new Eleva instance with the specified name.
      *
      * @public
      * @constructor
      * @param {string} name - The unique identifier name for this Eleva instance.
-     * @param {ElevaConfig} [config={}] - Optional configuration object for the instance.
      * @throws {Error} If the name is not provided or is not a string.
      *
      * @example
@@ -941,11 +936,9 @@ declare class Eleva {
      * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
      *
      */
-    constructor(name: string, config?: ElevaConfig);
+    constructor(name: string);
     /** @public @readonly {string} The unique identifier name for this Eleva instance */
     public readonly name: string;
-    /** @public @readonly {Record<string, unknown>} Configuration object for the Eleva instance */
-    public readonly config: ElevaConfig;
     /** @public @readonly {Emitter} Event emitter for handling component events */
     public readonly emitter: Emitter;
     /** @public @readonly {typeof Signal} Signal class for creating reactive state */
@@ -1104,10 +1097,6 @@ declare class Eleva {
      */
     private _mountComponents;
 }
-/**
- * Configuration options for the Eleva instance (reserved for future use).
- */
-type ElevaConfig = Record<string, unknown>;
 /**
  * Component definition object.
  */
@@ -1325,5 +1314,5 @@ type DOMEventName = "click" | "submit" | "input" | "change" | "focus" | "blur" |
 //# sourceMappingURL=index.d.ts.map
 
 export { Eleva, Emitter, Renderer, Signal, TemplateEngine, Eleva as default };
-export type { ChildrenMap, CleanupResources, ComponentContext, ComponentDefinition, ComponentProps, DOMEventHandler, DOMEventName, ElevaConfig, ElevaPlugin, LifecycleHook, LifecycleHookContext, LifecycleHooks, MountResult, PluginInstallFunction, PluginOptions, PluginUninstallFunction, SetupFunction, SetupResult, SignalFactory, StyleFunction, TemplateFunction, UnmountFunction, UnmountHook, UnmountHookContext, UnsubscribeFunction };
+export type { ChildrenMap, CleanupResources, ComponentContext, ComponentDefinition, ComponentProps, DOMEventHandler, DOMEventName, ElevaPlugin, LifecycleHook, LifecycleHookContext, LifecycleHooks, MountResult, PluginInstallFunction, PluginOptions, PluginUninstallFunction, SetupFunction, SetupResult, SignalFactory, StyleFunction, TemplateFunction, UnmountFunction, UnmountHook, UnmountHookContext, UnsubscribeFunction };
 //# sourceMappingURL=eleva.d.cts.map

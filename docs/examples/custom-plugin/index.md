@@ -116,7 +116,7 @@ description: Complete guide to building Eleva.js plugins. Learn plugin architect
 
 # Creating a Custom Plugin for Eleva
 
-> **Version:** 1.1.0 | Complete guide to creating, testing, and publishing Eleva plugins.
+> **Version:** 1.1.1 | Complete guide to creating, testing, and publishing Eleva plugins.
 
 ---
 

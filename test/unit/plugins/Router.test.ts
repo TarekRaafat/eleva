@@ -1702,4 +1702,164 @@ describe("RouterPlugin", () => {
       expect(router.currentRoute.value.path).toBe("/profile");
     });
   });
+
+  // ===========================================================================
+  // Edge Cases and Error Handling
+  // ===========================================================================
+
+  describe("Edge Cases and Error Handling", () => {
+    test("should reset _isNavigating flag and emit router:error when history API throws", async () => {
+      const HomePage = { template: () => "<h1>Home</h1>" };
+      const AboutPage = { template: () => "<h1>About</h1>" };
+      const errorHandler = mock(() => {});
+
+      router = app.use(RouterPlugin, {
+        mount: "#app",
+        mode: "history",
+        autoStart: false,
+        routes: [
+          { path: "/", component: HomePage },
+          { path: "/about", component: AboutPage },
+        ],
+      });
+
+      // Register error handler
+      router.onError(errorHandler);
+
+      await router.start();
+
+      // Verify initial state
+      expect(router._isNavigating).toBe(false);
+
+      // Mock history.pushState to throw
+      const originalPushState = history.pushState;
+      history.pushState = mock(() => {
+        throw new Error("SecurityError: history.pushState failed");
+      });
+
+      try {
+        // Attempt navigation - should fail but reset flag
+        const result = await router.navigate("/about");
+
+        // Wait for microtask to reset flag
+        await flushPromises();
+
+        // Navigation should have failed
+        expect(result).toBe(false);
+
+        // Flag should be reset despite error
+        expect(router._isNavigating).toBe(false);
+
+        // Error handler should have been called
+        expect(errorHandler).toHaveBeenCalled();
+      } finally {
+        // Restore original pushState
+        history.pushState = originalPushState;
+      }
+    });
+
+    test("should execute all guards in snapshot even if a guard unregisters itself", async () => {
+      const HomePage = { template: () => "<h1>Home</h1>" };
+      const AboutPage = { template: () => "<h1>About</h1>" };
+      const executionOrder: string[] = [];
+
+      router = app.use(RouterPlugin, {
+        mount: "#app",
+        autoStart: false,
+        routes: [
+          { path: "/", component: HomePage },
+          { path: "/about", component: AboutPage },
+        ],
+      });
+
+      // First guard - normal execution
+      router.onBeforeEach(() => {
+        executionOrder.push("guard1");
+        return true;
+      });
+
+      // Second guard - unregisters itself during execution
+      let unregisterSelf: (() => void) | null = null;
+      unregisterSelf = router.onBeforeEach(() => {
+        executionOrder.push("guard2-start");
+        // Unregister self during execution
+        if (unregisterSelf) {
+          unregisterSelf();
+        }
+        executionOrder.push("guard2-end");
+        return true;
+      });
+
+      // Third guard - should still run because we iterate over a snapshot
+      router.onBeforeEach(() => {
+        executionOrder.push("guard3");
+        return true;
+      });
+
+      await router.start();
+      await router.navigate("/about");
+
+      // All three guards should have executed despite guard2 unregistering itself
+      expect(executionOrder).toContain("guard1");
+      expect(executionOrder).toContain("guard2-start");
+      expect(executionOrder).toContain("guard2-end");
+      expect(executionOrder).toContain("guard3");
+
+      // Verify execution order
+      expect(executionOrder).toEqual([
+        "guard1",
+        "guard2-start",
+        "guard2-end",
+        "guard3",
+      ]);
+    });
+
+    test("should execute later guard even when earlier guard unregisters it (snapshot behavior)", async () => {
+      const HomePage = { template: () => "<h1>Home</h1>" };
+      const AboutPage = { template: () => "<h1>About</h1>" };
+      const executionOrder: string[] = [];
+
+      router = app.use(RouterPlugin, {
+        mount: "#app",
+        autoStart: false,
+        routes: [
+          { path: "/", component: HomePage },
+          { path: "/about", component: AboutPage },
+        ],
+      });
+
+      // We need to register guard3 last but get its unregister function first
+      // So we use a holder that will be set after registration
+      let unregisterGuard3: (() => void) | null = null;
+
+      // First guard - unregisters guard3 before guard3 runs
+      router.onBeforeEach(() => {
+        executionOrder.push("guard1");
+        if (unregisterGuard3) {
+          unregisterGuard3(); // Unregister guard3 during guard1 execution
+        }
+        return true;
+      });
+
+      // Second guard - normal
+      router.onBeforeEach(() => {
+        executionOrder.push("guard2");
+        return true;
+      });
+
+      // Third guard - registered last, so runs after guard1 and guard2
+      // Guard1 will unregister it before it runs, but snapshot should preserve it
+      unregisterGuard3 = router.onBeforeEach(() => {
+        executionOrder.push("guard3");
+        return true;
+      });
+
+      await router.start();
+      await router.navigate("/about");
+
+      // Guard3 was in the snapshot when iteration started, so it should still run
+      // even though guard1 unregistered it before guard3's turn
+      expect(executionOrder).toEqual(["guard1", "guard2", "guard3"]);
+    });
+  });
 });

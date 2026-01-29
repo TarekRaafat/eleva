@@ -15,7 +15,7 @@ import { TemplateEngine } from "../../../src/modules/TemplateEngine.js";
 describe("TemplateEngine", () => {
   beforeEach(() => {
     // Clear cache before each test to ensure isolation
-    (TemplateEngine as any)._functionCache.clear();
+    (TemplateEngine as any)._cache.clear();
   });
 
   // ==========================================================================
@@ -89,7 +89,7 @@ describe("TemplateEngine", () => {
 
 describe("TemplateEngine Complex Expression Handling", () => {
   beforeEach(() => {
-    (TemplateEngine as any)._functionCache.clear();
+    (TemplateEngine as any)._cache.clear();
   });
 
   // ==========================================================================
@@ -625,13 +625,13 @@ describe("TemplateEngine Complex Expression Handling", () => {
       const result1 = TemplateEngine.evaluate(complexExpr, {
         items: [1, 2, 3, 4, 5],
       });
-      const cacheSize1 = (TemplateEngine as any)._functionCache.size;
+      const cacheSize1 = (TemplateEngine as any)._cache.size;
 
       // Second evaluation (should use cache)
       const result2 = TemplateEngine.evaluate(complexExpr, {
         items: [2, 3, 4, 5, 6],
       });
-      const cacheSize2 = (TemplateEngine as any)._functionCache.size;
+      const cacheSize2 = (TemplateEngine as any)._cache.size;
 
       expect(result1).toBe(24);
       expect(result2).toBe(36);
@@ -646,30 +646,30 @@ describe("TemplateEngine Complex Expression Handling", () => {
       TemplateEngine.evaluate(expr, { user: null });
       TemplateEngine.evaluate(expr, {});
 
-      expect((TemplateEngine as any)._functionCache.size).toBe(1);
+      expect((TemplateEngine as any)._cache.size).toBe(1);
     });
 
     test("whitespace differences create different cache entries", () => {
-      (TemplateEngine as any)._functionCache.clear();
+      (TemplateEngine as any)._cache.clear();
 
       TemplateEngine.evaluate("a+b", { a: 1, b: 2 });
       TemplateEngine.evaluate("a + b", { a: 1, b: 2 });
       TemplateEngine.evaluate("a  +  b", { a: 1, b: 2 });
 
       // Each whitespace variation is a different cache key
-      expect((TemplateEngine as any)._functionCache.size).toBe(3);
+      expect((TemplateEngine as any)._cache.size).toBe(3);
     });
 
     test("cache persists between evaluate calls", () => {
-      (TemplateEngine as any)._functionCache.clear();
+      (TemplateEngine as any)._cache.clear();
 
       // First call - should create cache entry
       TemplateEngine.evaluate("x * 2", { x: 5 });
-      const sizeAfterFirst = (TemplateEngine as any)._functionCache.size;
+      const sizeAfterFirst = (TemplateEngine as any)._cache.size;
 
       // Second call with same expression - should use cache
       TemplateEngine.evaluate("x * 2", { x: 10 });
-      const sizeAfterSecond = (TemplateEngine as any)._functionCache.size;
+      const sizeAfterSecond = (TemplateEngine as any)._cache.size;
 
       expect(sizeAfterFirst).toBe(1);
       expect(sizeAfterSecond).toBe(1);

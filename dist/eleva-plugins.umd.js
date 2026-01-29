@@ -1,4 +1,4 @@
-/*! Eleva Plugins v1.1.0 | MIT License | https://elevajs.com */
+/*! Eleva Plugins v1.1.1 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -77,7 +77,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.1.0",
+     */ version: "1.1.1",
       /**
      * Plugin description
      * @type {string}
@@ -1077,26 +1077,30 @@
                   // Increment navigation ID and capture it for this navigation
                   const currentNavId = ++this._navigationId;
                   this._isNavigating = true;
-                  const state = target.state || {};
-                  const replace = target.replace || false;
-                  const historyMethod = replace ? "replaceState" : "pushState";
-                  if (this.options.mode === "hash") {
-                      if (replace) {
-                          const newUrl = `${window.location.pathname}${window.location.search}#${path}`;
-                          window.history.replaceState(state, "", newUrl);
+                  try {
+                      const state = target.state || {};
+                      const replace = target.replace || false;
+                      const historyMethod = replace ? "replaceState" : "pushState";
+                      if (this.options.mode === "hash") {
+                          if (replace) {
+                              const newUrl = `${window.location.pathname}${window.location.search}#${path}`;
+                              window.history.replaceState(state, "", newUrl);
+                          } else {
+                              window.location.hash = path;
+                          }
                       } else {
-                          window.location.hash = path;
+                          const url = this.options.mode === "query" ? this._buildQueryUrl(path) : path;
+                          history[historyMethod](state, "", url);
                       }
-                  } else {
-                      const url = this.options.mode === "query" ? this._buildQueryUrl(path) : path;
-                      history[historyMethod](state, "", url);
+                  } finally{
+                      // Always reset the flag via microtask, even if history manipulation throws
+                      // Only reset if no newer navigation has started
+                      queueMicrotask(()=>{
+                          if (this._navigationId === currentNavId) {
+                              this._isNavigating = false;
+                          }
+                      });
                   }
-                  // Only reset the flag if no newer navigation has started
-                  queueMicrotask(()=>{
-                      if (this._navigationId === currentNavId) {
-                          this._isNavigating = false;
-                      }
-                  });
               }
               return navigationSuccessful;
           } catch (error) {
@@ -2014,7 +2018,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.1.0",
+     */ version: "1.1.1",
       /**
      * Plugin description
      * @type {string}
@@ -2395,7 +2399,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.1.0",
+     */ version: "1.1.1",
       /**
      * Plugin description
      * @type {string}

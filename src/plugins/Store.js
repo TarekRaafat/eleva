@@ -283,7 +283,7 @@ export const StorePlugin = {
    * Plugin version
    * @type {string}
    */
-  version: "1.1.0",
+  version: "1.1.1",
 
   /**
    * Plugin description

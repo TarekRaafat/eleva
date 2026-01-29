@@ -65,7 +65,7 @@ export class TemplateEngine {
      * @private
      * @type {Map<string, CompiledExpressionFunction>}
      */
-    private static _functionCache;
+    private static _cache;
     /**
      * Evaluates an expression in the context of the provided data object.
      * Used for resolving `@event` handlers and `:prop` bindings.

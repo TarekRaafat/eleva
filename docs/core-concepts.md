@@ -21,7 +21,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Deep dive into Eleva's core modules - Signals, TemplateEngine, Emitters, Renderer, and Lifecycle Hooks. Learn reactivity and event handling.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-01-28T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -680,7 +680,7 @@ The **Eleva** class orchestrates component registration, mounting, plugin integr
 
 | Method | Description | Returns |
 |--------|-------------|---------|
-| `new Eleva(name, config)` | Creates an app instance | `Eleva` |
+| `new Eleva(name)` | Creates an app instance | `Eleva` |
 | `use(plugin, options)` | Integrates a plugin | `Eleva` or plugin result |
 | `component(name, definition)` | Registers a component | `Eleva` |
 | `mount(container, compName, props)` | Mounts to DOM | `Promise<MountResult>` |

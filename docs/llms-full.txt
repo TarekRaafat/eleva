@@ -34,7 +34,7 @@ Eleva.js is a minimalist, lightweight, pure vanilla JavaScript frontend framewor
 ## Quick Facts
 
 - Name: Eleva.js (also known as: elevajs, eleva)
-- Version: 1.1.0
+- Version: 1.1.1
 - License: MIT
 - Author: Tarek Raafat
 - Website: https://elevajs.com
@@ -265,7 +265,7 @@ The same rules apply to `style`: use a function for reactive `ctx` values, or a 
 
 ```typescript
 // Core API
-new Eleva(name: string, config?: object)
+new Eleva(name: string)
 app.component(name: string, def: ComponentDefinition): Eleva
 app.mount(el: HTMLElement, nameOrDef: string|ComponentDefinition, props?: object): Promise<MountResult>
 app.use(plugin: ElevaPlugin, options?: object): Eleva|unknown

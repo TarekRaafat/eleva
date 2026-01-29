@@ -1,4 +1,4 @@
-# Eleva.js v1.1.0 (LLM Quick Reference)
+# Eleva.js v1.1.1 (LLM Quick Reference)
 
 > Lightweight (~6KB) JavaScript framework. Compact rules and patterns for generating correct Eleva.js code. Zero dependencies. For full details, see `https://elevajs.com/llms-full.txt`.
 
@@ -83,7 +83,7 @@ const Eleva = require('eleva');
 
 ## Core Signatures (Minimal)
 ```ts
-new Eleva(name: string, config?: object)
+new Eleva(name: string)
 app.component(name: string, def: ComponentDefinition): Eleva
 app.mount(el: HTMLElement, nameOrDef: string|ComponentDefinition, props?: object): Promise<MountResult>
 app.use(plugin: ElevaPlugin, options?: object): Eleva|unknown

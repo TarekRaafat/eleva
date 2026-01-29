@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Store Plugin
 
-> **Version:** 1.1.0 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
+> **Version:** 1.1.1 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
 
 The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
 

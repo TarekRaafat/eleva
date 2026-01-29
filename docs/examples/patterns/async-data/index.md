@@ -14,7 +14,7 @@ description: Eleva.js async patterns for API fetching, loading states, paginatio
 
 # Async Data Fetching
 
-> **Version:** 1.1.0 | API fetching, loading states, and pagination patterns.
+> **Version:** 1.1.1 | API fetching, loading states, and pagination patterns.
 
 ---
 

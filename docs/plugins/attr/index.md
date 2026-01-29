@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Attr Plugin
 
-> **Version:** 1.1.0 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
+> **Version:** 1.1.1 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
 

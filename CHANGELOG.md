@@ -6,6 +6,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.1.1 (29-01-2026)
+
+### 🐛 Fixed
+
+- **Eleva Core** - Fixed multiple `@` event attributes on same element being skipped
+  - When an element had multiple event bindings (e.g., `@click` and `@mouseover`), some could be silently ignored
+  - Cause: Forward iteration over live `attributes` collection while removing processed attributes
+  - The `removeAttribute()` call shifted indices, causing subsequent `@` attributes to be skipped
+  - Fix: Changed to backward iteration which is safe for live collection mutation
+  - Example that now works correctly: `<button @click="save" @mouseover="preview" @mouseout="reset">`
+
+- **Router Plugin** - Added regression tests for navigation guards snapshot behavior
+  - Guards array is copied via spread before iteration, allowing guards to safely unregister during execution
+  - Added tests to verify and enforce this contract
+
+- **Router Plugin** - Fixed `_isNavigating` flag not resetting on error
+  - If an error occurred during history manipulation, the navigation flag could remain `true` forever
+  - This would block all future navigation attempts
+  - Fix: Added try-finally to ensure the flag always resets via microtask
+
+### 🧹 Cleanup
+
+- **Eleva Core** - Removed unused `config` parameter from constructor
+  - The `config` parameter was documented as "reserved for future use" but never implemented
+  - `new Eleva("app", config)` still works (extra arguments are ignored) but `app.config` is no longer available
+  - Saves 19 bytes minified
+
+- **TemplateEngine** - Renamed internal `_functionCache` to `_cache`
+  - Internal optimization, no public API change
+  - Saves 24 bytes minified
+
+### 📦 Bundle Size
+
+- **Core**: 6,173 bytes minified (was 6,213) — **40 bytes smaller**
+- **Core gzipped**: 2,463 bytes (was 2,484) — **21 bytes smaller**
+
+---
+
 ## v1.1.0 ✨ (27-01-2026)
 
 ### ⚠️ Breaking Changes

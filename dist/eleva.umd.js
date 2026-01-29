@@ -1,4 +1,4 @@
-/*! Eleva v1.1.0 | MIT License | https://elevajs.com */
+/*! Eleva v1.1.1 | MIT License | https://elevajs.com */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
@@ -120,11 +120,11 @@
      */ static evaluate(expression, data) {
           if (typeof expression !== "string") return expression;
           if (!expression.trim()) return "";
-          let fn = this._functionCache.get(expression);
+          let fn = this._cache.get(expression);
           if (!fn) {
               try {
                   fn = new Function("data", `with(data) { return ${expression}; }`);
-                  this._functionCache.set(expression, fn);
+                  this._cache.set(expression, fn);
               } catch  {
                   return "";
               }
@@ -149,7 +149,7 @@
      * @static
      * @private
      * @type {Map<string, CompiledExpressionFunction>}
-     */ TemplateEngine._functionCache = new Map();
+     */ TemplateEngine._cache = new Map();
 
   /**
    * @module eleva/signal
@@ -880,10 +880,7 @@
   // -----------------------------------------------------------------------------
   // Configuration Types
   // -----------------------------------------------------------------------------
-  /**
-   * Configuration options for the Eleva instance (reserved for future use).
-   * @typedef {Record<string, unknown>} ElevaConfig
-   */ // -----------------------------------------------------------------------------
+  // -----------------------------------------------------------------------------
   // Component Types
   // -----------------------------------------------------------------------------
   /**
@@ -1351,7 +1348,8 @@
           /** @type {NodeListOf<Element>} */ const elements = container.querySelectorAll("*");
           for (const el of elements){
               /** @type {NamedNodeMap} */ const attrs = el.attributes;
-              for(let i = 0; i < attrs.length; i++){
+              // Iterate backwards to safely remove attributes from live collection
+              for(let i = attrs.length - 1; i >= 0; i--){
                   /** @type {Attr} */ const attr = attrs[i];
                   if (!attr.name.startsWith("@")) continue;
                   /** @type {keyof HTMLElementEventMap} */ const event = attr.name.slice(1);
@@ -1456,12 +1454,11 @@
           }
       }
       /**
-     * Creates a new Eleva instance with the specified name and configuration.
+     * Creates a new Eleva instance with the specified name.
      *
      * @public
      * @constructor
      * @param {string} name - The unique identifier name for this Eleva instance.
-     * @param {ElevaConfig} [config={}] - Optional configuration object for the instance.
      * @throws {Error} If the name is not provided or is not a string.
      *
      * @example
@@ -1472,12 +1469,11 @@
      * });
      * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
      *
-     */ constructor(name, config = {}){
+     */ constructor(name){
           if (!name || typeof name !== "string") {
               throw new Error("Eleva: name must be a non-empty string");
           }
           /** @public @readonly {string} The unique identifier name for this Eleva instance */ this.name = name;
-          /** @public @readonly {Record<string, unknown>} Configuration object for the Eleva instance */ this.config = config;
           /** @public @readonly {Emitter} Event emitter for handling component events */ this.emitter = new Emitter();
           /** @public @readonly {typeof Signal} Signal class for creating reactive state */ this.signal = Signal;
           /** @public @readonly {typeof TemplateEngine} TemplateEngine class for template parsing */ this.templateEngine = TemplateEngine;

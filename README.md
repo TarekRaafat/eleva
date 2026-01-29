@@ -1,6 +1,6 @@
 # Eleva.js 🚀
 
-> **Version:** `1.1.0` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.1.1` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 >
 > *Also known as: elevajs, eleva*
 
@@ -33,7 +33,7 @@
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
 _Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
 
-> **Stable Release**: This is `v1.1.0` - The latest stable release of Eleva.js!
+> **Stable Release**: This is `v1.1.1` - The latest stable release of Eleva.js!
 
 
 

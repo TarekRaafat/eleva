@@ -419,17 +419,6 @@ describe("Eleva Constructor", () => {
     expect(app.name).toBe("MyApp");
   });
 
-  test("should store config object", () => {
-    const config = { debug: true, prefix: "custom" };
-    const app = new Eleva("MyApp", config);
-    expect(app.config).toEqual(config);
-  });
-
-  test("should use empty object as default config", () => {
-    const app = new Eleva("MyApp");
-    expect(app.config).toEqual({});
-  });
-
   test("should initialize emitter as Emitter instance", () => {
     const app = new Eleva("MyApp");
     expect(app.emitter).toBeInstanceOf(Emitter);
@@ -1202,6 +1191,63 @@ describe("Eleva Event Processing", () => {
 
     const button = container.querySelector("button")!;
     expect(button.hasAttribute("@click")).toBe(false);
+  });
+
+  test("should bind both @ attributes when two exist on same element", async () => {
+    const calls: string[] = [];
+    const component = {
+      setup: () => ({
+        handleClick: () => calls.push("click"),
+        handleMouseOver: () => calls.push("mouseover"),
+      }),
+      template: () =>
+        `<button @click="handleClick" @mouseover="handleMouseOver">Hover me</button>`,
+    };
+
+    app.component("two-events", component);
+    await app.mount(container, "two-events");
+
+    const button = container.querySelector("button")!;
+
+    // Both @ attributes should be removed after binding
+    expect(button.hasAttribute("@click")).toBe(false);
+    expect(button.hasAttribute("@mouseover")).toBe(false);
+
+    // Both handlers should be bound and functional
+    button.click();
+    button.dispatchEvent(new Event("mouseover"));
+
+    expect(calls).toEqual(["click", "mouseover"]);
+  });
+
+  test("should bind all @ attributes when three exist on same element", async () => {
+    const calls: string[] = [];
+    const component = {
+      setup: () => ({
+        handleClick: () => calls.push("click"),
+        handleMouseOver: () => calls.push("mouseover"),
+        handleMouseOut: () => calls.push("mouseout"),
+      }),
+      template: () =>
+        `<button @click="handleClick" @mouseover="handleMouseOver" @mouseout="handleMouseOut">Hover me</button>`,
+    };
+
+    app.component("three-events", component);
+    await app.mount(container, "three-events");
+
+    const button = container.querySelector("button")!;
+
+    // All @ attributes should be removed after binding
+    expect(button.hasAttribute("@click")).toBe(false);
+    expect(button.hasAttribute("@mouseover")).toBe(false);
+    expect(button.hasAttribute("@mouseout")).toBe(false);
+
+    // All handlers should be bound and functional
+    button.click();
+    button.dispatchEvent(new Event("mouseover"));
+    button.dispatchEvent(new Event("mouseout"));
+
+    expect(calls).toEqual(["click", "mouseover", "mouseout"]);
   });
 
   test("should handle expression-based handler", async () => {

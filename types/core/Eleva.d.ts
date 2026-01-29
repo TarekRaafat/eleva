@@ -1,8 +1,4 @@
 /**
- * Configuration options for the Eleva instance (reserved for future use).
- * @typedef {Record<string, unknown>} ElevaConfig
- */
-/**
  * Component definition object.
  * @typedef {Object} ComponentDefinition
  * @property {SetupFunction} [setup]
@@ -215,12 +211,11 @@
  */
 export class Eleva {
     /**
-     * Creates a new Eleva instance with the specified name and configuration.
+     * Creates a new Eleva instance with the specified name.
      *
      * @public
      * @constructor
      * @param {string} name - The unique identifier name for this Eleva instance.
-     * @param {ElevaConfig} [config={}] - Optional configuration object for the instance.
      * @throws {Error} If the name is not provided or is not a string.
      *
      * @example
@@ -232,11 +227,9 @@ export class Eleva {
      * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
      *
      */
-    constructor(name: string, config?: ElevaConfig);
+    constructor(name: string);
     /** @public @readonly {string} The unique identifier name for this Eleva instance */
     public readonly name: string;
-    /** @public @readonly {Record<string, unknown>} Configuration object for the Eleva instance */
-    public readonly config: ElevaConfig;
     /** @public @readonly {Emitter} Event emitter for handling component events */
     public readonly emitter: Emitter;
     /** @public @readonly {typeof Signal} Signal class for creating reactive state */
@@ -395,10 +388,6 @@ export class Eleva {
      */
     private _mountComponents;
 }
-/**
- * Configuration options for the Eleva instance (reserved for future use).
- */
-export type ElevaConfig = Record<string, unknown>;
 /**
  * Component definition object.
  */

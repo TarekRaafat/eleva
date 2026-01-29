@@ -84,7 +84,7 @@ export class TemplateEngine {
    * @private
    * @type {Map<string, CompiledExpressionFunction>}
    */
-  static _functionCache = new Map();
+  static _cache = new Map();
 
   /**
    * Evaluates an expression in the context of the provided data object.
@@ -147,11 +147,11 @@ export class TemplateEngine {
     if (typeof expression !== "string") return expression;
     if (!expression.trim()) return "";
 
-    let fn = this._functionCache.get(expression);
+    let fn = this._cache.get(expression);
     if (!fn) {
       try {
         fn = new Function("data", `with(data) { return ${expression}; }`);
-        this._functionCache.set(expression, fn);
+        this._cache.set(expression, fn);
       } catch {
         return "";
       }

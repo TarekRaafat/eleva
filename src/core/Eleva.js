@@ -19,11 +19,6 @@ import { Renderer } from "../modules/Renderer.js";
 // Configuration Types
 // -----------------------------------------------------------------------------
 
-/**
- * Configuration options for the Eleva instance (reserved for future use).
- * @typedef {Record<string, unknown>} ElevaConfig
- */
-
 // -----------------------------------------------------------------------------
 // Component Types
 // -----------------------------------------------------------------------------
@@ -285,12 +280,11 @@ import { Renderer } from "../modules/Renderer.js";
  */
 export class Eleva {
   /**
-   * Creates a new Eleva instance with the specified name and configuration.
+   * Creates a new Eleva instance with the specified name.
    *
    * @public
    * @constructor
    * @param {string} name - The unique identifier name for this Eleva instance.
-   * @param {ElevaConfig} [config={}] - Optional configuration object for the instance.
    * @throws {Error} If the name is not provided or is not a string.
    *
    * @example
@@ -302,14 +296,12 @@ export class Eleva {
    * app.mount(document.getElementById("app"), "myComponent", { name: "World" });
    *
    */
-  constructor(name, config = {}) {
+  constructor(name) {
     if (!name || typeof name !== "string") {
       throw new Error("Eleva: name must be a non-empty string");
     }
     /** @public @readonly {string} The unique identifier name for this Eleva instance */
     this.name = name;
-    /** @public @readonly {Record<string, unknown>} Configuration object for the Eleva instance */
-    this.config = config;
     /** @public @readonly {Emitter} Event emitter for handling component events */
     this.emitter = new Emitter();
     /** @public @readonly {typeof Signal} Signal class for creating reactive state */
@@ -646,7 +638,8 @@ export class Eleva {
     for (const el of elements) {
       /** @type {NamedNodeMap} */
       const attrs = el.attributes;
-      for (let i = 0; i < attrs.length; i++) {
+      // Iterate backwards to safely remove attributes from live collection
+      for (let i = attrs.length - 1; i >= 0; i--) {
         /** @type {Attr} */
         const attr = attrs[i];
 

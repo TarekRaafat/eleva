@@ -111,7 +111,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
+        "text": "Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
       }
     },
     {
@@ -214,7 +214,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Frequently asked questions, testing guide, troubleshooting tips, and community resources for Eleva.js.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-01-28T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -262,7 +262,7 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 **Q: Is Eleva production-ready?**
 
-Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
+Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
 
 **Q: How do I report issues or request features?**
 

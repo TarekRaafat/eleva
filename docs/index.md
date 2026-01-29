@@ -24,7 +24,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript Framework",
   "operatingSystem": "Cross-platform (Web Browser)",
-  "softwareVersion": "1.1.0",
+  "softwareVersion": "1.1.1",
   "datePublished": "2026-01-12",
   "releaseNotes": "First official stable release with production-ready API",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
@@ -180,7 +180,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.1.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
+        "text": "Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
       }
     },
     {
@@ -241,7 +241,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva.js - Best DX for Building the Best UX
 
-> **Version:** `1.1.0` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.1.1` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -293,7 +293,7 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 > _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
 
-> **Stable Release**: This is the official documentation for Eleva v1.1.0. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
+> **Stable Release**: This is the official documentation for Eleva v1.1.1. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
 
 ---
 

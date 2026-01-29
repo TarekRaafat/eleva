@@ -49,7 +49,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Migration Guides
 
-> **Version:** 1.1.0 | Comprehensive guides for migrating to Eleva from other frameworks
+> **Version:** 1.1.1 | Comprehensive guides for migrating to Eleva from other frameworks
 
 Welcome to the Eleva migration guides. These guides help you transition from popular frameworks to Eleva while leveraging your existing knowledge.
 
