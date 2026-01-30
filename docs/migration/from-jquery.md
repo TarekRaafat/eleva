@@ -541,7 +541,7 @@ app.component("Tooltip", {
     >
       <slot></slot>
       ${ctx.isVisible.value ? `
-        <div class="tooltip">${ctx.text.value}</div>
+        <div class="tooltip">${ctx.text}</div>
       ` : ''}
     </div>
   `
@@ -550,7 +550,7 @@ app.component("Tooltip", {
 // Use component
 app.component("MyPage", {
   template: () => `
-    <span class="has-tooltip" :text="Hello!">Hover me</span>
+    <span class="has-tooltip" :text="'Hello!'">Hover me</span>
   `,
   children: {
     ".has-tooltip": "Tooltip"

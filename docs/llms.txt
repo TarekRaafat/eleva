@@ -156,6 +156,8 @@ app.component("Parent", {
 ```
 
 > **Rule:** Use `:prop="value.value"` for static data, `:prop="value"` for reactive updates.
+> **Note:** Do not `JSON.stringify` props; pass objects/signals directly (use ids for static snapshots when needed).
+> **Tip:** `:prop` expressions are evaluated, so primitive ids work directly (e.g., `:postId="${post.id}"`).
 
 ### Child Events (Emitter with Cleanup)
 ```javascript
@@ -264,6 +266,8 @@ setup: ({ router }) => ({
   goHome: () => router.navigate("/")
 })
 ```
+
+> **No `router:notFound` Event:** If no route matches and no `*` route exists, the router emits `router:error`. Use a catch-all route or handle via `router.onError(...)`.
 
 > **Note:** `router.params`, `router.query`, `router.path`, `router.meta` are convenience getters (not signals). For reactive templates, access via `router.current.value.params`. Use `watch()` only for side effects.
 

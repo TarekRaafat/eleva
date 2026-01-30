@@ -462,6 +462,7 @@ const Parent = {
 **Key benefit:** No need for `JSON.stringify` — objects and arrays are passed directly!
 
 > **Props are static by design.** Values are evaluated once at mount time. For reactive updates, pass the signal itself (`:user="user"`) instead of its value (`:user="user.value"`). See [Components Guide](./components.md#props-behavior-static-vs-reactive) for details.
+> **Tip:** `:prop` expressions are evaluated by the TemplateEngine, so passing primitives is fine (e.g., `:postId="${post.id}"`).
 
 ### Context Reference Rules
 
@@ -545,7 +546,7 @@ Understanding how data flows during component initialization and event handling 
 
 **When It's Used:** Passed to the component's `setup` function during initialization.
 
-**What It Contains:** Utilities (like the `signal` function), component props, emitter, and lifecycle hooks.
+**What It Contains:** Utilities (like the `signal` function), component props, and emitter. Plugins may extend this context (e.g., `ctx.router`, `ctx.store`).
 
 ```javascript
 const MyComponent = {
@@ -639,7 +640,7 @@ setup({ emitter }) {
 **Key Features:**
 - Synchronous event propagation
 - Multiple handlers per event
-- Automatic event cleanup
+- Manual cleanup via returned unsubscribe (`emitter.on(...)`)
 - Memory-efficient handler management
 
 > **Error Handling:** If a handler throws synchronously, the error propagates immediately and remaining handlers are NOT called. Async handlers (returning Promises) are fire-and-forget — rejections won't stop other handlers but will result in unhandled Promise rejections. Wrap async handlers in try/catch for proper error handling.

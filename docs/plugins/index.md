@@ -208,7 +208,7 @@ app.use(Store, {
     increment: (state) => state.count.value++,
     setUser: (state, user) => state.user.value = user
   },
-  persist: { key: "app-state", storage: "localStorage" }
+  persistence: { key: "app-state", storage: "localStorage" }
 });
 
 app.component("Counter", {

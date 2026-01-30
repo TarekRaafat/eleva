@@ -416,6 +416,7 @@ setup: ({ signal }) => {
 ### Context Reference Rules
 
 > **Quick Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
+> **Reminder:** `:props` are evaluated expressions, so passing primitive ids is fine (e.g., `:postId="${post.id}"`).
 
 ```javascript
 template: (ctx) => `

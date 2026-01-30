@@ -333,8 +333,8 @@ const MyPlugin = {
     delete eleva.myFeature;
 
     // Remove from plugin registry
-    if (eleva._plugins) {
-      eleva._plugins.delete(this.name);
+    if (eleva.plugins) {
+      eleva.plugins.delete(this.name);
     }
   }
 };
@@ -354,7 +354,7 @@ MyPlugin.uninstall(app);
 | Added properties | Delete from Eleva instance |
 | Event listeners | Remove all subscriptions |
 | Timers/intervals | Clear all timers |
-| Plugin registry entry | Remove from `_plugins` Map |
+| Plugin registry entry | Remove from `eleva.plugins` Map (if you added metadata) |
 
 ### Uninstall Order (LIFO)
 

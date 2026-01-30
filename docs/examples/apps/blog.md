@@ -38,26 +38,40 @@ const app = new Eleva("BlogApp");
 // Comment Component
 app.component("Comment", {
   setup({ props }) {
-    return { comment: props.comment };
+    const { comments, commentIndex } = props;
+    const getComment = () => comments.value[commentIndex] || { author: "", date: "", text: "" };
+    return { getComment };
   },
-  template: (ctx) => `
-    <div class="comment">
-      <div class="comment-header">
-        <strong>${ctx.comment.author}</strong>
-        <span class="date">${ctx.comment.date}</span>
+  template: (ctx) => {
+    const comment = ctx.getComment();
+    return `
+      <div class="comment">
+        <div class="comment-header">
+          <strong>${comment.author}</strong>
+          <span class="date">${comment.date}</span>
+        </div>
+        <p>${comment.text}</p>
       </div>
-      <p>${ctx.comment.text}</p>
-    </div>
-  `
+    `;
+  }
 });
 
 // Post Component
 app.component("BlogPost", {
   setup({ signal, props }) {
-    const post = props.post;
+    const { posts, postId } = props;
+    const post = () =>
+      posts.value.find(p => p.id === postId) || {
+        title: "",
+        author: "",
+        date: "",
+        readTime: "",
+        excerpt: "",
+        comments: []
+      };
     const showComments = signal(false);
     const newComment = signal("");
-    const comments = signal(post.comments || []);
+    const comments = signal([...(post().comments || [])]);
 
     function toggleComments() {
       showComments.value = !showComments.value;
@@ -66,12 +80,16 @@ app.component("BlogPost", {
     function addComment() {
       if (!newComment.value.trim()) return;
 
-      comments.value = [...comments.value, {
+      const nextComments = [...comments.value, {
         id: Date.now(),
         author: "Anonymous",
         text: newComment.value,
         date: new Date().toLocaleDateString()
       }];
+      comments.value = nextComments;
+      posts.value = posts.value.map(p =>
+        p.id === postId ? { ...p, comments: nextComments } : p
+      );
       newComment.value = "";
     }
 
@@ -80,16 +98,16 @@ app.component("BlogPost", {
   template: (ctx) => `
     <article class="blog-post">
       <header>
-        <h2>${ctx.post.title}</h2>
+        <h2>${ctx.post().title}</h2>
         <div class="post-meta">
-          <span>By ${ctx.post.author}</span>
-          <span>${ctx.post.date}</span>
-          <span>${ctx.post.readTime} min read</span>
+          <span>By ${ctx.post().author}</span>
+          <span>${ctx.post().date}</span>
+          <span>${ctx.post().readTime} min read</span>
         </div>
       </header>
 
       <div class="post-content">
-        <p>${ctx.post.excerpt}</p>
+        <p>${ctx.post().excerpt}</p>
       </div>
 
       <footer>
@@ -100,8 +118,13 @@ app.component("BlogPost", {
 
       ${ctx.showComments.value ? `
         <div class="comments-section">
-          ${ctx.comments.value.map(comment => `
-            <div key="${comment.id}" class="comment-wrapper" :comment="comment"></div>
+          ${ctx.comments.value.map((comment, commentIndex) => `
+            <div
+              key="${comment.id}"
+              class="comment-wrapper"
+              :comments="comments"
+              :commentIndex="${commentIndex}">
+            </div>
           `).join('')}
 
           <div class="add-comment">
@@ -169,7 +192,12 @@ app.component("Blog", {
 
       <div class="posts">
         ${ctx.posts.value.map(post => `
-          <div key="${post.id}" class="post-wrapper" :post="post"></div>
+          <div
+            key="${post.id}"
+            class="post-wrapper"
+            :posts="posts"
+            :postId="${post.id}">
+          </div>
         `).join('')}
       </div>
     </div>

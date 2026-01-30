@@ -424,23 +424,25 @@ router.emitter.on("router:error", (error, to, from) => {
 });
 ```
 
-### Not Found Event
+### Route Not Found Handling
 
-Fired when no route matches and there's no catch-all (`*`) route defined:
+When no route matches and there's no catch-all (`*`) route, the router emits `router:error` with a "Route not found" message. Use a catch-all route for 404s, or handle it via `router:error`.
 
 ```javascript
-router.emitter.on("router:notFound", (to, from, path) => {
-  console.log(`Route not found: ${path}`);
+// Option 1: Catch-all route (recommended)
+const routes = [
+  { path: "/", component: Home },
+  { path: "*", component: NotFoundPage }
+];
 
-  // Custom 404 handling
-  showNotFoundPage(path);
-
-  // Or redirect to a custom 404 page
-  router.navigate("/404");
+// Option 2: Handle missing routes via router:error
+router.emitter.on("router:error", (error, to) => {
+  if (error.message.includes("Route not found")) {
+    console.log("Missing route:", to?.path);
+    router.navigate("/404");
+  }
 });
 ```
-
-> **Note:** If you define a catch-all route (`{ path: "*", component: NotFoundPage }`), the `router:notFound` event will not fire because the wildcard route matches all paths.
 
 ### Error Types Reference
 

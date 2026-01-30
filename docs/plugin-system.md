@@ -223,9 +223,9 @@ const Logger = {
     // Remove added properties
     delete eleva.log;
 
-    // Remove from plugin registry
-    if (eleva._plugins) {
-      eleva._plugins.delete(this.name);
+    // Optional: remove metadata if you registered it
+    if (eleva.plugins) {
+      eleva.plugins.delete(this.name);
     }
   }
 };
@@ -246,7 +246,7 @@ app.use(Logger, { level: "debug" });
 
 - Plugin is registered with the Eleva instance via `app.use()`
 - `install` function is called with the instance and options
-- Plugin is stored in the internal `_plugins` Map
+- Plugin is stored internally by Eleva (no public removal API)
 - Returns the Eleva instance for method chaining
 
 ### 2. Runtime
@@ -287,9 +287,9 @@ const MyPlugin = {
     // Remove added properties
     delete eleva.myFeature;
 
-    // Remove from plugin registry
-    if (eleva._plugins) {
-      eleva._plugins.delete(this.name);
+    // Optional: remove metadata if you registered it
+    if (eleva.plugins) {
+      eleva.plugins.delete(this.name);
     }
   }
 };
@@ -303,7 +303,7 @@ const MyPlugin = {
 | Added properties (`eleva.store`, `eleva.router`) | Delete from instance |
 | Event listeners | Remove all subscriptions |
 | Timers/intervals | Clear all timers |
-| Plugin registry entry | Remove from `_plugins` Map |
+| Plugin registry entry | Remove from `eleva.plugins` Map (if you added metadata) |
 
 ---
 
@@ -577,7 +577,7 @@ app.use(Store, {
     increment: (state) => state.count.value++,
     setUser: (state, user) => state.user.value = user
   },
-  persist: { key: "app-state", storage: "localStorage" }
+  persistence: { key: "app-state", storage: "localStorage" }
 });
 ```
 
@@ -695,9 +695,9 @@ export const Analytics = {
     // Remove added properties
     delete eleva.analytics;
 
-    // Remove from plugin registry
-    if (eleva._plugins) {
-      eleva._plugins.delete(this.name);
+    // Optional: remove metadata if you registered it
+    if (eleva.plugins) {
+      eleva.plugins.delete(this.name);
     }
   }
 };

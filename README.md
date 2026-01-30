@@ -491,7 +491,7 @@ import Eleva, { Signal, Emitter, Renderer, TemplateEngine } from "eleva";
 
 ### Eleva (Core)
 
-- **`new Eleva(name, config)`**  
+- **`new Eleva(name)`**  
   Create an Eleva instance.
 - **`.use(plugin, options)`**  
   Install plugins.
@@ -570,7 +570,7 @@ const app = new Eleva("myApp");
 const HomePage = { template: () => `<h1>Home</h1>` };
 const AboutPage = { template: () => `<h1>About</h1>` };
 const UserPage = {
-    template: (ctx) => `<h1>User: ${ctx.router.currentParams.value.id}</h1>`
+    template: (ctx) => `<h1>User: ${ctx.router.params.id}</h1>`
 };
 
 // Install router with advanced configuration

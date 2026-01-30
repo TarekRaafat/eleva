@@ -613,7 +613,11 @@ describe("MyComponent", () => {
    // Correct
    :user="userData.value"
    ```
-2. Ensure the child is properly mapped in `children`:
+2. `:prop` expressions are evaluated, so primitive IDs work directly:
+   ```javascript
+   :postId="${post.id}"
+   ```
+3. Ensure the child is properly mapped in `children`:
    ```javascript
    children: {
      ".child-selector": "ChildComponent"

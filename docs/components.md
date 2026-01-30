@@ -329,7 +329,7 @@ app.component("TodoList", {
       <h2>My Todo List</h2>
       ${ctx.todos.value.map((todo) => `
         <div key="${todo.id}" class="todo-item"
-             :title="${todo.title}"
+             :title="'${todo.title}'"
              :completed="${todo.completed}"
              @click="() => toggleTodo(todo.id)">
         </div>
@@ -481,8 +481,9 @@ app.component("ProductList", {
     <div class="products">
       ${ctx.products.value.map(product => `
         <div key="${product.id}" class="product-card"
-          :product="product"
-          :onSelect="() => handleSelect(product)">
+          :products="products"
+          :productId="${product.id}"
+          :onSelect="handleSelect">
         </div>
       `).join("")}
     </div>
@@ -495,13 +496,15 @@ app.component("ProductList", {
 // Child receives props
 app.component("ProductCard", {
   setup: ({ props }) => {
-    const { product, onSelect } = props;
-    return { product, onSelect };
+    const { products, productId, onSelect } = props;
+    const getProduct = () =>
+      products.value.find((p) => p.id === productId) || {};
+    return { productId, getProduct, onSelect };
   },
   template: (ctx) => `
-    <div class="card" @click="onSelect">
-      <h3>${ctx.product.name}</h3>
-      <p>$${ctx.product.price}</p>
+    <div class="card" @click="() => onSelect(productId)">
+      <h3>${ctx.getProduct().name}</h3>
+      <p>$${ctx.getProduct().price}</p>
     </div>
   `
 });
@@ -514,6 +517,7 @@ Props are evaluated expressions, so you can pass any value:
 | Type | Example |
 |------|---------|
 | **Primitives** | `:count="42"`, `:name="'John'"`, `:active="true"` |
+| **IDs / computed** | `:postId="${post.id}"`, `:total="items.length"` |
 | **Objects** | `:user="user.value"`, `:config="{ theme: 'dark' }"` |
 | **Arrays** | `:items="items.value"`, `:options="[1, 2, 3]"` |
 | **Functions** | `:onClick="handleClick"`, `:onSubmit="(data) => save(data)"` |

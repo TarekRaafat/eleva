@@ -501,9 +501,14 @@ app.component("TodoList", {
   },
   template: (ctx) => `
     <div>
-      <div class="todo-form" :on-add="addTodo"></div>
+      <div class="todo-form" :onAdd="addTodo"></div>
       ${ctx.todos.value.map(todo => `
-        <div key="${todo.id}" class="todo-item" :todo="todo"></div>
+        <div
+          key="${todo.id}"
+          class="todo-item"
+          :todos="todos"
+          :todoId="${todo.id}">
+        </div>
       `).join('')}
     </div>
   `,
@@ -516,10 +521,12 @@ app.component("TodoList", {
 // Child
 app.component("TodoItem", {
   setup({ props }) {
-    return { todo: props.todo };
+    const { todos, todoId } = props;
+    const getTodo = () => todos.value.find(t => t.id === todoId) || { text: "" };
+    return { getTodo };
   },
   template: (ctx) => `
-    <li>${ctx.todo.value.text}</li>
+    <li>${ctx.getTodo().text}</li>
   `
 });
 ```
@@ -527,7 +534,7 @@ app.component("TodoItem", {
 **Key differences:**
 - Children defined in `children` object, not JSX
 - Props passed via `:prop` attributes
-- JSON.stringify needed for object props
+- For object data, pass a signal (reactive) and a simple id (static) instead of serializing
 
 ---
 
@@ -578,7 +585,7 @@ const router = app.use(Router, {
 
 const UserProfile = {
   setup({ router }) {
-    const userId = router.currentParams.value.id;
+    const userId = router.params.id;
     return { userId };
   },
   template: (ctx) => `

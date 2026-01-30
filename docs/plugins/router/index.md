@@ -82,7 +82,7 @@ const router = app.use(Router, {
 > ```javascript
 > // ❌ Don't do this when using Router
 > app.use(Router, { mount: '#app', routes });
-> app.mount('#app', 'HomePage'); // Not needed!
+> app.mount(document.querySelector('#app'), 'HomePage'); // Not needed!
 >
 > // ✅ Correct - Router handles mounting automatically
 > app.use(Router, { mount: '#app', routes });
@@ -149,9 +149,10 @@ await Router.uninstall(app);
 | `router:afterRender` | No | Animations |
 | `router:scroll` | No | Scroll restoration |
 | `router:afterEach` | No | Analytics |
-| `router:notFound` | No | Custom 404 handling |
 | `router:error` | No | Error reporting |
 
+> **No `router:notFound` Event:** When no route matches and no `*` route exists, the router emits `router:error`. Define a catch-all route (`{ path: "*", component: NotFoundPage }`) for 404 handling.
+>
 > **Template Context:** Use `${ctx.router.xxx}` in templates, but `@click="handler"` for events (no `ctx.`).
 
 ---
@@ -217,7 +218,7 @@ const { Router } = require("eleva/plugins");
 ### CDN
 ```html
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
-<script src="https://cdn.jsdelivr.net/npm/eleva/plugins"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 <script>
   const { Eleva } = window.Eleva;
   const { Router } = window.ElevaPlugins;

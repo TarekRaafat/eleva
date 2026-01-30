@@ -42,27 +42,37 @@ const app = new Eleva("TaskManager");
 // Task Item Component
 app.component("TaskItem", {
   setup({ props }) {
-    const { task, onToggle, onDelete, onEdit } = props;
-    return { task, onToggle, onDelete, onEdit };
+    const { tasks, taskId, onToggle, onDelete, onEdit } = props;
+    const getTask = () =>
+      tasks.value.find(t => t.id === taskId) || {
+        title: "",
+        priority: "low",
+        completed: false,
+        dueDate: ""
+      };
+    return { getTask, onToggle, onDelete, onEdit };
   },
-  template: (ctx) => `
-    <div class="task-item ${ctx.task.completed ? 'completed' : ''} priority-${ctx.task.priority}">
-      <input
-        type="checkbox"
-        ${ctx.task.completed ? 'checked' : ''}
-        @change="onToggle"
-      />
-      <div class="task-content">
-        <span class="task-title">${ctx.task.title}</span>
-        ${ctx.task.dueDate ? `<span class="due-date">Due: ${ctx.task.dueDate}</span>` : ''}
-        <span class="priority-badge">${ctx.task.priority}</span>
+  template: (ctx) => {
+    const task = ctx.getTask();
+    return `
+      <div class="task-item ${task.completed ? 'completed' : ''} priority-${task.priority}">
+        <input
+          type="checkbox"
+          ${task.completed ? 'checked' : ''}
+          @change="onToggle"
+        />
+        <div class="task-content">
+          <span class="task-title">${task.title}</span>
+          ${task.dueDate ? `<span class="due-date">Due: ${task.dueDate}</span>` : ''}
+          <span class="priority-badge">${task.priority}</span>
+        </div>
+        <div class="task-actions">
+          <button class="edit-btn" @click="onEdit">✎</button>
+          <button class="delete-btn" @click="onDelete">×</button>
+        </div>
       </div>
-      <div class="task-actions">
-        <button class="edit-btn" @click="onEdit">✎</button>
-        <button class="delete-btn" @click="onDelete">×</button>
-      </div>
-    </div>
-  `
+    `;
+  }
 });
 
 // Main Task Manager Component
@@ -167,7 +177,9 @@ app.component("TaskManager", {
       }
     }
 
-    function startEdit(task) {
+    function startEdit(id) {
+      const task = tasks.value.find(t => t.id === id);
+      if (!task) return;
       editingTask.value = task;
       newTask.value = {
         title: task.title,
@@ -280,10 +292,11 @@ app.component("TaskManager", {
             </p>
           ` : filtered.map(task => `
             <div key="${task.id}" class="task-item-container"
-                 :task="task"
-                 :onToggle="() => toggleTask(task.id)"
-                 :onDelete="() => deleteTask(task.id)"
-                 :onEdit="() => startEdit(task)">
+                 :tasks="tasks"
+                 :taskId="${task.id}"
+                 :onToggle="() => toggleTask(${task.id})"
+                 :onDelete="() => deleteTask(${task.id})"
+                 :onEdit="() => startEdit(${task.id})">
             </div>
           `).join("")}
         </div>

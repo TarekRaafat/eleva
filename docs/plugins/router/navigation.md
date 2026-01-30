@@ -344,10 +344,11 @@ User triggers navigation
 | `router:scroll` | `(context)` | No | For scroll behavior |
 | `router:afterEnter` | `(to, from)` | No | After new component mounted |
 | `router:afterEach` | `(to, from)` | No | Navigation complete |
-| `router:notFound` | `(to, from, path)` | No | No matching route (when no `*` route) |
 | `router:error` | `(error, to, from)` | No | Navigation error |
 | `router:routeAdded` | `(route)` | No | Dynamic route added |
 | `router:routeRemoved` | `(route)` | No | Dynamic route removed |
+
+> **No `router:notFound` Event:** When no route matches and no `*` route exists, the router emits `router:error`. Use a catch-all route for 404 handling.
 
 ### Blocking Events (Context Object)
 

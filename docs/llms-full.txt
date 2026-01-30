@@ -956,6 +956,8 @@ app.component("ChildProfile", {
 ```
 
 **Rule:** Use `:prop="user.value"` for static data, `:prop="user"` for reactive updates.
+**Note:** Do not `JSON.stringify` props; pass objects/signals directly (use ids for static snapshots when needed).
+**Tip:** `:prop` expressions are evaluated, so primitive ids work directly (e.g., `:postId="${post.id}"`).
 
 ### Events (Child to Parent via Emitter)
 ```javascript
@@ -1010,11 +1012,17 @@ const MyPlugin = {
     // Add methods to app instance
     app.myMethod = () => {};
 
-    // Add to component context
-    app._pluginContext = app._pluginContext || {};
-    app._pluginContext.myPlugin = {
-      // Plugin state/methods available in components
-    };
+    // Optional: expose plugin metadata (used by official plugins)
+    if (!app.plugins) app.plugins = new Map();
+    app.plugins.set(this.name, {
+      name: this.name,
+      version: this.version,
+      description: this.description,
+      options
+    });
+
+    // To inject into component setup context, wrap app.mount/_mountComponents
+    // (see Store plugin pattern).
 
     // Return public API
     return {
@@ -1087,6 +1095,8 @@ const router = app.use(Router, {
   autoStart: true  // Auto-start (default: true)
 });
 ```
+
+> **No `router:notFound` Event:** If no route matches and no `*` route exists, the router emits `router:error`. Use a catch-all route for 404 handling or listen via `router.onError(...)`.
 
 ### Router - Component Access
 ```javascript

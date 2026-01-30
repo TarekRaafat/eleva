@@ -352,7 +352,7 @@ children: {
 ```javascript
 // Parent
 template: (ctx) => `
-  <div class="child" :message="Hello" :count="count.value"></div>
+  <div class="child" :message="'Hello'" :count="count.value"></div>
 `,
 children: { ".child": "Child" }
 

@@ -458,8 +458,8 @@ app.component("ParentComponent", {
     <div
       class="child-container"
       :user="currentUser.value"
-      :is-admin="true"
-      :on-update="handleUpdate"
+      :isAdmin="true"
+      :onUpdate="handleUpdate"
     ></div>
   `,
   children: {
@@ -492,8 +492,8 @@ app.component("ChildComponent", {
 
 **Key differences:**
 - Props passed via `:prop` attributes on container element
-- Object props need `JSON.stringify()`
-- Events passed as props (`:on-update="handler"`)
+- For object data, prefer passing a signal and a simple id; serialize only if you explicitly need a JSON string
+- Events passed as props (use camelCase, e.g., `:onUpdate="handler"`)
 - Children defined in `children` object
 
 ---
@@ -612,9 +612,9 @@ app.component("Card", {
   },
   template: (ctx) => `
     <div class="card">
-      ${ctx.header?.value ? `<header>${ctx.header.value}</header>` : ''}
-      <main>${ctx.content.value}</main>
-      ${ctx.footer?.value ? `<footer>${ctx.footer.value}</footer>` : ''}
+      ${ctx.header ? `<header>${ctx.header}</header>` : ''}
+      <main>${ctx.content}</main>
+      ${ctx.footer ? `<footer>${ctx.footer}</footer>` : ''}
     </div>
   `
 });
@@ -624,9 +624,9 @@ app.component("Page", {
   template: () => `
     <div
       class="card-container"
-      :header="<h1>Title</h1>"
-      :content="<p>Main content</p>"
-      :footer="<button>Action</button>"
+      :header="'<h1>Title</h1>'"
+      :content="'<p>Main content</p>'"
+      :footer="'<button>Action</button>'"
     ></div>
   `,
   children: {
@@ -714,7 +714,7 @@ router.onBeforeEach((to, from) => {
 // In component
 const UserProfile = {
   setup({ router }) {
-    const userId = router.currentParams.value.id;
+    const userId = router.params.id;
 
     // Navigate programmatically
     const goHome = () => router.navigate("/");

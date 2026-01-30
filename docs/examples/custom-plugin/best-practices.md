@@ -245,8 +245,8 @@ const CleanablePlugin = {
     delete eleva.cleanable;
 
     // 3. Remove from plugin registry
-    if (eleva._plugins) {
-      eleva._plugins.delete(this.name);
+    if (eleva.plugins) {
+      eleva.plugins.delete(this.name);
     }
 
     // 4. Reset installation state
@@ -263,7 +263,7 @@ const CleanablePlugin = {
 | Added properties | N/A | `delete eleva.property` |
 | Event listeners | Store unsubscribe function | Call unsubscribe |
 | Timers | Store timer ID | `clearTimeout/clearInterval` |
-| Plugin registry | N/A | `eleva._plugins.delete(name)` |
+| Plugin registry | N/A | `eleva.plugins.delete(name)` (if you added metadata) |
 
 ### Uninstall Order (LIFO)
 

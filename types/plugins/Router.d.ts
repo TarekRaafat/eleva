@@ -986,7 +986,8 @@ declare class Router {
      * @param {string} fullPath - The full path (e.g., '/users/123?foo=bar') to navigate to.
      * @param {boolean} [isPopState=false] - Whether this navigation was triggered by popstate (back/forward).
      * @returns {Promise<boolean>} `true` if navigation succeeded, `false` if aborted.
-     * @emits router:notFound When no matching route is found.
+     * @emits router:error When no matching route is found (and no catch-all route exists),
+     * or when an error occurs during navigation.
      * @emits router:beforeResolve Before component resolution (can block/redirect).
      * @emits router:afterResolve After components are resolved.
      * @emits router:afterLeave After leaving the previous route.
@@ -995,7 +996,6 @@ declare class Router {
      * @emits router:scroll After render, for scroll behavior handling.
      * @emits router:afterEnter After entering the new route.
      * @emits router:afterEach After navigation completes successfully.
-     * @emits router:error When an error occurs during navigation.
      * @see _runGuards - Guard execution.
      * @see _resolveComponents - Component resolution.
      * @see _render - DOM rendering.

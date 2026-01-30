@@ -242,7 +242,7 @@ This is useful for:
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 
 <!-- With all plugins (Optional) -->
-<script src="https://cdn.jsdelivr.net/npm/eleva/plugins"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 
 <!-- Or individual plugins -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
@@ -366,6 +366,8 @@ app.component("GreetingWithProps", {
 // Mount with initial props
 app.mount(document.getElementById("app"), "GreetingWithProps", { name: "Alice" });
 ```
+
+> **Note:** `:prop` expressions are evaluated, so you can pass strings, numbers, objects, functions, or ids directly (e.g., `:title="'Hello'"`, `:count="42"`, `:postId="${post.id}"`).
 
 ---
 
