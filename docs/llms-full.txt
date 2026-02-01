@@ -78,9 +78,23 @@ bun add eleva
 <!-- Core framework -->
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 
-<!-- With plugins -->
+<!-- Option 1: Bundled plugins → use ElevaPlugins.Router, ElevaPlugins.Store -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+
+<!-- Option 2: Individual plugins -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
 ```
+
+### Plugin Usage by Import Method
+
+| Method | Import/Include | Usage |
+|--------|----------------|-------|
+| ES Modules | `import { Router, Store } from "eleva/plugins"` | `app.use(Router, {...})` |
+| CDN Bundled | `eleva-plugins.umd.min.js` | `app.use(ElevaPlugins.Router, {...})` |
+| CDN Individual | `plugins/router.umd.min.js` | `app.use(ElevaRouterPlugin, {...})` |
+
+> Use bundled for 2+ plugins (simpler). Individual for 1 plugin (smaller bundle).
 
 ### Environment Requirements
 

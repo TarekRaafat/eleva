@@ -290,6 +290,12 @@ import { Store } from "eleva/plugins/store";
 </script>
 ```
 
+**When to use each:**
+| Approach | Best For |
+|----------|----------|
+| Bundled | Using 2+ plugins, simpler setup |
+| Individual | Using only 1 plugin, smaller bundle size |
+
 ---
 
 ## When to Use Each Core Plugin
