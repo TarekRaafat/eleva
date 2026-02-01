@@ -397,7 +397,7 @@ Eleva has a comprehensive test suite ensuring reliability and stability.
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 273 |
+| **Total Tests** | 1,335 |
 | **Line Coverage** | 100% |
 | **Function Coverage** | 100% (core) |
 | **Test Runner** | Bun |

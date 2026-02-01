@@ -828,7 +828,7 @@ Eleva has a comprehensive test suite with **100% line coverage**:
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 273 |
+| **Total Tests** | 1,335 |
 | **Line Coverage** | 100% |
 | **Test Runner** | Bun |
 
