@@ -217,11 +217,20 @@ const { Router } = require("eleva/plugins");
 
 ### CDN
 ```html
+<!-- Option 1: Bundled plugins -->
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 <script>
-  const { Eleva } = window.Eleva;
-  const { Router } = window.ElevaPlugins;
+  const app = new Eleva("MyApp");
+  app.use(ElevaPlugins.Router, { /* options */ });
+</script>
+
+<!-- Option 2: Individual plugin -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
+<script>
+  const app = new Eleva("MyApp");
+  app.use(ElevaRouterPlugin, { /* options */ });
 </script>
 ```
 

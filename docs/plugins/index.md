@@ -267,13 +267,27 @@ import { Store } from "eleva/plugins/store";
 ### Via CDN
 
 ```html
-<!-- All plugins bundled -->
+<!-- Option 1: All plugins bundled -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+<script>
+  // Access via ElevaPlugins global
+  app.use(ElevaPlugins.Attr);
+  app.use(ElevaPlugins.Router, { /* options */ });
+  app.use(ElevaPlugins.Store, { /* options */ });
+</script>
 
-<!-- Individual plugins -->
+<!-- Option 2: Individual plugins -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
+<script>
+  // Each plugin has its own global
+  app.use(ElevaAttrPlugin);
+  app.use(ElevaRouterPlugin, { /* options */ });
+  app.use(ElevaStorePlugin, { /* options */ });
+</script>
 ```
 
 ---

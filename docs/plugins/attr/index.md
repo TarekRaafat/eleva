@@ -136,11 +136,21 @@ bun add eleva
 ### Via CDN
 
 ```html
-<!-- Core + All Plugins -->
+<!-- Option 1: Bundled plugins -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+<script>
+  const app = new Eleva("MyApp");
+  app.use(ElevaPlugins.Attr);
+</script>
 
-<!-- Attr Plugin Only -->
+<!-- Option 2: Individual plugin -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
+<script>
+  const app = new Eleva("MyApp");
+  app.use(ElevaAttrPlugin);
+</script>
 ```
 
 ---

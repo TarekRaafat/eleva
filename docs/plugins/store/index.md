@@ -194,12 +194,22 @@ import { Store } from "eleva/plugins/store";
 ### Via CDN
 
 ```html
+<!-- Option 1: Bundled plugins -->
+<script src="https://cdn.jsdelivr.net/npm/eleva"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
+
+<script>
+  const app = new Eleva("MyApp");
+  app.use(ElevaPlugins.Store, { /* options */ });
+</script>
+
+<!-- Option 2: Individual plugin -->
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
 
 <script>
   const app = new Eleva("MyApp");
-  app.use(ElevaStore.Store, { /* options */ });
+  app.use(ElevaStorePlugin, { /* options */ });
 </script>
 ```
 
