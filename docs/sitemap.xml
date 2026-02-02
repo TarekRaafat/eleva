@@ -3,7 +3,7 @@
   <!-- Homepage -->
   <url>
     <loc>https://elevajs.com/</loc>
-    <lastmod>2026-01-29</lastmod>
+    <lastmod>2026-02-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
@@ -370,6 +370,14 @@
     <lastmod>2026-01-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+
+  <!-- Sponsor -->
+  <url>
+    <loc>https://elevajs.com/sponsor.html</loc>
+    <lastmod>2026-02-03</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
 
   <!-- Migration Guides -->

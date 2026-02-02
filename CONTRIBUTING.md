@@ -108,6 +108,22 @@ feat: add support for custom middleware
 - Join our [Discord community](https://discord.gg/Dg7cMKpvyZ)
 - Open an issue for questions
 
+## Other Ways to Support
+
+Not a coder? You can still help Eleva thrive:
+
+- **Star the repo** - It helps with visibility
+- **Spread the word** - Tweet, blog, or tell a friend
+- **Sponsor the project** - Financial support helps fund development
+
+[![GitHub Sponsors](https://img.shields.io/badge/Sponsor-EA4AAA?style=flat&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/TarekRaafat)
+[![Open Collective](https://img.shields.io/badge/Open%20Collective-7FADF2?style=flat&logo=opencollective&logoColor=white)](https://opencollective.com/elevajs)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/tarekraafat)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/tarekraafat)
+[![Liberapay](https://img.shields.io/badge/Liberapay-F6C915?style=flat&logo=liberapay&logoColor=black)](https://liberapay.com/TarekRaafat)
+
+[View sponsorship tiers →](https://github.com/TarekRaafat/eleva#sponsor-eleva)
+
 ## License
 
 By contributing to Eleva, you agree that your contributions will be licensed under the project's MIT License.

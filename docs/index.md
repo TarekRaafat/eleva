@@ -526,6 +526,33 @@ See the [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBU
 
 ---
 
+## Sponsor Eleva
+
+Eleva is built and maintained by a solo developer. Your sponsorship helps fund continued development, documentation, and community support.
+
+| What Your Support Enables |
+|---------------------------|
+| New features & performance optimizations |
+| Documentation, tutorials & examples |
+| Faster issue responses & community support |
+| Long-term project sustainability |
+
+<p align="center">
+  <a href="https://github.com/sponsors/TarekRaafat"><img src="https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white" alt="GitHub Sponsors"></a>
+  <a href="https://opencollective.com/elevajs"><img src="https://img.shields.io/badge/Open%20Collective-7FADF2?style=for-the-badge&logo=opencollective&logoColor=white" alt="Open Collective"></a>
+  <a href="https://ko-fi.com/tarekraafat"><img src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/tarekraafat"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee"></a>
+  <a href="https://liberapay.com/TarekRaafat"><img src="https://img.shields.io/badge/Liberapay-F6C915?style=for-the-badge&logo=liberapay&logoColor=black" alt="Liberapay"></a>
+  <a href="https://paypal.me/TarekMRaafat"><img src="https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
+</p>
+
+[View all sponsors](https://github.com/TarekRaafat/eleva/blob/master/SPONSORS.md) | [Sponsorship tiers & benefits](https://github.com/TarekRaafat/eleva#sponsor-eleva)
+
+---
+
 ## Changelog
 
 For a detailed log of all changes and updates, please refer to the [Changelog](https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md).

@@ -306,8 +306,24 @@
       "url": "https://github.com/sponsors/TarekRaafat"
     },
     {
+      "type": "opencollective",
+      "url": "https://opencollective.com/elevajs"
+    },
+    {
+      "type": "ko_fi",
+      "url": "https://ko-fi.com/tarekraafat"
+    },
+    {
       "type": "buymeacoffee",
       "url": "https://www.buymeacoffee.com/tarekraafat"
+    },
+    {
+      "type": "liberapay",
+      "url": "https://liberapay.com/TarekRaafat"
+    },
+    {
+      "type": "custom",
+      "url": "https://paypal.me/TarekMRaafat"
     }
   ]
 }

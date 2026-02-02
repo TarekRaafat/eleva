@@ -92,6 +92,7 @@ Eleva is ideal for developers building performance-critical applications, data-i
   - [Development](#development)
   - [Testing](#testing)
   - [Contributing](#contributing)
+  - [Sponsor Eleva](#sponsor-eleva)
   - [License](#license)
   - [Contact](#contact)
 
@@ -847,6 +848,75 @@ Contributions to tests are very welcome! 🧪
 ## Contributing
 
 I'd love to have you onboard as a contributor! Whether you're adding new features, squashing bugs, or sharing ideas, your input is invaluable. Please check out [CONTRIBUTING](https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md) for guidelines on getting started.
+
+---
+
+## Sponsor Eleva
+
+<p align="center">
+  <strong>Help keep Eleva lightweight, fast, and free for everyone.</strong>
+</p>
+
+Eleva is a labor of love — built and maintained by a solo developer passionate about pure JavaScript and great developer experience. Your sponsorship directly funds:
+
+| What Your Support Enables | Impact |
+|---------------------------|--------|
+| **Continued Development** | New features, performance optimizations, and bug fixes |
+| **Documentation & Examples** | Tutorials, guides, and real-world examples |
+| **Community Support** | Faster issue responses and dedicated help |
+| **Infrastructure** | Hosting, CI/CD, and development tools |
+| **Long-term Sustainability** | Ensuring Eleva remains actively maintained |
+
+### Why Sponsor?
+
+- **Zero dependencies** means Eleva relies solely on community support, not corporate backing
+- **~6KB** of pure JavaScript serves thousands of developers worldwide
+- **100% open source** — your sponsorship keeps it free for everyone
+- **Direct impact** — every dollar goes straight to development, not overhead
+
+### Sponsorship Tiers
+
+| Tier | Amount | Benefits |
+|------|--------|----------|
+| **Supporter** | $5/month | Name in SPONSORS.md + my sincere gratitude |
+| **Backer** | $10/month | Logo on GitHub README + Supporter benefits |
+| **Bronze Sponsor** | $25/month | Small logo on elevajs.com + Backer benefits |
+| **Silver Sponsor** | $50/month | Medium logo on elevajs.com + Priority issue support |
+| **Gold Sponsor** | $100/month | Large logo on elevajs.com homepage + Direct communication channel |
+| **Platinum Sponsor** | $250/month | Premium placement + Feature request priority + Consulting call |
+
+### How to Sponsor
+
+<p align="center">
+  <a href="https://github.com/sponsors/TarekRaafat"><img src="https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white" alt="GitHub Sponsors"></a>
+  <a href="https://opencollective.com/elevajs"><img src="https://img.shields.io/badge/Open%20Collective-7FADF2?style=for-the-badge&logo=opencollective&logoColor=white" alt="Open Collective"></a>
+  <a href="https://ko-fi.com/tarekraafat"><img src="https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi"></a>
+</p>
+
+<p align="center">
+  <a href="https://www.buymeacoffee.com/tarekraafat"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black" alt="Buy Me a Coffee"></a>
+  <a href="https://liberapay.com/TarekRaafat"><img src="https://img.shields.io/badge/Liberapay-F6C915?style=for-the-badge&logo=liberapay&logoColor=black" alt="Liberapay"></a>
+  <a href="https://paypal.me/TarekMRaafat"><img src="https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white" alt="PayPal"></a>
+</p>
+
+### Corporate Sponsorship
+
+Using Eleva at work? Consider corporate sponsorship to:
+- Ensure long-term maintenance of a dependency your product relies on
+- Get priority support for your team's issues
+- Influence the roadmap with feature requests
+- Show your commitment to open source
+
+**Contact:** [tarek.m.raafat@gmail.com](mailto:tarek.m.raafat@gmail.com?subject=Eleva%20Corporate%20Sponsorship)
+
+### Current Sponsors
+
+<p align="center">
+  <em>Be the first to sponsor Eleva and have your logo displayed here!</em><br>
+  <a href="https://github.com/TarekRaafat/eleva/blob/master/SPONSORS.md">View all sponsors</a>
+</p>
+
+> **Every contribution matters** — whether it's $5 or $500, you're helping ensure Eleva continues to provide the best DX for building the best UX. Thank you for considering supporting this project!
 
 ---
 

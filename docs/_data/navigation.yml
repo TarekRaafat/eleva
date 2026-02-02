@@ -10,6 +10,9 @@ main:
     url: /examples/
   - title: "Plugins"
     url: /plugins/
+  - title: "Sponsor"
+    url: /sponsor
+    highlight: true
   - title: "GitHub"
     url: https://github.com/TarekRaafat/eleva
     external: true
@@ -164,3 +167,15 @@ sidebar:
         url: /migration/from-alpine
       - title: "From jQuery"
         url: /migration/from-jquery
+
+  # Support Section
+  - title: "Support"
+    items:
+      - title: "Sponsor"
+        url: /sponsor
+      - title: "Contributing"
+        url: https://github.com/TarekRaafat/eleva/blob/master/CONTRIBUTING.md
+        external: true
+      - title: "Changelog"
+        url: https://github.com/TarekRaafat/eleva/blob/master/CHANGELOG.md
+        external: true
