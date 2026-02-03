@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Components Guide
-description: Complete guide to Eleva components - registration, mounting, children, props, styles, and inter-component communication patterns.
+description: Build reusable Eleva components with props, children, and scoped styles. Learn registration, mounting, and parent-child communication patterns.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/components.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/components.html">
+<meta property="og:title" content="Components Guide - Eleva.js">
+<meta property="og:description" content="Build reusable Eleva components with props, children, and scoped styles. Learn registration, mounting, and parent-child communication patterns.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/components.html">
+<meta name="twitter:title" content="Components Guide - Eleva.js">
+<meta name="twitter:description" content="Build reusable Eleva components with props, children, and scoped styles. Learn registration, mounting, and parent-child communication patterns.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,45 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "components", "mounting", "props", "children", "styles", "component communication"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Components", "item": "https://elevajs.com/components.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Component Structure",
+  "description": "Canonical component definition structure showing setup function, template, style, and children properties. Demonstrates the fundamental anatomy of an Eleva.js component.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Reference",
+  "teaches": ["Component structure", "Setup function", "Template syntax", "Props and children"]
 }
 </script>
 
@@ -881,6 +937,12 @@ app.component("TabPanel", {
 - **[Plugin System](./plugin-system.md)** - Creating and using plugins
 - **[Best Practices](./best-practices.md)** - Patterns and guidelines
 - **[Examples](./examples/index.md)** - Real-world patterns
+
+## See Also
+
+- **[Blog App Example](./examples/apps/blog.md)** — Component composition in practice
+- **[Form Patterns](./examples/patterns/forms.md)** — Form component patterns
+- **[Project Structure](./examples/patterns/state/project-structure.md)** — Organizing components
 
 ---
 

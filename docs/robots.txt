@@ -4,6 +4,10 @@
 User-agent: *
 Allow: /
 
+# Block non-content files
+Disallow: /_data/
+Disallow: /404.html
+
 # Allow all crawlers to index documentation
 User-agent: Googlebot
 Allow: /

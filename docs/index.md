@@ -4,6 +4,23 @@ description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A ligh
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
+<link rel="canonical" href="https://elevajs.com/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://elevajs.com/">
+<meta property="og:title" content="Eleva.js - Best DX for Building the Best UX">
+<meta property="og:description" content="A lightweight (~6KB) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/">
+<meta name="twitter:title" content="Eleva.js - Best DX for Building the Best UX">
+<meta name="twitter:description" content="A lightweight (~6KB) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
 <script>
@@ -56,13 +73,13 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "url": "https://www.tarekraafat.com",
+    "url": "https://github.com/TarekRaafat",
     "email": "tarek.m.raafat@gmail.com"
   },
   "maintainer": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "url": "https://www.tarekraafat.com"
+    "url": "https://github.com/TarekRaafat"
   },
   "license": "https://opensource.org/licenses/MIT",
   "isAccessibleForFree": true,
@@ -243,15 +260,15 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 > **Version:** `1.1.1` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
-[![Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
-![100% Javascript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
-![Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)
-[![codecov](https://codecov.io/gh/TarekRaafat/eleva/branch/master/graph/badge.svg?token=LFA6KENM24)](https://codecov.io/gh/TarekRaafat/eleva)
-[![Minified Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
-[![Gzipped Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
-[![](https://data.jsdelivr.com/v1/package/npm/eleva/badge?style=rounded)](https://www.jsdelivr.com/package/npm/eleva)
+[![Eleva.js MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Eleva.js GitHub Version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
+[![Eleva.js npm Version](https://img.shields.io/npm/v/eleva.svg?style=flat)](https://www.npmjs.com/package/eleva)
+![Eleva.js 100% JavaScript](https://img.shields.io/github/languages/top/TarekRaafat/eleva?color=yellow)
+![Eleva.js Zero Dependencies](https://img.shields.io/badge/dependencies-0-green.svg)
+[![Eleva.js Code Coverage](https://codecov.io/gh/TarekRaafat/eleva/branch/master/graph/badge.svg?token=LFA6KENM24)](https://codecov.io/gh/TarekRaafat/eleva)
+[![Eleva.js Minified Bundle Size](https://badgen.net/bundlephobia/min/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
+[![Eleva.js Gzipped Bundle Size](https://badgen.net/bundlephobia/minzip/eleva@latest)](https://bundlephobia.com/package/eleva@latest)
+[![Eleva.js jsDelivr CDN Downloads](https://data.jsdelivr.com/v1/package/npm/eleva/badge?style=rounded)](https://www.jsdelivr.com/package/npm/eleva)
 
 <br>
 
@@ -385,6 +402,11 @@ app.mount(document.getElementById("app"), "Counter");
 | **Router** | Client-side routing & guards | [View →](./plugins/router/) |
 | **Store** | Global state management | [View →](./plugins/store/) |
 
+**Plugin Deep Dive:**
+- Attr: [Features](./plugins/attr/features.md) · [Patterns](./plugins/attr/patterns.md) · [API](./plugins/attr/api.md)
+- Router: [Configuration](./plugins/router/configuration.md) · [Navigation](./plugins/router/navigation.md) · [Guards](./plugins/router/guards.md) · [Lazy Loading](./plugins/router/lazy-loading.md) · [API](./plugins/router/api.md)
+- Store: [Core Concepts](./plugins/store/core-concepts.md) · [Configuration](./plugins/store/configuration.md) · [Patterns](./plugins/store/patterns.md) · [Advanced](./plugins/store/advanced.md) · [API](./plugins/store/api.md)
+
 ### Examples & Patterns
 
 | Resource | Description |
@@ -402,6 +424,11 @@ app.mount(document.getElementById("app"), "Counter");
 | React | [Migration Guide →](./migration/from-react.md) |
 | Vue | [Migration Guide →](./migration/from-vue.md) |
 | Alpine.js | [Migration Guide →](./migration/from-alpine.md) |
+| jQuery | [Migration Guide →](./migration/from-jquery.md) |
+
+### Custom Plugins
+
+Learn to extend Eleva with your own plugins: [Plugin Development Guide →](./examples/custom-plugin/development.md)
 
 ---
 

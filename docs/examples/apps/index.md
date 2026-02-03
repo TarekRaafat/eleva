@@ -1,7 +1,24 @@
 ---
 title: Complete App Examples
-description: Full Eleva.js app examples - task manager, weather dashboard, and blog. Learn component composition and localStorage persistence.
+description: Complete Eleva.js apps with source code. Task manager, weather dashboard, and blog. Learn real-world patterns, component composition, and data persistence.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/apps/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/apps/">
+<meta property="og:title" content="Complete App Examples - Eleva.js">
+<meta property="og:description" content="Complete Eleva.js apps with source code. Task manager, weather dashboard, and blog. Learn real-world patterns, component composition, and data persistence.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/apps/">
+<meta name="twitter:title" content="Complete App Examples - Eleva.js">
+<meta name="twitter:description" content="Complete Eleva.js apps with source code. Task manager, weather dashboard, and blog. Learn real-world patterns, component composition, and data persistence.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,18 @@ description: Full Eleva.js app examples - task manager, weather dashboard, and b
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Apps", "item": "https://elevajs.com/examples/apps/" }
+  ]
+}
 </script>
 
 # Complete Application Examples

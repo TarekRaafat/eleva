@@ -1,7 +1,24 @@
 ---
 title: Conditional Rendering - Show/Hide & Tabs
-description: Eleva.js conditional rendering patterns. Build accordions, tabs, modals, skeleton loaders, and dynamic content with ternary operators and template strings.
+description: Conditional rendering in Eleva.js. Build accordions, tabs, modals, and skeleton loaders using ternary operators. No v-if needed, just JavaScript.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/conditional-rendering.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/conditional-rendering.html">
+<meta property="og:title" content="Conditional Rendering - Eleva.js">
+<meta property="og:description" content="Conditional rendering in Eleva.js. Build accordions, tabs, modals, and skeleton loaders using ternary operators. No v-if needed, just JavaScript.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/conditional-rendering.html">
+<meta name="twitter:title" content="Conditional Rendering - Eleva.js">
+<meta name="twitter:description" content="Conditional rendering in Eleva.js. Build accordions, tabs, modals, and skeleton loaders using ternary operators. No v-if needed, just JavaScript.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,19 @@ description: Eleva.js conditional rendering patterns. Build accordions, tabs, mo
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Conditional Rendering", "item": "https://elevajs.com/examples/patterns/conditional-rendering.html" }
+  ]
+}
 </script>
 
 # Conditional Rendering Examples
@@ -437,6 +467,24 @@ app.component("EmptyState", {
   `
 });
 ```
+
+---
+
+## Related Patterns
+
+Conditional rendering is used throughout other patterns:
+
+| Pattern | Where Conditional Rendering Is Used |
+|---------|-------------------------------------|
+| [Forms](./forms.md) | Validation errors, success/error messages, field visibility |
+| [Async Data](./async-data/index.md) | Loading spinners, error states, empty states |
+| [Lists](./lists/index.md) | Empty list states, filtered results, expandable items |
+| [State Management](./state/index.md) | UI state-driven visibility, feature toggles |
+
+## See Also
+
+- [Attr Plugin](../../plugins/attr/index.md) — Dynamic ARIA attributes for accessibility
+- [Best Practices](./best-practices/index.md) — Efficient conditional rendering techniques
 
 ---
 

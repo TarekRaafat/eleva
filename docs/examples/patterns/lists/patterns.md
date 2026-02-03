@@ -1,7 +1,24 @@
 ---
 title: List Patterns - Drag-Drop, CRUD & Grouped
-description: Eleva.js patterns for drag-and-drop reordering, CRUD operations, and grouped lists.
+description: Advanced list patterns in Eleva.js. Drag-and-drop reordering, CRUD operations (create, read, update, delete), and grouped/categorized lists with full code.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/lists/patterns.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/lists/patterns.html">
+<meta property="og:title" content="List Patterns - Eleva.js">
+<meta property="og:description" content="Advanced list patterns in Eleva.js. Drag-and-drop reordering, CRUD operations, and grouped/categorized lists with full code.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/lists/patterns.html">
+<meta name="twitter:title" content="List Patterns - Eleva.js">
+<meta name="twitter:description" content="Advanced list patterns in Eleva.js. Drag-and-drop reordering, CRUD operations, and grouped/categorized lists with full code.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js patterns for drag-and-drop reordering, CRUD operations, an
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Lists", "item": "https://elevajs.com/examples/patterns/lists/" },
+    { "@type": "ListItem", "position": 5, "name": "List Patterns", "item": "https://elevajs.com/examples/patterns/lists/patterns.html" }
+  ]
+}
 </script>
 
 # List Patterns
@@ -379,6 +410,15 @@ app.component("GroupedList", {
 ## Next Steps
 
 - **[Virtual Scrolling](./virtual-scrolling.md)** - Handle 10K+ rows efficiently
+
+---
+
+## See Also
+
+- [Conditional Rendering](../conditional-rendering.md) — Show/hide groups and items
+- [State Management](../state/index.md) — Complex list state with signals
+- [Forms](../forms.md) — Handle list item editing and CRUD operations
+- [Local Storage](../storage.md) — Persist list data across sessions
 
 ---
 

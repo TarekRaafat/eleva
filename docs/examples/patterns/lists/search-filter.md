@@ -1,7 +1,24 @@
 ---
 title: Searchable & Filterable Lists
-description: Eleva.js patterns for building searchable, filterable lists with sorting and multiple filter criteria.
+description: Build searchable, filterable lists in Eleva.js. Real-time search, multi-criteria filtering, column sorting, and debounced input. Full code examples.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/lists/search-filter.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/lists/search-filter.html">
+<meta property="og:title" content="Searchable & Filterable Lists - Eleva.js">
+<meta property="og:description" content="Build searchable, filterable lists in Eleva.js. Real-time search, multi-criteria filtering, column sorting, and debounced input.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/lists/search-filter.html">
+<meta name="twitter:title" content="Searchable & Filterable Lists - Eleva.js">
+<meta name="twitter:description" content="Build searchable, filterable lists in Eleva.js. Real-time search, multi-criteria filtering, column sorting, and debounced input.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js patterns for building searchable, filterable lists with so
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Lists", "item": "https://elevajs.com/examples/patterns/lists/" },
+    { "@type": "ListItem", "position": 5, "name": "Search & Filter", "item": "https://elevajs.com/examples/patterns/lists/search-filter.html" }
+  ]
+}
 </script>
 
 # Searchable & Filterable Lists
@@ -247,6 +278,15 @@ setup({ signal }) {
 
 - **[Patterns](./patterns.md)** - Drag-drop, CRUD, grouped lists
 - **[Virtual Scrolling](./virtual-scrolling.md)** - Handle 10K+ rows
+
+---
+
+## See Also
+
+- [Forms](../forms.md) — Handle search input and form controls
+- [Async Data Loading](../async-data/index.md) — Fetch filtered results from APIs
+- [Caching Strategies](../async-data/caching.md) — Cache search results for performance
+- [Performance Best Practices](../../../best-practices/performance.md) — Optimize search and filtering
 
 ---
 

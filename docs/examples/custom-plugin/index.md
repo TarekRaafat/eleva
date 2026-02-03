@@ -1,7 +1,24 @@
 ---
 title: Creating Custom Plugins
-description: Complete guide to building Eleva.js plugins. Learn plugin architecture, registration, and the basics of extending Eleva.
+description: Build your own Eleva.js plugin. Learn plugin architecture, install/uninstall hooks, app integration, and how to extend the framework. Full tutorial.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/custom-plugin/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/custom-plugin/">
+<meta property="og:title" content="Creating Custom Plugins - Eleva.js">
+<meta property="og:description" content="Build your own Eleva.js plugin. Learn plugin architecture, install/uninstall hooks, app integration, and how to extend the framework.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/custom-plugin/">
+<meta name="twitter:title" content="Creating Custom Plugins - Eleva.js">
+<meta name="twitter:description" content="Build your own Eleva.js plugin. Learn plugin architecture, install/uninstall hooks, app integration, and how to extend the framework.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -92,7 +109,7 @@ description: Complete guide to building Eleva.js plugins. Learn plugin architect
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -114,9 +131,32 @@ description: Complete guide to building Eleva.js plugins. Learn plugin architect
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Custom Plugin", "item": "https://elevajs.com/examples/custom-plugin/" }
+  ]
+}
+</script>
+
 # Creating a Custom Plugin for Eleva
 
 > **Version:** 1.1.1 | Complete guide to creating, testing, and publishing Eleva plugins.
+
+---
+
+## Prerequisites
+
+Plugin development requires a solid understanding of Eleva's architecture:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup and concepts
+- [Core Concepts](../../core-concepts.md) — Signals, emitters, and lifecycle hooks
+- [Components](../../components.md) — Component structure and the setup function
+- [Official Plugins](../../plugins/index.md) — See how production plugins are built
 
 ---
 
@@ -378,6 +418,27 @@ PluginA.uninstall(app);  // Then earlier plugins
 
 - **[Development Guide](./development.md)** - Set up a plugin project, write tests
 - **[Best Practices](./best-practices.md)** - Error handling, TypeScript support
+
+---
+
+## Learn from Official Plugins
+
+Study how Eleva's core plugins are built:
+
+| Plugin | What You'll Learn |
+|--------|-------------------|
+| [Attr Plugin](../../plugins/attr/) | Attribute handling, configuration options ([API](../../plugins/attr/api.md)) |
+| [Router Plugin](../../plugins/router/) | Complex state management, navigation ([Configuration](../../plugins/router/configuration.md) · [Guards](../../plugins/router/guards.md)) |
+| [Store Plugin](../../plugins/store/) | Reactive state, persistence, namespacing ([Patterns](../../plugins/store/patterns.md) · [Advanced](../../plugins/store/advanced.md)) |
+
+---
+
+## See Also
+
+- [Core Concepts](../../core-concepts.md) — Understand lifecycle hooks and plugin integration points
+- [Components](../../components.md) — Component architecture that plugins extend
+- [State Management](../patterns/state/index.md) — Patterns for reactive state in plugins
+- [Best Practices](../../best-practices.md) — Code quality and testing guidelines
 
 ---
 

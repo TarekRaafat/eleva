@@ -1,7 +1,24 @@
 ---
 title: Setup & Lifecycle Hooks
-description: Eleva.js best practices for setup function organization and lifecycle hook usage.
+description: Organize Eleva.js setup functions. Props, signals, computed values, actions, and lifecycle hooks in the right order. Avoid memory leaks with proper cleanup.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/best-practices/setup-lifecycle.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/best-practices/setup-lifecycle.html">
+<meta property="og:title" content="Setup & Lifecycle Hooks - Eleva.js">
+<meta property="og:description" content="Organize Eleva.js setup functions. Props, signals, computed values, actions, and lifecycle hooks in the right order. Avoid memory leaks with proper cleanup.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/best-practices/setup-lifecycle.html">
+<meta name="twitter:title" content="Setup & Lifecycle Hooks - Eleva.js">
+<meta name="twitter:description" content="Organize Eleva.js setup functions. Props, signals, computed values, actions, and lifecycle hooks in the right order. Avoid memory leaks with proper cleanup.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js best practices for setup function organization and lifecyc
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Best Practices", "item": "https://elevajs.com/examples/patterns/best-practices/" },
+    { "@type": "ListItem", "position": 5, "name": "Setup & Lifecycle", "item": "https://elevajs.com/examples/patterns/best-practices/setup-lifecycle.html" }
+  ]
+}
 </script>
 
 # Setup & Lifecycle Hooks

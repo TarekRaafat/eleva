@@ -1,7 +1,84 @@
 ---
 title: Sponsor Eleva.js
-description: Support Eleva.js development and help keep the framework lightweight, fast, and free for everyone.
+description: Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.
 ---
+
+<link rel="canonical" href="https://elevajs.com/sponsor.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://elevajs.com/sponsor.html">
+<meta property="og:title" content="Sponsor Eleva.js">
+<meta property="og:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/sponsor.html">
+<meta name="twitter:title" content="Sponsor Eleva.js">
+<meta name="twitter:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Sponsor", "item": "https://elevajs.com/sponsor.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How is sponsorship money used?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "100% of sponsorship funds go directly toward: (1) Development time for new features and maintenance, (2) Infrastructure costs (hosting, domains, CI/CD), and (3) Tools and services for testing and documentation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I sponsor anonymously?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Most platforms support anonymous sponsorship. Just select the anonymous option when signing up."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I get an invoice?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. Open Collective and GitHub Sponsors both provide invoices. For custom invoicing needs, contact us via email."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What if I need to cancel my sponsorship?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No problem. You can cancel anytime through your sponsorship platform. We're grateful for any support, however long."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "I represent a company. How do we proceed with corporate sponsorship?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Email us with your company details and we'll set up a call to discuss your needs. Corporate sponsorship provides benefits like premium logo placement, priority support, consulting calls, and custom integration support."
+      }
+    }
+  ]
+}
+</script>
 
 # Sponsor Eleva.js
 

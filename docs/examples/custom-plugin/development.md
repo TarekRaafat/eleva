@@ -1,7 +1,24 @@
 ---
 title: Plugin Development Guide
-description: Step-by-step guide to creating Eleva.js plugins - project setup, development workflow, and comprehensive testing strategies.
+description: Develop Eleva.js plugins step-by-step. Project setup, development workflow, unit testing with Vitest, and debugging strategies. Ship quality plugins.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/custom-plugin/development.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/custom-plugin/development.html">
+<meta property="og:title" content="Plugin Development Guide - Eleva.js">
+<meta property="og:description" content="Develop Eleva.js plugins step-by-step. Project setup, development workflow, unit testing with Vitest, and debugging strategies. Ship quality plugins.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/custom-plugin/development.html">
+<meta name="twitter:title" content="Plugin Development Guide - Eleva.js">
+<meta name="twitter:description" content="Develop Eleva.js plugins step-by-step. Project setup, development workflow, unit testing with Vitest, and debugging strategies. Ship quality plugins.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -88,9 +105,32 @@ description: Step-by-step guide to creating Eleva.js plugins - project setup, de
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Custom Plugin", "item": "https://elevajs.com/examples/custom-plugin/" },
+    { "@type": "ListItem", "position": 4, "name": "Development", "item": "https://elevajs.com/examples/custom-plugin/development.html" }
+  ]
+}
+</script>
+
 # Plugin Development Guide
 
 > **Plugin Guide** | Creating, developing, and testing Eleva plugins.
+
+---
+
+## Prerequisites
+
+Before building plugins, ensure you understand:
+
+- [Plugin Overview](./index.md) — Plugin structure and registration basics
+- [Core Concepts](../../core-concepts.md) — Lifecycle hooks and the Eleva instance
+- [Components](../../components.md) — How components use plugin features
 
 ---
 
@@ -482,6 +522,15 @@ eleva-my-plugin/
 ├── vite.config.js
 └── README.md
 ```
+
+---
+
+## See Also
+
+- [Core Concepts](../../core-concepts.md) — Lifecycle hooks and component architecture
+- [Store Plugin Advanced](../../plugins/store/advanced.md) — Complex plugin patterns
+- [Router Plugin Guards](../../plugins/router/guards.md) — Middleware and guard patterns
+- [Performance Best Practices](../../best-practices/performance.md) — Optimize plugin code
 
 ---
 

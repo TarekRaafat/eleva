@@ -1,7 +1,24 @@
 ---
 title: Signals, Templates & Communication
-description: Eleva.js best practices for signal reactivity, template syntax, children composition, and component communication.
+description: Eleva.js signal and template best practices. When to use signals, .value access patterns, event handlers, props communication, and common anti-patterns to avoid.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/best-practices/signals-templates.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/best-practices/signals-templates.html">
+<meta property="og:title" content="Signals, Templates & Communication - Eleva.js">
+<meta property="og:description" content="Eleva.js signal and template best practices. When to use signals, .value access patterns, event handlers, props communication, and anti-patterns to avoid.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/best-practices/signals-templates.html">
+<meta name="twitter:title" content="Signals, Templates & Communication - Eleva.js">
+<meta name="twitter:description" content="Eleva.js signal and template best practices. When to use signals, .value access patterns, event handlers, props communication, and anti-patterns to avoid.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js best practices for signal reactivity, template syntax, chi
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Best Practices", "item": "https://elevajs.com/examples/patterns/best-practices/" },
+    { "@type": "ListItem", "position": 5, "name": "Signals & Templates", "item": "https://elevajs.com/examples/patterns/best-practices/signals-templates.html" }
+  ]
+}
 </script>
 
 # Signals, Templates & Communication

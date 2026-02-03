@@ -1,7 +1,24 @@
 ---
 title: Router Configuration
-description: Configure Eleva Router with routing modes, route definitions, layouts, and options.
+description: Configure Eleva Router. Set up hash or history mode, define routes with params, add layouts, and customize options for your SPA navigation needs.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/configuration.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/configuration.html">
+<meta property="og:title" content="Router Configuration - Eleva.js">
+<meta property="og:description" content="Configure Eleva Router. Set up hash or history mode, define routes with params, add layouts, and customize options for your SPA navigation needs.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/configuration.html">
+<meta name="twitter:title" content="Router Configuration - Eleva.js">
+<meta name="twitter:description" content="Configure Eleva Router. Set up hash or history mode, define routes with params, add layouts, and customize options for your SPA navigation needs.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,52 @@ description: Configure Eleva Router with routing modes, route definitions, layou
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Router Configuration",
+  "description": "Configure Eleva Router with routing modes, route definitions, layouts, and options.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/router/configuration.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva router", "router configuration", "routing modes", "hash mode", "history mode", "route definitions"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" },
+    { "@type": "ListItem", "position": 4, "name": "Configuration", "item": "https://elevajs.com/plugins/router/configuration.html" }
+  ]
+}
 </script>
 
 # Router Configuration
@@ -425,6 +488,12 @@ const routes = [
 - [Navigation](./navigation.md) - Programmatic navigation and reactive state
 - [Guards](./guards.md) - Protect routes with navigation guards
 - [Lazy Loading](./lazy-loading.md) - Code splitting strategies
+
+## See Also
+
+- [Getting Started](../../getting-started.md) — Quick router setup example
+- [State Management](../../examples/patterns/state/index.md) — Managing route-related state
+- [Project Structure](../../examples/patterns/state/project-structure.md) — File organization with routing
 
 ---
 

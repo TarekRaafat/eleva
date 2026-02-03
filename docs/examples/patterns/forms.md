@@ -1,7 +1,24 @@
 ---
 title: Form Handling - Input Binding & Validation
-description: Eleva.js form examples with two-way data binding, real-time validation, and form submission. Build accessible reactive forms.
+description: Build reactive forms with Eleva.js. Two-way binding, real-time validation, error handling, and accessible form patterns. Works without a form library.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/forms.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/forms.html">
+<meta property="og:title" content="Form Handling - Eleva.js">
+<meta property="og:description" content="Build reactive forms with Eleva.js. Two-way binding, real-time validation, error handling, and accessible form patterns. Works without a form library.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/forms.html">
+<meta name="twitter:title" content="Form Handling - Eleva.js">
+<meta name="twitter:description" content="Build reactive forms with Eleva.js. Two-way binding, real-time validation, error handling, and accessible form patterns. Works without a form library.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,47 @@ description: Eleva.js form examples with two-way data binding, real-time validat
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Forms", "item": "https://elevajs.com/examples/patterns/forms.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Form Handling Patterns",
+  "description": "Complete form handling examples including input binding, validation, checkbox/radio inputs, select dropdowns, and form submission with error handling. Copy-paste patterns for common form scenarios.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["Input binding", "Form validation", "Checkbox handling", "Select dropdowns", "Form submission"]
+}
 </script>
 
 # Form Handling Examples
@@ -666,6 +724,25 @@ app.component("CountrySelector", {
   `
 });
 ```
+
+---
+
+## Related Patterns
+
+Forms work best when combined with these patterns:
+
+| Pattern | How It Works With Forms |
+|---------|------------------------|
+| [Conditional Rendering](./conditional-rendering.md) | Show/hide validation errors, loading states, success messages |
+| [State Management](./state/index.md) | Manage complex form state, multi-step wizards |
+| [Local Storage](./storage.md) | Save form drafts, persist data across sessions |
+| [Async Data](./async-data/index.md) | Submit forms to APIs, handle server validation |
+| [Lists](./lists/index.md) | Inline editing, search inputs with list results |
+
+## See Also
+
+- [Task Manager App](../apps/task-manager.md) — Complete app with forms and validation
+- [Attr Plugin](../../plugins/attr/index.md) — Accessible form attributes (ARIA)
 
 ---
 

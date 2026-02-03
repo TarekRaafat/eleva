@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Architecture & Data Flow
-description: Understand Eleva's internal architecture, data flow patterns, and how components interact. Visual diagrams and detailed explanations.
+description: Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/architecture.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/architecture.html">
+<meta property="og:title" content="Architecture & Data Flow - Eleva.js">
+<meta property="og:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/architecture.html">
+<meta name="twitter:title" content="Architecture & Data Flow - Eleva.js">
+<meta name="twitter:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "architecture", "data flow", "component interaction", "signals", "renderer"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Architecture", "item": "https://elevajs.com/architecture.html" }
+  ]
 }
 </script>
 

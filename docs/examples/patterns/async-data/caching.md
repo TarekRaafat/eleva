@@ -1,7 +1,24 @@
 ---
 title: Caching & Optimization
-description: Eleva.js async patterns for caching, parallel fetching, request deduplication, and SWR pattern.
+description: Cache API responses in Eleva.js. In-memory caching, parallel fetching, request deduplication, and stale-while-revalidate (SWR) pattern. Faster apps.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/async-data/caching.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/async-data/caching.html">
+<meta property="og:title" content="Caching & Optimization - Eleva.js">
+<meta property="og:description" content="Cache API responses in Eleva.js. In-memory caching, parallel fetching, request deduplication, and stale-while-revalidate (SWR) pattern.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/async-data/caching.html">
+<meta name="twitter:title" content="Caching & Optimization - Eleva.js">
+<meta name="twitter:description" content="Cache API responses in Eleva.js. In-memory caching, parallel fetching, request deduplication, and stale-while-revalidate (SWR) pattern.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,33 @@ description: Eleva.js async patterns for caching, parallel fetching, request ded
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Async Data", "item": "https://elevajs.com/examples/patterns/async-data/" },
+    { "@type": "ListItem", "position": 5, "name": "Caching", "item": "https://elevajs.com/examples/patterns/async-data/caching.html" }
+  ]
+}
+</script>
+
 # Caching & Optimization
 
 > **Async Data** | Caching, parallel requests, and smart revalidation.
+
+---
+
+## Prerequisites
+
+This is an **advanced pattern**. Before implementing caching, ensure you understand:
+
+- [Async Data Loading](./index.md) — Basic fetch patterns and loading states
+- [Core Concepts](../../../core-concepts.md) — Signals and lifecycle hooks
+- [Local Storage](../storage.md) — Basic persistence concepts
 
 ---
 
@@ -426,6 +467,14 @@ app.component("SWRComponent", {
 | **Parallel fetch** | Dashboard, multiple resources | Faster page load |
 | **Deduplication** | Shared resources | Reduce redundant requests |
 | **SWR** | Real-time dashboards | Instant UI, fresh data |
+
+---
+
+## See Also
+
+- [Resilience Patterns](./resilience.md) — Handle failures gracefully
+- [Local Storage](../storage.md) — Persist cache across sessions
+- [Performance Best Practices](../best-practices/performance.md) — Optimize rendering
 
 ---
 

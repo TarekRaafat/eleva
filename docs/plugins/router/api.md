@@ -1,7 +1,24 @@
 ---
 title: Router API Reference
-description: Complete API reference for Eleva Router including methods, properties, plugins, TypeScript support, and troubleshooting.
+description: Eleva Router API reference. All methods, properties, events, and TypeScript types. Includes troubleshooting guide and migration tips from other routers.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/api.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/api.html">
+<meta property="og:title" content="Router API Reference - Eleva.js">
+<meta property="og:description" content="Eleva Router API reference. All methods, properties, events, and TypeScript types. Includes troubleshooting guide and migration tips.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/api.html">
+<meta name="twitter:title" content="Router API Reference - Eleva.js">
+<meta name="twitter:description" content="Eleva Router API reference. All methods, properties, events, and TypeScript types. Includes troubleshooting guide and migration tips.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,101 @@ description: Complete API reference for Eleva Router including methods, properti
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Router API Reference",
+  "description": "Complete API reference for Eleva Router including methods, properties, plugins, TypeScript support, and troubleshooting.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/router/api.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva router", "API reference", "router methods", "navigate", "router events", "TypeScript"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" },
+    { "@type": "ListItem", "position": 4, "name": "API Reference", "item": "https://elevajs.com/plugins/router/api.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why do I get 'Mount element not found' error?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This error occurs when the mount element doesn't exist before the router starts. Solution: Either wait for DOMContentLoaded before creating the router, or use autoStart: false for manual control and call router.start() after the DOM is ready."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I get 'Component not registered' error?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This error means the component referenced in your route hasn't been registered with Eleva. Solution: Register components with app.component() before defining routes that reference them."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is navigation not working with History mode?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "History mode requires server-side configuration to redirect all routes to your index.html. Without this fallback, direct URL access or page refresh will result in 404 errors. Configure your server to serve index.html for all routes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are my guards not blocking navigation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Guards must explicitly return a value to block or redirect navigation. If your guard doesn't return anything (or returns undefined), navigation proceeds. Ensure your guard returns false to block, a string path to redirect, or true to allow."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why are route params always strings?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This is correct behavior. URL parameters are always extracted as strings from the URL path. Convert them to numbers or other types as needed using parseInt(), parseFloat(), or other parsing methods."
+      }
+    }
+  ]
+}
 </script>
 
 # Router API Reference
@@ -1072,6 +1184,16 @@ The Eleva Router Plugin provides:
 - **Plugin system**: Extensible architecture for custom functionality
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+---
+
+## See Also
+
+- [Router Configuration](./configuration.md) — Setup routes and modes
+- [Navigation Guards](./guards.md) — Protect routes with auth
+- [Store Plugin](../store/index.md) — Manage auth state for guards
+- [Migration from React](../../migration/from-react.md) — React Router comparison
+- [Migration from Vue](../../migration/from-vue.md) — Vue Router comparison
 
 ---
 

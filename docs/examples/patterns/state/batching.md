@@ -1,7 +1,24 @@
 ---
 title: Batching & Performance
-description: Eleva.js automatic render batching, performance optimization, and 240fps+ animation capabilities.
+description: Eleva.js render batching explained. Automatic optimization via queueMicrotask, multiple signal updates in one render, and 240fps+ animation performance.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/state/batching.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/state/batching.html">
+<meta property="og:title" content="Batching & Performance - Eleva.js">
+<meta property="og:description" content="Eleva.js render batching explained. Automatic optimization via queueMicrotask, multiple signal updates in one render, and 240fps+ animation performance.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/state/batching.html">
+<meta name="twitter:title" content="Batching & Performance - Eleva.js">
+<meta name="twitter:description" content="Eleva.js render batching explained. Automatic optimization via queueMicrotask, multiple signal updates in one render, and 240fps+ animation performance.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,33 @@ description: Eleva.js automatic render batching, performance optimization, and 2
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "State", "item": "https://elevajs.com/examples/patterns/state/" },
+    { "@type": "ListItem", "position": 5, "name": "Batching", "item": "https://elevajs.com/examples/patterns/state/batching.html" }
+  ]
+}
+</script>
+
 # Batching & Performance
 
 > **State Patterns** | Automatic render batching and high-performance capabilities.
+
+---
+
+## Prerequisites
+
+This is an **advanced pattern**. Before diving into batching, ensure you understand:
+
+- [State Management Basics](./index.md) — Signals and state updates
+- [Core Concepts](../../../core-concepts.md) — Signal reactivity and the render cycle
+- [Performance Best Practices](../best-practices/performance.md) — General optimization techniques
 
 ---
 

@@ -1,7 +1,24 @@
 ---
 title: List Operations - Basics, Events & Keys
-description: Eleva.js list fundamentals - rendering dynamic lists, event binding, and key-based reconciliation for optimal performance.
+description: Render dynamic lists in Eleva.js. Array.map() for rendering, event binding per item, and key-based reconciliation for fast DOM updates. No v-for needed.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/lists/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/lists/">
+<meta property="og:title" content="List Operations - Eleva.js">
+<meta property="og:description" content="Render dynamic lists in Eleva.js. Array.map() for rendering, event binding per item, and key-based reconciliation for fast DOM updates.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/lists/">
+<meta name="twitter:title" content="List Operations - Eleva.js">
+<meta name="twitter:description" content="Render dynamic lists in Eleva.js. Array.map() for rendering, event binding per item, and key-based reconciliation for fast DOM updates.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,19 @@ description: Eleva.js list fundamentals - rendering dynamic lists, event binding
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Lists", "item": "https://elevajs.com/examples/patterns/lists/" }
+  ]
+}
 </script>
 
 # List Operations - Basics
@@ -576,6 +606,25 @@ With stable IDs, the renderer correctly identifies which items moved, were added
 - **[Search & Filter](./search-filter.md)** - Build searchable, filterable lists
 - **[Patterns](./patterns.md)** - Drag-drop, CRUD, grouped lists
 - **[Virtual Scrolling](./virtual-scrolling.md)** - Handle 10K+ rows efficiently
+
+---
+
+## Related Patterns
+
+Lists combine with these patterns for complete features:
+
+| Pattern | How It Works With Lists |
+|---------|------------------------|
+| [Forms](../forms.md) | Inline editing, search inputs, add item forms |
+| [Conditional Rendering](../conditional-rendering.md) | Empty states, loading indicators, expandable rows |
+| [State Management](../state/index.md) | Item selection, computed totals, undo/redo |
+| [Async Data](../async-data/index.md) | Paginated lists, infinite scroll, API data |
+| [Storage](../storage.md) | Persist items, remember sort/filter preferences |
+
+## See Also
+
+- [Task Manager App](../../apps/task-manager.md) — Complete app demonstrating list patterns
+- [Best Practices](../best-practices/performance.md) — List performance optimization
 
 ---
 

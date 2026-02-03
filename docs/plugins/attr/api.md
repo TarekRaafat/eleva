@@ -1,7 +1,24 @@
 ---
 title: Attr Plugin API Reference
-description: Complete API reference for Eleva Attr plugin including methods, troubleshooting, and best practices.
+description: Eleva Attr API reference. Configuration options, updateElementAttributes method, uninstall guide, troubleshooting tips, and accessibility best practices.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/attr/api.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/attr/api.html">
+<meta property="og:title" content="Attr Plugin API Reference - Eleva.js">
+<meta property="og:description" content="Eleva Attr API reference. Configuration options, updateElementAttributes method, uninstall guide, troubleshooting tips, and accessibility best practices.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/attr/api.html">
+<meta name="twitter:title" content="Attr Plugin API Reference - Eleva.js">
+<meta name="twitter:description" content="Eleva Attr API reference. Configuration options, updateElementAttributes method, uninstall guide, troubleshooting tips, and accessibility best practices.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,101 @@ description: Complete API reference for Eleva Attr plugin including methods, tro
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Attr Plugin API Reference",
+  "description": "Complete API reference for Eleva Attr plugin including methods, troubleshooting, and best practices.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/attr/api.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva attr", "API reference", "updateElementAttributes", "attribute binding", "configuration options"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Attr", "item": "https://elevajs.com/plugins/attr/" },
+    { "@type": "ListItem", "position": 4, "name": "API Reference", "item": "https://elevajs.com/plugins/attr/api.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why isn't my boolean attribute toggling correctly?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The Attr plugin only recognizes 'true', '' (empty string), or the attribute name itself (e.g., disabled='disabled') as truthy values. Values like '1' or 'yes' are NOT recognized as truthy. Use boolean signals that produce true/false strings."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why aren't my ARIA attributes updating?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Ensure you're accessing the .value property of signals. Use aria-expanded='${ctx.isOpen.value}' not aria-expanded='${ctx.isOpen}' (missing .value)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I handle data attributes with special characters?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Encode special characters using encodeURIComponent(). Create a computed property like const safeMessage = () => encodeURIComponent(message.value) and use it in your template."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why isn't my dynamic property binding to input value?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "For two-way binding, implement both value binding and input event handler. Use value='${ctx.inputValue.value}' combined with @input='(e) => inputValue.value = e.target.value' for complete two-way data flow."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why isn't the Attr plugin working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check: (1) Installation order - app.use(Attr) must be called before mount(). (2) Plugin is imported correctly from 'eleva/plugins'. (3) No conflicting plugins that override attribute handling - install Attr first."
+      }
+    }
+  ]
+}
 </script>
 
 # Attr Plugin API Reference
@@ -459,6 +571,15 @@ checked.value = true;
 - **Configuration Options**: 4
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+---
+
+## See Also
+
+- [Attr Features](./features.md) — ARIA, data attributes, boolean handling
+- [Attr Patterns](./patterns.md) — Accessible forms, tabs, accordions
+- [Conditional Rendering](../../examples/patterns/conditional-rendering.md) — Dynamic UI states
+- [Form Handling](../../examples/patterns/forms.md) — Accessible form patterns
 
 ---
 

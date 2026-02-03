@@ -1,7 +1,24 @@
 ---
 title: Local Storage - Persistence & Caching
-description: Eleva.js localStorage patterns for data persistence, session storage, caching strategies, and auto-save functionality. Keep user data across browser sessions.
+description: Persist data in Eleva.js. localStorage, sessionStorage, caching strategies, and auto-save patterns. Keep user preferences and data across browser sessions.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/storage.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/storage.html">
+<meta property="og:title" content="Local Storage - Eleva.js">
+<meta property="og:description" content="Persist data in Eleva.js. localStorage, sessionStorage, caching strategies, and auto-save patterns. Keep user preferences and data across browser sessions.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/storage.html">
+<meta name="twitter:title" content="Local Storage - Eleva.js">
+<meta name="twitter:description" content="Persist data in Eleva.js. localStorage, sessionStorage, caching strategies, and auto-save patterns. Keep user preferences and data across browser sessions.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,19 @@ description: Eleva.js localStorage patterns for data persistence, session storag
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Storage", "item": "https://elevajs.com/examples/patterns/storage.html" }
+  ]
+}
 </script>
 
 # Local Storage Examples
@@ -603,6 +633,24 @@ app.component("StorageInfo", {
   `
 });
 ```
+
+---
+
+## Related Patterns
+
+Storage integrates with these patterns:
+
+| Pattern | Storage Integration |
+|---------|---------------------|
+| [Forms](./forms.md) | Auto-save drafts, restore form state on page load |
+| [State Management](./state/index.md) | Hydrate signals from storage, persist state changes |
+| [Async Data](./async-data/caching.md) | Cache API responses, offline-first strategies |
+| [Lists](./lists/index.md) | Persist list items, remember sort/filter preferences |
+
+## See Also
+
+- [Store Plugin](../../plugins/store/index.md) — Built-in persistence with Store plugin
+- [Task Manager App](../apps/task-manager.md) — Complete app with localStorage persistence
 
 ---
 

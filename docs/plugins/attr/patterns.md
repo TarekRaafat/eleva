@@ -1,7 +1,24 @@
 ---
 title: Attr Plugin Usage Patterns
-description: Real-world examples of using Eleva Attr plugin for accessible forms, accordions, tabs, tables, and modals.
+description: Accessible UI patterns with Eleva Attr. Build WCAG-compliant forms, accordions, tabs, data tables, and modals. Full code examples with ARIA best practices.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/attr/patterns.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/attr/patterns.html">
+<meta property="og:title" content="Attr Plugin Usage Patterns - Eleva.js">
+<meta property="og:description" content="Accessible UI patterns with Eleva Attr. Build WCAG-compliant forms, accordions, tabs, data tables, and modals. Full code examples with ARIA best practices.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/attr/patterns.html">
+<meta name="twitter:title" content="Attr Plugin Usage Patterns - Eleva.js">
+<meta name="twitter:description" content="Accessible UI patterns with Eleva Attr. Build WCAG-compliant forms, accordions, tabs, data tables, and modals. Full code examples with ARIA best practices.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,65 @@ description: Real-world examples of using Eleva Attr plugin for accessible forms
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Attr Plugin Usage Patterns",
+  "description": "Real-world examples of using Eleva Attr plugin for accessible forms, accordions, tabs, tables, and modals.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/attr/patterns.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva attr", "accessible forms", "accordion", "tabs", "modal", "accessibility patterns"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Attr", "item": "https://elevajs.com/plugins/attr/" },
+    { "@type": "ListItem", "position": 4, "name": "Patterns", "item": "https://elevajs.com/plugins/attr/patterns.html" }
+  ]
+}
+</script>
+
 # Attr Plugin Usage Patterns
 
 > **Attr Plugin** | Practical examples for accessible, interactive components.
+
+---
+
+## Prerequisites
+
+Before implementing these patterns, ensure you understand:
+
+- [Attr Plugin Overview](./index.md) — Basic setup and configuration
+- [Attr Features](./features.md) — ARIA, data, and boolean attributes
+- [Form Handling](../../examples/patterns/forms.md) — Form state and validation
 
 ---
 
@@ -549,6 +622,12 @@ const ModalDialog = {
 ## Next Steps
 
 - [API Reference](./api.md) - Complete API and troubleshooting
+
+## See Also
+
+- [Conditional Rendering](../../examples/patterns/conditional-rendering.md) — Tabs, accordions, modals
+- [Form Handling](../../examples/patterns/forms.md) — Accessible input patterns
+- [List Operations](../../examples/patterns/lists/index.md) — Accessible list patterns
 
 ---
 

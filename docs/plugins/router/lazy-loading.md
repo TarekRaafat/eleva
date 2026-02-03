@@ -1,7 +1,24 @@
 ---
 title: Lazy Loading & Code Splitting
-description: Reduce bundle size with lazy loading and code splitting strategies in Eleva Router.
+description: Speed up your Eleva app with lazy loading. Code-split routes, load components on demand, and reduce initial bundle size for faster page loads.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/lazy-loading.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/lazy-loading.html">
+<meta property="og:title" content="Lazy Loading & Code Splitting - Eleva.js">
+<meta property="og:description" content="Speed up your Eleva app with lazy loading. Code-split routes, load components on demand, and reduce initial bundle size for faster page loads.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/lazy-loading.html">
+<meta name="twitter:title" content="Lazy Loading & Code Splitting - Eleva.js">
+<meta name="twitter:description" content="Speed up your Eleva app with lazy loading. Code-split routes, load components on demand, and reduce initial bundle size for faster page loads.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,65 @@ description: Reduce bundle size with lazy loading and code splitting strategies 
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Lazy Loading & Code Splitting",
+  "description": "Reduce bundle size with lazy loading and code splitting strategies in Eleva Router.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/router/lazy-loading.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva router", "lazy loading", "code splitting", "dynamic imports", "bundle optimization", "performance"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" },
+    { "@type": "ListItem", "position": 4, "name": "Lazy Loading", "item": "https://elevajs.com/plugins/router/lazy-loading.html" }
+  ]
+}
+</script>
+
 # Lazy Loading & Code Splitting
 
 > **Router Plugin** | Reduce bundle size with on-demand component loading.
+
+---
+
+## Prerequisites
+
+Before implementing lazy loading, ensure you understand:
+
+- [Router Plugin Overview](./index.md) — Basic routing setup
+- [Router Configuration](./configuration.md) — Route definitions
+- [Components](../../components.md) — Component structure and exports
 
 ---
 
@@ -308,6 +381,12 @@ router.onError((error, to, from) => {
 ## Next Steps
 
 - [API Reference](./api.md) - Complete method reference and error handling
+
+## See Also
+
+- [Performance Best Practices](../../examples/patterns/best-practices/performance.md) - Optimize load times
+- [Router Guards](./guards.md) - Protect lazy-loaded routes
+- [Custom Plugin Development](../../examples/custom-plugin/development.md) - Build lazy-loading plugins
 
 ---
 

@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Cheat Sheet
-description: Quick reference for Eleva.js syntax - signals, templates, lifecycle hooks, events, props, and common patterns. Print-friendly.
+description: Eleva.js cheat sheet. Copy-paste code for signals, templates, events, props, and lifecycle hooks. Print-friendly quick reference for developers.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/cheatsheet.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/cheatsheet.html">
+<meta property="og:title" content="Cheat Sheet - Eleva.js">
+<meta property="og:description" content="Eleva.js cheat sheet. Copy-paste code for signals, templates, events, props, and lifecycle hooks. Print-friendly quick reference for developers.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/cheatsheet.html">
+<meta name="twitter:title" content="Cheat Sheet - Eleva.js">
+<meta name="twitter:description" content="Eleva.js cheat sheet. Copy-paste code for signals, templates, events, props, and lifecycle hooks. Print-friendly quick reference for developers.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,45 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Beginner",
   "articleSection": "Reference",
   "keywords": ["eleva", "elevajs", "Eleva.js", "cheat sheet", "quick reference", "syntax", "signals", "templates", "lifecycle"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Cheat Sheet", "item": "https://elevajs.com/cheatsheet.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Quick Reference Code Examples",
+  "description": "Comprehensive quick reference showing setup, template syntax, signals, lifecycle hooks, common patterns, and form handling. Copy-paste code snippets for rapid development.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Quick Reference",
+  "teaches": ["Setup patterns", "Template syntax", "Signal management", "Lifecycle hooks", "Form handling"]
 }
 </script>
 

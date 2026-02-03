@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Best Practices
-description: Comprehensive guide to Eleva best practices - component structure, setup patterns, signals, lifecycle hooks, and general guidelines.
+description: Write clean, performant Eleva code. Best practices for component structure, signal usage, lifecycle hooks, and patterns used by experienced developers.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/best-practices.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/best-practices.html">
+<meta property="og:title" content="Best Practices - Eleva.js">
+<meta property="og:description" content="Write clean, performant Eleva code. Best practices for component structure, signal usage, lifecycle hooks, and patterns used by experienced developers.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/best-practices.html">
+<meta name="twitter:title" content="Best Practices - Eleva.js">
+<meta name="twitter:description" content="Write clean, performant Eleva code. Best practices for component structure, signal usage, lifecycle hooks, and patterns used by experienced developers.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "best practices", "component structure", "signals", "lifecycle hooks", "patterns"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Best Practices", "item": "https://elevajs.com/best-practices.html" }
+  ]
 }
 </script>
 

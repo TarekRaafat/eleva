@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Attr Plugin - Intelligent Attribute Binding
-description: Eleva.js Attr plugin for ARIA accessibility, data attributes, boolean attributes, and dynamic property binding. 2.2KB, zero-config.
+description: Build accessible Eleva apps with the Attr plugin. ARIA attributes, data-* binding, and boolean toggles. Just 2.2KB, zero-config, WCAG-friendly.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/attr/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/attr/">
+<meta property="og:title" content="Attr Plugin - Eleva.js">
+<meta property="og:description" content="Build accessible Eleva apps with the Attr plugin. ARIA attributes, data-* binding, and boolean toggles. Just 2.2KB, zero-config, WCAG-friendly.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/attr/">
+<meta name="twitter:title" content="Attr Plugin - Eleva.js">
+<meta name="twitter:description" content="Build accessible Eleva apps with the Attr plugin. ARIA attributes, data-* binding, and boolean toggles. Just 2.2KB, zero-config, WCAG-friendly.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -47,11 +64,119 @@ image: /imgs/eleva.js%20Full%20Logo.png
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Attr", "item": "https://elevajs.com/plugins/attr/" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Eleva Attr",
+  "alternateName": ["@eleva/attr", "eleva-attr", "Eleva.js Attr"],
+  "description": "Intelligent attribute binding plugin for Eleva.js. ARIA accessibility attributes, data-* binding, boolean attribute toggles, and dynamic property detection. WCAG-compliant accessibility helper.",
+  "url": "https://elevajs.com/plugins/attr/",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "JavaScript Accessibility Plugin",
+  "operatingSystem": "Cross-platform (Web Browser)",
+  "softwareVersion": "1.1.1",
+  "datePublished": "2026-01-12",
+  "downloadUrl": "https://www.npmjs.com/package/eleva",
+  "installUrl": "https://www.npmjs.com/package/eleva",
+  "fileSize": "2.2KB",
+  "storageRequirements": "2.2KB minified",
+  "softwareRequirements": "Eleva.js core framework",
+  "featureList": [
+    "ARIA attribute binding",
+    "Data attribute binding",
+    "Boolean attribute toggling",
+    "Dynamic property detection",
+    "WCAG compliance helpers",
+    "Screen reader optimization",
+    "Zero configuration",
+    "Automatic attribute syncing"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "codeRepository": "https://github.com/TarekRaafat/eleva",
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "sameAs": [
+    "https://www.npmjs.com/package/eleva",
+    "https://github.com/TarekRaafat/eleva",
+    "https://www.jsdelivr.com/package/npm/eleva",
+    "https://unpkg.com/eleva",
+    "https://bundlephobia.com/package/eleva"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva Attr - Accessible Component Example",
+  "description": "Practical example showing ARIA attributes, data attributes, and boolean attribute binding for accessible interactive components. Demonstrates accessibility patterns in Eleva.js.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva Attr",
+    "url": "https://elevajs.com/plugins/attr/"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["ARIA attributes", "Data attributes", "Boolean attributes", "Web accessibility"]
+}
+</script>
+
 # Attr Plugin
 
 > **Version:** 1.1.1 | **Type:** Attribute Binding Plugin | **Bundle Size:** ~2.2KB minified | **Dependencies:** Eleva core
 
 The Attr plugin provides intelligent attribute binding for Eleva components, automatically handling ARIA accessibility attributes, data attributes, boolean attributes, and dynamic property detection.
+
+---
+
+## Prerequisites
+
+Before using the Attr Plugin, you should be familiar with:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup and your first app
+- [Core Concepts](../../core-concepts.md) — Signals and template syntax
+- [Components](../../components.md) — Component structure and templates
 
 ---
 
@@ -303,6 +428,15 @@ app.use(Attr, {
 - [Features](./features.md) - Learn about ARIA, data, boolean, and dynamic attributes
 - [Usage Patterns](./patterns.md) - Real-world examples
 - [API Reference](./api.md) - Complete API and troubleshooting
+
+---
+
+## Related Documentation
+
+- [Form Patterns](../../examples/patterns/forms.md) - Input binding and validation examples
+- [Conditional Rendering](../../examples/patterns/conditional-rendering.md) - Show/hide and accessibility
+- [Router Plugin](../router/) - Combine with routing for accessible navigation
+- [Store Plugin](../store/) - Manage attribute state globally
 
 ---
 

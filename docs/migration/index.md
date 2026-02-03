@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Migration Guides
-description: Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping and code comparisons.
+description: Migrate to Eleva.js from React, Vue, Alpine.js, or jQuery. Side-by-side code comparisons, concept mapping, and incremental migration strategies.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/migration/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/migration/">
+<meta property="og:title" content="Migration Guides - Eleva.js">
+<meta property="og:description" content="Migrate to Eleva.js from React, Vue, Alpine.js, or jQuery. Side-by-side code comparisons, concept mapping, and incremental migration strategies.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/migration/">
+<meta name="twitter:title" content="Migration Guides - Eleva.js">
+<meta name="twitter:description" content="Migrate to Eleva.js from React, Vue, Alpine.js, or jQuery. Side-by-side code comparisons, concept mapping, and incremental migration strategies.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,58 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Migration",
   "keywords": ["eleva", "elevajs", "Eleva.js", "migration", "React", "Vue", "Alpine.js", "jQuery", "framework migration"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Migration", "item": "https://elevajs.com/migration/" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Can I migrate to Eleva incrementally?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva can coexist with your existing framework. You can mount Eleva components alongside existing code and migrate one component at a time, starting with leaf components that have no children."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What migration strategy should I use?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Three approaches: (1) Incremental - Eleva coexists with existing code, migrate pieces over time. (2) Component-by-component - Start with leaf components, work up to parents. (3) Feature-by-feature - Build new features in Eleva, convert during refactors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I gain by migrating to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Simplicity (~2.5KB gzipped, no build step, no virtual DOM), Performance (240+ FPS rendering, batched DOM updates), and Developer Experience (familiar patterns from React/Vue, TypeScript support, simple mental model)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How does Eleva's state management compare to other frameworks?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Eleva uses signals for reactive state. React's useState becomes signal(), Vue's ref/reactive becomes signal(), Alpine's x-data becomes setup() + signal(), and jQuery global variables become signals with automatic DOM updates."
+      }
+    }
+  ]
 }
 </script>
 
@@ -301,6 +370,15 @@ template: (ctx) => `
 - **Documentation:** [Main Docs](../index.md)
 - **Examples:** [Examples & Recipes](../examples/index.md)
 - **GitHub:** [Report Issues](https://github.com/TarekRaafat/eleva/issues)
+
+---
+
+## All Migration Guides
+
+- [From React](./from-react.md) — useState, hooks, JSX → signals, templates
+- [From Vue](./from-vue.md) — ref/reactive, SFC → signals, component objects
+- [From Alpine.js](./from-alpine.md) — x-data, directives → setup, templates
+- [From jQuery](./from-jquery.md) — DOM manipulation → reactive components
 
 ---
 

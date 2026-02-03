@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Store Plugin - Centralized State Management
-description: Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in 6KB.
+description: Manage global state with Eleva Store. Actions, namespaces, localStorage persistence, and devtools. A lightweight Redux/Vuex alternative in just 6KB.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/">
+<meta property="og:title" content="Store Plugin - Eleva.js">
+<meta property="og:description" content="Manage global state with Eleva Store. Actions, namespaces, localStorage persistence. A lightweight Redux/Vuex alternative.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/">
+<meta name="twitter:title" content="Store Plugin - Eleva.js">
+<meta name="twitter:description" content="Manage global state with Eleva Store. Actions, namespaces, localStorage persistence. A lightweight Redux/Vuex alternative.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -47,11 +64,119 @@ image: /imgs/eleva.js%20Full%20Logo.png
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Eleva Store",
+  "alternateName": ["@eleva/store", "eleva-store", "Eleva.js Store"],
+  "description": "Centralized state management plugin for Eleva.js. Actions, namespaces, localStorage/sessionStorage persistence, and devtools integration. Lightweight Redux/Vuex/Pinia alternative.",
+  "url": "https://elevajs.com/plugins/store/",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "JavaScript State Management Plugin",
+  "operatingSystem": "Cross-platform (Web Browser)",
+  "softwareVersion": "1.1.1",
+  "datePublished": "2026-01-12",
+  "downloadUrl": "https://www.npmjs.com/package/eleva",
+  "installUrl": "https://www.npmjs.com/package/eleva",
+  "fileSize": "6KB",
+  "storageRequirements": "6KB minified",
+  "softwareRequirements": "Eleva.js core framework",
+  "featureList": [
+    "Reactive global state with signals",
+    "Action-based state mutations",
+    "Namespace organization",
+    "localStorage persistence",
+    "sessionStorage persistence",
+    "DevTools integration",
+    "State subscriptions",
+    "Module system"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "codeRepository": "https://github.com/TarekRaafat/eleva",
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "sameAs": [
+    "https://www.npmjs.com/package/eleva",
+    "https://github.com/TarekRaafat/eleva",
+    "https://www.jsdelivr.com/package/npm/eleva",
+    "https://unpkg.com/eleva",
+    "https://bundlephobia.com/package/eleva"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva Store - 30-Second Setup Example",
+  "description": "Complete Store plugin example showing global state definition, actions for state mutations, and component integration with store.state and store.dispatch().",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "full solution",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva Store",
+    "url": "https://elevajs.com/plugins/store/"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["Global state management", "Actions", "State dispatch", "Reactive updates"]
+}
+</script>
+
 # Store Plugin
 
 > **Version:** 1.1.1 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
 
 The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
+
+---
+
+## Prerequisites
+
+Before using the Store Plugin, you should be familiar with:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup and your first app
+- [Core Concepts](../../core-concepts.md) — Signals, emitters, and reactivity
+- [Components](../../components.md) — Component structure and setup function
 
 ---
 
@@ -346,6 +471,18 @@ app.mount(document.getElementById("app"), "Counter");
 - [Core Concepts](./core-concepts.md) - Learn about state, actions, and namespaces
 - [Configuration](./configuration.md) - Set up persistence and DevTools
 - [Usage Patterns](./patterns.md) - Real-world examples
+- [Advanced](./advanced.md) - Middleware, DevTools, and computed state
+- [API Reference](./api.md) - Complete API documentation
+
+---
+
+## Related Documentation
+
+- [State Patterns](../../examples/patterns/state/) - State management examples
+- [Router Plugin](../router/) - Combine for route-based state
+- [Migration from React](../../migration/from-react.md) - Redux/Context → Eleva Store
+- [Migration from Vue](../../migration/from-vue.md) - Vuex/Pinia → Eleva Store
+- [Storage Patterns](../../examples/patterns/storage.md) - Persistence examples
 
 ---
 

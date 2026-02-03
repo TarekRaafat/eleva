@@ -1,7 +1,24 @@
 ---
 title: Task Manager App
-description: Build a task manager with Eleva.js featuring filtering, sorting, priorities, due dates, and localStorage. Complete source code.
+description: Build a full-featured task manager with Eleva.js. Filtering, sorting, priorities, due dates, and localStorage persistence. Complete source code included.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/apps/task-manager.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/apps/task-manager.html">
+<meta property="og:title" content="Task Manager App - Eleva.js">
+<meta property="og:description" content="Build a full-featured task manager with Eleva.js. Filtering, sorting, priorities, due dates, and localStorage persistence. Complete source code included.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/apps/task-manager.html">
+<meta name="twitter:title" content="Task Manager App - Eleva.js">
+<meta name="twitter:description" content="Build a full-featured task manager with Eleva.js. Filtering, sorting, priorities, due dates, and localStorage persistence. Complete source code included.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,62 @@ description: Build a task manager with Eleva.js featuring filtering, sorting, pr
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Apps", "item": "https://elevajs.com/examples/apps/" },
+    { "@type": "ListItem", "position": 4, "name": "Task Manager", "item": "https://elevajs.com/examples/apps/task-manager.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Task Manager - Complete Application",
+  "description": "Full-featured task manager application demonstrating CRUD operations, filtering, sorting, priority levels, due dates, search functionality, and localStorage persistence. Production-ready example.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "full solution",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Complete Application",
+  "teaches": ["CRUD operations", "List filtering", "Sorting", "localStorage", "Form handling", "Component composition"]
+}
+</script>
+
 # Task Manager
 
 > **Example App** | Task manager with filtering, sorting, and persistence.
+
+---
+
+## Prerequisites
+
+This example combines multiple patterns. Before studying it, you should understand:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup
+- [Components](../../components.md) — Component structure and props
+- [Form Handling](../patterns/forms.md) — Input binding and validation
+- [List Operations](../patterns/lists/index.md) — Rendering and filtering lists
+- [Local Storage](../patterns/storage.md) — Persisting data
 
 ---
 
@@ -365,6 +435,15 @@ app.mount(document.getElementById("app"), "TaskManager");
 - **Form handling** - Input binding and validation
 - **Conditional rendering** - Show/hide based on state
 - **Component styling** - CSS for each component
+
+---
+
+## See Also
+
+- [Form Handling Patterns](../patterns/forms.md) — Input binding and validation techniques
+- [Local Storage Patterns](../patterns/storage.md) — Persistence strategies
+- [List Operations](../patterns/lists/index.md) — Search, filter, and sort patterns
+- [State Management](../patterns/state/index.md) — Signal-based state patterns
 
 ---
 

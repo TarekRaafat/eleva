@@ -1,7 +1,24 @@
 ---
 title: Store Core Concepts
-description: Learn about state, actions, and namespaces in Eleva Store plugin.
+description: Understand Eleva Store fundamentals. Learn reactive state with signals, predictable mutations with actions, and modular organization with namespaces.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/core-concepts.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/core-concepts.html">
+<meta property="og:title" content="Store Core Concepts - Eleva.js">
+<meta property="og:description" content="Understand Eleva Store fundamentals. Learn reactive state with signals, predictable mutations with actions, and modular organization with namespaces.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/core-concepts.html">
+<meta name="twitter:title" content="Store Core Concepts - Eleva.js">
+<meta name="twitter:description" content="Understand Eleva Store fundamentals. Learn reactive state with signals, predictable mutations with actions, and modular organization with namespaces.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,52 @@ description: Learn about state, actions, and namespaces in Eleva Store plugin.
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store Core Concepts",
+  "description": "Learn about state, actions, and namespaces in Eleva Store plugin.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/core-concepts.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva store", "state management", "actions", "namespaces", "reactive state", "signals"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" },
+    { "@type": "ListItem", "position": 4, "name": "Core Concepts", "item": "https://elevajs.com/plugins/store/core-concepts.html" }
+  ]
+}
 </script>
 
 # Store Core Concepts
@@ -413,6 +476,12 @@ setup({ store }) {
 - [Configuration](./configuration.md) - Set up persistence and DevTools
 - [Usage Patterns](./patterns.md) - Real-world examples
 - [Advanced](./advanced.md) - Dynamic modules and async patterns
+
+## See Also
+
+- [Core Concepts](../../core-concepts.md) — Eleva's signal system fundamentals
+- [State Management Patterns](../../examples/patterns/state/index.md) — Component-level state patterns
+- [Migration from Vue](../../migration/from-vue.md) — Vuex/Pinia concept comparison
 
 ---
 

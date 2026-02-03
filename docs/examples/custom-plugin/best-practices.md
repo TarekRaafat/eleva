@@ -1,7 +1,24 @@
 ---
 title: Plugin Best Practices
-description: Eleva.js plugin best practices - error handling, edge cases, TypeScript support, and publishing to npm.
+description: Publish quality Eleva.js plugins. Error handling, edge cases, TypeScript/JSDoc types, npm packaging, and documentation. Make your plugin production-ready.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/custom-plugin/best-practices.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/custom-plugin/best-practices.html">
+<meta property="og:title" content="Plugin Best Practices - Eleva.js">
+<meta property="og:description" content="Publish quality Eleva.js plugins. Error handling, edge cases, TypeScript/JSDoc types, npm packaging, and documentation. Make your plugin production-ready.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/custom-plugin/best-practices.html">
+<meta name="twitter:title" content="Plugin Best Practices - Eleva.js">
+<meta name="twitter:description" content="Publish quality Eleva.js plugins. Error handling, edge cases, TypeScript/JSDoc types, npm packaging, and documentation. Make your plugin production-ready.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,31 @@ description: Eleva.js plugin best practices - error handling, edge cases, TypeSc
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Custom Plugin", "item": "https://elevajs.com/examples/custom-plugin/" },
+    { "@type": "ListItem", "position": 4, "name": "Best Practices", "item": "https://elevajs.com/examples/custom-plugin/best-practices.html" }
+  ]
+}
+</script>
+
 # Plugin Best Practices
 
 > **Plugin Guide** | Best practices for robust, maintainable plugins.
+
+---
+
+## Prerequisites
+
+Before implementing best practices, complete:
+
+- [Plugin Overview](./index.md) — Plugin structure basics
+- [Development Guide](./development.md) — Project setup and testing
 
 ---
 
@@ -468,6 +507,15 @@ MIT
 - Check out the [official plugins](../../plugins/index.md) for inspiration
 
 Remember: The best plugins are those that solve real problems while maintaining Eleva's philosophy of simplicity and performance.
+
+---
+
+## See Also
+
+- [Best Practices Overview](../../best-practices.md) — General Eleva best practices
+- [Official Plugins](../../plugins/index.md) — Learn from production plugin code
+- [Store Plugin Patterns](../../plugins/store/patterns.md) — State management patterns
+- [Attr Plugin API](../../plugins/attr/api.md) — Plugin API design reference
 
 ---
 

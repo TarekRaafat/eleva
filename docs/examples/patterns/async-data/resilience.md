@@ -1,7 +1,24 @@
 ---
 title: Resilience Patterns
-description: Eleva.js async patterns for request cancellation, timeouts, retries, and error handling.
+description: Build resilient Eleva.js apps. Request cancellation with AbortController, timeouts, automatic retries with backoff, and graceful error handling patterns.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/async-data/resilience.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/async-data/resilience.html">
+<meta property="og:title" content="Resilience Patterns - Eleva.js">
+<meta property="og:description" content="Build resilient Eleva.js apps. Request cancellation with AbortController, timeouts, automatic retries with backoff, and graceful error handling.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/async-data/resilience.html">
+<meta name="twitter:title" content="Resilience Patterns - Eleva.js">
+<meta name="twitter:description" content="Build resilient Eleva.js apps. Request cancellation with AbortController, timeouts, automatic retries with backoff, and graceful error handling.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,33 @@ description: Eleva.js async patterns for request cancellation, timeouts, retries
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Async Data", "item": "https://elevajs.com/examples/patterns/async-data/" },
+    { "@type": "ListItem", "position": 5, "name": "Resilience", "item": "https://elevajs.com/examples/patterns/async-data/resilience.html" }
+  ]
+}
+</script>
+
 # Resilience Patterns
 
 > **Async Data** | Cancellation, timeouts, and retry strategies.
+
+---
+
+## Prerequisites
+
+This is an **advanced pattern**. Before implementing resilience patterns, ensure you understand:
+
+- [Async Data Loading](./index.md) — Basic fetch patterns and error handling
+- [Caching & Optimization](./caching.md) — Response caching strategies
+- [Core Concepts](../../../core-concepts.md) — Lifecycle hooks and cleanup
 
 ---
 
@@ -483,6 +524,14 @@ app.component("SafeDataLoader", {
 3. **Use exponential backoff** - Be kind to servers during failures
 4. **Show attempt progress** - Users appreciate knowing what's happening
 5. **Handle AbortError specially** - It's not a real error
+
+---
+
+## See Also
+
+- [Caching & Optimization](./caching.md) — Cache successful responses
+- [Conditional Rendering](../conditional-rendering.md) — Show retry UI and error states
+- [Weather Dashboard App](../../apps/weather-dashboard.md) — Error handling in practice
 
 ---
 

@@ -1,7 +1,24 @@
 ---
 title: Migrate from Alpine.js
-description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x-show to templates, and x-model to input binding.
+description: Migrate from Alpine.js to Eleva.js. x-data → setup(), x-for → .map(), x-model → value + @input. JS-first vs HTML-first. When to choose each.
 ---
+
+<link rel="canonical" href="https://elevajs.com/migration/from-alpine.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/migration/from-alpine.html">
+<meta property="og:title" content="Migrate from Alpine.js - Eleva.js">
+<meta property="og:description" content="Migrate from Alpine.js to Eleva.js. x-data → setup(), x-for → .map(), x-model → value + @input. JS-first vs HTML-first approach.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/migration/from-alpine.html">
+<meta name="twitter:title" content="Migrate from Alpine.js - Eleva.js">
+<meta name="twitter:description" content="Migrate from Alpine.js to Eleva.js. x-data → setup(), x-for → .map(), x-model → value + @input. JS-first vs HTML-first approach.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -100,7 +117,7 @@ description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -119,6 +136,67 @@ description: Alpine.js to Eleva.js migration guide. Compare x-data to setup(), x
   "proficiencyLevel": "Intermediate",
   "articleSection": "Migration",
   "keywords": ["eleva", "elevajs", "Eleva.js", "Alpine.js migration", "x-data", "x-show", "x-model", "directives"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Migration", "item": "https://elevajs.com/migration/" },
+    { "@type": "ListItem", "position": 3, "name": "From Alpine.js", "item": "https://elevajs.com/migration/from-alpine.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What's the difference between Alpine.js and Eleva's approach?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Alpine is HTML-first (declarative) - logic lives in HTML attributes with directives. Eleva is JS-first (programmatic) - logic lives in JavaScript and HTML is generated from templates. Neither is better; they serve different preferences."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace x-model in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use explicit value + @input handler pattern: value=\"${ctx.text.value}\" @input=\"(e) => text.value = e.target.value\". For modifiers like .number or .debounce, implement the logic manually in the handler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "When should I choose Alpine.js vs Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Choose Alpine when adding interactivity to server-rendered HTML, working with non-JS developers, or preferring declarative HTML. Choose Eleva when building full client-side apps, wanting component architecture, preferring JS-first development, or needing fine-grained reactivity."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I lose by migrating from Alpine to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "HTML simplicity (Alpine works directly in HTML without JS files), built-in modifiers (.prevent, .stop, .outside, .debounce), progressive enhancement of existing HTML, and the lower learning curve for HTML-focused developers."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I gain by migrating from Alpine to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Full JavaScript control with IDE autocomplete, component encapsulation with self-contained objects, better performance with batched DOM updates, and easier testability since components are plain JavaScript objects."
+      }
+    }
+  ]
 }
 </script>
 
@@ -533,8 +611,8 @@ const Form = {
 **Alpine:**
 ```html
 <div x-data="{ imageUrl: '/img.jpg', isActive: true }">
-  <img x-bind:src="imageUrl" />
-  <img :src="imageUrl" />
+  <img x-bind:src="imageUrl" alt="Dynamic image" />
+  <img :src="imageUrl" alt="Dynamic image" />
 
   <div :class="{ active: isActive, 'text-red': hasError }"></div>
   <div :class="isActive ? 'active' : 'inactive'"></div>
@@ -547,8 +625,8 @@ const Form = {
 ```javascript
 template: (ctx) => `
   <div>
-    <img src="${ctx.imageUrl.value}" />
-    <img src="${ctx.imageUrl.value}" />
+    <img src="${ctx.imageUrl.value}" alt="Dynamic image" />
+    <img src="${ctx.imageUrl.value}" alt="Dynamic image" />
 
     <div class="${ctx.isActive.value ? 'active' : ''} ${ctx.hasError.value ? 'text-red' : ''}"></div>
     <div class="${ctx.isActive.value ? 'active' : 'inactive'}"></div>
@@ -968,6 +1046,15 @@ app.mount(document.getElementById("app"), "TodoApp");
 - [ ] Replace `Alpine.store` with Eleva Store plugin
 - [ ] Implement event modifiers manually
 - [ ] Add `key` attributes to all list items
+
+---
+
+## See Also
+
+- [Getting Started](../getting-started.md) — Quick setup (also no build step required)
+- [Core Concepts](../core-concepts.md) — Signals and reactivity fundamentals
+- [Store Plugin](../plugins/store/index.md) — Alpine.store alternative
+- [List Patterns](../examples/patterns/lists/index.md) — Replacing x-for with .map()
 
 ---
 

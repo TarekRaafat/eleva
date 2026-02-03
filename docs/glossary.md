@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Glossary
-description: Definitions of key terms and concepts used in Eleva.js - signals, reactivity, components, lifecycle hooks, and more.
+description: Eleva.js glossary. Clear definitions of signals, reactivity, components, props, emitters, and lifecycle hooks. Understand the framework terminology.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/glossary.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/glossary.html">
+<meta property="og:title" content="Glossary - Eleva.js">
+<meta property="og:description" content="Eleva.js glossary. Clear definitions of signals, reactivity, components, props, emitters, and lifecycle hooks. Understand the framework terminology.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/glossary.html">
+<meta name="twitter:title" content="Glossary - Eleva.js">
+<meta name="twitter:description" content="Eleva.js glossary. Clear definitions of signals, reactivity, components, props, emitters, and lifecycle hooks. Understand the framework terminology.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Beginner",
   "articleSection": "Reference",
   "keywords": ["eleva", "elevajs", "Eleva.js", "glossary", "definitions", "signals", "reactivity", "components", "terminology"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Glossary", "item": "https://elevajs.com/glossary.html" }
+  ]
 }
 </script>
 

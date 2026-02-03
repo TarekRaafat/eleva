@@ -1,7 +1,24 @@
 ---
 title: Router Navigation
-description: Programmatic navigation, reactive state, events, dynamic routes, and scroll behavior in Eleva Router.
+description: Navigate programmatically in Eleva Router. Use reactive route state, listen to navigation events, handle dynamic routes, and control scroll behavior.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/navigation.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/navigation.html">
+<meta property="og:title" content="Router Navigation - Eleva.js">
+<meta property="og:description" content="Navigate programmatically in Eleva Router. Use reactive route state, listen to navigation events, handle dynamic routes, and control scroll behavior.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/navigation.html">
+<meta name="twitter:title" content="Router Navigation - Eleva.js">
+<meta name="twitter:description" content="Navigate programmatically in Eleva Router. Use reactive route state, listen to navigation events, handle dynamic routes, and control scroll behavior.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,52 @@ description: Programmatic navigation, reactive state, events, dynamic routes, an
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Router Navigation",
+  "description": "Programmatic navigation, reactive state, events, dynamic routes, and scroll behavior in Eleva Router.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/router/navigation.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva router", "programmatic navigation", "reactive state", "router events", "scroll behavior"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" },
+    { "@type": "ListItem", "position": 4, "name": "Navigation", "item": "https://elevajs.com/plugins/router/navigation.html" }
+  ]
+}
 </script>
 
 # Router Navigation
@@ -585,6 +648,12 @@ router.emitter.on("router:scroll", ({ to, from, savedPosition }) => {
 - [Guards](./guards.md) - Navigation guards and lifecycle hooks
 - [Lazy Loading](./lazy-loading.md) - Code splitting strategies
 - [API Reference](./api.md) - Complete method reference
+
+## See Also
+
+- [Store Plugin](../store/index.md) — Persist navigation history in state
+- [Conditional Rendering](../../examples/patterns/conditional-rendering.md) — Route-based UI changes
+- [Migration from React](../../migration/from-react.md) — React Router navigation comparison
 
 ---
 

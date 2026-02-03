@@ -1,4 +1,4 @@
-# Eleva.js - Comprehensive LLM Reference
+# Eleva.js v1.1.1 - Comprehensive LLM Reference
 
 > This document provides comprehensive information about Eleva.js for Large Language Models to generate accurate code and recommendations.
 

@@ -1,7 +1,24 @@
 ---
 title: State Management
-description: Eleva.js state management patterns - signals, reactive state, counters, and computed values. Master signal-based reactivity with practical examples.
+description: Master Eleva.js signals. Build counters, toggle states, and computed values. Understand signal-based reactivity with practical, copy-paste code examples.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/state/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/state/">
+<meta property="og:title" content="State Management - Eleva.js">
+<meta property="og:description" content="Master Eleva.js signals. Build counters, toggle states, and computed values. Understand signal-based reactivity with practical, copy-paste code examples.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/state/">
+<meta name="twitter:title" content="State Management - Eleva.js">
+<meta name="twitter:description" content="Master Eleva.js signals. Build counters, toggle states, and computed values. Understand signal-based reactivity with practical, copy-paste code examples.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,19 @@ description: Eleva.js state management patterns - signals, reactive state, count
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "State", "item": "https://elevajs.com/examples/patterns/state/" }
+  ]
+}
 </script>
 
 # State Management Examples
@@ -275,6 +305,24 @@ app.component("SafeCounter", {
 - **[Project Structure](./project-structure.md)** - Multi-file organization
 - **[State Patterns](./patterns.md)** - Shopping cart, undo/redo, wizards
 - **[Batching & Performance](./batching.md)** - Render optimization
+
+## Related Patterns
+
+State management is the foundation for these patterns:
+
+| Pattern | State Management Role |
+|---------|----------------------|
+| [Forms](../forms.md) | Form data, validation errors, submission state |
+| [Lists](../lists/index.md) | Item arrays, selection state, computed totals |
+| [Async Data](../async-data/index.md) | Loading flags, error states, cached responses |
+| [Conditional Rendering](../conditional-rendering.md) | Visibility flags, active tabs, modal state |
+| [Storage](../storage.md) | Hydrate state from storage, persist changes |
+
+## See Also
+
+- [Core Concepts](../../../core-concepts.md) — Deep dive into signals and reactivity
+- [Store Plugin](../../../plugins/store/index.md) — Global state management
+- [Task Manager App](../../apps/task-manager.md) — State patterns in practice
 
 ---
 

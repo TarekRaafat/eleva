@@ -1,7 +1,24 @@
 ---
 title: Store API Reference
-description: Complete API reference for Eleva Store plugin including methods, TypeScript support, troubleshooting, and migration guide.
+description: Eleva Store API reference. All methods (dispatch, subscribe, getState), TypeScript types, troubleshooting, and migration guide from Redux/Vuex/Pinia.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/api.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/api.html">
+<meta property="og:title" content="Store API Reference - Eleva.js">
+<meta property="og:description" content="Eleva Store API reference. All methods (dispatch, subscribe, getState), TypeScript types, troubleshooting, and migration guide from Redux/Vuex/Pinia.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/api.html">
+<meta name="twitter:title" content="Store API Reference - Eleva.js">
+<meta name="twitter:description" content="Eleva Store API reference. All methods (dispatch, subscribe, getState), TypeScript types, troubleshooting, and migration guide from Redux/Vuex/Pinia.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,101 @@ description: Complete API reference for Eleva Store plugin including methods, Ty
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store API Reference",
+  "description": "Complete API reference for Eleva Store plugin including methods, TypeScript support, troubleshooting, and migration guide.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/api.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva store", "API reference", "store methods", "dispatch", "subscribe", "TypeScript"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" },
+    { "@type": "ListItem", "position": 4, "name": "API Reference", "item": "https://elevajs.com/plugins/store/api.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why is my component not re-rendering when store state changes?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Three common causes: (1) Missing .value - use ctx.count.value in templates, not ctx.count. (2) Not returning state from setup - you must return the signal from setup(). (3) Mutating arrays/objects in place - use spread operator to create new references (e.g., items.value = [...items.value, newItem])."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I get 'Action not found' error?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Check that: (1) The action name is spelled correctly and matches exactly. (2) For namespaced actions, use dot notation like 'auth.login', not 'authLogin'. (3) The action is defined in the actions object when installing the Store plugin."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is persistence not working?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Verify that: (1) persistence.enabled is set to true. (2) Check include/exclude paths - only specified paths are persisted. (3) Storage is available (localStorage/sessionStorage). (4) Check for storage quota errors in your onError handler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do I get 'Module already exists' warning?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This occurs when trying to register a module that's already registered. Check if the module exists before registering (if (!store.state.myModule)) or unregister it first with store.unregisterModule()."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I avoid circular state updates and infinite loops?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Don't update state in watchers that trigger re-renders without conditions. Use conditional checks in watchers (e.g., if (value < 100)) to prevent infinite loops where a state change triggers another state change."
+      }
+    }
+  ]
+}
 </script>
 
 # Store API Reference
@@ -697,6 +809,16 @@ store.state.count.watch((value) => {
 6. **Dynamic Modules** - Runtime extensibility
 
 For questions or issues, visit the [GitHub repository](https://github.com/TarekRaafat/eleva).
+
+---
+
+## See Also
+
+- [Store Patterns](./patterns.md) — Counter, todo, auth, cart examples
+- [Router Guards](../router/guards.md) — Use store state for route protection
+- [State Management Patterns](../../examples/patterns/state/index.md) — Signal-based state patterns
+- [Migration from React](../../migration/from-react.md) — Redux comparison
+- [Migration from Vue](../../migration/from-vue.md) — Vuex/Pinia comparison
 
 ---
 

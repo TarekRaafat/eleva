@@ -1,7 +1,24 @@
 ---
 title: Migrate from React
-description: React to Eleva.js migration guide. Learn how useState maps to signals, useEffect to watchers, and JSX to template strings.
+description: Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).
 ---
+
+<link rel="canonical" href="https://elevajs.com/migration/from-react.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/migration/from-react.html">
+<meta property="og:title" content="Migrate from React - Eleva.js">
+<meta property="og:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/migration/from-react.html">
+<meta name="twitter:title" content="Migrate from React - Eleva.js">
+<meta name="twitter:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -94,7 +111,7 @@ description: React to Eleva.js migration guide. Learn how useState maps to signa
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -113,6 +130,67 @@ description: React to Eleva.js migration guide. Learn how useState maps to signa
   "proficiencyLevel": "Intermediate",
   "articleSection": "Migration",
   "keywords": ["eleva", "elevajs", "Eleva.js", "React migration", "useState", "signals", "JSX", "template strings"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Migration", "item": "https://elevajs.com/migration/" },
+    { "@type": "ListItem", "position": 3, "name": "From React", "item": "https://elevajs.com/migration/from-react.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Eleva equivalent of React's useState?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use signal(initialValue). Instead of const [value, setValue] = useState(0), use const value = signal(0). Access and update via value.value. No array destructuring needed, and direct .value assignment instead of a setter function."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need useMemo or useCallback in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Eleva's batching handles optimization automatically. Computed values are just regular functions called during template execution, and functions are stable (not recreated on render). No dependency arrays to maintain."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace React Context in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use the Eleva Store plugin. Instead of Provider/Consumer patterns, Store is globally available via setup({ store }). Actions provide predictable state mutations, and no prop drilling is needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I gain by migrating from React to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No more hooks rules (call signals anywhere), simpler mental model (direct mutation with signal.value), smaller bundle (~2.5KB vs React's ~40KB), and better performance (240+ FPS, no virtual DOM overhead)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace useEffect in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use signal.watch(callback) for side effects. Each signal has its own watch method. No dependency arrays to manage - effects run on signal change, not component re-render. Use onMount lifecycle hook for initialization that requires the DOM."
+      }
+    }
+  ]
 }
 </script>
 
@@ -818,6 +896,15 @@ setup({ signal }) {
 - [ ] Replace React Router with Eleva Router
 - [ ] Replace Redux/Context with Eleva Store
 - [ ] Update tests for async DOM updates (use `queueMicrotask`)
+
+---
+
+## See Also
+
+- [Core Concepts](../core-concepts.md) — Signals, reactivity, and lifecycle hooks
+- [Router Plugin](../plugins/router/index.md) — React Router alternative for SPAs
+- [Store Plugin](../plugins/store/index.md) — Redux/Context alternative for state management
+- [Components Guide](../components.md) — Props, children, and component patterns
 
 ---
 

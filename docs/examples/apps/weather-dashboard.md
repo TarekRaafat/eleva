@@ -1,7 +1,24 @@
 ---
 title: Weather Dashboard App
-description: Build a weather dashboard with Eleva.js featuring API fetching, city search, unit toggle, and search history. Full source code.
+description: Build a weather dashboard with Eleva.js. Fetch from weather APIs, search cities, toggle C°/F°, and save search history. Complete source code included.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/apps/weather-dashboard.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/apps/weather-dashboard.html">
+<meta property="og:title" content="Weather Dashboard App - Eleva.js">
+<meta property="og:description" content="Build a weather dashboard with Eleva.js. Fetch from weather APIs, search cities, toggle C°/F°, and save search history. Complete source code included.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/apps/weather-dashboard.html">
+<meta name="twitter:title" content="Weather Dashboard App - Eleva.js">
+<meta name="twitter:description" content="Build a weather dashboard with Eleva.js. Fetch from weather APIs, search cities, toggle C°/F°, and save search history. Complete source code included.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,62 @@ description: Build a weather dashboard with Eleva.js featuring API fetching, cit
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Apps", "item": "https://elevajs.com/examples/apps/" },
+    { "@type": "ListItem", "position": 4, "name": "Weather Dashboard", "item": "https://elevajs.com/examples/apps/weather-dashboard.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Weather Dashboard - API Integration Example",
+  "description": "Weather application demonstrating real-time API data fetching, loading/error states, search functionality with history, unit conversion (Celsius/Fahrenheit), and localStorage persistence.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "full solution",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Complete Application",
+  "teaches": ["API integration", "Async data fetching", "Loading states", "Error handling", "Search history", "localStorage"]
+}
+</script>
+
 # Weather Dashboard
 
 > **Example App** | Weather app with API fetching, search history, and unit conversion.
+
+---
+
+## Prerequisites
+
+This example combines multiple patterns. Before studying it, you should understand:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup
+- [Components](../../components.md) — Component structure
+- [Async Data Loading](../patterns/async-data/index.md) — API fetching and loading states
+- [Conditional Rendering](../patterns/conditional-rendering.md) — Loading/error UI states
+- [Local Storage](../patterns/storage.md) — Persisting search history
 
 ---
 
@@ -232,6 +302,15 @@ app.mount(document.getElementById("app"), "WeatherDashboard");
 - **Unit conversion** - Toggle between C/F
 - **Form handling** - Search with submit
 - **Conditional rendering** - Multiple UI states
+
+---
+
+## See Also
+
+- [Async Data Fetching](../patterns/async-data/index.md) — Loading, error states, and pagination
+- [Caching & Optimization](../patterns/async-data/caching.md) — Cache API responses
+- [Resilience Patterns](../patterns/async-data/resilience.md) — Retries and error handling
+- [Local Storage Patterns](../patterns/storage.md) — Persist search history
 
 ---
 

@@ -1,7 +1,24 @@
 ---
 title: Store Advanced Topics
-description: Dynamic modules, async patterns, complex state organization, and debugging strategies for Eleva Store.
+description: Advanced Eleva Store techniques. Dynamic module registration, async action patterns, complex state organization, and debugging strategies for large apps.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/advanced.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/advanced.html">
+<meta property="og:title" content="Store Advanced Topics - Eleva.js">
+<meta property="og:description" content="Advanced Eleva Store techniques. Dynamic module registration, async action patterns, complex state organization, and debugging strategies for large apps.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/advanced.html">
+<meta name="twitter:title" content="Store Advanced Topics - Eleva.js">
+<meta name="twitter:description" content="Advanced Eleva Store techniques. Dynamic module registration, async action patterns, complex state organization, and debugging strategies for large apps.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,65 @@ description: Dynamic modules, async patterns, complex state organization, and de
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store Advanced Topics",
+  "description": "Dynamic modules, async patterns, complex state organization, and debugging strategies for Eleva Store.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/advanced.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva store", "dynamic modules", "async patterns", "state organization", "debugging", "middleware"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" },
+    { "@type": "ListItem", "position": 4, "name": "Advanced", "item": "https://elevajs.com/plugins/store/advanced.html" }
+  ]
+}
+</script>
+
 # Store Advanced Topics
 
 > **Store Plugin** | Dynamic modules, async patterns, and complex state.
+
+---
+
+## Prerequisites
+
+This is **advanced content**. Before proceeding, ensure you understand:
+
+- [Store Plugin Overview](./index.md) — Basic store setup
+- [Store Core Concepts](./core-concepts.md) — State, actions, and namespaces
+- [Store Configuration](./configuration.md) — Store options and persistence
 
 ---
 
@@ -511,6 +584,12 @@ actions: {
 ## Next Steps
 
 - [API Reference](./api.md) - Complete method reference and TypeScript support
+
+## See Also
+
+- [Async Data Patterns](../../examples/patterns/async-data/index.md) — Loading states with Store
+- [Batching & Performance](../../examples/patterns/state/batching.md) — Optimize multiple updates
+- [Custom Plugin Development](../../examples/custom-plugin/index.md) — Create Store extensions
 
 ---
 

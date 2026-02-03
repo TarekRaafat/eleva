@@ -1,7 +1,24 @@
 ---
 title: Virtual Scrolling for Large Lists
-description: Eleva.js virtual scrolling pattern for rendering 10K+ rows efficiently with minimal memory and maximum performance.
+description: Render 10,000+ rows efficiently with Eleva.js virtual scrolling. 5.5x less memory, 12x faster creation. Only visible rows rendered for 60fps performance.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/lists/virtual-scrolling.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/lists/virtual-scrolling.html">
+<meta property="og:title" content="Virtual Scrolling - Eleva.js">
+<meta property="og:description" content="Render 10,000+ rows efficiently with Eleva.js virtual scrolling. 5.5x less memory, 12x faster creation. Only visible rows rendered for 60fps performance.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/lists/virtual-scrolling.html">
+<meta name="twitter:title" content="Virtual Scrolling - Eleva.js">
+<meta name="twitter:description" content="Render 10,000+ rows efficiently with Eleva.js virtual scrolling. 5.5x less memory, 12x faster creation. Only visible rows rendered for 60fps performance.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,11 +29,35 @@ description: Eleva.js virtual scrolling pattern for rendering 10K+ rows efficien
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Lists", "item": "https://elevajs.com/examples/patterns/lists/" },
+    { "@type": "ListItem", "position": 5, "name": "Virtual Scrolling", "item": "https://elevajs.com/examples/patterns/lists/virtual-scrolling.html" }
+  ]
+}
+</script>
+
 # Virtual Scrolling
 
 > **List Patterns** | Render only visible rows for 10K+ row performance.
 
 For very large datasets (10,000+ rows), virtual scrolling renders only visible rows instead of all items. This dramatically improves both memory usage and update performance.
+
+---
+
+## Prerequisites
+
+This is an **advanced pattern**. Before implementing virtual scrolling, ensure you understand:
+
+- [List Operations](./index.md) — Basic list rendering and keyed reconciliation
+- [Core Concepts](../../../core-concepts.md) — Signals and event handling
+- [Performance Best Practices](../best-practices/performance.md) — General optimization techniques
 
 ---
 
@@ -409,6 +450,14 @@ app.component("MyPage", {
 | **Spacer element** | Inner div with `totalHeight` for scrollbar |
 | **Absolute positioning** | Table/content positioned at `offsetY` |
 | **Buffer rows** | Extra rows above/below for smooth scrolling |
+
+---
+
+## See Also
+
+- [Performance Best Practices](../best-practices/performance.md) — Other optimization techniques
+- [Batching & Performance](../state/batching.md) — Efficient signal updates
+- [List Operations](./index.md) — Basic list rendering patterns
 
 ---
 

@@ -1,8 +1,25 @@
 ---
 title: Eleva.js FAQ & Troubleshooting
-description: Frequently asked questions, testing guide, troubleshooting tips, and community resources for Eleva.js.
+description: Eleva.js FAQ. Get answers about testing, TypeScript support, debugging, performance, and common issues. Plus community resources and support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/faq.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/faq.html">
+<meta property="og:title" content="FAQ & Troubleshooting - Eleva.js">
+<meta property="og:description" content="Eleva.js FAQ. Get answers about testing, TypeScript support, debugging, performance, and common issues. Plus community resources and support.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/faq.html">
+<meta name="twitter:title" content="FAQ & Troubleshooting - Eleva.js">
+<meta name="twitter:description" content="Eleva.js FAQ. Get answers about testing, TypeScript support, debugging, performance, and common issues. Plus community resources and support.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -218,7 +235,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -237,6 +254,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Beginner",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "FAQ", "troubleshooting", "testing", "common questions"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "FAQ", "item": "https://elevajs.com/faq.html" }
+  ]
 }
 </script>
 

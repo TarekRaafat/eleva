@@ -1,7 +1,24 @@
 ---
 title: Performance Optimization
-description: Eleva.js performance best practices - preventing unnecessary re-renders, large list handling, and virtual scrolling for 10K+ rows.
+description: Optimize Eleva.js performance. Prevent unnecessary re-renders, handle 10K+ row lists, debounce/throttle updates, and achieve 60fps with virtual scrolling.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/best-practices/performance.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/best-practices/performance.html">
+<meta property="og:title" content="Performance Optimization - Eleva.js">
+<meta property="og:description" content="Optimize Eleva.js performance. Prevent unnecessary re-renders, handle 10K+ row lists, debounce/throttle updates, and achieve 60fps with virtual scrolling.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/best-practices/performance.html">
+<meta name="twitter:title" content="Performance Optimization - Eleva.js">
+<meta name="twitter:description" content="Optimize Eleva.js performance. Prevent unnecessary re-renders, handle 10K+ row lists, debounce/throttle updates, and achieve 60fps with virtual scrolling.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js performance best practices - preventing unnecessary re-ren
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Best Practices", "item": "https://elevajs.com/examples/patterns/best-practices/" },
+    { "@type": "ListItem", "position": 5, "name": "Performance", "item": "https://elevajs.com/examples/patterns/best-practices/performance.html" }
+  ]
+}
 </script>
 
 # Performance Optimization
@@ -463,6 +494,14 @@ app.component("virtual-table", {
 | 10,000+ rows | Virtual scrolling |
 
 > **Tip:** See the [Lists - Virtual Scrolling](../lists/virtual-scrolling.md) guide for a complete implementation with search, selection, and a reusable component.
+
+---
+
+## See Also
+
+- [Virtual Scrolling](../lists/virtual-scrolling.md) — Render 10K+ rows efficiently
+- [Batching & Performance](../state/batching.md) — Signal update batching
+- [Caching & Optimization](../async-data/caching.md) — Cache API responses
 
 ---
 

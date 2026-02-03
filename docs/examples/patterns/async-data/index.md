@@ -1,7 +1,24 @@
 ---
 title: Async Data Fetching
-description: Eleva.js async patterns for API fetching, loading states, pagination, and debounced search.
+description: Fetch data in Eleva.js. API calls with loading/error states, pagination, infinite scroll, and debounced search. Clean async patterns without useEffect.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/async-data/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/async-data/">
+<meta property="og:title" content="Async Data Fetching - Eleva.js">
+<meta property="og:description" content="Fetch data in Eleva.js. API calls with loading/error states, pagination, infinite scroll, and debounced search. Clean async patterns without useEffect.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/async-data/">
+<meta name="twitter:title" content="Async Data Fetching - Eleva.js">
+<meta name="twitter:description" content="Fetch data in Eleva.js. API calls with loading/error states, pagination, infinite scroll, and debounced search. Clean async patterns without useEffect.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,47 @@ description: Eleva.js async patterns for API fetching, loading states, paginatio
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Async Data", "item": "https://elevajs.com/examples/patterns/async-data/" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Async Data Fetching Patterns",
+  "description": "Patterns for fetching data from APIs including loading states, error handling, pagination, infinite scroll, and search with debounce. Production-ready async patterns.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["API fetching", "Loading states", "Error handling", "Pagination", "Debounced search"]
+}
 </script>
 
 # Async Data Fetching
@@ -291,6 +349,25 @@ app.component("UserSearch", {
 
 - **[Caching & Optimization](./caching.md)** - Cache responses, parallel fetching
 - **[Resilience Patterns](./resilience.md)** - Handle timeouts, cancellation, retries
+
+---
+
+## Related Patterns
+
+Async data works with these patterns:
+
+| Pattern | Async Data Integration |
+|---------|------------------------|
+| [State Management](../state/index.md) | Loading/error signals, response caching |
+| [Conditional Rendering](../conditional-rendering.md) | Loading spinners, error messages, empty states |
+| [Lists](../lists/index.md) | Paginated data, infinite scroll, search results |
+| [Forms](../forms.md) | Form submission, server validation, search inputs |
+| [Storage](./caching.md) | Cache responses, offline-first patterns |
+
+## See Also
+
+- [Weather Dashboard App](../../apps/weather-dashboard.md) — Real-world async data example
+- [Best Practices](../best-practices/performance.md) — API call optimization
 
 ---
 

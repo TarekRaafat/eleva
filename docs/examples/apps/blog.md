@@ -1,7 +1,24 @@
 ---
 title: Simple Blog App
-description: Build a blog with Eleva.js featuring posts, comments, and nested components. Learn component composition, styling, and reactive state management.
+description: Build a blog with Eleva.js. Posts, comments, and nested components. Master component composition, scoped styles, and reactive state. Full source code.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/apps/blog.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/apps/blog.html">
+<meta property="og:title" content="Simple Blog App - Eleva.js">
+<meta property="og:description" content="Build a blog with Eleva.js. Posts, comments, and nested components. Master component composition, scoped styles, and reactive state. Full source code.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/apps/blog.html">
+<meta name="twitter:title" content="Simple Blog App - Eleva.js">
+<meta name="twitter:description" content="Build a blog with Eleva.js. Posts, comments, and nested components. Master component composition, scoped styles, and reactive state. Full source code.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,33 @@ description: Build a blog with Eleva.js featuring posts, comments, and nested co
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Apps", "item": "https://elevajs.com/examples/apps/" },
+    { "@type": "ListItem", "position": 4, "name": "Blog", "item": "https://elevajs.com/examples/apps/blog.html" }
+  ]
+}
+</script>
+
 # Simple Blog
 
 > **Example App** | Blog with posts and comments demonstrating component composition.
+
+---
+
+## Prerequisites
+
+This example demonstrates component composition. Before studying it, you should understand:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup
+- [Components](../../components.md) — Props, children, and nested components
+- [Conditional Rendering](../patterns/conditional-rendering.md) — Show/hide UI elements
+- [List Operations](../patterns/lists/index.md) — Rendering lists of items
 
 ---
 
@@ -255,6 +296,15 @@ This demonstrates Eleva's component composition:
 - **List rendering** - Map over posts and comments
 - **Event handling** - Add comments, toggle sections
 - **Component styling** - CSS for each component
+
+---
+
+## See Also
+
+- [Components Guide](../../../components.md) — Component composition and props
+- [List Operations](../patterns/lists/index.md) — Rendering lists of posts/comments
+- [Conditional Rendering](../patterns/conditional-rendering.md) — Toggle sections visibility
+- [State Management](../patterns/state/index.md) — Local component state patterns
 
 ---
 

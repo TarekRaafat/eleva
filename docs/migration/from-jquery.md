@@ -1,7 +1,24 @@
 ---
 title: Migrate from jQuery
-description: jQuery to Eleva.js migration guide. Replace DOM manipulation with reactive components and $.ajax with fetch + signals.
+description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.
 ---
+
+<link rel="canonical" href="https://elevajs.com/migration/from-jquery.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/migration/from-jquery.html">
+<meta property="og:title" content="Migrate from jQuery - Eleva.js">
+<meta property="og:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/migration/from-jquery.html">
+<meta name="twitter:title" content="Migrate from jQuery - Eleva.js">
+<meta name="twitter:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -94,7 +111,7 @@ description: jQuery to Eleva.js migration guide. Replace DOM manipulation with r
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -113,6 +130,67 @@ description: jQuery to Eleva.js migration guide. Replace DOM manipulation with r
   "proficiencyLevel": "Beginner",
   "articleSection": "Migration",
   "keywords": ["eleva", "elevajs", "Eleva.js", "jQuery migration", "DOM manipulation", "events", "AJAX", "components"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Migration", "item": "https://elevajs.com/migration/" },
+    { "@type": "ListItem", "position": 3, "name": "From jQuery", "item": "https://elevajs.com/migration/from-jquery.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Why should I migrate from jQuery to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "jQuery challenges include spaghetti code, no structure, manual DOM updates, state chaos with global variables, and testing difficulty. Eleva provides component structure, automatic DOM updates, reactive state with signals, no build step, and is ~2.5KB vs jQuery's ~87KB."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace jQuery DOM selection and manipulation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Instead of finding and updating DOM elements with $('#id').text(value), you declare what the DOM should look like in a template based on state. Change the signal, and the DOM updates automatically - no manual synchronization needed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace $.ajax in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use native fetch() combined with signals for loading, data, and error states. Create signals for each state (loading, data, error), use async/await with fetch(), and the template automatically reflects state changes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can Eleva coexist with jQuery during migration?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva can run alongside jQuery. Mount Eleva components to specific DOM elements while keeping your existing jQuery code. Migrate incrementally - new features in Eleva, convert existing code during refactors or bug fixes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I convert jQuery plugins to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Transform $.fn.pluginName patterns into Eleva component objects with setup() for state and logic, and template() for the UI. Props replace plugin options, and the component is mounted via the children property instead of calling a plugin method."
+      }
+    }
+  ]
 }
 </script>
 
@@ -316,7 +394,7 @@ const MyComponent = {
         <div class="user">
           <span id="username">${ctx.user.value.name}</span>
           <span id="email">${ctx.user.value.email}</span>
-          <img id="avatar" src="${ctx.user.value.avatar}" />
+          <img id="avatar" src="${ctx.user.value.avatar}" alt="User avatar" />
         </div>
       ` : ''}
     </div>
@@ -1008,6 +1086,15 @@ Eleva can run alongside jQuery:
 - [ ] Convert `$.ajax()` to `fetch()` + signals
 - [ ] Extract repeated patterns into components
 - [ ] Remove jQuery dependency when fully migrated
+
+---
+
+## See Also
+
+- [Getting Started](../getting-started.md) — Quick CDN setup (no build step like jQuery)
+- [Core Concepts](../core-concepts.md) — Reactive state instead of manual DOM updates
+- [Async Data Patterns](../examples/patterns/async-data/index.md) — Fetch API instead of $.ajax
+- [Form Handling](../examples/patterns/forms.md) — Modern form patterns
 
 ---
 

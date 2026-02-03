@@ -1,8 +1,25 @@
 ---
 title: Code Examples - Patterns, Apps & Plugins
-description: Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, async data. Complete apps and plugin development guide.
+description: Eleva.js examples you can copy-paste. UI patterns, complete apps (task manager, weather, blog), and plugin development. Learn by building real projects.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/">
+<meta property="og:title" content="Examples - Eleva.js">
+<meta property="og:description" content="Eleva.js examples you can copy-paste. UI patterns, complete apps (task manager, weather, blog), and plugin development. Learn by building real projects.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/">
+<meta name="twitter:title" content="Examples - Eleva.js">
+<meta name="twitter:description" content="Eleva.js examples you can copy-paste. UI patterns, complete apps (task manager, weather, blog), and plugin development. Learn by building real projects.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Examples",
   "keywords": ["eleva", "elevajs", "Eleva.js", "code examples", "patterns", "forms", "lists", "async data", "apps"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" }
+  ]
 }
 </script>
 
@@ -113,6 +141,19 @@ Full mini-applications demonstrating multiple features working together.
 ### Guides
 - [Creating Custom Plugins](./custom-plugin/development.md)
 - [Plugin Best Practices](./custom-plugin/best-practices.md)
+
+---
+
+## Related Plugin Documentation
+
+These examples work great with Eleva's official plugins:
+
+| If you're building... | Check out... |
+|-----------------------|--------------|
+| Accessible forms & UI | [Attr Plugin Patterns](../plugins/attr/patterns.md) |
+| Multi-page apps | [Router Configuration](../plugins/router/configuration.md) · [Navigation Guards](../plugins/router/guards.md) |
+| Shared state | [Store Patterns](../plugins/store/patterns.md) · [Store Advanced](../plugins/store/advanced.md) |
+| Route-based lazy loading | [Router Lazy Loading](../plugins/router/lazy-loading.md) |
 
 ---
 

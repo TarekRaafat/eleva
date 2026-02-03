@@ -1,7 +1,24 @@
 ---
 title: Attr Plugin Features
-description: ARIA attributes, data attributes, boolean attributes, and dynamic properties in Eleva Attr plugin.
+description: Eleva Attr features explained. Auto-sync ARIA for screen readers, bind data-* attributes, toggle booleans like disabled/checked, and set DOM properties.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/attr/features.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/attr/features.html">
+<meta property="og:title" content="Attr Plugin Features - Eleva.js">
+<meta property="og:description" content="Eleva Attr features explained. Auto-sync ARIA for screen readers, bind data-* attributes, toggle booleans like disabled/checked, and set DOM properties.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/attr/features.html">
+<meta name="twitter:title" content="Attr Plugin Features - Eleva.js">
+<meta name="twitter:description" content="Eleva Attr features explained. Auto-sync ARIA for screen readers, bind data-* attributes, toggle booleans like disabled/checked, and set DOM properties.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,52 @@ description: ARIA attributes, data attributes, boolean attributes, and dynamic p
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Attr Plugin Features",
+  "description": "ARIA attributes, data attributes, boolean attributes, and dynamic properties in Eleva Attr plugin.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/attr/features.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva attr", "ARIA attributes", "data attributes", "boolean attributes", "accessibility", "a11y"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Attr", "item": "https://elevajs.com/plugins/attr/" },
+    { "@type": "ListItem", "position": 4, "name": "Features", "item": "https://elevajs.com/plugins/attr/features.html" }
+  ]
+}
 </script>
 
 # Attr Plugin Features
@@ -454,6 +517,12 @@ const SelectAllComponent = {
 
 - [Usage Patterns](./patterns.md) - Real-world examples
 - [API Reference](./api.md) - Complete API and troubleshooting
+
+## See Also
+
+- [Form Handling](../../examples/patterns/forms.md) — Accessible form patterns
+- [Conditional Rendering](../../examples/patterns/conditional-rendering.md) — Dynamic ARIA states
+- [Best Practices](../../best-practices.md) — Accessibility best practices
 
 ---
 

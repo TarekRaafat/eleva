@@ -1,7 +1,24 @@
 ---
 title: Navigation Guards
-description: Control navigation flow with guards and lifecycle hooks in Eleva Router.
+description: Protect routes with Eleva Router guards. Implement authentication, role-based access, and navigation lifecycle hooks. Block or redirect unauthorized users.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/guards.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/guards.html">
+<meta property="og:title" content="Navigation Guards - Eleva.js">
+<meta property="og:description" content="Protect routes with Eleva Router guards. Implement authentication, role-based access, and navigation lifecycle hooks. Block or redirect unauthorized users.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/guards.html">
+<meta name="twitter:title" content="Navigation Guards - Eleva.js">
+<meta name="twitter:description" content="Protect routes with Eleva Router guards. Implement authentication, role-based access, and navigation lifecycle hooks. Block or redirect unauthorized users.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,65 @@ description: Control navigation flow with guards and lifecycle hooks in Eleva Ro
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Navigation Guards",
+  "description": "Control navigation flow with guards and lifecycle hooks in Eleva Router.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/router/guards.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva router", "navigation guards", "route guards", "beforeEnter", "authentication", "route protection"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" },
+    { "@type": "ListItem", "position": 4, "name": "Guards", "item": "https://elevajs.com/plugins/router/guards.html" }
+  ]
+}
+</script>
+
 # Navigation Guards
 
 > **Router Plugin** | Control navigation flow with guards and lifecycle hooks.
+
+---
+
+## Prerequisites
+
+Before implementing guards, ensure you understand:
+
+- [Router Plugin Overview](./index.md) — Basic routing setup
+- [Router Configuration](./configuration.md) — Route definitions and options
+- [Core Concepts](../../core-concepts.md) — Lifecycle hooks
 
 ---
 
@@ -288,6 +361,12 @@ router.onBeforeEach(async (to, from) => {
 
 - [Lazy Loading](./lazy-loading.md) - Code splitting strategies
 - [API Reference](./api.md) - Complete method reference
+
+## See Also
+
+- [Store Plugin](../store/) - Manage auth state for guards
+- [Router Configuration](./configuration.md) - Route meta and setup
+- [Migration from React](../../migration/from-react.md) - React Router guards equivalent
 
 ---
 

@@ -1,7 +1,24 @@
 ---
 title: State Patterns
-description: Eleva.js state patterns - shopping cart with computed totals, undo/redo, form state machines, and multi-step wizards.
+description: Complex state patterns in Eleva.js. Shopping cart with totals, undo/redo history, form state machines, and multi-step wizards. Production-ready code.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/state/patterns.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/state/patterns.html">
+<meta property="og:title" content="State Patterns - Eleva.js">
+<meta property="og:description" content="Complex state patterns in Eleva.js. Shopping cart with totals, undo/redo history, form state machines, and multi-step wizards.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/state/patterns.html">
+<meta name="twitter:title" content="State Patterns - Eleva.js">
+<meta name="twitter:description" content="Complex state patterns in Eleva.js. Shopping cart with totals, undo/redo history, form state machines, and multi-step wizards.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,20 @@ description: Eleva.js state patterns - shopping cart with computed totals, undo/
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "State", "item": "https://elevajs.com/examples/patterns/state/" },
+    { "@type": "ListItem", "position": 5, "name": "State Patterns", "item": "https://elevajs.com/examples/patterns/state/patterns.html" }
+  ]
+}
 </script>
 
 # State Patterns
@@ -599,6 +630,14 @@ app.component("FormWizard", {
 | **Undo/Redo** | Reversible actions | History array + index |
 | **State Machine** | Complex form flows | Explicit state transitions |
 | **Multi-Step Wizard** | Progressive disclosure | Step-based rendering |
+
+---
+
+## See Also
+
+- [Store Plugin Patterns](../../../plugins/store/patterns.md) — Global state patterns
+- [Form Handling](../forms.md) — Form validation and multi-step forms
+- [Conditional Rendering](../conditional-rendering.md) — State-driven UI
 
 ---
 

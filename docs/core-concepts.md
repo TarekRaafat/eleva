@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Core Concepts
-description: Deep dive into Eleva's core modules - Signals, TemplateEngine, Emitters, Renderer, and Lifecycle Hooks. Learn reactivity and event handling.
+description: Master Eleva's reactive system. Learn Signals for state, TemplateEngine for rendering, Emitters for events, and Lifecycle Hooks. Zero dependencies, pure JS.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/core-concepts.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/core-concepts.html">
+<meta property="og:title" content="Core Concepts - Eleva.js">
+<meta property="og:description" content="Master Eleva's reactive system: Signals for state, TemplateEngine for rendering, Emitters for events, and Lifecycle Hooks. Zero dependencies, pure JS.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/core-concepts.html">
+<meta name="twitter:title" content="Core Concepts - Eleva.js">
+<meta name="twitter:description" content="Master Eleva's reactive system: Signals for state, TemplateEngine for rendering, Emitters for events, and Lifecycle Hooks. Zero dependencies, pure JS.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,45 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "signals", "reactivity", "template engine", "emitter", "renderer", "lifecycle hooks"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Core Concepts", "item": "https://elevajs.com/core-concepts.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Signal - Reactive State Management",
+  "description": "Core reactive primitive in Eleva.js. Demonstrates creating signals, reading/writing values with .value accessor, and watching for changes with .watch() callback.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "code snippet",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Reference",
+  "teaches": ["Reactive signals", "State management", "Change detection", "Value watching"]
 }
 </script>
 
@@ -1030,6 +1086,13 @@ setup: ({ signal }) => {
 - **[Architecture](./architecture.md)** - Data flow diagrams
 - **[Best Practices](./best-practices.md)** - Patterns and guidelines
 - **[Examples](./examples/index.md)** - Real-world patterns
+
+## See Also
+
+- **[State Management Patterns](./examples/patterns/state/index.md)** — Practical signal patterns
+- **[Store Plugin](./plugins/store/index.md)** — Global state management
+- **[Migration from React](./migration/from-react.md)** — Hooks to signals comparison
+- **[Migration from Vue](./migration/from-vue.md)** — ref/reactive to signals comparison
 
 ---
 

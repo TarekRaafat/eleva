@@ -1,7 +1,24 @@
 ---
 title: Store Usage Patterns
-description: Real-world examples of using Eleva Store plugin for counter, todo list, authentication, and shopping cart.
+description: Eleva Store patterns with full code. Build a counter, todo list, auth system, and shopping cart. Copy-paste examples for common state management needs.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/patterns.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/patterns.html">
+<meta property="og:title" content="Store Usage Patterns - Eleva.js">
+<meta property="og:description" content="Eleva Store patterns with full code. Build a counter, todo list, auth system, and shopping cart. Copy-paste examples for common state management needs.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/patterns.html">
+<meta name="twitter:title" content="Store Usage Patterns - Eleva.js">
+<meta name="twitter:description" content="Eleva Store patterns with full code. Build a counter, todo list, auth system, and shopping cart. Copy-paste examples for common state management needs.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -12,9 +29,65 @@ description: Real-world examples of using Eleva Store plugin for counter, todo l
   gtag("config", "G-S4L689921Q");
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store Usage Patterns",
+  "description": "Real-world examples of using Eleva Store plugin for counter, todo list, authentication, and shopping cart.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/patterns.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva store", "usage patterns", "counter", "todo list", "authentication", "shopping cart"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" },
+    { "@type": "ListItem", "position": 4, "name": "Patterns", "item": "https://elevajs.com/plugins/store/patterns.html" }
+  ]
+}
+</script>
+
 # Store Usage Patterns
 
 > **Store Plugin** | Real-world examples for counters, todos, auth, and carts.
+
+---
+
+## Prerequisites
+
+Before implementing these patterns, ensure you understand:
+
+- [Store Plugin Overview](./index.md) — Basic setup
+- [Store Core Concepts](./core-concepts.md) — State, actions, and dispatching
+- [Store Configuration](./configuration.md) — Persistence and namespaces
 
 ---
 
@@ -495,6 +568,12 @@ app.component("UserList", {
 
 - [Advanced](./advanced.md) - Dynamic modules and async patterns
 - [API Reference](./api.md) - Complete method reference
+
+## See Also
+
+- [Router Guards](../router/guards.md) — Use store state for authentication guards
+- [State Management Patterns](../../examples/patterns/state/index.md) — Additional state patterns
+- [Migration from Vue](../../migration/from-vue.md) — Vuex/Pinia to Store
 
 ---
 

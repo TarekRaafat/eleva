@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Plugin System
-description: Learn how to create, install, and use plugins in Eleva. Covers plugin structure, capabilities, lifecycle, and built-in plugins.
+description: Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugin-system.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugin-system.html">
+<meta property="og:title" content="Plugin System - Eleva.js">
+<meta property="og:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugin-system.html">
+<meta name="twitter:title" content="Plugin System - Eleva.js">
+<meta name="twitter:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "plugins", "plugin system", "extensibility", "middleware"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugin System", "item": "https://elevajs.com/plugin-system.html" }
+  ]
 }
 </script>
 

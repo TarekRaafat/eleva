@@ -1,7 +1,24 @@
 ---
 title: Migrate from Vue
-description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to signals, computed to functions, and v-directives to templates.
+description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions, same @click syntax. Simpler API, smaller bundle (~2.5KB vs 33KB).
 ---
+
+<link rel="canonical" href="https://elevajs.com/migration/from-vue.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/migration/from-vue.html">
+<meta property="og:title" content="Migrate from Vue - Eleva.js">
+<meta property="og:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs 33KB).">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/migration/from-vue.html">
+<meta name="twitter:title" content="Migrate from Vue - Eleva.js">
+<meta name="twitter:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs 33KB).">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -100,7 +117,7 @@ description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to s
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -119,6 +136,67 @@ description: Vue 3 to Eleva.js migration guide. Learn how ref/reactive maps to s
   "proficiencyLevel": "Intermediate",
   "articleSection": "Migration",
   "keywords": ["eleva", "elevajs", "Eleva.js", "Vue migration", "ref", "reactive", "signals", "SFC", "Pinia"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Migration", "item": "https://elevajs.com/migration/" },
+    { "@type": "ListItem", "position": 3, "name": "From Vue", "item": "https://elevajs.com/migration/from-vue.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Eleva equivalent of Vue's ref and reactive?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Use signal() for both primitives and objects. Unlike Vue, there's no distinction between ref and reactive. For objects, create a new reference on update (immutable pattern). Access via .value in both setup and template."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace Vue directives like v-if, v-for, and v-model?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "v-if becomes ternary expressions: ${condition ? '<div>...</div>' : ''}. v-for becomes .map().join(''). v-model becomes explicit value + @input handler. v-show becomes inline style toggling. The @click event syntax is the same!"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I convert Vue Single File Components to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Vue SFCs become JavaScript component objects with setup() function and template string. Move <script setup> logic to setup(), convert <template> to template literal, and add styles to CSS files or inline. No build step required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What do I gain by migrating from Vue to Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Smaller bundle (~2.5KB vs Vue's ~33KB), simpler mental model (no ref vs reactive, no Options vs Composition API choice), familiar syntax (same @click and :prop binding), and better performance with direct DOM manipulation."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I replace computed() in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Computed values are just regular functions in Eleva. No computed() wrapper needed. Functions are called during template execution, and Eleva's batching optimizes re-computation automatically."
+      }
+    }
+  ]
 }
 </script>
 
@@ -969,6 +1047,15 @@ template: (ctx) => `
 - [ ] Replace Vue Router with Eleva Router
 - [ ] Replace Vuex/Pinia with Eleva Store
 - [ ] Update tests for async DOM updates (use `queueMicrotask`)
+
+---
+
+## See Also
+
+- [Core Concepts](../core-concepts.md) — Signals (similar to ref/reactive)
+- [Router Plugin](../plugins/router/index.md) — Vue Router alternative for SPAs
+- [Store Plugin](../plugins/store/index.md) — Vuex/Pinia alternative for state management
+- [Components Guide](../components.md) — Component objects (similar to Options API)
 
 ---
 

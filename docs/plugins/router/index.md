@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Router Plugin - Client-Side Routing
-description: Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and layouts. 15KB.
+description: Build SPAs with Eleva Router. Hash/history modes, navigation guards, lazy loading, nested layouts. Lightweight alternative to Vue Router or React Router.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/router/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/router/">
+<meta property="og:title" content="Router Plugin - Eleva.js">
+<meta property="og:description" content="Build SPAs with Eleva Router. Hash/history modes, navigation guards, lazy loading. Lightweight alternative to Vue Router or React Router.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/router/">
+<meta name="twitter:title" content="Router Plugin - Eleva.js">
+<meta name="twitter:description" content="Build SPAs with Eleva Router. Hash/history modes, navigation guards, lazy loading. Lightweight alternative to Vue Router or React Router.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -47,11 +64,119 @@ image: /imgs/eleva.js%20Full%20Logo.png
 }
 </script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Router", "item": "https://elevajs.com/plugins/router/" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Eleva Router",
+  "alternateName": ["@eleva/router", "eleva-router", "Eleva.js Router"],
+  "description": "Client-side routing plugin for Eleva.js. Hash/history modes, navigation guards, lazy loading, nested layouts, and reactive route state. Lightweight Vue Router/React Router alternative.",
+  "url": "https://elevajs.com/plugins/router/",
+  "applicationCategory": "DeveloperApplication",
+  "applicationSubCategory": "JavaScript Router Plugin",
+  "operatingSystem": "Cross-platform (Web Browser)",
+  "softwareVersion": "1.1.1",
+  "datePublished": "2026-01-12",
+  "downloadUrl": "https://www.npmjs.com/package/eleva",
+  "installUrl": "https://www.npmjs.com/package/eleva",
+  "fileSize": "15KB",
+  "storageRequirements": "15KB minified",
+  "softwareRequirements": "Eleva.js core framework",
+  "featureList": [
+    "Hash and history routing modes",
+    "Navigation guards (beforeEach, afterEach)",
+    "Lazy loading with dynamic imports",
+    "Nested layouts",
+    "Route parameters and query strings",
+    "Programmatic navigation",
+    "Reactive route state",
+    "404 handling"
+  ],
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "isAccessibleForFree": true,
+  "codeRepository": "https://github.com/TarekRaafat/eleva",
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "sameAs": [
+    "https://www.npmjs.com/package/eleva",
+    "https://github.com/TarekRaafat/eleva",
+    "https://www.jsdelivr.com/package/npm/eleva",
+    "https://unpkg.com/eleva",
+    "https://bundlephobia.com/package/eleva"
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva Router - Minimal Setup Example",
+  "description": "Complete minimal router setup for Eleva.js showing hash mode configuration, route definitions with parameters, and automatic component mounting. No manual app.mount() needed.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "full solution",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva Router",
+    "url": "https://elevajs.com/plugins/router/"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["Client-side routing", "Hash mode", "Route parameters", "SPA navigation"]
+}
+</script>
+
 # Router Plugin
 
 > **Version:** 1.1.1 | **Type:** Client-Side Routing Plugin | **Bundle Size:** ~15KB minified | **Dependencies:** Eleva core
 
 The Router Plugin is a powerful, reactive, and fully extensible routing solution for Eleva. It provides client-side navigation with support for multiple routing modes, navigation guards, lazy loading, layouts, and a comprehensive plugin system.
+
+---
+
+## Prerequisites
+
+Before using the Router Plugin, you should be familiar with:
+
+- [Getting Started](../../getting-started.md) — Basic Eleva setup and your first app
+- [Core Concepts](../../core-concepts.md) — Signals, lifecycle hooks, and reactivity
+- [Components](../../components.md) — Component structure, props, and children
 
 ---
 
@@ -368,6 +493,17 @@ When you open the app:
 - [Configuration](./configuration.md) - Learn about routing modes, route definitions, and layouts
 - [Navigation](./navigation.md) - Programmatic navigation and reactive state
 - [Guards](./guards.md) - Protect routes with navigation guards
+- [Lazy Loading](./lazy-loading.md) - Load components on demand
+- [API Reference](./api.md) - Complete API documentation
+
+---
+
+## Related Documentation
+
+- [Store Plugin](../store/) - Combine with global state for authenticated routes
+- [Migration from React](../../migration/from-react.md) - React Router → Eleva Router
+- [Migration from Vue](../../migration/from-vue.md) - Vue Router → Eleva Router
+- [Complete Apps](../../examples/apps/) - See Router in action
 
 ---
 

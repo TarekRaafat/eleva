@@ -1,8 +1,25 @@
 ---
 title: Eleva.js Plugins - Router, Store & Attr
-description: Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed.
+description: Official Eleva.js plugins. Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/">
+<meta property="og:title" content="Plugins - Eleva.js">
+<meta property="og:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/">
+<meta name="twitter:title" content="Plugins - Eleva.js">
+<meta name="twitter:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -25,7 +42,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -44,6 +61,17 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "proficiencyLevel": "Intermediate",
   "articleSection": "Plugins",
   "keywords": ["eleva", "elevajs", "Eleva.js", "plugins", "router", "store", "attr", "state management", "routing"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" }
+  ]
 }
 </script>
 
@@ -398,6 +426,21 @@ When creating or using external plugins:
 | **Export structure** | Named export matching plugin name |
 | **Options** | Accept configuration object in `install()` |
 | **Documentation** | Include compatible Eleva versions |
+
+---
+
+---
+
+## Quick Links to Plugin Documentation
+
+### Attr Plugin
+- [Overview](./attr/) · [Features](./attr/features.md) · [Patterns](./attr/patterns.md) · [API Reference](./attr/api.md)
+
+### Router Plugin
+- [Overview](./router/) · [Configuration](./router/configuration.md) · [Navigation](./router/navigation.md) · [Guards](./router/guards.md) · [Lazy Loading](./router/lazy-loading.md) · [API Reference](./router/api.md)
+
+### Store Plugin
+- [Overview](./store/) · [Core Concepts](./store/core-concepts.md) · [Configuration](./store/configuration.md) · [Patterns](./store/patterns.md) · [Advanced](./store/advanced.md) · [API Reference](./store/api.md)
 
 ---
 

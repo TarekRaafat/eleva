@@ -1,8 +1,25 @@
 ---
 title: Getting Started with Eleva.js
-description: Learn how to install and create your first Eleva.js application. Step-by-step tutorial covering installation, components, signals, and basic patterns.
+description: Build your first Eleva.js app in 5 minutes. No build step required. Install via CDN or npm, create reactive components with signals, and master the basics.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
+
+<link rel="canonical" href="https://elevajs.com/getting-started.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/getting-started.html">
+<meta property="og:title" content="Getting Started with Eleva.js">
+<meta property="og:description" content="Build your first Eleva.js app in 5 minutes. No build step required. Install via CDN or npm, create reactive components with signals.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/getting-started.html">
+<meta name="twitter:title" content="Getting Started with Eleva.js">
+<meta name="twitter:description" content="Build your first Eleva.js app in 5 minutes. No build step required. Install via CDN or npm, create reactive components with signals.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -89,7 +106,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
-    "email": "tarek.m.raaf@gmail.com",
+    "email": "tarek.m.raafat@gmail.com",
     "url": "https://github.com/TarekRaafat"
   },
   "publisher": {
@@ -109,6 +126,45 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "dependencies": "Modern web browser, Text editor",
   "articleSection": "Documentation",
   "keywords": ["eleva", "elevajs", "Eleva.js", "JavaScript framework", "getting started", "installation", "components", "signals", "reactivity"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Getting Started", "item": "https://elevajs.com/getting-started.html" }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "Eleva.js Quick Start - Dynamic Greeting Component",
+  "description": "Complete example showing how to create a reactive Eleva.js component with signals, event handling, and DOM mounting. The canonical first component tutorial.",
+  "programmingLanguage": {
+    "@type": "ComputerLanguage",
+    "name": "JavaScript"
+  },
+  "runtimePlatform": "Browser (ES6+)",
+  "codeSampleType": "full solution",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat"
+  },
+  "isPartOf": {
+    "@type": "SoftwareApplication",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com"
+  },
+  "license": "https://opensource.org/licenses/MIT",
+  "learningResourceType": "Tutorial",
+  "teaches": ["Component creation", "Reactive signals", "Event binding", "DOM mounting"]
 }
 </script>
 
@@ -584,6 +640,13 @@ Now that you have Eleva installed and have created your first component, explore
 - **[Architecture](./architecture.md)** - Data flow and visual diagrams
 - **[Examples](./examples/index.md)** - Patterns and complete applications
 - **[Plugins](./plugins/index.md)** - Router, Store, and Attr plugins
+
+## See Also
+
+- **[Migration from React](./migration/from-react.md)** — If you know React
+- **[Migration from Vue](./migration/from-vue.md)** — If you know Vue
+- **[Migration from Alpine](./migration/from-alpine.md)** — If you know Alpine.js
+- **[Migration from jQuery](./migration/from-jquery.md)** — If you know jQuery
 
 ---
 

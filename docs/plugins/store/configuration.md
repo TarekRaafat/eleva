@@ -1,7 +1,24 @@
 ---
 title: Store Configuration
-description: Configure Eleva Store with persistence, DevTools, and error handling options.
+description: Configure Eleva Store. Set up localStorage/sessionStorage persistence, enable DevTools integration, and customize error handling for production apps.
 ---
+
+<link rel="canonical" href="https://elevajs.com/plugins/store/configuration.html">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/plugins/store/configuration.html">
+<meta property="og:title" content="Store Configuration - Eleva.js">
+<meta property="og:description" content="Configure Eleva Store. Set up localStorage/sessionStorage persistence, enable DevTools integration, and customize error handling for production apps.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/plugins/store/configuration.html">
+<meta name="twitter:title" content="Store Configuration - Eleva.js">
+<meta name="twitter:description" content="Configure Eleva Store. Set up localStorage/sessionStorage persistence, enable DevTools integration, and customize error handling for production apps.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,52 @@ description: Configure Eleva Store with persistence, DevTools, and error handlin
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Eleva.js Store Configuration",
+  "description": "Configure Eleva Store with persistence, DevTools, and error handling options.",
+  "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
+  "datePublished": "2026-01-01T00:00:00Z",
+  "dateModified": "2026-02-03T00:00:00Z",
+  "author": {
+    "@type": "Person",
+    "name": "Tarek Raafat",
+    "url": "https://github.com/TarekRaafat",
+    "email": "tarek.m.raafat@gmail.com"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Eleva.js",
+    "url": "https://elevajs.com",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png"
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://elevajs.com/plugins/store/configuration.html"
+  },
+  "articleSection": "Plugins",
+  "keywords": ["eleva store", "store configuration", "persistence", "localStorage", "DevTools", "state management"]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Plugins", "item": "https://elevajs.com/plugins/" },
+    { "@type": "ListItem", "position": 3, "name": "Store", "item": "https://elevajs.com/plugins/store/" },
+    { "@type": "ListItem", "position": 4, "name": "Configuration", "item": "https://elevajs.com/plugins/store/configuration.html" }
+  ]
+}
 </script>
 
 # Store Configuration
@@ -416,6 +479,12 @@ setup({ store }) {
 - [Usage Patterns](./patterns.md) - Real-world examples
 - [Advanced](./advanced.md) - Dynamic modules and async patterns
 - [API Reference](./api.md) - Complete method reference
+
+## See Also
+
+- [Local Storage Patterns](../../examples/patterns/storage.md) — Manual persistence patterns
+- [Router Guards](../router/guards.md) — Use persisted auth state
+- [Task Manager App](../../examples/apps/task-manager.md) — Persistence in practice
 
 ---
 

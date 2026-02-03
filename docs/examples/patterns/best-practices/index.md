@@ -1,7 +1,24 @@
 ---
 title: Best Practices Overview
-description: Eleva.js best practices for writing efficient, maintainable components with proper selectors, structure, and guidelines.
+description: Eleva.js best practices guide. Write efficient, maintainable components. Selector performance, setup organization, signal patterns, and code structure.
 ---
+
+<link rel="canonical" href="https://elevajs.com/examples/patterns/best-practices/">
+
+<!-- Open Graph -->
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://elevajs.com/examples/patterns/best-practices/">
+<meta property="og:title" content="Best Practices Overview - Eleva.js">
+<meta property="og:description" content="Eleva.js best practices guide. Write efficient, maintainable components. Selector performance, setup organization, signal patterns, and code structure.">
+<meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
+<meta property="og:site_name" content="Eleva.js">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="https://elevajs.com/examples/patterns/best-practices/">
+<meta name="twitter:title" content="Best Practices Overview - Eleva.js">
+<meta name="twitter:description" content="Eleva.js best practices guide. Write efficient, maintainable components. Selector performance, setup organization, signal patterns, and code structure.">
+<meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-S4L689921Q"></script>
@@ -10,6 +27,19 @@ description: Eleva.js best practices for writing efficient, maintainable compone
   function gtag(){dataLayer.push(arguments);}
   gtag("js", new Date());
   gtag("config", "G-S4L689921Q");
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://elevajs.com/" },
+    { "@type": "ListItem", "position": 2, "name": "Examples", "item": "https://elevajs.com/examples/" },
+    { "@type": "ListItem", "position": 3, "name": "Patterns", "item": "https://elevajs.com/examples/patterns/" },
+    { "@type": "ListItem", "position": 4, "name": "Best Practices", "item": "https://elevajs.com/examples/patterns/best-practices/" }
+  ]
+}
 </script>
 
 # Best Practices
@@ -115,6 +145,19 @@ items.value = items.value.filter(i => i.id !== id);  // Remove
 - **[Setup & Lifecycle](./setup-lifecycle.md)** - Setup patterns and lifecycle hooks
 - **[Signals & Templates](./signals-templates.md)** - Reactivity and template syntax
 - **[Performance](./performance.md)** - Optimization techniques
+
+---
+
+## Related Patterns
+
+Apply these best practices in context:
+
+| Pattern | Best Practices Applied |
+|---------|------------------------|
+| [State Management](../state/index.md) | Signal patterns, batching, immutable updates |
+| [Lists](../lists/index.md) | Keyed reconciliation, selector performance |
+| [Async Data](../async-data/index.md) | Lifecycle cleanup, loading state management |
+| [Forms](../forms.md) | Event handlers, validation state |
 
 ---
 
