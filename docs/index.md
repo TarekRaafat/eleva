@@ -1,6 +1,6 @@
 ---
 title: Best DX for Building the Best UX
-description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A lightweight (~6KB) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
+description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -10,7 +10,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://elevajs.com/">
 <meta property="og:title" content="Eleva.js - Best DX for Building the Best UX">
-<meta property="og:description" content="A lightweight (~6KB) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta property="og:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/">
 <meta name="twitter:title" content="Eleva.js - Best DX for Building the Best UX">
-<meta name="twitter:description" content="A lightweight (~6KB) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta name="twitter:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -36,7 +36,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@type": "SoftwareApplication",
   "name": "Eleva.js",
   "alternateName": ["Eleva", "ElevaJS", "eleva.js", "elevajs"],
-  "description": "Best DX for Building the Best UX. A lightweight (~6KB) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "description": "Best DX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
   "url": "https://elevajs.com",
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript Framework",
@@ -46,7 +46,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "releaseNotes": "First official stable release with production-ready API",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
   "installUrl": "https://www.npmjs.com/package/eleva",
-  "fileSize": "6KB",
+  "fileSize": "2.5KB gzipped",
   "memoryRequirements": "Minimal",
   "storageRequirements": "6KB minified, 2.5KB gzipped",
   "softwareRequirements": "Modern web browser (Chrome 71+, Firefox 69+, Safari 12.1+, Edge 79+)",
@@ -117,7 +117,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is Eleva.js?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
+        "text": "Eleva is a minimalist, lightweight (~2.5KB gzipped) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
       }
     },
     {
@@ -125,7 +125,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and React?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
+        "text": "Eleva differs from React in several key ways: (1) Eleva is ~2.5KB vs React's ~55KB gzipped, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
       }
     },
     {
@@ -181,7 +181,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and Vue?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
+        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (~2.5KB vs ~45KB gzipped), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
       }
     },
     {
@@ -189,7 +189,23 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and Svelte?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (~2.5KB gzipped) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and SolidJS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both Eleva and SolidJS use signal-based reactivity and skip the virtual DOM. SolidJS (~7KB gzipped) requires a build step and uses JSX, while Eleva (~2.5KB gzipped) works without any build tools via CDN and uses template strings. Choose Eleva for simplicity and no build step; choose SolidJS when you prefer JSX and are already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Preact?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Preact (~5KB gzipped) is a lightweight React alternative with the same API, using Virtual DOM. Eleva (~2.5KB gzipped) is even smaller, uses signal-based reactivity instead of Virtual DOM, and uses template strings instead of JSX. Both can work without a build step. Choose Eleva for smaller size and no Virtual DOM overhead; choose Preact when you want React API compatibility."
       }
     },
     {
@@ -290,7 +306,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 ## What is Eleva?
 
-**Eleva** is a minimalist, lightweight (6KB), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI).
+**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI).
 
 Unlike React, Vue, or Angular, Eleva:
 - **Has zero dependencies** - No node_modules bloat
@@ -436,23 +452,23 @@ Learn to extend Eleva with your own plugins: [Plugin Development Guide →](./ex
 
 How does Eleva compare to popular JavaScript frameworks?
 
-| Feature | Eleva 1 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
-|---------|-----------|----------|---------|----------|------------|
-| **Bundle Size** | ~6KB | ~44KB | ~45KB | ~3KB* | ~90KB |
-| **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
-| **Virtual DOM** | No | Yes | Yes | No | No |
-| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
-| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in |
-| **Build Required** | No | Yes | Optional | Yes | Yes |
-| **Learning Curve** | Low | Medium | Medium | Low | High |
-| **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | Decorators |
+| Feature | Eleva 1 | React 19 | Vue 3.5 | Svelte 5 | SolidJS 1.9 | Preact 10 | Angular 19 |
+|---------|-----------|----------|---------|----------|-------------|-----------|------------|
+| **Bundle Size (gzipped)** | ~2.5KB | ~55KB | ~45KB | ~3KB* | ~7KB | ~5KB | ~62KB |
+| **Dependencies** | 0 | 3+ | 0 | 0 | 0 | 0 | 10+ |
+| **Virtual DOM** | No | Yes | Yes | No | No | Yes | No |
+| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Signals | useState/Hooks | Zone.js |
+| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in | Optional | Built-in |
+| **Build Required** | No | Yes | Optional | Yes | Yes | Optional | Yes |
+| **Learning Curve** | Low | Medium | Medium | Low | Medium | Low | High |
+| **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | JSX/Functional | JSX/Functional | Decorators |
 
 _*Svelte compiles away, so runtime is minimal but build step is required._
 
 ### When to Use Eleva
 
 **Choose Eleva when you need:**
-- High performance without complexity (~6KB, 240fps capable, handles 10K+ rows)
+- High performance without complexity (~2.5KB gzipped, 240fps capable, handles 10K+ rows)
 - Zero build tooling—works directly in browsers via CDN
 - Micro-frontends, embedded widgets, or progressive enhancement
 - Data-intensive UIs where bundle size and render speed matter
@@ -504,7 +520,7 @@ Eleva is built for high-performance applications. With an average render time of
 
 **Performance Highlights:**
 - **240fps+ capable** - Framework never limits frame rate
-- **Smallest bundle size** (~2.5KB vs 35-90KB)
+- **Smallest bundle size** (~2.5KB vs 5-62KB gzipped)
 - **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Automatic render batching** - Multiple signal changes = 1 render

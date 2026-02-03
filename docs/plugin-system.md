@@ -536,11 +536,11 @@ This ensures type safety when developing plugins in TypeScript.
 
 Eleva comes with three powerful built-in plugins:
 
-| Plugin | Purpose | Size | Docs |
-|--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attributes | ~2.2KB | [View →](./plugins/attr/) |
-| **Router** | Client-side routing & guards | ~15KB | [View →](./plugins/router/) |
-| **Store** | Global state management | ~6KB | [View →](./plugins/store/) |
+| Plugin | Purpose | Size (gzipped) | Docs |
+|--------|---------|----------------|------|
+| **Attr** | ARIA, data-*, boolean attributes | ~1KB | [View →](./plugins/attr/) |
+| **Router** | Client-side routing & guards | ~5KB | [View →](./plugins/router/) |
+| **Store** | Global state management | ~2KB | [View →](./plugins/store/) |
 
 ### Attr Plugin
 

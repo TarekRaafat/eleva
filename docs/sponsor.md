@@ -1,6 +1,6 @@
 ---
 title: Sponsor Eleva.js
-description: Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.
+description: Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~2.5KB gzipped framework lightweight, fast, and free for the JavaScript community.
 ---
 
 <link rel="canonical" href="https://elevajs.com/sponsor.html">
@@ -9,7 +9,7 @@ description: Support Eleva.js development. Sponsor tiers from $5/month. Help kee
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://elevajs.com/sponsor.html">
 <meta property="og:title" content="Sponsor Eleva.js">
-<meta property="og:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.">
+<meta property="og:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~2.5KB gzipped framework lightweight, fast, and free for the JavaScript community.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -17,7 +17,7 @@ description: Support Eleva.js development. Sponsor tiers from $5/month. Help kee
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/sponsor.html">
 <meta name="twitter:title" content="Sponsor Eleva.js">
-<meta name="twitter:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~6KB framework lightweight, fast, and free for the JavaScript community.">
+<meta name="twitter:description" content="Support Eleva.js development. Sponsor tiers from $5/month. Help keep this ~2.5KB gzipped framework lightweight, fast, and free for the JavaScript community.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <script type="application/ld+json">
@@ -105,7 +105,7 @@ Eleva.js is a labor of love — built and maintained by a solo developer passion
 ### Why Eleva Needs Your Support
 
 - **Zero dependencies** = Zero corporate backing. Community support is everything.
-- **~6KB** of pure JavaScript serves thousands of developers worldwide
+- **~2.5KB gzipped** of pure JavaScript serves thousands of developers worldwide
 - **100% open source** — Your sponsorship keeps it free for everyone
 - **Direct impact** — Every dollar goes straight to development, not overhead
 - **Solo maintainer** — Your support directly enables continued dedication to this project

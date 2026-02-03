@@ -1,6 +1,6 @@
 ---
 title: Migrate from Vue
-description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions, same @click syntax. Simpler API, smaller bundle (~2.5KB vs 33KB).
+description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions, same @click syntax. Simpler API, smaller bundle (~2.5KB vs ~45KB gzipped).
 ---
 
 <link rel="canonical" href="https://elevajs.com/migration/from-vue.html">
@@ -9,7 +9,7 @@ description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/migration/from-vue.html">
 <meta property="og:title" content="Migrate from Vue - Eleva.js">
-<meta property="og:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs 33KB).">
+<meta property="og:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs ~45KB gzipped).">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -17,7 +17,7 @@ description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/migration/from-vue.html">
 <meta name="twitter:title" content="Migrate from Vue - Eleva.js">
-<meta name="twitter:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs 33KB).">
+<meta name="twitter:description" content="Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for → JS expressions. Simpler API, smaller bundle (~2.5KB vs ~45KB gzipped).">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -185,7 +185,7 @@ description: Migrate from Vue to Eleva.js. ref/reactive → signal(), v-if/v-for
       "name": "What do I gain by migrating from Vue to Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Smaller bundle (~2.5KB vs Vue's ~33KB), simpler mental model (no ref vs reactive, no Options vs Composition API choice), familiar syntax (same @click and :prop binding), and better performance with direct DOM manipulation."
+        "text": "Smaller bundle (~2.5KB vs Vue's ~45KB gzipped), simpler mental model (no ref vs reactive, no Options vs Composition API choice), familiar syntax (same @click and :prop binding), and better performance with direct DOM manipulation."
       }
     },
     {
@@ -1016,7 +1016,7 @@ template: (ctx) => `
 ## What You Gain
 
 ### Smaller Bundle
-- ~2.5KB vs Vue's ~33KB
+- ~2.5KB vs Vue's ~45KB (gzipped)
 - No virtual DOM overhead
 - No template compiler in production
 

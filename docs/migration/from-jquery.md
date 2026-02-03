@@ -1,6 +1,6 @@
 ---
 title: Migrate from jQuery
-description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.
+description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs ~30KB gzipped, modern architecture.
 ---
 
 <link rel="canonical" href="https://elevajs.com/migration/from-jquery.html">
@@ -9,7 +9,7 @@ description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reac
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/migration/from-jquery.html">
 <meta property="og:title" content="Migrate from jQuery - Eleva.js">
-<meta property="og:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.">
+<meta property="og:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs ~30KB gzipped, modern architecture.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -17,7 +17,7 @@ description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reac
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/migration/from-jquery.html">
 <meta name="twitter:title" content="Migrate from jQuery - Eleva.js">
-<meta name="twitter:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs 87KB, modern architecture.">
+<meta name="twitter:description" content="Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs ~30KB gzipped, modern architecture.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -155,7 +155,7 @@ description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reac
       "name": "Why should I migrate from jQuery to Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "jQuery challenges include spaghetti code, no structure, manual DOM updates, state chaos with global variables, and testing difficulty. Eleva provides component structure, automatic DOM updates, reactive state with signals, no build step, and is ~2.5KB vs jQuery's ~87KB."
+        "text": "jQuery challenges include spaghetti code, no structure, manual DOM updates, state chaos with global variables, and testing difficulty. Eleva provides component structure, automatic DOM updates, reactive state with signals, no build step, and is ~2.5KB vs jQuery's ~30KB gzipped."
       }
     },
     {
@@ -234,7 +234,7 @@ This guide helps jQuery developers understand Eleva by mapping familiar jQuery p
 - **Automatic updates** - Change state, DOM updates automatically
 - **Reactive state** - Signals track and propagate changes
 - **No build step** - Still works with a simple `<script>` tag
-- **Small size** - ~2.5KB vs jQuery's ~87KB
+- **Small size** - ~2.5KB vs jQuery's ~30KB (gzipped)
 
 ---
 
@@ -1071,7 +1071,7 @@ Eleva can run alongside jQuery:
 - Declarative templates
 
 ### Smaller Footprint
-- ~2.5KB vs jQuery's ~87KB
+- ~2.5KB vs jQuery's ~30KB (gzipped)
 - No build step required
 - Works with CDN
 

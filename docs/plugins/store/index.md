@@ -1,6 +1,6 @@
 ---
 title: Eleva.js Store Plugin - Centralized State Management
-description: Manage global state with Eleva Store. Actions, namespaces, localStorage persistence, and devtools. A lightweight Redux/Vuex alternative in just 6KB.
+description: Manage global state with Eleva Store. Actions, namespaces, localStorage persistence, and devtools. A lightweight Redux/Vuex alternative in just ~2KB gzipped.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -35,7 +35,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "Eleva.js Store Plugin - Centralized State Management",
-  "description": "Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in 6KB.",
+  "description": "Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in ~2KB gzipped.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
   "dateModified": "2026-01-17T00:00:00Z",
@@ -91,8 +91,8 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "datePublished": "2026-01-12",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
   "installUrl": "https://www.npmjs.com/package/eleva",
-  "fileSize": "6KB",
-  "storageRequirements": "6KB minified",
+  "fileSize": "2KB gzipped",
+  "storageRequirements": "~6KB minified (~2KB gzipped)",
   "softwareRequirements": "Eleva.js core framework",
   "featureList": [
     "Reactive global state with signals",
@@ -164,7 +164,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Store Plugin
 
-> **Version:** 1.1.1 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified | **Dependencies:** Eleva core (Signal system)
+> **Version:** 1.1.1 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified (~2KB gzipped) | **Dependencies:** Eleva core (Signal system)
 
 The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
 

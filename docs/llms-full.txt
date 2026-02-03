@@ -1934,14 +1934,16 @@ app.use(Router, {
 
 ## Comparison with Other Frameworks
 
-| Feature | Eleva | React | Vue | Angular |
-|---------|-------|-------|-----|---------|
-| Bundle Size | ~6KB | ~44KB | ~45KB | ~90KB |
-| Dependencies | 0 | 3+ | 0 | 10+ |
-| Build Required | No | Yes | Optional | Yes |
-| Virtual DOM | No | Yes | Yes | No |
-| Reactivity | Signals | Hooks | Refs | Zone.js |
-| Learning Curve | Low | Medium | Medium | High |
+| Feature | Eleva | React | Vue | Svelte | SolidJS | Preact | Angular |
+|---------|-------|-------|-----|--------|---------|--------|---------|
+| Bundle Size (gzipped) | ~2.5KB | ~55KB | ~45KB | ~3KB* | ~7KB | ~5KB | ~62KB |
+| Dependencies | 0 | 3+ | 0 | 0 | 0 | 0 | 10+ |
+| Build Required | No | Yes | Optional | Yes | Yes | Optional | Yes |
+| Virtual DOM | No | Yes | Yes | No | No | Yes | No |
+| Reactivity | Signals | Hooks | Refs | Compiler | Signals | Hooks | Zone.js |
+| Learning Curve | Low | Medium | Medium | Low | Medium | Low | High |
+
+_*Svelte compiles away, so runtime is minimal but build step is required._
 
 ## Key Differentiators
 

@@ -777,7 +777,7 @@ store.state.count.watch((value) => {
 
 | Metric | Value |
 |--------|-------|
-| **Bundle Size** | ~6KB minified |
+| **Bundle Size** | ~6KB minified (~2KB gzipped) |
 | **API Methods** | 11 (dispatch, subscribe, getState, signal, etc.) |
 | **Storage Options** | 2 (localStorage, sessionStorage) |
 | **State Access** | Direct via Signals |

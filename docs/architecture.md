@@ -1,6 +1,6 @@
 ---
 title: Eleva.js Architecture & Data Flow
-description: Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.
+description: Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -10,7 +10,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/architecture.html">
 <meta property="og:title" content="Architecture & Data Flow - Eleva.js">
-<meta property="og:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.">
+<meta property="og:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/architecture.html">
 <meta name="twitter:title" content="Architecture & Data Flow - Eleva.js">
-<meta name="twitter:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~6KB framework internals.">
+<meta name="twitter:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->

@@ -1,6 +1,6 @@
 ---
 title: Migrate from React
-description: Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).
+description: Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs ~55KB gzipped).
 ---
 
 <link rel="canonical" href="https://elevajs.com/migration/from-react.html">
@@ -9,7 +9,7 @@ description: Migrate from React to Eleva.js. useState → signal(), useEffect �
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/migration/from-react.html">
 <meta property="og:title" content="Migrate from React - Eleva.js">
-<meta property="og:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).">
+<meta property="og:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs ~55KB gzipped).">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -17,7 +17,7 @@ description: Migrate from React to Eleva.js. useState → signal(), useEffect �
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/migration/from-react.html">
 <meta name="twitter:title" content="Migrate from React - Eleva.js">
-<meta name="twitter:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs 40KB).">
+<meta name="twitter:description" content="Migrate from React to Eleva.js. useState → signal(), useEffect → watch(), JSX → templates. No hooks rules, smaller bundle (~2.5KB vs ~55KB gzipped).">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -179,7 +179,7 @@ description: Migrate from React to Eleva.js. useState → signal(), useEffect �
       "name": "What do I gain by migrating from React to Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No more hooks rules (call signals anywhere), simpler mental model (direct mutation with signal.value), smaller bundle (~2.5KB vs React's ~40KB), and better performance (240+ FPS, no virtual DOM overhead)."
+        "text": "No more hooks rules (call signals anywhere), simpler mental model (direct mutation with signal.value), smaller bundle (~2.5KB vs React's ~55KB gzipped), and better performance (240+ FPS, no virtual DOM overhead)."
       }
     },
     {
@@ -875,7 +875,7 @@ setup({ signal }) {
 - No useCallback/useMemo optimization dance
 
 ### Smaller Bundle
-- ~2.5KB vs React's ~40KB
+- ~2.5KB vs React's ~55KB (gzipped)
 - No virtual DOM overhead
 - No reconciler complexity
 

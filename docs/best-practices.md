@@ -561,7 +561,7 @@ store.dispatch("setUser", newUser);  // Correct
 | Use Case | Description |
 |----------|-------------|
 | **Performance-Critical Applications** | From simple counters to data-intensive dashboards with 10K+ rows (via virtual scrolling) |
-| **Bundle-Sensitive Projects** | At ~6KB with zero dependencies, ideal for embedded widgets, micro-frontends |
+| **Bundle-Sensitive Projects** | At ~2.5KB gzipped with zero dependencies, ideal for embedded widgets, micro-frontends |
 | **Rapid Prototyping** | Quick experimentation without build tooling overhead |
 | **Progressive Enhancement** | Add interactivity to server-rendered pages |
 | **Customizable Solutions** | Unopinionated architecture with plugin support |

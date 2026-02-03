@@ -40,7 +40,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is Eleva.js?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
+        "text": "Eleva is a minimalist, lightweight (~2.5KB gzipped) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks."
       }
     },
     {
@@ -56,7 +56,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and React?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva differs from React in several key ways: (1) Eleva is 6KB vs React's 42KB+ bundle size, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
+        "text": "Eleva differs from React in several key ways: (1) Eleva is ~2.5KB vs React's ~55KB gzipped, (2) Eleva has zero dependencies while React has several, (3) Eleva uses signal-based reactivity instead of virtual DOM diffing, (4) Eleva requires no build step and works directly via CDN, (5) Eleva uses template strings instead of JSX."
       }
     },
     {
@@ -112,7 +112,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and Vue?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
+        "text": "Both Eleva and Vue are progressive frameworks, but Eleva is smaller (~2.5KB vs ~45KB gzipped), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package."
       }
     },
     {
@@ -120,7 +120,23 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What is the difference between Eleva and Svelte?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+        "text": "Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (~2.5KB gzipped) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and SolidJS?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Both Eleva and SolidJS use signal-based reactivity and skip the virtual DOM. SolidJS (~7KB gzipped) requires a build step and uses JSX, while Eleva (~2.5KB gzipped) works without any build tools via CDN and uses template strings. Choose Eleva for simplicity and no build step; choose SolidJS when you prefer JSX and are already using a bundler."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Eleva and Preact?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Preact (~5KB gzipped) is a lightweight React alternative with the same API, using Virtual DOM. Eleva (~2.5KB gzipped) is even smaller, uses signal-based reactivity instead of Virtual DOM, and uses template strings instead of JSX. Both can work without a build step. Choose Eleva for smaller size and no Virtual DOM overhead; choose Preact when you want React API compatibility."
       }
     },
     {
@@ -280,7 +296,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 **Q: What is Eleva?**
 
-Eleva is a minimalist, lightweight (6KB) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks.
+Eleva is a minimalist, lightweight (~2.5KB gzipped) pure vanilla JavaScript frontend framework. It provides React-like component-based architecture with signal-based reactivity, but without the complexity, dependencies, or mandatory build tools of larger frameworks.
 
 **Q: What's Eleva's core philosophy?**
 
@@ -303,7 +319,7 @@ Please use the [GitHub Issues](https://github.com/TarekRaafat/eleva/issues) page
 **Q: What is the difference between Eleva and React?**
 
 Eleva differs from React in several key ways:
-1. Eleva is 6KB vs React's 42KB+ bundle size
+1. Eleva is ~2.5KB vs React's ~55KB gzipped
 2. Eleva has zero dependencies while React has several
 3. Eleva uses signal-based reactivity instead of virtual DOM diffing
 4. Eleva requires no build step and works directly via CDN
@@ -313,11 +329,19 @@ Choose Eleva when bundle size and performance matter without build complexity; c
 
 **Q: What is the difference between Eleva and Vue?**
 
-Both Eleva and Vue are progressive frameworks, but Eleva is smaller (6KB vs 34KB), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package.
+Both Eleva and Vue are progressive frameworks, but Eleva is smaller (~2.5KB vs ~45KB gzipped), has zero dependencies, and requires no build tools. Vue offers a more comprehensive ecosystem with Vue Router, Vuex/Pinia, and extensive tooling. Eleva's plugins (Router, Store) provide similar functionality in a lighter package.
 
 **Q: What is the difference between Eleva and Svelte?**
 
-Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (6KB) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler.
+Svelte compiles components at build time, resulting in very small runtime code (~2KB), but requires a build step. Eleva (~2.5KB gzipped) works without any build tools via CDN. Both avoid virtual DOM. Choose Eleva when avoiding build complexity; choose Svelte when you're already using a bundler.
+
+**Q: What is the difference between Eleva and SolidJS?**
+
+Both Eleva and SolidJS use signal-based reactivity and skip the virtual DOM. SolidJS (~7KB gzipped) requires a build step and uses JSX, while Eleva (~2.5KB gzipped) works without any build tools via CDN and uses template strings. Choose Eleva for simplicity and no build step; choose SolidJS when you prefer JSX and are already using a bundler.
+
+**Q: What is the difference between Eleva and Preact?**
+
+Preact (~5KB gzipped) is a lightweight React alternative with the same API, using Virtual DOM. Eleva (~2.5KB gzipped) is even smaller, uses signal-based reactivity instead of Virtual DOM, and uses template strings instead of JSX. Both can work without a build step. Choose Eleva for smaller size and no Virtual DOM overhead; choose Preact when you want React API compatibility.
 
 **Q: Is Eleva a React alternative?**
 

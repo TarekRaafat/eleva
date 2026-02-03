@@ -518,12 +518,14 @@ Even the **heaviest scenario** (100-item list at 0.614ms) comfortably fits withi
 
 Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
 
-| **Framework** | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
+| **Framework** | **Bundle Size (gzipped)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB) |
 | ------------- | -------------------------- | ----------------------- | ----------------------- | --------------- |
 | **Eleva 1** | **~2.5KB** | **~25** | ~86 | **~0.5** |
-| **React 19** | ~44KB | 40-70 | 10-20 | 2-5 |
+| **React 19** | ~55KB | 40-70 | 10-20 | 2-5 |
 | **Vue 3.5** | ~45KB | 25-45 | 5-15 | 2-4 |
-| **Angular 19** | ~90KB | 50-80 | 15-25 | 3-6 |
+| **SolidJS 1.9** | ~7KB | 35-45 | 5-10 | 1-2 |
+| **Preact 10** | ~5KB | 45-60 | 10-15 | 2-3 |
+| **Angular 19** | ~62KB | 50-80 | 15-25 | 3-6 |
 
 **Performance Tips:**
 - Use `key` attribute on list items for optimal diffing (note: the `key` attribute persists in the rendered DOM)

@@ -43,7 +43,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## What is Eleva.js?
 
-**Eleva** is a minimalist, lightweight (6KB), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI) without the complexity, bundle size, or build tool requirements of traditional frameworks.
+**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI) without the complexity, bundle size, or build tool requirements of traditional frameworks.
 
 Unlike React, Vue, or Angular, Eleva:
 - **Has zero dependencies** - No node_modules bloat
@@ -214,7 +214,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 - **🎯 Built-in Plugins:** Attr for advanced attributes, Router for client-side routing, and Store for reactive state management
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
-- **💎 Tiny Footprint & TypeScript Support:** Approximately ~6 KB minified with built-in TypeScript declarations
+- **💎 Tiny Footprint & TypeScript Support:** Approximately ~2.5KB gzipped (~6KB minified) with built-in TypeScript declarations
 
 ---
 
@@ -223,7 +223,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 Eleva is ideal for developers seeking a lightweight, flexible, and high-performance solution for building frontend applications. Here are some scenarios where Eleva shines:
 
 - **⚡ Performance-Critical Applications:** 240fps-capable rendering handles everything from simple counters to 10K+ row dashboards (via virtual scrolling).
-- **📦 Bundle-Sensitive Projects:** At ~6KB with zero dependencies, ideal for embedded widgets, micro-frontends, and mobile-first apps.
+- **📦 Bundle-Sensitive Projects:** At ~2.5KB gzipped with zero dependencies, ideal for embedded widgets, micro-frontends, and mobile-first apps.
 - **🔄 Unopinionated & Flexible:** Architect your application your way with a straightforward API and plugin system.
 - **🎯 Developer-Friendly:** Stick to pure vanilla JavaScript with familiar syntax and built-in TypeScript support.
 - **🧪 Rapid Prototyping:** Start building immediately—no build tooling required.
@@ -259,7 +259,7 @@ I follow [Semantic Versioning (SemVer)](https://semver.org/):
 
 Eleva is crafted for performance:
 
-- **Lightweight:** Approximately ~6 KB minified and ~2.5 KB gzipped.
+- **Lightweight:** Approximately ~6KB minified and ~2.5KB gzipped.
 - **Efficient Reactivity:** Signal-based updates ensure only necessary DOM parts are updated.
 - **Optimized Diffing:** Renderer efficiently patches changes without the overhead of a virtual DOM.
 - **No Bloat:** Pure vanilla JavaScript with zero dependencies keeps your project nimble.
@@ -272,15 +272,17 @@ Eleva is crafted for performance:
 
 Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framework-benchmark/) methodology (1,000 rows):
 
-| **Framework**                 | **Bundle Size (min+gzip)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB)* |
+| **Framework**                 | **Bundle Size (gzipped)** | **Create 1K Rows** (ms) | **Partial Update** (ms) | **Memory** (MB)* |
 | ----------------------------- | -------------------------- | ----------------------- | ----------------------- | ---------------- |
-| **Eleva** (Direct DOM)        | **~2.5 KB**                | **~25**                 | ~86                     | **~0.5** (Chrome) |
-| **React 19** (Virtual DOM)    | ~44 KB                     | 40-70                   | 10-20                   | 2-5              |
-| **Vue 3.5** (Reactive)        | ~35 KB                     | 25-45                   | 5-15                    | 2-4              |
-| **Angular 19** (Signals)      | ~90 KB                     | 50-80                   | 15-25                   | 3-6              |
+| **Eleva** (Direct DOM)        | **~2.5KB**                 | **~25**                 | ~86                     | **~0.5** (Chrome) |
+| **React 19** (Virtual DOM)    | ~55KB                      | 40-70                   | 10-20                   | 2-5              |
+| **Vue 3.5** (Reactive)        | ~45KB                      | 25-45                   | 5-15                    | 2-4              |
+| **SolidJS 1.9** (Signals)     | ~7KB                       | 35-45                   | 5-10                    | 1-2              |
+| **Preact 10** (Virtual DOM)   | ~5KB                       | 45-60                   | 10-15                   | 2-3              |
+| **Angular 19** (Signals)      | ~62KB                      | 50-80                   | 15-25                   | 3-6              |
 
 **Eleva's Strengths:**
-- **Smallest bundle size** (~2.5 KB vs 35-90 KB)
+- **Smallest bundle size** (~2.5KB vs 5-62KB gzipped)
 - **Competitive initial render** (~25ms for 1K rows)
 - **Zero dependencies** and minimal runtime overhead
 - **Direct DOM diffing** without virtual DOM overhead
@@ -297,17 +299,17 @@ Benchmarks using [js-framework-benchmark](https://krausest.github.io/js-framewor
 
 ## Eleva vs. Popular Frameworks
 
-How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, and Angular?
+How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte, SolidJS, Preact, and Angular?
 
-| Feature | Eleva 1 | React 19 | Vue 3.5 | Svelte 5 | Angular 19 |
-|---------|-----------|----------|---------|----------|------------|
-| **Bundle Size** | ~6KB | ~44KB | ~45KB | ~3KB* | ~90KB |
-| **Dependencies** | 0 | 3+ | 0 | 0 | 10+ |
-| **Virtual DOM** | No | Yes | Yes | No | No |
-| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Zone.js |
-| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in |
-| **Build Required** | No | Yes | Optional | Yes | Yes |
-| **Learning Curve** | Low | Medium | Medium | Low | High |
+| Feature | Eleva 1 | React 19 | Vue 3.5 | Svelte 5 | SolidJS 1.9 | Preact 10 | Angular 19 |
+|---------|-----------|----------|---------|----------|-------------|-----------|------------|
+| **Bundle Size (gzipped)** | ~2.5KB | ~55KB | ~45KB | ~3KB* | ~7KB | ~5KB | ~62KB |
+| **Dependencies** | 0 | 3+ | 0 | 0 | 0 | 0 | 10+ |
+| **Virtual DOM** | No | Yes | Yes | No | No | Yes | No |
+| **Reactivity** | Signals | useState/Hooks | Refs/Reactive | Compiler | Signals | useState/Hooks | Zone.js |
+| **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in | Optional | Built-in |
+| **Build Required** | No | Yes | Optional | Yes | Yes | Optional | Yes |
+| **Learning Curve** | Low | Medium | Medium | Low | Medium | Low | High |
 
 _*Svelte compiles away, so runtime is minimal but build step is required._
 
@@ -870,7 +872,7 @@ Eleva is a labor of love — built and maintained by a solo developer passionate
 ### Why Sponsor?
 
 - **Zero dependencies** means Eleva relies solely on community support, not corporate backing
-- **~6KB** of pure JavaScript serves thousands of developers worldwide
+- **~2.5KB gzipped** of pure JavaScript serves thousands of developers worldwide
 - **100% open source** — your sponsorship keeps it free for everyone
 - **Direct impact** — every dollar goes straight to development, not overhead
 

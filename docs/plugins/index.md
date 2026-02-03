@@ -152,11 +152,11 @@ app.use(Router, { routes: [...] });
 
 ## Core Plugins
 
-| Plugin | Purpose | Size | Docs |
-|--------|---------|------|------|
-| **Attr** | ARIA, data-*, boolean attribute handling | ~2.2KB | [View →](./attr/) |
-| **Router** | Client-side routing & navigation guards | ~15KB | [View →](./router/) |
-| **Store** | Global state management & persistence | ~6KB | [View →](./store/) |
+| Plugin | Purpose | Size (gzipped) | Docs |
+|--------|---------|----------------|------|
+| **Attr** | ARIA, data-*, boolean attribute handling | ~1KB | [View →](./attr/) |
+| **Router** | Client-side routing & navigation guards | ~5KB | [View →](./router/) |
+| **Store** | Global state management & persistence | ~2KB | [View →](./store/) |
 
 ---
 

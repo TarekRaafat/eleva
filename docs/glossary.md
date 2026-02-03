@@ -430,7 +430,7 @@ count.value = 5;          // Write (triggers re-render)
 A web application that loads a single HTML page and dynamically updates content as the user interacts. Eleva with the Router plugin enables SPA development.
 
 ### Store Plugin
-An official Eleva plugin (~6KB) for centralized state management with actions, namespaces, persistence, and subscriptions. [Learn more →](./plugins/store/index.md)
+An official Eleva plugin (~2KB gzipped) for centralized state management with actions, namespaces, persistence, and subscriptions. [Learn more →](./plugins/store/index.md)
 
 ### Subscription
 A way to listen for changes to store state or emitter events. Always unsubscribe in `onUnmount` to prevent memory leaks.
