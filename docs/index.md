@@ -443,7 +443,7 @@ app.mount(document.getElementById("app"), "Counter");
 - Attr: [Features](./plugins/attr/features.md) · [Patterns](./plugins/attr/patterns.md) · [API](./plugins/attr/api.md)
 - Router: [Configuration](./plugins/router/configuration.md) · [Navigation](./plugins/router/navigation.md) · [Guards](./plugins/router/guards.md) · [Lazy Loading](./plugins/router/lazy-loading.md) · [API](./plugins/router/api.md)
 - Store: [Core Concepts](./plugins/store/core-concepts.md) · [Configuration](./plugins/store/configuration.md) · [Patterns](./plugins/store/patterns.md) · [Advanced](./plugins/store/advanced.md) · [API](./plugins/store/api.md)
-- Agent: [Features](./plugins/agent/features.md) · [API](./plugins/agent/api.md) · [Patterns](./plugins/agent/patterns.md)
+- Agent: [Overview](./plugins/agent/index.md) · [API](./plugins/agent/api.md) · [Patterns](./plugins/agent/patterns.md)
 
 ### Examples & Patterns
 

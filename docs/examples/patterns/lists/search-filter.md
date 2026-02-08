@@ -286,7 +286,7 @@ setup({ signal }) {
 - [Forms](../forms.md) — Handle search input and form controls
 - [Async Data Loading](../async-data/index.md) — Fetch filtered results from APIs
 - [Caching Strategies](../async-data/caching.md) — Cache search results for performance
-- [Performance Best Practices](../../../best-practices/performance.md) — Optimize search and filtering
+- [Performance Best Practices](../best-practices/performance.md) — Optimize search and filtering
 
 ---
 

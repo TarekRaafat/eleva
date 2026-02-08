@@ -301,7 +301,7 @@ This demonstrates Eleva's component composition:
 
 ## See Also
 
-- [Components Guide](../../../components.md) — Component composition and props
+- [Components Guide](../../components.md) — Component composition and props
 - [List Operations](../patterns/lists/index.md) — Rendering lists of posts/comments
 - [Conditional Rendering](../patterns/conditional-rendering.md) — Toggle sections visibility
 - [State Management](../patterns/state/index.md) — Local component state patterns

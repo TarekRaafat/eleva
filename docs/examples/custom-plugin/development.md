@@ -530,7 +530,7 @@ eleva-my-plugin/
 - [Core Concepts](../../core-concepts.md) — Lifecycle hooks and component architecture
 - [Store Plugin Advanced](../../plugins/store/advanced.md) — Complex plugin patterns
 - [Router Plugin Guards](../../plugins/router/guards.md) — Middleware and guard patterns
-- [Performance Best Practices](../../best-practices/performance.md) — Optimize plugin code
+- [Performance Best Practices](../patterns/best-practices/performance.md) — Optimize plugin code
 
 ---
 
