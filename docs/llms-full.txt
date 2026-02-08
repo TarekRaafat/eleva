@@ -1490,6 +1490,7 @@ store.clearPersistedState();
 - `register()` silently overwrites existing actions with the same name. No warning.
 - Agent emits 5 events via `eleva.emitter`: `agent:register`, `agent:unregister`, `agent:execute`, `agent:execute:error`, `agent:dispatch`. It also captures OTHER plugins' events via `emitterEvents` config.
 - All errors have a machine-readable `error.code` property — use `switch(error.code)` not string matching.
+- Mutating methods can throw `AGENT_DESTROYED` when called on stale references after plugin uninstall.
 - Agent exposes two reactive signals on `ctx.agent`: `actionCount` (Signal\<number\>) and `lastActivity` (Signal\<AgentLogEntry|null\>). Use `.value` to read and `.watch()` to subscribe.
 - Actions registered and commands subscribed via `ctx.agent` in `setup()` are automatically cleaned up when the component unmounts. No manual `onUnmount` cleanup needed for agent resources.
 - Audit log entries include `result`, `error`, `durationMs` — log is written AFTER handler completion.
@@ -1499,19 +1500,19 @@ store.clearPersistedState();
 **Method contract:**
 ```
 METHOD                                    RETURNS             THROWS (error.code)
-register(name, handler, schema?)          void                AGENT_HANDLER_NOT_FUNCTION
-unregister(name)                          void                never (warns if missing)
-execute(name, payload?, scope?)           Promise<unknown>    AGENT_PERMISSION_DENIED | AGENT_ACTION_NOT_FOUND | AGENT_SCHEMA_VIOLATION | AGENT_HANDLER_ERROR
-executeBatch(actions[], scope?)           Promise<unknown[]>  first error from any action (parallel)
-executeSequence(actions[], scope?)        Promise<unknown>    first error in chain (sequential, pipes results)
+register(name, handler, schema?)          void                AGENT_DESTROYED | AGENT_HANDLER_NOT_FUNCTION
+unregister(name)                          void                AGENT_DESTROYED (warns if missing)
+execute(name, payload?, scope?)           Promise<unknown>    AGENT_DESTROYED | AGENT_PERMISSION_DENIED | AGENT_ACTION_NOT_FOUND | AGENT_SCHEMA_VIOLATION | AGENT_HANDLER_ERROR
+executeBatch(actions[], scope?)           Promise<unknown[]>  AGENT_DESTROYED | first error from any action (parallel)
+executeSequence(actions[], scope?)        Promise<unknown>    AGENT_DESTROYED | first error in chain (sequential, pipes results)
 hasAction(name)                           boolean             never
 describeAction(name)                      Descriptor|null     never
 listActions()                             Descriptor[]        never
 describe(scope?)                          Manifest            never
-dispatch(command, scope?)                 Promise<void>       AGENT_COMMAND_INVALID_TYPE | AGENT_PERMISSION_DENIED
-onCommand(type, handler)                  ()=>void            AGENT_HANDLER_NOT_FUNCTION
+dispatch(command, scope?)                 Promise<void>       AGENT_DESTROYED | AGENT_COMMAND_INVALID_TYPE | AGENT_PERMISSION_DENIED
+onCommand(type, handler)                  ()=>void            AGENT_DESTROYED | AGENT_HANDLER_NOT_FUNCTION
 getLog(filter?)                           LogEntry[]          never (filter: type, since, action, status)
-clearLog()                                void                never
+clearLog()                                void                AGENT_DESTROYED
 inspect()                                 object              never (warns if disabled)
 snapshot()                                Snapshot            never (warns if disabled)
 diff(snapA, snapB)                        DiffResult          never

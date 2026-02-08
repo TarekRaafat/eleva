@@ -347,6 +347,7 @@ diff(snapA, snapB)                      → DiffResult    | only if enableInspec
 **Handler receives payload only:** `(payload) => result` — NOT `(ctx, name)`.
 **Permissions are scope objects:** `{ "scopeName": { actions: [...], commands: [...] } }` — NOT arrays.
 **All errors have `error.code`** — machine-readable codes for programmatic handling.
+**Destroyed-state guard:** Mutating methods (`register`, `unregister`, `execute`, `executeBatch`, `executeSequence`, `dispatch`, `onCommand`, `clearLog`) can throw `AGENT_DESTROYED` when called on stale references after uninstall.
 **Audit log records outcomes:** entries include `result`, `error`, `durationMs` after handler completion.
 **Schema validation is opt-in:** set `validateSchemas: true` in options to enforce `schema.input` on execute.
 **Agent emits events:** `agent:register`, `agent:unregister`, `agent:execute`, `agent:execute:error`, `agent:dispatch` via `eleva.emitter`.

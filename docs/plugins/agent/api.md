@@ -362,7 +362,7 @@ console.log(agent.getLog().length); // 0
 
 ## State Inspection Methods
 
-> **Note:** When `enableInspection` is `false`, these methods are **omitted entirely** from the `ctx.agent` API in components — they will be `undefined`. If you call them directly on `app.agent` (the internal instance), they will log a warning and return empty results. The default is `enableInspection: true`.
+> **Note:** When `enableInspection` is `false`, these methods are **omitted entirely** from the `ctx.agent` API in components — they will be `undefined`. On `app.agent` (the internal instance), `inspect()` and `snapshot()` still exist but log a warning and return empty results. The default is `enableInspection: true`.
 
 ### inspect()
 
@@ -800,8 +800,8 @@ await agent.execute("actionName", payload, "my-scope");
 // 3. Without strictPermissions, omit scope for unrestricted access
 await agent.execute("actionName", payload);
 
-// 4. Check configured permissions
-console.log(app.agent._permissions);
+// 4. Check resolved permissions via public API
+console.log(app.agent.describe("my-scope").permissions);
 ```
 
 ### Audit Log Empty
@@ -832,7 +832,7 @@ const filtered = agent.getLog({ type: "action" });  // Only actions
 
 When `enableInspection` is `false`, these methods are **omitted entirely** from the `ctx.agent` API injected into components. They won't exist as properties, so calling them throws a TypeError.
 
-> **Note:** On `app.agent` (the internal instance), these methods always exist but log a warning and return empty results when inspection is disabled.
+> **Note:** On `app.agent` (the internal instance), `inspect()` and `snapshot()` still exist but log a warning and return empty results when inspection is disabled.
 
 **Solutions:**
 
