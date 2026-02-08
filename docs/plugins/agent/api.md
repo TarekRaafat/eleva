@@ -908,7 +908,7 @@ A compact, machine-oriented reference for AI models generating Eleva Agent code.
 | `snapshot` | `()` | `AgentSnapshot` | Never | `console.warn` if inspection disabled; returns empty snapshot |
 | `diff` | `(snapA: AgentSnapshot, snapB: AgentSnapshot)` | `AgentDiffResult` | Never | None |
 
-> **Note on `ctx.agent` vs `app.agent`:** When `enableInspection: false`, the methods `inspect`, `snapshot`, and `diff` are **omitted entirely** from `ctx.agent` (they are `undefined`). On `app.agent`, they always exist but warn and return empty results.
+> **Note on `ctx.agent` vs `app.agent`:** When `enableInspection: false`, the methods `inspect`, `snapshot`, and `diff` are **omitted entirely** from `ctx.agent` (they are `undefined`). On `app.agent`, `inspect()` and `snapshot()` still exist but warn and return empty results; `diff()` remains available and compares snapshots normally.
 
 ### Type Definitions
 
