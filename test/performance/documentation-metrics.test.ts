@@ -191,7 +191,9 @@ function measureBundleSize(): DocumentationMetrics["bundleSize"] {
 // Hydration Time Measurement
 // ============================================================================
 
-async function measureHydrationTime(): Promise<DocumentationMetrics["hydrationTime"]> {
+async function measureHydrationTime(): Promise<
+  DocumentationMetrics["hydrationTime"]
+> {
   const measurements: number[] = [];
 
   // Warmup runs
@@ -349,7 +351,12 @@ async function measureMemory(): Promise<DocumentationMetrics["memory"]> {
     afterMount,
     peak,
     // For documentation, report the realistic footprint
-    formatted: elevaMemory < 0.5 ? "< 0.5" : elevaMemory < 1 ? `< 1` : `${elevaMemory.toFixed(1)}`,
+    formatted:
+      elevaMemory < 0.5
+        ? "< 0.5"
+        : elevaMemory < 1
+          ? `< 1`
+          : `${elevaMemory.toFixed(1)}`,
   };
 }
 
@@ -487,7 +494,13 @@ describe("Documentation Metrics Benchmark", () => {
       bundleSize: { raw: 0, minified: 0, gzipped: 0, formatted: "N/A" },
       hydrationTime: { median: 0, min: 0, max: 0, formatted: "N/A" },
       domUpdate: { median: 0, min: 0, max: 0, formatted: "N/A" },
-      memory: { baseline: 0, afterInit: 0, afterMount: 0, peak: 0, formatted: "N/A" },
+      memory: {
+        baseline: 0,
+        afterInit: 0,
+        afterMount: 0,
+        peak: 0,
+        formatted: "N/A",
+      },
       timestamp: new Date().toISOString(),
       version: packageJson.version,
       runtime: `Bun ${Bun.version}`,
@@ -500,7 +513,9 @@ describe("Documentation Metrics Benchmark", () => {
     metrics.bundleSize = measureBundleSize();
 
     console.log(`   ESM (raw):     ${formatBytes(metrics.bundleSize.raw)}`);
-    console.log(`   UMD (min):     ${formatBytes(metrics.bundleSize.minified)}`);
+    console.log(
+      `   UMD (min):     ${formatBytes(metrics.bundleSize.minified)}`
+    );
     console.log(`   UMD (gzip):    ${formatBytes(metrics.bundleSize.gzipped)}`);
 
     // Bundle should be under 10KB gzipped
@@ -512,7 +527,9 @@ describe("Documentation Metrics Benchmark", () => {
     metrics.hydrationTime = await measureHydrationTime();
 
     console.log(`   Median:        ${formatMs(metrics.hydrationTime.median)}`);
-    console.log(`   Range:         ${formatMs(metrics.hydrationTime.min)} - ${formatMs(metrics.hydrationTime.max)}`);
+    console.log(
+      `   Range:         ${formatMs(metrics.hydrationTime.min)} - ${formatMs(metrics.hydrationTime.max)}`
+    );
 
     // Hydration should be under 10ms for a simple component
     expect(metrics.hydrationTime.median).toBeLessThan(10);
@@ -523,7 +540,9 @@ describe("Documentation Metrics Benchmark", () => {
     metrics.domUpdate = await measureDOMUpdate();
 
     console.log(`   Median:        ${formatMs(metrics.domUpdate.median)}`);
-    console.log(`   Range:         ${formatMs(metrics.domUpdate.min)} - ${formatMs(metrics.domUpdate.max)}`);
+    console.log(
+      `   Range:         ${formatMs(metrics.domUpdate.min)} - ${formatMs(metrics.domUpdate.max)}`
+    );
 
     // Single DOM update should be under 5ms
     expect(metrics.domUpdate.median).toBeLessThan(5);
@@ -557,7 +576,9 @@ describe("Documentation Metrics Benchmark", () => {
     console.log("📊 DOCUMENTATION METRICS SUMMARY");
     console.log("═".repeat(60));
     console.log(`\n  Bundle Size (min+gzip): ${metrics.bundleSize.formatted}`);
-    console.log(`  Hydration Time:         ${metrics.hydrationTime.formatted} ms`);
+    console.log(
+      `  Hydration Time:         ${metrics.hydrationTime.formatted} ms`
+    );
     console.log(`  DOM Update:             ${metrics.domUpdate.formatted} ms`);
     console.log(`  Memory:                 ${metrics.memory.formatted} MB`);
     console.log("\n" + "─".repeat(60));
@@ -568,7 +589,9 @@ describe("Documentation Metrics Benchmark", () => {
 
     // Print documentation table format
     console.log("\n📝 Copy this to documentation:\n");
-    console.log(`| **Eleva** (Direct DOM) | **~${Math.round(metrics.bundleSize.gzipped / 1024)} KB** | **${metrics.hydrationTime.formatted}** | **${metrics.domUpdate.formatted}** | **${metrics.memory.formatted}** |`);
+    console.log(
+      `| **Eleva** (Direct DOM) | **~${Math.round(metrics.bundleSize.gzipped / 1024)} KB** | **${metrics.hydrationTime.formatted}** | **${metrics.domUpdate.formatted}** | **${metrics.memory.formatted}** |`
+    );
     console.log("");
   });
 });

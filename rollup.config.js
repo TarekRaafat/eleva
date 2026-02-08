@@ -7,6 +7,7 @@ import pkg from "./package.json" with { type: "json" };
 import { AttrPlugin } from "./src/plugins/Attr.js";
 import { RouterPlugin } from "./src/plugins/Router.js";
 import { StorePlugin } from "./src/plugins/Store.js";
+import { AgentPlugin } from "./src/plugins/Agent.js";
 
 const name = "Eleva";
 
@@ -17,8 +18,18 @@ const createBanner = (bundleName, version = pkg.version) =>
 const coreBanner = createBanner("Eleva");
 const pluginsBanner = createBanner("Eleva Plugins");
 const attrPluginBanner = createBanner("Eleva Attr Plugin", AttrPlugin.version);
-const routerPluginBanner = createBanner("Eleva Router Plugin", RouterPlugin.version);
-const storePluginBanner = createBanner("Eleva Store Plugin", StorePlugin.version);
+const routerPluginBanner = createBanner(
+  "Eleva Router Plugin",
+  RouterPlugin.version
+);
+const storePluginBanner = createBanner(
+  "Eleva Store Plugin",
+  StorePlugin.version
+);
+const agentPluginBanner = createBanner(
+  "Eleva Agent Plugin",
+  AgentPlugin.version
+);
 
 // SWC minify configuration - optimized for smallest output
 const swcMinifyConfig = {
@@ -217,7 +228,7 @@ const pluginConfig = {
   ],
 };
 
-// Individual plugin configurations for ESM, CJS, and UMD usage
+// Individual plugin configurations for ESM and CJS (named exports preserved)
 const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
   input: inputFile,
   output: [
@@ -234,19 +245,43 @@ const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
       format: "cjs",
       exports: "named",
     },
+  ],
+  treeshake: {
+    moduleSideEffects: false,
+    propertyReadSideEffects: false,
+    tryCatchDeoptimization: false,
+    annotations: true,
+    unknownGlobalSideEffects: false,
+  },
+  plugins: [
+    ...commonPlugins,
+    codecovRollupPlugin({
+      enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+      bundleName: `Eleva${pluginName}`,
+      uploadToken: process.env.CODECOV_TOKEN,
+    }),
+  ],
+});
+
+// Individual plugin UMD configurations (default export → direct global)
+const createIndividualPluginUmdConfig = (pluginName, umdInputFile, banner) => ({
+  input: umdInputFile,
+  output: [
     {
-      name: `Eleva${pluginName}Plugin`,
+      name: `Eleva${pluginName}`,
       sourcemap: true,
       banner: banner,
       file: `./dist/plugins/${pluginName.toLowerCase()}.umd.js`,
       format: "umd",
+      exports: "default",
     },
     {
-      name: `Eleva${pluginName}Plugin`,
+      name: `Eleva${pluginName}`,
       sourcemap: true,
       banner: banner,
       file: `./dist/plugins/${pluginName.toLowerCase()}.umd.min.js`,
       format: "umd",
+      exports: "default",
       plugins: [minify(swcMinifyConfig)],
     },
   ],
@@ -267,7 +302,7 @@ const createIndividualPluginConfig = (pluginName, inputFile, banner) => ({
   ],
 });
 
-// Individual plugin builds for CDN
+// Individual plugin builds — ESM/CJS (named exports)
 const attrPluginConfig = createIndividualPluginConfig(
   "Attr",
   "src/plugins/Attr.js",
@@ -286,6 +321,37 @@ const storePluginConfig = createIndividualPluginConfig(
   storePluginBanner
 );
 
+const agentPluginConfig = createIndividualPluginConfig(
+  "Agent",
+  "src/plugins/Agent.js",
+  agentPluginBanner
+);
+
+// Individual plugin builds — UMD (default export → direct global)
+const attrPluginUmdConfig = createIndividualPluginUmdConfig(
+  "Attr",
+  "src/plugins/umd/attr.js",
+  attrPluginBanner
+);
+
+const routerPluginUmdConfig = createIndividualPluginUmdConfig(
+  "Router",
+  "src/plugins/umd/router.js",
+  routerPluginBanner
+);
+
+const storePluginUmdConfig = createIndividualPluginUmdConfig(
+  "Store",
+  "src/plugins/umd/store.js",
+  storePluginBanner
+);
+
+const agentPluginUmdConfig = createIndividualPluginUmdConfig(
+  "Agent",
+  "src/plugins/umd/agent.js",
+  agentPluginBanner
+);
+
 // Export all configurations
 export default [
   coreEsmConfig,
@@ -295,4 +361,9 @@ export default [
   attrPluginConfig,
   routerPluginConfig,
   storePluginConfig,
+  agentPluginConfig,
+  attrPluginUmdConfig,
+  routerPluginUmdConfig,
+  storePluginUmdConfig,
+  agentPluginUmdConfig,
 ];

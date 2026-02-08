@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Eleva.js Store plugin for reactive global state with actions, namespaces, persistence, and devtools. Redux-like patterns in ~2KB gzipped.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -87,7 +87,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript State Management Plugin",
   "operatingSystem": "Cross-platform (Web Browser)",
-  "softwareVersion": "1.1.1",
+  "softwareVersion": "1.2.0",
   "datePublished": "2026-01-12",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
   "installUrl": "https://www.npmjs.com/package/eleva",
@@ -100,6 +100,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
     "Namespace organization",
     "localStorage persistence",
     "sessionStorage persistence",
+    "Emitter events for cross-plugin observability",
     "DevTools integration",
     "State subscriptions",
     "Module system"
@@ -164,7 +165,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Store Plugin
 
-> **Version:** 1.1.1 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified (~2KB gzipped) | **Dependencies:** Eleva core (Signal system)
+> **Version:** 1.2.0 | **Type:** State Management Plugin | **Bundle Size:** ~6KB minified (~2KB gzipped) | **Dependencies:** Eleva core (Signal system)
 
 The Store plugin provides centralized, reactive state management for Eleva applications. It enables sharing data across the entire application with automatic UI updates, action-based mutations, namespace organization, and built-in persistence.
 
@@ -294,6 +295,7 @@ app.use(Store, {
 | **Async Support** | Native async/await in actions |
 | **Subscriptions** | Listen to all state mutations |
 | **Dynamic Modules** | Register/unregister modules at runtime |
+| **Emitter Events** | `store:*` events via `eleva.emitter` for cross-plugin observability |
 | **DevTools Integration** | Debug state changes in development |
 | **TypeScript Support** | Full type definitions included |
 
@@ -334,7 +336,7 @@ import { Store } from "eleva/plugins/store";
 
 <script>
   const app = new Eleva("MyApp");
-  app.use(ElevaStorePlugin, { /* options */ });
+  app.use(ElevaStore, { /* options */ });
 </script>
 ```
 

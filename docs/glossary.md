@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Definitions of key terms and concepts used in Eleva.js - signals, reactivity, components, lifecycle hooks, and more.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",

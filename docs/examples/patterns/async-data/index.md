@@ -72,7 +72,7 @@ description: Fetch data in Eleva.js. API calls with loading/error states, pagina
 
 # Async Data Fetching
 
-> **Version:** 1.1.1 | API fetching, loading states, and pagination patterns.
+> **Version:** 1.2.0 | API fetching, loading states, and pagination patterns.
 
 ---
 

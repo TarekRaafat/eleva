@@ -43,7 +43,7 @@ description: Reusable Eleva.js UI patterns. Forms, async data fetching, conditio
 
 # UI Patterns
 
-> **Version:** 1.1.1 | Reusable code patterns for common UI scenarios.
+> **Version:** 1.2.0 | Reusable code patterns for common UI scenarios.
 
 ---
 

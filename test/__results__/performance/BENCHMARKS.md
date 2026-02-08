@@ -1,6 +1,6 @@
 # Eleva.js Performance Benchmarks
 
-> **Current Version:** 1.1.0 | **Generated:** 20/01/2026 at 01:41 PM (GMT +0) | **Platform:** darwin arm64 | **Runtime:** Bun 1.3.6
+> **Current Version:** 1.2.0 | **Generated:** 08/02/2026 at 11:11 AM (GMT +0) | **Platform:** darwin arm64 | **Runtime:** Bun 1.3.8
 
 > **Note:** Initial baseline (1.2.5-alpha) used legacy methodology (single run, Jest/Node.js). Current tests use improved methodology (10 runs, warm-up, outlier removal).
 
@@ -10,7 +10,7 @@
 |--------|-------|
 | **Benchmarks Passed** | 8/8 (100%) |
 | **Performance Health** | Excellent |
-| **Versions Tracked** | 22 |
+| **Versions Tracked** | 23 |
 | **Initial Baseline** | 1.2.5-alpha (legacy) |
 
 ## Legend
@@ -24,16 +24,16 @@
 
 ## Summary
 
-| Benchmark | Current (1.1.0) | Previous (1.0.0) | Initial (1.2.5-alpha) | Trend | Change |
+| Benchmark | Current (1.2.0) | Previous (1.1.0) | Initial (1.2.5-alpha) | Trend | Change |
 |-----------|---------|----------|---------|-------|--------|
-| Framework Instantiation | 1.37µs | 1.58µs | 40.00µs | ↑ | -13.2% |
-| Component Registration (×10) | 3.46µs | 3.58µs | 550.00µs | → | -3.5% |
-| Component Mount | 33.17µs | 31.33µs | 2.67ms | → | +5.8% |
-| Reactive Updates (×100) | 3.25µs | 4.17µs | 140.00µs | ↑ | -22.0% |
-| Lifecycle Cycles (×10) | 199.29µs | 224.17µs | — | ↑ | -11.1% |
-| Event Handling (×50) | 157.06µs | 125.92µs | 1.41ms | ↓ | +24.7% |
-| Large List Update (500 items) | 16.15µs | 13.87µs | 290.00µs | ↓ | +16.4% |
-| Complex Template (50×5) | 10.08µs | 9.65µs | 160.00µs | → | +4.5% |
+| Framework Instantiation | 1.37µs | 1.37µs | 40.00µs | → | +0.0% |
+| Component Registration (×10) | 4.46µs | 3.46µs | 550.00µs | ↓ | +28.9% |
+| Component Mount | 45.71µs | 33.17µs | 2.67ms | ↓ | +37.8% |
+| Reactive Updates (×100) | 3.85µs | 3.25µs | 140.00µs | ↓ | +18.6% |
+| Lifecycle Cycles (×10) | 249.42µs | 199.29µs | — | ↓ | +25.2% |
+| Event Handling (×50) | 268.67µs | 157.06µs | 1.41ms | ↓ | +71.1% |
+| Large List Update (500 items) | 17.98µs | 16.15µs | 290.00µs | ↓ | +11.4% |
+| Complex Template (50×5) | 13.62µs | 10.08µs | 160.00µs | ↓ | +35.1% |
 
 
 ## Methodology
@@ -53,144 +53,144 @@
 | Metric | Value |
 |--------|-------|
 | **Median** | 1.37µs |
-| **Mean** | 1.54µs |
-| **Std Dev** | 513.63ns |
-| **Range** | 1.04µs – 2.83µs |
-| **CV** | 33.3% |
+| **Mean** | 2.17µs |
+| **Std Dev** | 1.37µs |
+| **Range** | 1.00µs – 4.92µs |
+| **CV** | 63.5% |
 | **Runs** | 9 |
 | **Ops/Run** | 1 |
 | **Budget** | < 10.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 1.58µs → 1.37µs (↑ -13.2%)
+- vs Previous: 1.37µs → 1.37µs (→ +0.0%)
 - vs Initial: 40.00µs → 1.37µs (↑ -96.6%)
 
 ### Component Registration (×10)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 3.46µs |
-| **Mean** | 3.48µs |
-| **Std Dev** | 463.91ns |
-| **Range** | 2.83µs – 4.46µs |
-| **CV** | 13.3% |
+| **Median** | 4.46µs |
+| **Mean** | 4.80µs |
+| **Std Dev** | 1.34µs |
+| **Range** | 3.33µs – 7.88µs |
+| **CV** | 27.9% |
 | **Runs** | 9 |
 | **Ops/Run** | 10 |
 | **Budget** | < 20.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 3.58µs → 3.46µs (→ -3.5%)
-- vs Initial: 550.00µs → 3.46µs (↑ -99.4%)
+- vs Previous: 3.46µs → 4.46µs (↓ +28.9%)
+- vs Initial: 550.00µs → 4.46µs (↑ -99.2%)
 
 ### Component Mount
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 33.17µs |
-| **Mean** | 31.63µs |
-| **Std Dev** | 4.40µs |
-| **Range** | 26.21µs – 40.17µs |
-| **CV** | 13.9% |
+| **Median** | 45.71µs |
+| **Mean** | 56.30µs |
+| **Std Dev** | 24.70µs |
+| **Range** | 37.17µs – 121.92µs |
+| **CV** | 43.9% |
 | **Runs** | 9 |
 | **Ops/Run** | 1 |
 | **Budget** | < 20.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 31.33µs → 33.17µs (→ +5.8%)
-- vs Initial: 2.67ms → 33.17µs (↑ -98.8%)
+- vs Previous: 33.17µs → 45.71µs (↓ +37.8%)
+- vs Initial: 2.67ms → 45.71µs (↑ -98.3%)
 
 ### Reactive Updates (×100)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 3.25µs |
-| **Mean** | 7.05µs |
-| **Std Dev** | 5.87µs |
-| **Range** | 2.75µs – 18.46µs |
-| **CV** | 83.2% |
-| **Runs** | 9 |
+| **Median** | 3.85µs |
+| **Mean** | 8.33µs |
+| **Std Dev** | 6.10µs |
+| **Range** | 3.12µs – 17.79µs |
+| **CV** | 73.3% |
+| **Runs** | 10 |
 | **Ops/Run** | 100 |
 | **Budget** | < 50.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 4.17µs → 3.25µs (↑ -22.0%)
-- vs Initial: 140.00µs → 3.25µs (↑ -97.7%)
+- vs Previous: 3.25µs → 3.85µs (↓ +18.6%)
+- vs Initial: 140.00µs → 3.85µs (↑ -97.2%)
 
 ### Lifecycle Cycles (×10)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 199.29µs |
-| **Mean** | 197.71µs |
-| **Std Dev** | 6.82µs |
-| **Range** | 188.33µs – 209.25µs |
-| **CV** | 3.4% |
-| **Runs** | 9 |
+| **Median** | 249.42µs |
+| **Mean** | 260.35µs |
+| **Std Dev** | 23.87µs |
+| **Range** | 229.58µs – 302.38µs |
+| **CV** | 9.2% |
+| **Runs** | 10 |
 | **Ops/Run** | 10 |
 | **Budget** | < 100.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 224.17µs → 199.29µs (↑ -11.1%)
+- vs Previous: 199.29µs → 249.42µs (↓ +25.2%)
 - vs Initial: No initial data
 
 ### Event Handling (×50)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 157.06µs |
-| **Mean** | 214.92µs |
-| **Std Dev** | 89.64µs |
-| **Range** | 129.71µs – 362.42µs |
-| **CV** | 41.7% |
+| **Median** | 268.67µs |
+| **Mean** | 281.87µs |
+| **Std Dev** | 96.78µs |
+| **Range** | 178.00µs – 461.50µs |
+| **CV** | 34.3% |
 | **Runs** | 10 |
 | **Ops/Run** | 50 |
 | **Budget** | < 50.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 125.92µs → 157.06µs (↓ +24.7%)
-- vs Initial: 1.41ms → 157.06µs (↑ -88.9%)
+- vs Previous: 157.06µs → 268.67µs (↓ +71.1%)
+- vs Initial: 1.41ms → 268.67µs (↑ -80.9%)
 
 ### Large List Update (500 items)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 16.15µs |
-| **Mean** | 16.21µs |
-| **Std Dev** | 4.38µs |
-| **Range** | 10.75µs – 24.04µs |
-| **CV** | 27.0% |
+| **Median** | 17.98µs |
+| **Mean** | 18.65µs |
+| **Std Dev** | 3.32µs |
+| **Range** | 15.08µs – 24.58µs |
+| **CV** | 17.8% |
 | **Runs** | 10 |
 | **Ops/Run** | 500 |
 | **Budget** | < 100.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 13.87µs → 16.15µs (↓ +16.4%)
-- vs Initial: 290.00µs → 16.15µs (↑ -94.4%)
+- vs Previous: 16.15µs → 17.98µs (↓ +11.4%)
+- vs Initial: 290.00µs → 17.98µs (↑ -93.8%)
 
 ### Complex Template (50×5)
 
 | Metric | Value |
 |--------|-------|
-| **Median** | 10.08µs |
-| **Mean** | 9.63µs |
-| **Std Dev** | 1.38µs |
-| **Range** | 7.25µs – 11.29µs |
-| **CV** | 14.4% |
-| **Runs** | 10 |
+| **Median** | 13.62µs |
+| **Mean** | 13.56µs |
+| **Std Dev** | 1.42µs |
+| **Range** | 10.83µs – 15.63µs |
+| **CV** | 10.5% |
+| **Runs** | 9 |
 | **Ops/Run** | 250 |
 | **Budget** | < 50.00ms |
 | **Status** | ✓ PASSED |
 
 **Comparison:**
-- vs Previous: 9.65µs → 10.08µs (→ +4.5%)
-- vs Initial: 160.00µs → 10.08µs (↑ -93.7%)
+- vs Previous: 10.08µs → 13.62µs (↓ +35.1%)
+- vs Initial: 160.00µs → 13.62µs (↑ -91.5%)
 
 
 
@@ -198,6 +198,7 @@
 
 | Version | Date | Avg. Median | Methodology |
 |---------|------|-------------|-------------|
+| 1.2.0 | 2/8/2026 | 75.64µs | Standard |
 | 1.1.0 | 1/20/2026 | 52.98µs | Standard |
 | 1.0.0 | 1/13/2026 | 51.78µs | Standard |
 | 1.0.0-rc.14 | 1/12/2026 | 63.98µs | Standard |
@@ -206,7 +207,6 @@
 | 1.0.0-rc.11 | 1/5/2026 | 72.24µs | Standard |
 | 1.0.0-rc.10 | 1/3/2026 | 56.50µs | Standard |
 | 1.0.0-rc.1 | 6/18/2025 | 738.57µs | Legacy |
-| 1.2.19-beta | 6/2/2025 | 735.71µs | Legacy |
 | 1.2.5-alpha *(initial)* | 4/25/2025 | 751.43µs | Legacy |
 
 

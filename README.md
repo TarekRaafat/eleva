@@ -1,10 +1,10 @@
 # Eleva.js 🚀
 
-> **Version:** `1.1.1` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
+> **Version:** `1.2.0` | **Size:** ~6KB min (~2.5KB gzip) | **Dependencies:** Zero | **TypeScript:** Yes
 >
 > *Also known as: elevajs, eleva*
 
-**Best DX for Building the Best UX** — Pure JavaScript, Pure Performance, Simply Elegant.
+**Best DX + AX for Building the Best UX** — Pure JavaScript, AI-Ready, Simply Elegant.
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub package.json version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -31,9 +31,9 @@
 <br>
 
 **A minimalist, lightweight, pure vanilla JavaScript frontend runtime framework.**
-_Designed for the best Developer Experience (DX) to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — because sometimes, less really is more!_ 😊
+_Designed for the best Developer Experience (DX) and **Agent Experience (AX)** to help you build exceptional User Experiences (UX). Built with love for native JavaScript and a minimal core that can be extended through a powerful plugin system — including built-in AI agent support. Because sometimes, less really is more!_ 😊
 
-> **Stable Release**: This is `v1.1.1` - The latest stable release of Eleva.js!
+> **Stable Release**: This is `v1.2.0` - The latest stable release of Eleva.js!
 
 
 
@@ -43,7 +43,7 @@ Welcome to Eleva! This is my humble, experimental playground for a fresh approac
 
 ## What is Eleva.js?
 
-**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI) without the complexity, bundle size, or build tool requirements of traditional frameworks.
+**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)** and **Agent Experience (AX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI) without the complexity, bundle size, or build tool requirements of traditional frameworks.
 
 Unlike React, Vue, or Angular, Eleva:
 - **Has zero dependencies** - No node_modules bloat
@@ -51,9 +51,10 @@ Unlike React, Vue, or Angular, Eleva:
 - **Uses real DOM** - No virtual DOM overhead for simple apps
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
+- **Is AI-agent-ready** - Built-in Agent plugin for LLM integration, action registry, and audit logging
 - **Is just JavaScript** - If it works in vanilla JS, it works in Eleva
 
-Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+Eleva is ideal for developers building performance-critical applications, AI-agent-powered interfaces, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler, AI-ready alternative to React, Vue, or Angular.
 
 ---
 
@@ -65,7 +66,7 @@ Eleva is ideal for developers building performance-critical applications, data-i
   - [Quick Reference](#quick-reference)
   - [Introduction](#introduction)
   - [Design Philosophy](#design-philosophy)
-  - [Best-in-Class Developer Experience (DX)](#best-in-class-developer-experience-dx)
+  - [Best-in-Class Developer Experience (DX) & Agent Experience (AX)](#best-in-class-developer-experience-dx--agent-experience-ax)
   - [Features](#features)
   - [When to Use Eleva](#when-to-use-eleva)
   - [Version Strategy](#version-strategy)
@@ -177,9 +178,9 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 ---
 
-## Best-in-Class Developer Experience (DX)
+## Best-in-Class Developer Experience (DX) & Agent Experience (AX)
 
-Eleva is built on a simple principle: **great DX leads to great UX**. When developers have intuitive tools, they build better interfaces. Every aspect of Eleva's design prioritizes your productivity and enjoyment.
+Eleva is built on a simple principle: **great DX + AX leads to great UX**. When developers have intuitive tools — and agents have a first-class integration surface — they build better interfaces. Every aspect of Eleva's design prioritizes your productivity and enjoyment.
 
 **Why Eleva's DX Stands Out:**
 
@@ -191,13 +192,14 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **Instant Feedback** | Signal-based reactivity shows changes immediately |
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
 | **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
+| **Agent-Ready (AX)** | Built-in Agent plugin for AI/LLM integration with action registry, audit logging, and permissions |
 
 - **🎨 Craftsmanship:** Every line of code is written with care, keeping the framework lightweight, efficient, and easy to understand.
 - **🛠️ Developer-First:** Intuitive API and minimal core mean you spend less time wrestling with the framework and more time perfecting your UI.
 - **🌟 No Magic:** Pure vanilla JavaScript with no hidden abstractions — debug easily, ship confidently.
 - **🏗️ Scales With You:** From prototype to production, Eleva grows with your project without added complexity.
 
-> _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
+> _"The best UX comes from developers who love their tools — and agents that speak their framework's language."_ — Eleva's DX + AX philosophy
 
 ---
 
@@ -211,7 +213,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 - **🔄 Lifecycle Hooks:** Complete lifecycle management with before/after mount and update hooks
 - **🧹 Automatic Cleanup:** Proper cleanup of resources, watchers, and child components on unmount
 - **🔌 Plugin System:** Extensible architecture with a simple plugin API
-- **🎯 Built-in Plugins:** Attr for advanced attributes, Router for client-side routing, and Store for reactive state management
+- **🎯 Built-in Plugins:** Attr for advanced attributes, Router for client-side routing, Store for reactive state management, and Agent for AI/LLM integration (AX)
 - **📦 UMD & ES Module Builds:** Supports modern build tools and browser environments
 - **🤝 Friendly API:** A gentle learning curve for both beginners and seasoned developers
 - **💎 Tiny Footprint & TypeScript Support:** Approximately ~2.5KB gzipped (~6KB minified) with built-in TypeScript declarations
@@ -310,6 +312,7 @@ How does Eleva compare to popular JavaScript frameworks like React, Vue, Svelte,
 | **TypeScript** | Built-in | Optional | Optional | Built-in | Built-in | Optional | Built-in |
 | **Build Required** | No | Yes | Optional | Yes | Yes | Optional | Yes |
 | **Learning Curve** | Low | Medium | Medium | Low | Medium | Low | High |
+| **AI/Agent Support** | Built-in | No | No | No | No | No | No |
 
 _*Svelte compiles away, so runtime is minimal but build step is required._
 
@@ -514,8 +517,8 @@ Eleva's plugin system allows you to extend functionality as needed. Plugins are 
 | **Core Plugins** | Bundled with Eleva | `import { X } from "eleva/plugins"` |
 | **External Plugins** | Community/Ecosystem | `npm install eleva-plugin-x` |
 
-> **Core plugins** (Attr, Router, Store) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](https://elevajs.com/plugins/) for details.
-> **TypeScript:** Use `import type { ... } from "eleva"` for core types and `import { Attr, Router, Store } from "eleva/plugins"` for plugin types — no deep imports needed.
+> **Core plugins** (Attr, Router, Store, Agent) are official, tested, and documented. **External plugins** are community-created and installed separately. See [Plugin Documentation](https://elevajs.com/plugins/) for details.
+> **TypeScript:** Use `import type { ... } from "eleva"` for core types and `import { Attr, Router, Store, Agent } from "eleva/plugins"` for plugin types — no deep imports needed.
 
 #### Core Framework Only (Lightweight)
 
@@ -523,7 +526,7 @@ Eleva's plugin system allows you to extend functionality as needed. Plugins are 
 import Eleva from 'eleva';
 
 const app = new Eleva("myApp");
-// Core framework only - ~6KB minified
+// Core framework only - ~6KB minified (~2.4KB gzipped)
 ```
 
 #### Attr Plugin
@@ -746,36 +749,41 @@ app.dispatch("increment");          // Dispatch actions globally
 📚 **[Full Store Documentation →](https://elevajs.com/plugins/store/)** - Comprehensive guide with 10 API methods, persistence options, namespaces, subscriptions, and migration guides.
 
 **Bundle Sizes:**
-- Core framework only: ~6KB (minified)
-- Core + Attr: ~8KB (minified)
-- Core + Router: ~21KB (minified)
-- Core + Store: ~12KB (minified)
-- Core + All plugins: ~29KB (minified)
+- Core framework only: ~6KB minified (~2.4KB gzipped)
+- Core + Attr: ~8KB minified (~3.4KB gzipped)
+- Core + Router: ~21KB minified (~7.0KB gzipped)
+- Core + Store: ~12KB minified (~4.4KB gzipped)
+- Core + Agent: ~17KB minified (~5.9KB gzipped)
+- Core + All plugins: ~41KB minified (~13.5KB gzipped)
 
 **Individual Plugin Sizes:**
-- Attr: ~2.2KB (minified)
-- Router: ~15KB (minified)
-- Store: ~6KB (minified)
+- Attr: ~2.2KB minified (~1.0KB gzipped)
+- Router: ~15KB minified (~4.6KB gzipped)
+- Store: ~6KB minified (~2.0KB gzipped)
+- Agent: ~11.2KB minified (~3.5KB gzipped)
 
 **Available Plugin Formats:**
 
 **For Bundlers (Tree-Shaking Supported):**
-- ESM: `import { Attr, Router, Store } from 'eleva/plugins'`
-- CJS: `const { Attr, Router, Store } = require('eleva/plugins')`
+- ESM: `import { Attr, Router, Store, Agent } from 'eleva/plugins'`
+- CJS: `const { Attr, Router, Store, Agent } = require('eleva/plugins')`
 
 **For CDN (Individual Plugins - Smaller Bundle Size):**
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/eleva.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/attr.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/router.umd.min.js"></script>`
 - UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/store.umd.min.js"></script>`
+- UMD: `<script src="https://cdn.jsdelivr.net/npm/eleva@latest/dist/plugins/agent.umd.min.js"></script>`
 
 **Individual Plugin Imports (Smaller Bundle Size):**
 - ESM: `import { Attr } from 'eleva/plugins/attr'`
 - ESM: `import { Router } from 'eleva/plugins/router'`
 - ESM: `import { Store } from 'eleva/plugins/store'`
+- ESM: `import { Agent } from 'eleva/plugins/agent'`
 - CJS: `const { Attr } = require('eleva/plugins/attr')`
 - CJS: `const { Router } = require('eleva/plugins/router')`
 - CJS: `const { Store } = require('eleva/plugins/store')`
+- CJS: `const { Agent } = require('eleva/plugins/agent')`
 
 For detailed API documentation, please check the [docs](https://elevajs.com) folder.
 
@@ -831,7 +839,7 @@ Eleva has a comprehensive test suite with **100% line coverage**:
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 1,335 |
+| **Total Tests** | 1,624 |
 | **Line Coverage** | 100% |
 | **Test Runner** | Bun |
 
@@ -918,7 +926,7 @@ Using Eleva at work? Consider corporate sponsorship to:
   <a href="https://github.com/TarekRaafat/eleva/blob/master/SPONSORS.md">View all sponsors</a>
 </p>
 
-> **Every contribution matters** — whether it's $5 or $500, you're helping ensure Eleva continues to provide the best DX for building the best UX. Thank you for considering supporting this project!
+> **Every contribution matters** — whether it's $5 or $500, you're helping ensure Eleva continues to provide the best DX + AX for building the best UX. Thank you for considering supporting this project!
 
 ---
 

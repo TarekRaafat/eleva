@@ -1,0 +1,868 @@
+{
+  "name": "eleva-agent",
+  "version": "1.0.0",
+  "framework": "eleva",
+  "frameworkVersion": "1.2.0",
+  "description": "Agent plugin for Eleva.js providing action registry, command bus, audit logging, permissions, schema validation, and state inspection for AI/agent workflows.",
+  "license": "MIT",
+  "homepage": "https://elevajs.com/plugins/agent/",
+  "repository": "https://github.com/TarekRaafat/eleva",
+  "contractVersion": "1.0.0",
+  "lastVerified": "2026-02-08",
+  "install": {
+    "esm": "import { Agent } from 'eleva/plugins';",
+    "cjs": "const { Agent } = require('eleva/plugins');",
+    "cdn": "<script src=\"https://cdn.jsdelivr.net/npm/eleva/dist/plugins/agent.umd.min.js\"></script>",
+    "usage_esm": "app.use(Agent, options?)",
+    "usage_cdn": "app.use(ElevaAgent, options?)"
+  },
+  "configuration": [
+    {
+      "name": "maxLogSize",
+      "type": "number",
+      "default": 100,
+      "description": "Maximum audit log entries before FIFO rotation."
+    },
+    {
+      "name": "enableInspection",
+      "type": "boolean",
+      "default": true,
+      "description": "Enable inspect(), snapshot(), and diff() methods. When false, these are omitted from ctx.agent."
+    },
+    {
+      "name": "onError",
+      "type": "(error: Error, context: AgentErrorContext) => void",
+      "default": null,
+      "description": "Custom error handler called on execute() and dispatch() permission/handler errors. NOT called for register(), dispatch() invalid type, or onCommand() validation errors — those throw directly."
+    },
+    {
+      "name": "actions",
+      "type": "Record<string, Function>",
+      "default": {},
+      "description": "Pre-registered action handlers (name -> handler)."
+    },
+    {
+      "name": "permissions",
+      "type": "Record<string, AgentPermissionRule>",
+      "default": {},
+      "description": "Capability-based access control per scope."
+    },
+    {
+      "name": "emitterEvents",
+      "type": "string[]",
+      "default": [],
+      "description": "Emitter event prefixes to capture in audit log (e.g., [\"store:\", \"router:\"])."
+    },
+    {
+      "name": "strictPermissions",
+      "type": "boolean",
+      "default": false,
+      "description": "When true, scope is mandatory for execute/dispatch and calls without a scope are denied."
+    },
+    {
+      "name": "validateSchemas",
+      "type": "boolean",
+      "default": false,
+      "description": "When true, execute() validates payload against action's schema.input before calling handler."
+    }
+  ],
+  "methods": [
+    {
+      "name": "register",
+      "category": "action-registry",
+      "description": "Register a callable action with optional schema.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "Unique action name."
+        },
+        {
+          "name": "handler",
+          "type": "Function",
+          "required": true,
+          "description": "The action handler: (payload) => result."
+        },
+        {
+          "name": "schema",
+          "type": "AgentActionSchema",
+          "required": false,
+          "description": "Optional action contract (input/output/errors)."
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_HANDLER_NOT_FUNCTION"
+      ],
+      "sideEffects": [
+        "Overwrites silently if action name already exists.",
+        "Does NOT call onError — throws directly.",
+        "Updates actionCount signal.",
+        "Emits 'agent:register' via eleva.emitter (failure-isolated)."
+      ]
+    },
+    {
+      "name": "unregister",
+      "category": "action-registry",
+      "description": "Remove a registered action.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The action name to remove."
+        }
+      ],
+      "returns": {
+        "type": "void"
+      },
+      "errors": [
+        "AGENT_DESTROYED"
+      ],
+      "sideEffects": [
+        "Warns via console.warn if action not found.",
+        "Updates actionCount signal.",
+        "Emits 'agent:unregister' via eleva.emitter (failure-isolated)."
+      ]
+    },
+    {
+      "name": "execute",
+      "category": "action-registry",
+      "description": "Execute a registered action with optional scope-based permission check. Order: permission check -> schema validation (if enabled) -> handler invocation -> audit log entry with outcome.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The action name to execute."
+        },
+        {
+          "name": "payload",
+          "type": "unknown",
+          "required": false,
+          "description": "Data to pass to the action handler."
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "required": false,
+          "description": "Scope for permission check."
+        }
+      ],
+      "returns": {
+        "type": "Promise<unknown>",
+        "description": "The result of the action handler."
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_PERMISSION_DENIED",
+        "AGENT_ACTION_NOT_FOUND",
+        "AGENT_SCHEMA_VIOLATION",
+        "AGENT_HANDLER_ERROR"
+      ],
+      "sideEffects": [
+        "Writes audit log entry with result/error/durationMs after handler completes.",
+        "Calls onError callback on permission, not-found, schema, and handler errors (failure-isolated).",
+        "Checks permissions before execution.",
+        "Validates payload against schema.input if validateSchemas is true.",
+        "Emits 'agent:execute' on success or 'agent:execute:error' on failure via eleva.emitter (failure-isolated).",
+        "Updates lastActivity signal."
+      ]
+    },
+    {
+      "name": "executeBatch",
+      "category": "composition",
+      "description": "Execute multiple actions in parallel. All actions start concurrently via Promise.all(). Rejects with first error.",
+      "parameters": [
+        {
+          "name": "actions",
+          "type": "Array<{action: string, payload?: unknown}>",
+          "required": true,
+          "description": "Actions to execute in parallel."
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "required": false,
+          "description": "Scope for permission check (applied to all actions)."
+        }
+      ],
+      "returns": {
+        "type": "Promise<unknown[]>",
+        "description": "Array of results in same order as input."
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_PERMISSION_DENIED",
+        "AGENT_ACTION_NOT_FOUND",
+        "AGENT_SCHEMA_VIOLATION",
+        "AGENT_HANDLER_ERROR"
+      ],
+      "sideEffects": [
+        "Each action writes its own audit log entry."
+      ]
+    },
+    {
+      "name": "executeSequence",
+      "category": "composition",
+      "description": "Execute actions sequentially, piping results. First action uses its own payload; subsequent actions receive the previous action's result as payload. Stops on first error.",
+      "parameters": [
+        {
+          "name": "actions",
+          "type": "Array<{action: string, payload?: unknown}>",
+          "required": true,
+          "description": "Actions to execute in order."
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "required": false,
+          "description": "Scope for permission check (applied to all actions)."
+        }
+      ],
+      "returns": {
+        "type": "Promise<unknown>",
+        "description": "The result of the last action in the sequence."
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_PERMISSION_DENIED",
+        "AGENT_ACTION_NOT_FOUND",
+        "AGENT_SCHEMA_VIOLATION",
+        "AGENT_HANDLER_ERROR"
+      ],
+      "sideEffects": [
+        "Each action writes its own audit log entry."
+      ]
+    },
+    {
+      "name": "hasAction",
+      "category": "action-registry",
+      "description": "Check if an action is registered.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The action name to check."
+        }
+      ],
+      "returns": {
+        "type": "boolean",
+        "description": "True if the action exists."
+      },
+      "errors": [],
+      "sideEffects": []
+    },
+    {
+      "name": "describeAction",
+      "category": "action-registry",
+      "description": "Get an action's descriptor including its schema.",
+      "parameters": [
+        {
+          "name": "name",
+          "type": "string",
+          "required": true,
+          "description": "The action name."
+        }
+      ],
+      "returns": {
+        "type": "AgentActionDescriptor | null",
+        "description": "Descriptor with name and schema, or null if not found."
+      },
+      "errors": [],
+      "sideEffects": []
+    },
+    {
+      "name": "listActions",
+      "category": "action-registry",
+      "description": "List all registered actions with their schemas.",
+      "parameters": [],
+      "returns": {
+        "type": "AgentActionDescriptor[]",
+        "description": "Array of all action descriptors."
+      },
+      "errors": [],
+      "sideEffects": []
+    },
+    {
+      "name": "describe",
+      "category": "discovery",
+      "description": "Return a complete capability manifest for a given scope. Includes all actions (with allowed flag), commands, resolved permissions, and configuration.",
+      "parameters": [
+        {
+          "name": "scope",
+          "type": "string",
+          "required": false,
+          "description": "Scope to check permissions against."
+        }
+      ],
+      "returns": {
+        "type": "AgentCapabilityManifest",
+        "description": "Full capability manifest."
+      },
+      "errors": [],
+      "sideEffects": []
+    },
+    {
+      "name": "dispatch",
+      "category": "command-bus",
+      "description": "Dispatch a structured command through the command bus with optional scope-based permission check.",
+      "parameters": [
+        {
+          "name": "command",
+          "type": "AgentCommand",
+          "required": true,
+          "description": "Command object with type, optional target and payload."
+        },
+        {
+          "name": "scope",
+          "type": "string",
+          "required": false,
+          "description": "Scope for permission check."
+        }
+      ],
+      "returns": {
+        "type": "Promise<void>"
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_COMMAND_INVALID_TYPE",
+        "AGENT_PERMISSION_DENIED"
+      ],
+      "sideEffects": [
+        "Writes audit log entry with durationMs after all handlers complete. Handler errors are recorded in log entry's error field but dispatch still resolves.",
+        "Handler errors are caught, tagged with AGENT_HANDLER_ERROR (if no code), and passed to onError (failure-isolated) — but dispatch does NOT reject.",
+        "Does NOT call onError for invalid command type — throws directly.",
+        "Checks permissions before dispatch.",
+        "Emits 'agent:dispatch' via eleva.emitter (failure-isolated).",
+        "Updates lastActivity signal."
+      ]
+    },
+    {
+      "name": "onCommand",
+      "category": "command-bus",
+      "description": "Register a handler for a command type. Returns an unsubscribe function.",
+      "parameters": [
+        {
+          "name": "type",
+          "type": "string",
+          "required": true,
+          "description": "The command type to listen for."
+        },
+        {
+          "name": "handler",
+          "type": "Function",
+          "required": true,
+          "description": "Handler function: (command: AgentCommand) => void."
+        }
+      ],
+      "returns": {
+        "type": "() => void",
+        "description": "Unsubscribe function. Call to remove the handler."
+      },
+      "errors": [
+        "AGENT_DESTROYED",
+        "AGENT_HANDLER_NOT_FUNCTION"
+      ],
+      "sideEffects": [
+        "Does NOT call onError — throws directly."
+      ]
+    },
+    {
+      "name": "getLog",
+      "category": "audit-log",
+      "description": "Query the audit log with optional filters.",
+      "parameters": [
+        {
+          "name": "filter",
+          "type": "AgentLogFilter",
+          "required": false,
+          "description": "Filter by type, since, action, or status."
+        }
+      ],
+      "returns": {
+        "type": "AgentLogEntry[]",
+        "description": "Matching log entries."
+      },
+      "errors": [],
+      "sideEffects": []
+    },
+    {
+      "name": "clearLog",
+      "category": "audit-log",
+      "description": "Clear all audit log entries.",
+      "parameters": [],
+      "returns": {
+        "type": "void"
+      },
+      "errors": [
+        "AGENT_DESTROYED"
+      ],
+      "sideEffects": [
+        "All audit log entries are permanently removed."
+      ]
+    },
+    {
+      "name": "inspect",
+      "category": "state-inspection",
+      "description": "Get the component registry info. Only available when enableInspection is true.",
+      "parameters": [],
+      "returns": {
+        "type": "object",
+        "description": "Component registry with name, hasSetup, hasTemplate, hasChildren, hasStyle per component."
+      },
+      "errors": [],
+      "sideEffects": [
+        "Warns via console.warn if inspection is disabled."
+      ],
+      "conditional": "Only available when enableInspection is true. Omitted from ctx.agent when disabled."
+    },
+    {
+      "name": "snapshot",
+      "category": "state-inspection",
+      "description": "Capture a serializable snapshot of the application state. Only available when enableInspection is true.",
+      "parameters": [],
+      "returns": {
+        "type": "AgentSnapshot",
+        "description": "Serializable state snapshot with timestamp, components, and plugins."
+      },
+      "errors": [],
+      "sideEffects": [
+        "Warns via console.warn if inspection is disabled."
+      ],
+      "conditional": "Only available when enableInspection is true. Omitted from ctx.agent when disabled."
+    },
+    {
+      "name": "diff",
+      "category": "state-inspection",
+      "description": "Compare two snapshots and return added/removed components.",
+      "parameters": [
+        {
+          "name": "snapshotA",
+          "type": "AgentSnapshot",
+          "required": true,
+          "description": "The baseline snapshot."
+        },
+        {
+          "name": "snapshotB",
+          "type": "AgentSnapshot",
+          "required": true,
+          "description": "The comparison snapshot."
+        }
+      ],
+      "returns": {
+        "type": "AgentDiffResult",
+        "description": "Object with added and removed component name arrays."
+      },
+      "errors": [],
+      "sideEffects": [],
+      "conditional": "Only available when enableInspection is true."
+    }
+  ],
+  "types": {
+    "AgentActionSchema": {
+      "description": "Action contract describing expected input, output, and errors.",
+      "properties": {
+        "input": {
+          "type": "Record<string, string>",
+          "required": false,
+          "description": "Expected input fields with type names (e.g., {\"name\": \"string\", \"age\": \"number\"})."
+        },
+        "output": {
+          "type": "string",
+          "required": false,
+          "description": "Expected return type name."
+        },
+        "errors": {
+          "type": "string[]",
+          "required": false,
+          "description": "Known error codes this action may produce."
+        }
+      }
+    },
+    "AgentLogEntry": {
+      "description": "Audit log entry recording an action execution, command dispatch, or emitter event.",
+      "properties": {
+        "type": {
+          "type": "\"action\" | \"command\" | \"event\"",
+          "required": true,
+          "description": "Category of the log entry."
+        },
+        "action": {
+          "type": "string",
+          "required": true,
+          "description": "Action name, command type, or emitter event name."
+        },
+        "payload": {
+          "type": "unknown",
+          "required": true,
+          "description": "Data associated with the entry."
+        },
+        "timestamp": {
+          "type": "number",
+          "required": true,
+          "description": "Unix timestamp (Date.now())."
+        },
+        "source": {
+          "type": "string",
+          "required": true,
+          "description": "Origin context. Action: scope || \"global\". Command: command.target || scope || \"global\". Event: \"emitter\"."
+        },
+        "result": {
+          "type": "unknown",
+          "required": false,
+          "description": "Handler return value (action entries only). Absent on error or non-action entries."
+        },
+        "error": {
+          "type": "string",
+          "required": false,
+          "description": "Error message if handler threw (action/command entries). Absent on success or event entries."
+        },
+        "durationMs": {
+          "type": "number",
+          "required": false,
+          "description": "Execution time in milliseconds (action/command entries). Absent on event entries."
+        }
+      }
+    },
+    "AgentLogFilter": {
+      "description": "Filter options for querying the audit log.",
+      "properties": {
+        "type": {
+          "type": "\"action\" | \"command\" | \"event\"",
+          "required": false,
+          "description": "Filter by entry type."
+        },
+        "since": {
+          "type": "number",
+          "required": false,
+          "description": "Filter entries after this timestamp."
+        },
+        "action": {
+          "type": "string",
+          "required": false,
+          "description": "Filter by action/event name."
+        },
+        "status": {
+          "type": "\"ok\" | \"error\"",
+          "required": false,
+          "description": "Filter by outcome: \"ok\" = entries without error, \"error\" = entries with error."
+        }
+      }
+    },
+    "AgentCommand": {
+      "description": "Structured command dispatched through the command bus.",
+      "properties": {
+        "type": {
+          "type": "string",
+          "required": true,
+          "description": "Command type identifier."
+        },
+        "target": {
+          "type": "string",
+          "required": false,
+          "description": "Optional target component or agent."
+        },
+        "payload": {
+          "type": "unknown",
+          "required": false,
+          "description": "Optional data payload."
+        }
+      }
+    },
+    "AgentPermissionRule": {
+      "description": "Permission rule for a scope defining allowed actions and commands.",
+      "properties": {
+        "actions": {
+          "type": "string[]",
+          "required": false,
+          "description": "Allowed action names."
+        },
+        "commands": {
+          "type": "string[]",
+          "required": false,
+          "description": "Allowed command types."
+        }
+      }
+    },
+    "AgentActionDescriptor": {
+      "description": "Descriptor returned by describeAction() and listActions().",
+      "properties": {
+        "name": {
+          "type": "string",
+          "required": true,
+          "description": "Action name."
+        },
+        "schema": {
+          "type": "AgentActionSchema | null",
+          "required": true,
+          "description": "Action schema or null."
+        }
+      }
+    },
+    "AgentSnapshot": {
+      "description": "Serializable application state snapshot.",
+      "properties": {
+        "timestamp": {
+          "type": "number",
+          "required": true,
+          "description": "Unix timestamp when snapshot was taken."
+        },
+        "components": {
+          "type": "Array<{name: string, hasSetup: boolean, hasChildren: boolean}>",
+          "required": true,
+          "description": "Registered components with metadata."
+        },
+        "plugins": {
+          "type": "string[]",
+          "required": true,
+          "description": "Installed plugin names (from eleva.plugins Map)."
+        }
+      }
+    },
+    "AgentDiffResult": {
+      "description": "Result of comparing two snapshots.",
+      "properties": {
+        "added": {
+          "type": "string[]",
+          "required": true,
+          "description": "Component names in snapshotB but not snapshotA."
+        },
+        "removed": {
+          "type": "string[]",
+          "required": true,
+          "description": "Component names in snapshotA but not snapshotB."
+        }
+      }
+    },
+    "AgentCapabilityManifest": {
+      "description": "Complete capability manifest returned by describe(scope?).",
+      "properties": {
+        "actions": {
+          "type": "Array<{name: string, schema: AgentActionSchema | null, allowed: boolean}>",
+          "required": true,
+          "description": "All actions with scope-based access flag."
+        },
+        "commands": {
+          "type": "string[]",
+          "required": true,
+          "description": "All registered command types."
+        },
+        "permissions": {
+          "type": "{scope: string | null, actions: string[], commands: string[]} | null",
+          "required": true,
+          "description": "Resolved permission rules for the scope, or null."
+        },
+        "config": {
+          "type": "{strictPermissions: boolean, maxLogSize: number, inspectionEnabled: boolean, validateSchemas: boolean}",
+          "required": true,
+          "description": "Current agent configuration."
+        }
+      }
+    },
+    "AgentErrorContext": {
+      "description": "Structured error context passed to the onError callback.",
+      "properties": {
+        "method": {
+          "type": "\"execute\" | \"dispatch\"",
+          "required": true,
+          "description": "The method that generated the error. Only execute() and dispatch() call onError."
+        },
+        "code": {
+          "type": "string",
+          "required": true,
+          "description": "Machine-readable error code."
+        },
+        "action": {
+          "type": "string",
+          "required": false,
+          "description": "The action name involved (if applicable)."
+        },
+        "scope": {
+          "type": "string",
+          "required": false,
+          "description": "The scope involved (if applicable)."
+        },
+        "commandType": {
+          "type": "string",
+          "required": false,
+          "description": "The command type involved (if applicable)."
+        }
+      }
+    }
+  },
+  "errors": [
+    {
+      "code": "AGENT_DESTROYED",
+      "message": "[AgentPlugin] Agent has been destroyed. Create a new instance via app.use(AgentPlugin).",
+      "methods": [
+        "register",
+        "unregister",
+        "execute",
+        "executeBatch",
+        "executeSequence",
+        "dispatch",
+        "onCommand",
+        "clearLog"
+      ],
+      "condition": "Any mutating method called on a destroyed agent instance (stale reference after uninstall). Read-only methods (hasAction, describeAction, listActions, getLog, describe, inspect, snapshot, diff) return safe defaults instead.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_HANDLER_NOT_FUNCTION",
+      "message": "[AgentPlugin] Action handler must be a function",
+      "methods": [
+        "register"
+      ],
+      "condition": "Handler argument to register() is not a function.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_HANDLER_NOT_FUNCTION",
+      "message": "[AgentPlugin] Command handler must be a function",
+      "methods": [
+        "onCommand"
+      ],
+      "condition": "Handler argument to onCommand() is not a function.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_PERMISSION_DENIED",
+      "message": "[AgentPlugin] Permission denied: scope \"${scope}\" cannot execute \"${name}\"",
+      "methods": [
+        "execute"
+      ],
+      "condition": "Scope does not have permission for the requested action.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_PERMISSION_DENIED",
+      "message": "[AgentPlugin] Permission denied: scope \"${scope}\" cannot dispatch \"${command.type}\"",
+      "methods": [
+        "dispatch"
+      ],
+      "condition": "Scope does not have permission for the requested command.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_ACTION_NOT_FOUND",
+      "message": "[AgentPlugin] Action \"${name}\" not found",
+      "methods": [
+        "execute"
+      ],
+      "condition": "No action registered with the given name.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_COMMAND_INVALID_TYPE",
+      "message": "[AgentPlugin] Command must have a string 'type'",
+      "methods": [
+        "dispatch"
+      ],
+      "condition": "Command is falsy or command.type is not a string.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_SCHEMA_VIOLATION",
+      "message": "[AgentPlugin] Schema violation for \"${name}\": ${violations}",
+      "methods": [
+        "execute"
+      ],
+      "condition": "Payload does not match action's schema.input (only when validateSchemas is true). Error includes violations array.",
+      "severity": "error"
+    },
+    {
+      "code": "AGENT_HANDLER_ERROR",
+      "message": "(original handler error message)",
+      "methods": [
+        "execute",
+        "dispatch"
+      ],
+      "condition": "Action or command handler threw an error without a pre-existing error.code. Auto-assigned by the plugin.",
+      "severity": "error",
+      "behavior": {
+        "execute": {
+          "thrown": true,
+          "description": "Handler error is re-thrown after logging and onError."
+        },
+        "dispatch": {
+          "thrown": false,
+          "description": "Handler error is caught, passed to onError, and logged — but dispatch still resolves."
+        }
+      }
+    }
+  ],
+  "permissions": {
+    "description": "Capability-based permission model with two modes.",
+    "modes": {
+      "default": {
+        "description": "strictPermissions: false (default). Permissive mode.",
+        "rules": [
+          "No permissions configured -> everything allowed (zero-config path).",
+          "No scope provided -> unrestricted (trusted/internal call).",
+          "Scope provided -> checked against permission rules."
+        ]
+      },
+      "strict": {
+        "description": "strictPermissions: true. Restrictive mode.",
+        "rules": [
+          "No permissions configured -> everything denied.",
+          "No scope provided -> denied (scope is mandatory).",
+          "Scope provided -> checked against permission rules."
+        ]
+      }
+    },
+    "decisionLogic": [
+      "1. hasRules = Object.keys(permissions).length > 0",
+      "2. IF strictPermissions: (!hasRules OR !scope) -> DENY",
+      "3. IF !strictPermissions: (!hasRules) -> ALLOW; (!scope) -> ALLOW",
+      "4. rule = permissions[scope]; IF !rule -> DENY",
+      "5. allowed = rule[kind]; IF !allowed -> DENY",
+      "6. ALLOW only if allowed.includes(name)"
+    ]
+  },
+  "events": [
+    {
+      "name": "agent:register",
+      "payload": "{ name: string, hasSchema: boolean, timestamp: number }",
+      "description": "Emitted after action registration via register()."
+    },
+    {
+      "name": "agent:unregister",
+      "payload": "{ name: string, timestamp: number }",
+      "description": "Emitted after action removal via unregister()."
+    },
+    {
+      "name": "agent:execute",
+      "payload": "{ name: string, payload: unknown, result: unknown, durationMs: number, timestamp: number }",
+      "description": "Emitted after successful action execution."
+    },
+    {
+      "name": "agent:execute:error",
+      "payload": "{ name: string, payload: unknown, error: string, durationMs: number, timestamp: number }",
+      "description": "Emitted after failed action execution."
+    },
+    {
+      "name": "agent:dispatch",
+      "payload": "{ type: string, target: string | undefined, payload: unknown, errors?: string[], durationMs: number, timestamp: number }",
+      "description": "Emitted after command dispatch completes."
+    }
+  ],
+  "properties": [
+    {
+      "name": "actionCount",
+      "type": "Signal<number>",
+      "description": "Reactive signal tracking the number of registered actions. Updates on register/unregister."
+    },
+    {
+      "name": "lastActivity",
+      "type": "Signal<AgentLogEntry | null>",
+      "description": "Reactive signal of the most recent audit log entry. Updates on every action execution, command dispatch, and captured emitter event."
+    }
+  ]
+}

@@ -3,10 +3,23 @@
  * Tests the core functionality of reactive state management, actions, persistence, and cross-component updates
  */
 
-import { describe, test, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import {
+  describe,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  mock,
+  spyOn,
+} from "bun:test";
 import { Eleva } from "../../../src/core/Eleva.js";
 import { StorePlugin } from "../../../src/plugins/Store.js";
-import { createFixture, cleanupFixtures, flushPromises, createComponentFixture } from "../../utils.js";
+import {
+  createFixture,
+  cleanupFixtures,
+  flushPromises,
+  createComponentFixture,
+} from "../../utils.js";
 
 // =============================================================================
 // Store Plugin Tests
@@ -99,7 +112,8 @@ describe("StorePlugin", () => {
             state.user.value = { ...state.user.value, ...updates };
           },
           toggleTheme: (state: any) => {
-            state.theme.value = state.theme.value === "light" ? "dark" : "light";
+            state.theme.value =
+              state.theme.value === "light" ? "dark" : "light";
           },
         },
       });
@@ -276,7 +290,10 @@ describe("StorePlugin", () => {
         state.auth.token.value = credentials.token;
       });
 
-      await app.store.dispatch("auth.login", { user: { name: "John" }, token: "abc123" });
+      await app.store.dispatch("auth.login", {
+        user: { name: "John" },
+        token: "abc123",
+      });
 
       expect(app.store.state.auth.user.value).toEqual({ name: "John" });
       expect(app.store.state.auth.token.value).toBe("abc123");
@@ -296,7 +313,9 @@ describe("StorePlugin", () => {
 
       await app.store.dispatch("admin.users.create", { name: "Jane" });
 
-      expect(app.store.state.admin.settings.value).toEqual({ lastCreated: { name: "Jane" } });
+      expect(app.store.state.admin.settings.value).toEqual({
+        lastCreated: { name: "Jane" },
+      });
     });
 
     test("should create action in new namespace via dot notation", async () => {
@@ -376,7 +395,8 @@ describe("StorePlugin", () => {
         },
         actions: {
           toggleTheme: (state: any) => {
-            state.theme.value = state.theme.value === "light" ? "dark" : "light";
+            state.theme.value =
+              state.theme.value === "light" ? "dark" : "light";
           },
         },
       });
@@ -485,7 +505,11 @@ describe("StorePlugin", () => {
         actions: {},
       });
 
-      expect(warnCalls.some((call) => call[0] === '[StorePlugin] Module "test" already exists')).toBe(true);
+      expect(
+        warnCalls.some(
+          (call) => call[0] === '[StorePlugin] Module "test" already exists'
+        )
+      ).toBe(true);
       console.warn = originalWarn;
     });
 
@@ -509,7 +533,12 @@ describe("StorePlugin", () => {
 
       app.store.unregisterModule("nonExistent");
 
-      expect(warnCalls.some((call) => call[0] === '[StorePlugin] Module "nonExistent" does not exist')).toBe(true);
+      expect(
+        warnCalls.some(
+          (call) =>
+            call[0] === '[StorePlugin] Module "nonExistent" does not exist'
+        )
+      ).toBe(true);
       console.warn = originalWarn;
     });
   });
@@ -1087,7 +1116,9 @@ describe("StorePlugin", () => {
         },
       });
 
-      await expect(app.mount(container, "ParentComponent")).resolves.toBeDefined();
+      await expect(
+        app.mount(container, "ParentComponent")
+      ).resolves.toBeDefined();
     });
 
     test("should handle string component references in children", async () => {
@@ -1105,7 +1136,9 @@ describe("StorePlugin", () => {
         },
       });
 
-      await expect(app.mount(container, "ParentWithStringRef")).resolves.toBeDefined();
+      await expect(
+        app.mount(container, "ParentWithStringRef")
+      ).resolves.toBeDefined();
     });
   });
 
@@ -1142,7 +1175,10 @@ describe("StorePlugin", () => {
       expect(app.store.state.loading.value).toBe(false);
       expect(app.store.state.data.value).toBe(null);
 
-      const promise = app.store.dispatch("fetchData", "https://api.example.com");
+      const promise = app.store.dispatch(
+        "fetchData",
+        "https://api.example.com"
+      );
 
       // Loading should be true immediately (state update is sync within action)
       await flushPromises();
@@ -1150,7 +1186,10 @@ describe("StorePlugin", () => {
       const result = await promise;
 
       expect(app.store.state.loading.value).toBe(false);
-      expect(app.store.state.data.value).toEqual({ url: "https://api.example.com", fetched: true });
+      expect(app.store.state.data.value).toEqual({
+        url: "https://api.example.com",
+        fetched: true,
+      });
       expect(result).toEqual({ url: "https://api.example.com", fetched: true });
     });
 
@@ -1163,7 +1202,9 @@ describe("StorePlugin", () => {
     });
 
     test("should return payload-based result from action", async () => {
-      const result = await app.store.dispatch("actionWithPayloadReturn", { key: "value" });
+      const result = await app.store.dispatch("actionWithPayloadReturn", {
+        key: "value",
+      });
       expect(result).toEqual({ processed: true, payload: { key: "value" } });
     });
 
@@ -1184,7 +1225,9 @@ describe("StorePlugin", () => {
         throw new Error("Async error");
       });
 
-      await expect(app.store.dispatch("asyncError")).rejects.toThrow("Async error");
+      await expect(app.store.dispatch("asyncError")).rejects.toThrow(
+        "Async error"
+      );
     });
   });
 
@@ -1436,9 +1479,9 @@ describe("StorePlugin", () => {
         },
       });
 
-      await expect(app.store.dispatch("level1.level2.level3.action")).rejects.toThrow(
-        'Action "level1.level2.level3.action" not found'
-      );
+      await expect(
+        app.store.dispatch("level1.level2.level3.action")
+      ).rejects.toThrow('Action "level1.level2.level3.action" not found');
     });
 
     test("should handle replaceState with partial data", () => {
@@ -1514,7 +1557,9 @@ describe("StorePlugin", () => {
             state.items.value = [...state.items.value, item];
           },
           removeItem: (state: any, index: number) => {
-            state.items.value = state.items.value.filter((_: any, i: number) => i !== index);
+            state.items.value = state.items.value.filter(
+              (_: any, i: number) => i !== index
+            );
           },
         },
       });
@@ -1710,7 +1755,9 @@ describe("StorePlugin", () => {
             );
           },
           removeUser: (state: any, id: number) => {
-            state.users.value = state.users.value.filter((u: any) => u.id !== id);
+            state.users.value = state.users.value.filter(
+              (u: any) => u.id !== id
+            );
           },
           updatePrivacy: (state: any, updates: any) => {
             state.settings.value = {
@@ -1728,7 +1775,10 @@ describe("StorePlugin", () => {
 
       expect(app.store.state.users.value).toHaveLength(2);
 
-      await app.store.dispatch("updateUser", { id: 1, updates: { name: "Johnny" } });
+      await app.store.dispatch("updateUser", {
+        id: 1,
+        updates: { name: "Johnny" },
+      });
       expect(app.store.state.users.value[0].name).toBe("Johnny");
 
       await app.store.dispatch("removeUser", 1);
@@ -1754,4 +1804,285 @@ describe("StorePlugin", () => {
     });
   });
 
+  // ===========================================================================
+  // Emitter Events (store:* via eleva.emitter)
+  // ===========================================================================
+
+  describe("Emitter Events", () => {
+    test("should emit store:dispatch before action execution", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:dispatch", (mutation: any) => {
+        // Capture state BEFORE action executes
+        events.push({ ...mutation, countAtEmit: app.store.state.count.value });
+      });
+
+      await app.store.dispatch("increment");
+
+      expect(events).toHaveLength(1);
+      expect(events[0].type).toBe("increment");
+      expect(events[0].countAtEmit).toBe(0); // State not yet mutated
+      expect(events[0].timestamp).toBeGreaterThan(0);
+    });
+
+    test("should emit store:mutate after successful action execution", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:mutate", (mutation: any) => {
+        // Capture state AFTER action executes
+        events.push({ ...mutation, countAtEmit: app.store.state.count.value });
+      });
+
+      await app.store.dispatch("increment");
+
+      expect(events).toHaveLength(1);
+      expect(events[0].type).toBe("increment");
+      expect(events[0].countAtEmit).toBe(1); // State already mutated
+    });
+
+    test("should emit store:error when action fails", async () => {
+      const testError = new Error("Action failed");
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: {
+          failAction: () => {
+            throw testError;
+          },
+        },
+        onError: () => {}, // Suppress error logging
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:error", (payload: any) => {
+        events.push(payload);
+      });
+
+      try {
+        await app.store.dispatch("failAction", "test-payload");
+      } catch (e) {
+        // Expected
+      }
+
+      expect(events).toHaveLength(1);
+      expect(events[0].action).toBe("failAction");
+      expect(events[0].error).toBe(testError);
+      expect(events[0].timestamp).toBeGreaterThan(0);
+    });
+
+    test("should not emit store:mutate when action fails", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: {
+          failAction: () => {
+            throw new Error("fail");
+          },
+        },
+        onError: () => {},
+      });
+
+      const mutateEvents: any[] = [];
+      app.emitter.on("store:mutate", (mutation: any) => {
+        mutateEvents.push(mutation);
+      });
+
+      try {
+        await app.store.dispatch("failAction");
+      } catch (e) {
+        // Expected
+      }
+
+      expect(mutateEvents).toHaveLength(0);
+    });
+
+    test("should emit store:dispatch with payload", async () => {
+      app.use(StorePlugin, {
+        state: { user: null },
+        actions: {
+          setUser: (state: any, user: any) => (state.user.value = user),
+        },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:dispatch", (mutation: any) => {
+        events.push(mutation);
+      });
+
+      const user = { name: "Alice" };
+      await app.store.dispatch("setUser", user);
+
+      expect(events).toHaveLength(1);
+      expect(events[0].type).toBe("setUser");
+      expect(events[0].payload).toBe(user);
+    });
+
+    test("should emit store:register when a module is registered", async () => {
+      app.use(StorePlugin, { state: { count: 0 } });
+
+      const events: any[] = [];
+      app.emitter.on("store:register", (payload: any) => {
+        events.push(payload);
+      });
+
+      app.store.registerModule("auth", {
+        state: { user: null },
+        actions: {},
+      });
+
+      expect(events).toHaveLength(1);
+      expect(events[0].namespace).toBe("auth");
+      expect(events[0].timestamp).toBeGreaterThan(0);
+    });
+
+    test("should not emit store:register for duplicate namespace", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        namespaces: {
+          auth: { state: { user: null }, actions: {} },
+        },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:register", (payload: any) => {
+        events.push(payload);
+      });
+
+      // Attempt duplicate registration
+      app.store.registerModule("auth", { state: { token: null }, actions: {} });
+
+      expect(events).toHaveLength(0);
+    });
+
+    test("should emit store:unregister when a module is unregistered", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        namespaces: {
+          auth: { state: { user: null }, actions: {} },
+        },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:unregister", (payload: any) => {
+        events.push(payload);
+      });
+
+      app.store.unregisterModule("auth");
+
+      expect(events).toHaveLength(1);
+      expect(events[0].namespace).toBe("auth");
+      expect(events[0].timestamp).toBeGreaterThan(0);
+    });
+
+    test("should not emit store:unregister for non-existent namespace", async () => {
+      app.use(StorePlugin, { state: { count: 0 } });
+
+      const events: any[] = [];
+      app.emitter.on("store:unregister", (payload: any) => {
+        events.push(payload);
+      });
+
+      app.store.unregisterModule("nonexistent");
+
+      expect(events).toHaveLength(0);
+    });
+
+    test("should emit both store:dispatch and store:mutate in correct order", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      const eventOrder: string[] = [];
+      app.emitter.on("store:dispatch", () => eventOrder.push("dispatch"));
+      app.emitter.on("store:mutate", () => eventOrder.push("mutate"));
+
+      await app.store.dispatch("increment");
+
+      expect(eventOrder).toEqual(["dispatch", "mutate"]);
+    });
+
+    test("should emit events for multiple dispatches", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      const dispatchEvents: any[] = [];
+      const mutateEvents: any[] = [];
+      app.emitter.on("store:dispatch", (m: any) => dispatchEvents.push(m));
+      app.emitter.on("store:mutate", (m: any) => mutateEvents.push(m));
+
+      await app.store.dispatch("increment");
+      await app.store.dispatch("increment");
+      await app.store.dispatch("increment");
+
+      expect(dispatchEvents).toHaveLength(3);
+      expect(mutateEvents).toHaveLength(3);
+      expect(app.store.state.count.value).toBe(3);
+    });
+
+    test("should work with namespaced actions", async () => {
+      app.use(StorePlugin, {
+        state: {},
+        namespaces: {
+          auth: {
+            state: { user: null },
+            actions: {
+              login: (state: any, user: any) => (state.auth.user.value = user),
+            },
+          },
+        },
+      });
+
+      const events: any[] = [];
+      app.emitter.on("store:dispatch", (m: any) => events.push(m));
+      app.emitter.on("store:mutate", (m: any) => events.push(m));
+
+      await app.store.dispatch("auth.login", { name: "Alice" });
+
+      expect(events).toHaveLength(2);
+      expect(events[0].type).toBe("auth.login");
+      expect(events[1].type).toBe("auth.login");
+    });
+
+    test("should not break when no emitter listeners are registered", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      // No listeners — should not throw
+      await app.store.dispatch("increment");
+      expect(app.store.state.count.value).toBe(1);
+    });
+
+    test("should still notify subscribers alongside emitter events", async () => {
+      app.use(StorePlugin, {
+        state: { count: 0 },
+        actions: { increment: (state: any) => state.count.value++ },
+      });
+
+      const subscriberCalls: any[] = [];
+      const emitterCalls: any[] = [];
+
+      app.store.subscribe((mutation: any) => subscriberCalls.push(mutation));
+      app.emitter.on("store:mutate", (mutation: any) =>
+        emitterCalls.push(mutation)
+      );
+
+      await app.store.dispatch("increment");
+
+      expect(subscriberCalls).toHaveLength(1);
+      expect(emitterCalls).toHaveLength(1);
+      expect(subscriberCalls[0].type).toBe("increment");
+      expect(emitterCalls[0].type).toBe("increment");
+    });
+  });
 });

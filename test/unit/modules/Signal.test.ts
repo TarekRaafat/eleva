@@ -1826,7 +1826,10 @@ describe("Signal Async Watcher Behavior", () => {
 describe("Signal Class and Inheritance", () => {
   test("should handle class instance as value", () => {
     class User {
-      constructor(public name: string, public age: number) {}
+      constructor(
+        public name: string,
+        public age: number
+      ) {}
       greet() {
         return `Hello, ${this.name}`;
       }

@@ -1,6 +1,6 @@
 ---
-title: Eleva.js Plugins - Router, Store & Attr
-description: Official Eleva.js plugins. Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.
+title: Eleva.js Plugins - Router, Store, Attr & Agent
+description: Official Eleva.js plugins. Router for SPA navigation, Store for state management, Attr for accessibility, Agent for AI integration. All tree-shakeable, typed, and zero-config.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -10,7 +10,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/plugins/">
 <meta property="og:title" content="Plugins - Eleva.js">
-<meta property="og:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.">
+<meta property="og:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility, Agent for AI integration. All tree-shakeable, typed, and zero-config.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/plugins/">
 <meta name="twitter:title" content="Plugins - Eleva.js">
-<meta name="twitter:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility. All tree-shakeable, typed, and zero-config.">
+<meta name="twitter:description" content="Official Eleva.js plugins: Router for SPA navigation, Store for state management, Attr for accessibility, Agent for AI integration. All tree-shakeable, typed, and zero-config.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -34,11 +34,11 @@ image: /imgs/eleva.js%20Full%20Logo.png
 {
   "@context": "https://schema.org",
   "@type": "TechArticle",
-  "headline": "Eleva.js Plugins - Router, Store & Attr",
-  "description": "Extend Eleva.js with official plugins for routing, state management, and attribute binding. Tree-shakeable, zero-config, and fully typed.",
+  "headline": "Eleva.js Plugins - Router, Store, Attr & Agent",
+  "description": "Extend Eleva.js with official plugins for routing, state management, attribute binding, and AI agent integration. Tree-shakeable, zero-config, and fully typed.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -60,7 +60,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   },
   "proficiencyLevel": "Intermediate",
   "articleSection": "Plugins",
-  "keywords": ["eleva", "elevajs", "Eleva.js", "plugins", "router", "store", "attr", "state management", "routing"]
+  "keywords": ["eleva", "elevajs", "Eleva.js", "plugins", "router", "store", "attr", "agent", "state management", "routing", "AI integration"]
 }
 </script>
 
@@ -77,7 +77,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Eleva Plugins
 
-> **Version:** 1.1.1 | **All plugins are optional and tree-shakeable**
+> **Version:** 1.2.0 | **All plugins are optional and tree-shakeable**
 
 Eleva's plugin system extends the core framework with powerful optional features. Plugins come in two types: **Core Plugins** maintained by the Eleva team, and **External Plugins** created by the community.
 
@@ -100,7 +100,7 @@ Core plugins are **built and maintained by the Eleva team**. They are:
 
 ```javascript
 // Core plugins - import from "eleva/plugins"
-import { Attr, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store, Agent } from "eleva/plugins";
 ```
 
 ### External Plugins (Community)
@@ -128,7 +128,7 @@ app.use(SomePlugin, { /* options */ });
 
 ```javascript
 import Eleva from "eleva";
-import { Attr, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store, Agent } from "eleva/plugins";
 
 const app = new Eleva("MyApp");
 
@@ -136,6 +136,7 @@ const app = new Eleva("MyApp");
 app.use(Attr);
 app.use(Store, { state: { count: 0 } });
 app.use(Router, { routes: [...] });
+app.use(Agent, { actions: { ping: () => "pong" } });
 ```
 
 > **Template Context Quick Rule:** `${}` needs `ctx.` — `@events` and `:props` don't.
@@ -154,9 +155,10 @@ app.use(Router, { routes: [...] });
 
 | Plugin | Purpose | Size (gzipped) | Docs |
 |--------|---------|----------------|------|
-| **Attr** | ARIA, data-*, boolean attribute handling | ~1KB | [View →](./attr/) |
-| **Router** | Client-side routing & navigation guards | ~5KB | [View →](./router/) |
-| **Store** | Global state management & persistence | ~2KB | [View →](./store/) |
+| **Attr** | ARIA, data-*, boolean attribute handling | ~1.0KB | [View →](./attr/) |
+| **Router** | Client-side routing & navigation guards | ~4.6KB | [View →](./router/) |
+| **Store** | Global state management & persistence | ~2.0KB | [View →](./store/) |
+| **Agent** | AI/agent integration, action registry & audit log | ~3.5KB | [View →](./agent/) |
 
 ---
 
@@ -261,6 +263,41 @@ app.component("Counter", {
 
 ---
 
+### Agent Plugin
+
+AI and agent integration with action registry, command bus, and audit logging.
+
+```javascript
+app.use(Agent, {
+  actions: { ping: () => "pong" },
+  permissions: { "ui-agent": { actions: ["ping"] } }
+});
+
+app.component("SmartWidget", {
+  setup: ({ agent }) => ({
+    run: async () => {
+      const result = await agent.execute("ping");
+      console.log(result); // "pong"
+    },
+    tools: () => agent.listActions()
+  }),
+  template: (ctx) => `
+    <button @click="run">Ping Agent</button>
+  `
+});
+```
+
+**Key Features:**
+- Action registry with typed schemas
+- Structured command bus
+- Audit logging with rotation
+- Capability-based permissions
+- State inspection and snapshots
+
+[Full Agent Documentation →](./agent/)
+
+---
+
 ## Installation
 
 ### Via Package Manager
@@ -282,14 +319,16 @@ bun add eleva
 import { Attr } from "eleva/plugins";
 import { Router } from "eleva/plugins";
 import { Store } from "eleva/plugins";
+import { Agent } from "eleva/plugins";
 
 // Import all plugins
-import { Attr, Router, Store } from "eleva/plugins";
+import { Attr, Router, Store, Agent } from "eleva/plugins";
 
 // Import from specific paths (alternative)
 import { Attr } from "eleva/plugins/attr";
 import { Router } from "eleva/plugins/router";
 import { Store } from "eleva/plugins/store";
+import { Agent } from "eleva/plugins/agent";
 ```
 
 ### Via CDN
@@ -303,6 +342,7 @@ import { Store } from "eleva/plugins/store";
   app.use(ElevaPlugins.Attr);
   app.use(ElevaPlugins.Router, { /* options */ });
   app.use(ElevaPlugins.Store, { /* options */ });
+  app.use(ElevaPlugins.Agent, { /* options */ });
 </script>
 
 <!-- Option 2: Individual plugins -->
@@ -310,11 +350,13 @@ import { Store } from "eleva/plugins/store";
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/agent.umd.min.js"></script>
 <script>
-  // Each plugin has its own global
-  app.use(ElevaAttrPlugin);
-  app.use(ElevaRouterPlugin, { /* options */ });
-  app.use(ElevaStorePlugin, { /* options */ });
+  // Each plugin is a direct global — use it directly
+  app.use(ElevaAttr);
+  app.use(ElevaRouter, { /* options */ });
+  app.use(ElevaStore, { /* options */ });
+  app.use(ElevaAgent, { /* options */ });
 </script>
 ```
 
@@ -336,6 +378,10 @@ import { Store } from "eleva/plugins/store";
 | Form handling with validation | Attr |
 | Authenticated routes | Router + Store |
 | E-commerce cart | Store |
+| AI/LLM tool integration | Agent |
+| Cross-component messaging | Agent |
+| Action audit trail and logging | Agent |
+| Multi-agent coordination | Agent + Store |
 
 ---
 
@@ -350,12 +396,14 @@ const app = new Eleva("MyApp");
 app.use(Attr);                    // Attribute handling
 app.use(Store, { state: {} });    // State management
 app.use(Router, { routes: [] }); // Routing
+app.use(Agent, { emitterEvents: ["router:", "store:"] }); // Agent integration
 
 // Plugins enhance each other
 app.component("Dashboard", {
-  setup: ({ store, router }) => ({
+  setup: ({ store, router, agent }) => ({
     user: store.state.user,
-    navigate: (path) => router.navigate(path)
+    navigate: (path) => router.navigate(path),
+    tools: () => agent.listActions()
   }),
   template: (ctx) => `
     <div
@@ -441,6 +489,9 @@ When creating or using external plugins:
 
 ### Store Plugin
 - [Overview](./store/) · [Core Concepts](./store/core-concepts.md) · [Configuration](./store/configuration.md) · [Patterns](./store/patterns.md) · [Advanced](./store/advanced.md) · [API Reference](./store/api.md)
+
+### Agent Plugin
+- [Overview](./agent/) · [Patterns](./agent/patterns.md) · [API Reference](./agent/api.md)
 
 ---
 

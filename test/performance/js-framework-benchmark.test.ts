@@ -26,7 +26,14 @@
  * @see {@link https://github.com/tarekraafat/eleva|Eleva.js Repository}
  */
 
-import { describe, test, expect, beforeAll, beforeEach, afterAll } from "bun:test";
+import {
+  describe,
+  test,
+  expect,
+  beforeAll,
+  beforeEach,
+  afterAll,
+} from "bun:test";
 import fs from "fs";
 import path from "path";
 import { gzipSync } from "zlib";
@@ -91,20 +98,61 @@ const ROWS_10K = 10000;
 // ============================================================================
 
 const ADJECTIVES = [
-  "pretty", "large", "big", "small", "tall", "short", "long", "handsome",
-  "plain", "quaint", "clean", "elegant", "easy", "angry", "crazy", "helpful",
-  "mushy", "odd", "unsightly", "adorable", "important", "inexpensive",
-  "cheap", "expensive", "fancy"
+  "pretty",
+  "large",
+  "big",
+  "small",
+  "tall",
+  "short",
+  "long",
+  "handsome",
+  "plain",
+  "quaint",
+  "clean",
+  "elegant",
+  "easy",
+  "angry",
+  "crazy",
+  "helpful",
+  "mushy",
+  "odd",
+  "unsightly",
+  "adorable",
+  "important",
+  "inexpensive",
+  "cheap",
+  "expensive",
+  "fancy",
 ];
 
 const COLOURS = [
-  "red", "yellow", "blue", "green", "pink", "brown", "purple", "brown",
-  "white", "black", "orange"
+  "red",
+  "yellow",
+  "blue",
+  "green",
+  "pink",
+  "brown",
+  "purple",
+  "brown",
+  "white",
+  "black",
+  "orange",
 ];
 
 const NOUNS = [
-  "table", "chair", "house", "bbq", "desk", "car", "pony", "cookie",
-  "sandwich", "burger", "pizza", "mouse", "keyboard"
+  "table",
+  "chair",
+  "house",
+  "bbq",
+  "desk",
+  "car",
+  "pony",
+  "cookie",
+  "sandwich",
+  "burger",
+  "pizza",
+  "mouse",
+  "keyboard",
 ];
 
 let nextId = 1;
@@ -237,14 +285,20 @@ function recordResult(
   rows?: number
 ): void {
   benchmarkResults.push({ name, operation, duration, memory, rows });
-  console.log(`  ${name}: ${formatMs(duration)}${memory ? ` (${memory.toFixed(2)} MB)` : ""}`);
+  console.log(
+    `  ${name}: ${formatMs(duration)}${memory ? ` (${memory.toFixed(2)} MB)` : ""}`
+  );
 }
 
 // ============================================================================
 // Report Generation
 // ============================================================================
 
-function generateReport(summary: BenchmarkSummary, pureDom1k: number, pureDom10k: number): string {
+function generateReport(
+  summary: BenchmarkSummary,
+  pureDom1k: number,
+  pureDom10k: number
+): string {
   const results = summary.results;
 
   // Group results by operation type
@@ -255,17 +309,21 @@ function generateReport(summary: BenchmarkSummary, pureDom1k: number, pureDom10k
 
   // Calculate key metrics for documentation
   const create1k = results.find((r) => r.name === "create 1,000 rows");
-  const partialUpdate = results.find((r) => r.name === "partial update (every 10th row)");
-  const memoryAfter1k = results.find((r) => r.name === "memory after 1,000 rows");
-  const memoryAfter10k = results.find((r) => r.name === "memory after 10,000 rows");
+  const partialUpdate = results.find(
+    (r) => r.name === "partial update (every 10th row)"
+  );
+  const memoryAfter1k = results.find(
+    (r) => r.name === "memory after 1,000 rows"
+  );
+  const memoryAfter10k = results.find(
+    (r) => r.name === "memory after 10,000 rows"
+  );
 
   // Calculate actual Eleva overhead
-  const elevaOverhead1k = memoryAfter1k && pureDom1k > 0
-    ? memoryAfter1k.memory! - pureDom1k
-    : 0;
-  const elevaOverhead10k = memoryAfter10k && pureDom10k > 0
-    ? memoryAfter10k.memory! - pureDom10k
-    : 0;
+  const elevaOverhead1k =
+    memoryAfter1k && pureDom1k > 0 ? memoryAfter1k.memory! - pureDom1k : 0;
+  const elevaOverhead10k =
+    memoryAfter10k && pureDom10k > 0 ? memoryAfter10k.memory! - pureDom10k : 0;
 
   return `# Eleva.js - js-framework-benchmark Results
 
@@ -506,7 +564,13 @@ describe("js-framework-benchmark Style Performance Test", () => {
         await new Promise((r) => setTimeout(r, 0)); // Let DOM update
       });
 
-      recordResult("create 1,000 rows", "create", result.median, undefined, ROWS_1K);
+      recordResult(
+        "create 1,000 rows",
+        "create",
+        result.median,
+        undefined,
+        ROWS_1K
+      );
       expect(result.median).toBeLessThan(500); // Should complete in under 500ms
     });
 
@@ -530,7 +594,13 @@ describe("js-framework-benchmark Style Performance Test", () => {
         await new Promise((r) => setTimeout(r, 0));
       });
 
-      recordResult("create 10,000 rows", "create", result.median, undefined, ROWS_10K);
+      recordResult(
+        "create 10,000 rows",
+        "create",
+        result.median,
+        undefined,
+        ROWS_10K
+      );
       expect(result.median).toBeLessThan(5000); // Should complete in under 5s
     });
 
@@ -541,12 +611,22 @@ describe("js-framework-benchmark Style Performance Test", () => {
       await new Promise((r) => setTimeout(r, 50));
 
       // Use fewer runs for this expensive operation
-      const result = await measureOperation("append 1k", async () => {
-        rowsSignal.value = [...rowsSignal.value, ...buildData(ROWS_1K)];
-        await new Promise((r) => setTimeout(r, 0));
-      }, 3); // Only 3 runs instead of 5
+      const result = await measureOperation(
+        "append 1k",
+        async () => {
+          rowsSignal.value = [...rowsSignal.value, ...buildData(ROWS_1K)];
+          await new Promise((r) => setTimeout(r, 0));
+        },
+        3
+      ); // Only 3 runs instead of 5
 
-      recordResult("append 1,000 rows to 1,000", "create", result.median, undefined, ROWS_1K);
+      recordResult(
+        "append 1,000 rows to 1,000",
+        "create",
+        result.median,
+        undefined,
+        ROWS_1K
+      );
       // Note: Eleva re-renders full list on updates (no virtual DOM diffing)
       expect(result.median).toBeLessThan(2000);
     }, 15000); // 15 second timeout
@@ -565,7 +645,13 @@ describe("js-framework-benchmark Style Performance Test", () => {
         await new Promise((r) => setTimeout(r, 0));
       });
 
-      recordResult("replace all 1,000 rows", "update", result.median, undefined, ROWS_1K);
+      recordResult(
+        "replace all 1,000 rows",
+        "update",
+        result.median,
+        undefined,
+        ROWS_1K
+      );
       expect(result.median).toBeLessThan(500);
     });
 
@@ -583,7 +669,13 @@ describe("js-framework-benchmark Style Performance Test", () => {
         await new Promise((r) => setTimeout(r, 0));
       });
 
-      recordResult("partial update (every 10th row)", "update", result.median, undefined, 100);
+      recordResult(
+        "partial update (every 10th row)",
+        "update",
+        result.median,
+        undefined,
+        100
+      );
       expect(result.median).toBeLessThan(200);
     });
   });
@@ -630,7 +722,9 @@ describe("js-framework-benchmark Style Performance Test", () => {
 
       const result = await measureOperation("remove row", async () => {
         const idToRemove = rowsSignal.value[500].id;
-        rowsSignal.value = rowsSignal.value.filter((r: Row) => r.id !== idToRemove);
+        rowsSignal.value = rowsSignal.value.filter(
+          (r: Row) => r.id !== idToRemove
+        );
         await new Promise((r) => setTimeout(r, 0));
       });
 
@@ -831,9 +925,15 @@ describe("js-framework-benchmark Style Performance Test", () => {
     );
 
     // Calculate documentation metrics
-    const create1k = benchmarkResults.find((r) => r.name === "create 1,000 rows");
-    const partialUpdate = benchmarkResults.find((r) => r.name === "partial update (every 10th row)");
-    const memory1k = benchmarkResults.find((r) => r.name === "memory after 1,000 rows");
+    const create1k = benchmarkResults.find(
+      (r) => r.name === "create 1,000 rows"
+    );
+    const partialUpdate = benchmarkResults.find(
+      (r) => r.name === "partial update (every 10th row)"
+    );
+    const memory1k = benchmarkResults.find(
+      (r) => r.name === "memory after 1,000 rows"
+    );
 
     // Format for documentation (comparable to other frameworks)
     const hydrationTime = create1k
@@ -858,28 +958,31 @@ describe("js-framework-benchmark Style Performance Test", () => {
 
     // Calculate Eleva's actual memory overhead by comparing against pure DOM baseline
     // This measures what Eleva adds: signals, component state, watchers, etc.
-    const elevaOverhead1k = memory1k && pureDomMemory1k > 0
-      ? memory1k.memory! - pureDomMemory1k
-      : 0;
+    const elevaOverhead1k =
+      memory1k && pureDomMemory1k > 0 ? memory1k.memory! - pureDomMemory1k : 0;
 
     // Calculate 10k overhead
-    const memory10k = benchmarkResults.find((r) => r.name === "memory after 10,000 rows");
-    const elevaOverhead10k = memory10k && pureDomMemory10k > 0
-      ? memory10k.memory! - pureDomMemory10k
-      : 0;
+    const memory10k = benchmarkResults.find(
+      (r) => r.name === "memory after 10,000 rows"
+    );
+    const elevaOverhead10k =
+      memory10k && pureDomMemory10k > 0
+        ? memory10k.memory! - pureDomMemory10k
+        : 0;
 
     // Format memory for documentation (actual measured overhead)
-    const memoryUsage = memory1k && pureDomMemory1k > 0
-      ? elevaOverhead1k < 0.5
-        ? "< 0.5"
-        : elevaOverhead1k < 1
-          ? "< 1"
-          : elevaOverhead1k < 2
-            ? "1-2"
-            : elevaOverhead1k < 5
-              ? "2-5"
-              : `~${Math.round(elevaOverhead1k)}`
-      : "N/A";
+    const memoryUsage =
+      memory1k && pureDomMemory1k > 0
+        ? elevaOverhead1k < 0.5
+          ? "< 0.5"
+          : elevaOverhead1k < 1
+            ? "< 1"
+            : elevaOverhead1k < 2
+              ? "1-2"
+              : elevaOverhead1k < 5
+                ? "2-5"
+                : `~${Math.round(elevaOverhead1k)}`
+        : "N/A";
 
     const summary: BenchmarkSummary = {
       version: packageJson.version,
@@ -916,15 +1019,25 @@ describe("js-framework-benchmark Style Performance Test", () => {
 
     console.log("\n📈 Key Metrics (comparable to other frameworks):\n");
     console.log(`  Bundle Size:     ${formatBytes(bundleSize)} (min+gzip)`);
-    console.log(`  Create 1k rows:  ${create1k ? formatMs(create1k.duration) : "N/A"}`);
-    console.log(`  Partial update:  ${partialUpdate ? formatMs(partialUpdate.duration) : "N/A"}`);
-    console.log(`  Memory (1k):     ${elevaOverhead1k.toFixed(2)} MB (Eleva overhead vs pure DOM)`);
+    console.log(
+      `  Create 1k rows:  ${create1k ? formatMs(create1k.duration) : "N/A"}`
+    );
+    console.log(
+      `  Partial update:  ${partialUpdate ? formatMs(partialUpdate.duration) : "N/A"}`
+    );
+    console.log(
+      `  Memory (1k):     ${elevaOverhead1k.toFixed(2)} MB (Eleva overhead vs pure DOM)`
+    );
     console.log(`    Pure DOM:      ${pureDomMemory1k.toFixed(2)} MB`);
-    console.log(`    With Eleva:    ${memory1k ? memory1k.memory!.toFixed(2) : "N/A"} MB`);
+    console.log(
+      `    With Eleva:    ${memory1k ? memory1k.memory!.toFixed(2) : "N/A"} MB`
+    );
 
     console.log("\n" + "─".repeat(70));
     console.log("\n📝 For documentation table:\n");
-    console.log(`| **Eleva** (Direct DOM) | **${summary.documentationMetrics.bundleSize}** | **${summary.documentationMetrics.hydrationTime}** | **${summary.documentationMetrics.domUpdate}** | **${summary.documentationMetrics.memory}** |`);
+    console.log(
+      `| **Eleva** (Direct DOM) | **${summary.documentationMetrics.bundleSize}** | **${summary.documentationMetrics.hydrationTime}** | **${summary.documentationMetrics.domUpdate}** | **${summary.documentationMetrics.memory}** |`
+    );
 
     console.log("\n" + "─".repeat(70));
     console.log(`\nResults saved to:`);

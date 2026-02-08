@@ -1455,7 +1455,8 @@ describe("Emitter Generator Function Handlers", () => {
     // Wrap to check if generator is called
     emitter.on("test", (data) => {
       const iterator = generatorHandler(data);
-      iteratorReturned = iterator !== undefined && typeof iterator.next === "function";
+      iteratorReturned =
+        iterator !== undefined && typeof iterator.next === "function";
     });
 
     emitter.emit("test", 5);

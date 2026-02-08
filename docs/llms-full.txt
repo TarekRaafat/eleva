@@ -1,6 +1,9 @@
-# Eleva.js v1.1.1 - Comprehensive LLM Reference
+# Eleva.js v1.2.0 - Comprehensive LLM Reference
 
-> This document provides comprehensive information about Eleva.js for Large Language Models to generate accurate code and recommendations.
+<!-- contract-version: 1.0.0 -->
+<!-- last-verified: 2026-02-08 -->
+
+> This document provides comprehensive information about Eleva.js for Large Language Models to generate accurate code and recommendations. Eleva includes a built-in Agent plugin (AX — Agent Experience) for AI/LLM integration with action registry, command bus, audit logging, and permissions.
 
 ## LLM Contract (Strict Summary)
 > **Sync note:** This file is curated by maintainers; keep it aligned with core docs and release notes.
@@ -12,7 +15,7 @@
 - Must clean up timers/listeners in `onUnmount`; parent-removal unmount is synchronous (old cleanup completes before new mount)
 - Must namespace styles manually; no auto-scoping
 - Must use stable `key` in lists; avoid heavy logic in templates
-- If using Router/Store, install via `app.use()` and access via injected context (`router`, `store`)
+- If using Router/Store/Agent, install via `app.use()` and access via injected context (`router`, `store`, `agent`)
 
 ## Overview
 
@@ -34,7 +37,7 @@ Eleva.js is a minimalist, lightweight, pure vanilla JavaScript frontend framewor
 ## Quick Facts
 
 - Name: Eleva.js (also known as: elevajs, eleva)
-- Version: 1.1.1
+- Version: 1.2.0
 - License: MIT
 - Author: Tarek Raafat
 - Website: https://elevajs.com
@@ -81,20 +84,22 @@ bun add eleva
 <!-- Option 1: Bundled plugins → use ElevaPlugins.Router, ElevaPlugins.Store -->
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 
-<!-- Option 2: Individual plugins -->
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
+<!-- Option 2: Individual plugins (each exposes a single global) -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>    <!-- → ElevaAttr -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>  <!-- → ElevaRouter -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>   <!-- → ElevaStore -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/agent.umd.min.js"></script>   <!-- → ElevaAgent -->
 ```
 
 ### Plugin Usage by Import Method
 
 | Method | Import/Include | Usage |
 |--------|----------------|-------|
-| ES Modules | `import { Router, Store } from "eleva/plugins"` | `app.use(Router, {...})` |
+| ES Modules | `import { Router, Store, Agent } from "eleva/plugins"` | `app.use(Router, {...})` |
 | CDN Bundled | `eleva-plugins.umd.min.js` | `app.use(ElevaPlugins.Router, {...})` |
-| CDN Individual | `plugins/router.umd.min.js` | `app.use(ElevaRouterPlugin, {...})` |
+| CDN Individual | `plugins/<name>.umd.min.js` | `app.use(ElevaRouter, {...})` / `app.use(ElevaStore, {...})` / `app.use(ElevaAgent, {...})` / `app.use(ElevaAttr, {...})` |
 
-> Use bundled for 2+ plugins (simpler). Individual for 1 plugin (smaller bundle).
+> Use bundled for 2+ plugins (simpler). Individual for 1 plugin (smaller bundle). UMD global pattern: `Eleva<Name>` (e.g., `ElevaRouter`, `ElevaStore`, `ElevaAgent`, `ElevaAttr`).
 
 ### Environment Requirements
 
@@ -127,13 +132,14 @@ Eleva provides multiple entry points for different environments:
 | `eleva/plugins/attr` | ESM/CJS/UMD | Attr plugin (tree-shakable) |
 | `eleva/plugins/router` | ESM/CJS/UMD | Router plugin (tree-shakable) |
 | `eleva/plugins/store` | ESM/CJS/UMD | Store plugin (tree-shakable) |
+| `eleva/plugins/agent` | ESM/CJS/UMD | Agent plugin (tree-shakable) |
 
 > **Note:** `/browser` and `/umd` subpaths are for `<script>` tags only, not ESM imports. Individual plugin subpaths provide ESM for bundlers, CJS for Node.js, and UMD for browsers.
 
 ```javascript
 // Standard imports (recommended)
 import Eleva from 'eleva';
-import { Router, Store, Attr } from 'eleva/plugins';
+import { Router, Store, Attr, Agent } from 'eleva/plugins';
 
 // CommonJS
 const Eleva = require('eleva');
@@ -294,6 +300,7 @@ interface SetupContext {
   emitter: Emitter;                     // Event emitter instance
   store?: StoreContext;                 // Added by Store plugin
   router?: RouterContext;               // Added by Router plugin
+  agent?: AgentContext;                 // Added by Agent plugin
 }
 
 // Setup Return - what setup() can return
@@ -1473,6 +1480,537 @@ store.replaceState({
 store.clearPersistedState();
 ```
 
+### Agent — LLM Contract
+
+**Critical rules for correct code generation:**
+- Handler signature: `(payload) => result` — NOT `(ctx, name)`. Single argument only.
+- Permissions format: `{ "scopeName": { actions: string[], commands: string[] } }` — NOT a flat array.
+- `execute()` returns a value; `dispatch()` returns `void`. Use execute for request/response.
+- `onCommand()` returns an unsubscribe function — always capture it for cleanup.
+- `register()` silently overwrites existing actions with the same name. No warning.
+- Agent emits 5 events via `eleva.emitter`: `agent:register`, `agent:unregister`, `agent:execute`, `agent:execute:error`, `agent:dispatch`. It also captures OTHER plugins' events via `emitterEvents` config.
+- All errors have a machine-readable `error.code` property — use `switch(error.code)` not string matching.
+- Agent exposes two reactive signals on `ctx.agent`: `actionCount` (Signal\<number\>) and `lastActivity` (Signal\<AgentLogEntry|null\>). Use `.value` to read and `.watch()` to subscribe.
+- Actions registered and commands subscribed via `ctx.agent` in `setup()` are automatically cleaned up when the component unmounts. No manual `onUnmount` cleanup needed for agent resources.
+- Audit log entries include `result`, `error`, `durationMs` — log is written AFTER handler completion.
+- Schema validation is opt-in: `validateSchemas: true` enforces `schema.input` on execute.
+- `onError` receives structured context: `(error, { method, code, action?, scope?, commandType? })`.
+
+**Method contract:**
+```
+METHOD                                    RETURNS             THROWS (error.code)
+register(name, handler, schema?)          void                AGENT_HANDLER_NOT_FUNCTION
+unregister(name)                          void                never (warns if missing)
+execute(name, payload?, scope?)           Promise<unknown>    AGENT_PERMISSION_DENIED | AGENT_ACTION_NOT_FOUND | AGENT_SCHEMA_VIOLATION | AGENT_HANDLER_ERROR
+executeBatch(actions[], scope?)           Promise<unknown[]>  first error from any action (parallel)
+executeSequence(actions[], scope?)        Promise<unknown>    first error in chain (sequential, pipes results)
+hasAction(name)                           boolean             never
+describeAction(name)                      Descriptor|null     never
+listActions()                             Descriptor[]        never
+describe(scope?)                          Manifest            never
+dispatch(command, scope?)                 Promise<void>       AGENT_COMMAND_INVALID_TYPE | AGENT_PERMISSION_DENIED
+onCommand(type, handler)                  ()=>void            AGENT_HANDLER_NOT_FUNCTION
+getLog(filter?)                           LogEntry[]          never (filter: type, since, action, status)
+clearLog()                                void                never
+inspect()                                 object              never (warns if disabled)
+snapshot()                                Snapshot            never (warns if disabled)
+diff(snapA, snapB)                        DiffResult          never
+```
+
+**Types:**
+```
+AgentActionSchema       = { input?: Record<string,string>, output?: string, errors?: string[] }
+AgentActionDescriptor   = { name: string, schema: AgentActionSchema | null }
+AgentCommand            = { type: string, target?: string, payload?: unknown }
+AgentLogEntry           = { type: "action"|"command"|"event", action: string, payload: unknown, timestamp: number, source: string, result?: unknown, error?: string, durationMs?: number }
+AgentLogFilter          = { type?: "action"|"command"|"event", since?: number, action?: string, status?: "ok"|"error" }
+AgentSnapshot           = { timestamp: number, components: object[], plugins: string[] }
+AgentDiffResult         = { added: string[], removed: string[] }
+AgentPermissionRule     = { actions?: string[], commands?: string[] }
+AgentErrorContext       = { method: string, code: string, action?: string, scope?: string, commandType?: string }
+AgentCapabilityManifest = { actions: {name, schema, allowed}[], commands: string[], permissions: {scope, actions, commands}|null, config: {strictPermissions, maxLogSize, inspectionEnabled, validateSchemas} }
+AgentOptions            = { maxLogSize?, enableInspection?, onError?: (Error, AgentErrorContext)=>void, actions?, permissions?, emitterEvents?, strictPermissions?, validateSchemas? }
+```
+
+**Error codes (all errors have `error.code`):**
+```
+AGENT_HANDLER_NOT_FUNCTION  → register()/onCommand() with non-function handler
+AGENT_PERMISSION_DENIED     → execute()/dispatch() scope check failed
+AGENT_ACTION_NOT_FOUND      → execute() with unknown action name
+AGENT_SCHEMA_VIOLATION      → execute() payload fails schema.input validation (also has error.violations[])
+AGENT_COMMAND_INVALID_TYPE  → dispatch() with missing/non-string command.type
+AGENT_HANDLER_ERROR         → handler threw (assigned if handler error has no code)
+```
+
+**Error strings (exact):**
+```
+register():   "[AgentPlugin] Action handler must be a function"
+execute():    "[AgentPlugin] Permission denied: scope \"${scope}\" cannot execute \"${name}\""
+execute():    "[AgentPlugin] Action \"${name}\" not found"
+execute():    "[AgentPlugin] Schema violation for \"${name}\": ${violations}"
+dispatch():   "[AgentPlugin] Command must have a string 'type'"
+dispatch():   "[AgentPlugin] Permission denied: scope \"${scope}\" cannot dispatch \"${command.type}\""
+onCommand():  "[AgentPlugin] Command handler must be a function"
+install():    console.warn "[AgentPlugin] Already installed. Uninstall first to reconfigure."
+unregister(): console.warn "[AgentPlugin] Action \"${name}\" not found for unregister"
+inspect/snapshot(): console.warn "[AgentPlugin] Inspection is disabled. Enable with { enableInspection: true }"
+```
+
+**Permission logic (strictPermissions):**
+```
+strict=true:  no rules OR no scope → DENY.  scope provided → check rules.
+strict=false: no rules → ALLOW.  no scope → ALLOW.  scope provided → check rules.
+Check rules:  scope not in config → DENY.  name not in allowed list → DENY.  else → ALLOW.
+```
+
+**LogEntry.source field:**
+```
+action entries:  scope || "global"
+command entries: command.target || scope || "global"
+event entries:   "emitter" (always)
+```
+
+### Agent Plugin Details
+```javascript
+import { Agent } from "eleva/plugins";
+
+app.use(Agent, {
+  actions: {
+    greet: (payload) => `Hello, ${payload.name}!`,
+    fetchUser: async (payload) => {
+      const res = await fetch(`/api/users/${payload.id}`);
+      return res.json();
+    }
+  },
+  permissions: {                           // Capability-based per scope
+    "ui-agent": { actions: ["greet", "fetchUser"], commands: ["REFRESH"] }
+  },
+  strictPermissions: false,                // false = allow all when no scope (default)
+  validateSchemas: false,                  // true = enforce schema.input on execute (default: false)
+  maxLogSize: 100,                         // Audit log capacity (default: 100)
+  enableInspection: true,                  // Enable inspect/snapshot/diff (default: true)
+  emitterEvents: ["store:"],               // Capture store events in audit log
+  onError: (err, ctx) => console.error(ctx.code, err) // ctx is { method, code, action?, scope? }
+});
+```
+
+### Agent - Component Access
+```javascript
+app.component("AgentDemo", {
+  setup: ({ agent, signal }) => {
+    const result = signal(null);
+
+    return {
+      result,
+      run: async () => {
+        result.value = await agent.execute("greet", { name: "World" });
+      },
+      getLog: () => agent.getLog(),                // Audit log entries
+      getTools: () => agent.listActions(),          // All action descriptors
+      describe: () => agent.describeAction("greet") // Action schema
+    };
+  },
+  template: (ctx) => `
+    <div>
+      <button @click="run">Run Agent</button>
+      <p>Result: ${ctx.result.value || "N/A"}</p>
+    </div>
+  `
+});
+```
+
+### Agent - Action Registry
+```javascript
+// Register action with optional schema (handler receives payload only)
+agent.register("multiply", (payload) => payload.a * payload.b, {
+  input: { a: "number", b: "number" },
+  output: "number"
+});
+
+// Unregister an action
+agent.unregister("multiply");
+
+// Check if action exists
+agent.hasAction("greet"); // true
+
+// List all registered actions (returns descriptors with name + schema)
+agent.listActions(); // [{ name: "greet", schema: {...} }, ...]
+
+// Describe a single action
+agent.describeAction("greet"); // { name: "greet", schema: {...} } or null
+```
+
+### Agent - Command Bus
+```javascript
+// Dispatch structured commands — any component can handle them
+await agent.dispatch({ type: "REFRESH", target: "Dashboard", payload: { force: true } });
+
+// Register command handler (returns unsubscribe function)
+const unsub = agent.onCommand("REFRESH", async (cmd) => {
+  console.log(cmd.type, cmd.target, cmd.payload);
+});
+unsub(); // Stop handling
+```
+
+### Agent - Audit Log (with Outcomes)
+```javascript
+// Get all audit log entries — entries include result, error, durationMs
+const log = agent.getLog();
+
+// Filter by type: "action", "command", or "event"
+const actions = agent.getLog({ type: "action" });
+const events = agent.getLog({ type: "event" });
+
+// Filter by timestamp or action name
+const recent = agent.getLog({ since: Date.now() - 60000 });
+const greets = agent.getLog({ action: "greet" });
+
+// Filter by outcome status
+const failures = agent.getLog({ status: "error" });   // Only failed entries
+const successes = agent.getLog({ status: "ok" });      // Only successful entries
+
+// Inspect execution details
+const entry = agent.getLog({ type: "action" })[0];
+// { type: "action", action: "greet", payload: {...}, timestamp: 123,
+//   source: "global", result: "Hello!", durationMs: 2 }
+
+// Clear audit log
+agent.clearLog();
+
+// Capture Store/Router events in audit log via emitterEvents config
+// Events from eleva.emitter matching configured prefixes are logged automatically
+```
+
+### Agent - State Inspection (requires enableInspection: true)
+```javascript
+// Inspect registered components
+const info = agent.inspect();
+// { components: [{ name: "Counter", hasSetup: true, hasTemplate: true, ... }] }
+
+// Capture serializable snapshot
+const snap1 = agent.snapshot();
+// { timestamp, components: [...], plugins: ["agent"] }  (only plugins registered in eleva.plugins; Store does not register there)
+
+// Diff two snapshots
+const snap2 = agent.snapshot();
+const changes = agent.diff(snap1, snap2);
+// { added: ["NewComponent"], removed: [] }
+```
+
+### Agent - Permissions
+```javascript
+// Permissions are scope-based objects (NOT arrays)
+// strictPermissions: false (default) — no scope = unrestricted access
+// strictPermissions: true  — no scope = denied, scope required for all calls
+app.use(Agent, {
+  actions: { readData: () => "ok", writeData: (p) => p },
+  permissions: {
+    "admin": { actions: ["readData", "writeData"], commands: ["SHUTDOWN"] },
+    "viewer": { actions: ["readData"], commands: [] }
+  },
+  strictPermissions: true
+});
+
+// Execute with scope — checked against permissions
+await agent.execute("readData", null, "viewer");   // OK
+await agent.execute("writeData", {}, "viewer");     // throws: Permission denied
+await agent.execute("readData", null);              // throws: scope required (strict mode)
+```
+
+### Agent - Composition Primitives
+```javascript
+// Parallel execution — all actions run concurrently
+const [user, posts] = await agent.executeBatch([
+  { action: "fetchUser", payload: { id: 1 } },
+  { action: "fetchPosts", payload: { userId: 1 } }
+], "ui-agent"); // optional scope applied to all
+
+// Sequential execution — each result becomes next payload
+const email = await agent.executeSequence([
+  { action: "fetchUser", payload: { id: 1 } },   // returns user object
+  { action: "formatProfile" },                     // receives user, returns formatted string
+  { action: "sendWelcomeEmail" }                   // receives formatted string
+], "ui-agent");
+```
+
+### Agent - Capability Discovery
+```javascript
+// Get complete capability manifest for a scope
+const manifest = agent.describe("ui-agent");
+// {
+//   actions: [
+//     { name: "greet", schema: { input: { name: "string" } }, allowed: true },
+//     { name: "admin", schema: null, allowed: false }
+//   ],
+//   commands: ["REFRESH", "SHUTDOWN"],
+//   permissions: { scope: "ui-agent", actions: ["greet"], commands: ["REFRESH"] },
+//   config: { strictPermissions: false, maxLogSize: 100, inspectionEnabled: true, validateSchemas: false }
+// }
+
+// Without scope — all actions show allowed: true (default mode)
+const fullManifest = agent.describe();
+```
+
+### Agent - Schema Validation (opt-in)
+```javascript
+// Enable schema validation
+app.use(Agent, { validateSchemas: true });
+
+agent.register("calc", (p) => p.a + p.b, {
+  input: { a: "number", b: "number" },
+  output: "number"
+});
+
+await agent.execute("calc", { a: 1, b: 2 });           // OK → 3
+await agent.execute("calc", { a: "x", b: 2 });         // throws AGENT_SCHEMA_VIOLATION
+await agent.execute("calc", {});                        // throws AGENT_SCHEMA_VIOLATION (missing fields)
+// error.violations = ['field "a" expected number, got string'] or ['missing required field "a"', ...]
+```
+
+### Agent - Error Code Handling
+```javascript
+// All errors have error.code for programmatic handling
+try {
+  await agent.execute("admin", {}, "viewer");
+} catch (error) {
+  switch (error.code) {
+    case "AGENT_PERMISSION_DENIED":
+      // Recover: try a different scope or fall back to allowed action
+      const manifest = agent.describe("viewer");
+      const allowed = manifest.actions.filter(a => a.allowed);
+      break;
+    case "AGENT_ACTION_NOT_FOUND":
+      // Action doesn't exist
+      break;
+    case "AGENT_SCHEMA_VIOLATION":
+      // Fix payload using error.violations array
+      console.log(error.violations); // ["missing required field \"name\""]
+      break;
+    case "AGENT_HANDLER_ERROR":
+      // Handler threw an error
+      break;
+  }
+}
+```
+
+> **Machine-readable manifest:** `https://elevajs.com/agent-manifest.json` — structured JSON with all methods, types, errors, and permission logic for tool-calling integrations.
+
+## AI Recipes
+
+### Recipe: Reactive Counter Component
+**Task:** Create a minimal component with reactive state, an event handler, and a template that updates on click.
+**Steps:**
+1. Create an Eleva instance and define a component with `setup` and `template`.
+2. Use `signal(0)` for the count state.
+3. Return the signal and an increment handler from `setup`.
+4. Use `@click="handler"` (no `ctx.` prefix) and `${ctx.count.value}` (with `ctx.` prefix) in the template.
+
+**Complete Code:**
+```javascript
+const app = new Eleva("MyApp");
+
+app.component("Counter", {
+  setup: ({ signal }) => {
+    const count = signal(0);
+    return { count, inc: () => count.value++ };
+  },
+  template: (ctx) => `
+    <div>
+      <h1>Count: ${ctx.count.value}</h1>
+      <button @click="inc">Increment</button>
+    </div>
+  `
+});
+
+app.mount(document.getElementById("app"), "Counter");
+```
+**Verify:** Click the button — the displayed count increments by 1 each time.
+
+### Recipe: Parent-Child Communication via Emitter
+**Task:** Create a child component that emits an event and a parent that listens and updates its state.
+**Steps:**
+1. Define a child component that calls `emitter.emit("event-name", data)` on a button click.
+2. Define a parent component that subscribes to the event in `onMount` using `emitter.on()`.
+3. Store the unsubscribe function and call it in `onUnmount`.
+4. Wire the child into the parent using the `children` mapping with a kebab-case tag.
+
+**Complete Code:**
+```javascript
+const app = new Eleva("MyApp");
+
+app.component("AddButton", {
+  setup: ({ emitter }) => ({
+    add: () => emitter.emit("item:add", { id: Date.now(), text: "New item" })
+  }),
+  template: `<button @click="add">Add Item</button>`
+});
+
+app.component("ItemList", {
+  setup: ({ signal, emitter }) => {
+    const items = signal([]);
+    let unsub;
+
+    return {
+      items,
+      onMount: () => {
+        unsub = emitter.on("item:add", (item) => {
+          items.value = [...items.value, item];
+        });
+      },
+      onUnmount: () => { if (unsub) unsub(); }
+    };
+  },
+  template: (ctx) => `
+    <div>
+      <add-button></add-button>
+      <ul>
+        ${ctx.items.value.map((item) => `<li key="${item.id}">${item.text}</li>`).join("")}
+      </ul>
+    </div>
+  `,
+  children: { "add-button": "AddButton" }
+});
+
+app.mount(document.getElementById("app"), "ItemList");
+```
+**Verify:** Click "Add Item" — a new list item appears each time. No console errors or memory leaks.
+
+### Recipe: Agent Action Registration & Execution
+**Task:** Register an agent action with a schema, execute it, handle errors by code, and read the audit log.
+**Steps:**
+1. Install the Agent plugin with `app.use(Agent, { ... })`.
+2. Register an action with a handler and schema via `agent.register()`.
+3. Execute the action with `agent.execute()` and handle errors using `error.code`.
+4. Query the audit log with `agent.getLog()`.
+
+**Complete Code:**
+```javascript
+import Eleva from "eleva";
+import { Agent } from "eleva/plugins";
+
+const app = new Eleva("MyApp");
+
+app.use(Agent, {
+  validateSchemas: true,
+  enableInspection: true
+});
+
+app.component("AgentDemo", {
+  setup: ({ agent, signal }) => {
+    const output = signal("Ready");
+
+    // Register action with schema
+    agent.register("greet", (payload) => `Hello, ${payload.name}!`, {
+      input: { name: "string" },
+      output: "string"
+    });
+
+    const run = async () => {
+      try {
+        output.value = await agent.execute("greet", { name: "World" });
+      } catch (err) {
+        switch (err.code) {
+          case "AGENT_SCHEMA_VIOLATION":
+            output.value = `Schema error: ${err.violations.join(", ")}`;
+            break;
+          case "AGENT_ACTION_NOT_FOUND":
+            output.value = "Action not found";
+            break;
+          default:
+            output.value = `Error: ${err.message}`;
+        }
+      }
+    };
+
+    const showLog = () => {
+      const log = agent.getLog({ type: "action" });
+      output.value = JSON.stringify(log, null, 2);
+    };
+
+    return { output, run, showLog };
+  },
+  template: (ctx) => `
+    <div>
+      <button @click="run">Run Greet</button>
+      <button @click="showLog">Show Log</button>
+      <pre>${ctx.output.value}</pre>
+    </div>
+  `
+});
+
+app.mount(document.getElementById("app"), "AgentDemo");
+```
+**Verify:** Click "Run Greet" — shows "Hello, World!". Click "Show Log" — shows the audit log entry with `result`, `durationMs`, and `source`.
+
+### Recipe: SPA Page with Router + Store
+**Task:** Create a single-page app with two routes and shared global state.
+**Steps:**
+1. Install Store with initial state and actions.
+2. Define page components that access `store` and `router` from `setup`.
+3. Install Router with routes pointing to page components.
+4. Use `router.navigate()` for navigation.
+
+**Complete Code:**
+```javascript
+import Eleva from "eleva";
+import { Router, Store } from "eleva/plugins";
+
+const app = new Eleva("MyApp");
+
+app.use(Store, {
+  state: { count: 0 },
+  actions: { increment: (state) => state.count.value++ }
+});
+
+const Home = {
+  setup: ({ store, router }) => ({
+    count: store.state.count,
+    increment: () => store.dispatch("increment"),
+    goAbout: () => router.navigate("/about")
+  }),
+  template: (ctx) => `
+    <div>
+      <h1>Home</h1>
+      <p>Count: ${ctx.count.value}</p>
+      <button @click="increment">+1</button>
+      <button @click="goAbout">Go to About</button>
+    </div>
+  `
+};
+
+const About = {
+  setup: ({ store, router }) => ({
+    count: store.state.count,
+    goHome: () => router.navigate("/")
+  }),
+  template: (ctx) => `
+    <div>
+      <h1>About</h1>
+      <p>Shared count: ${ctx.count.value}</p>
+      <button @click="goHome">Go to Home</button>
+    </div>
+  `
+};
+
+app.use(Router, {
+  mount: "#app",
+  mode: "hash",
+  routes: [
+    { path: "/", component: Home },
+    { path: "/about", component: About }
+  ]
+});
+```
+**Verify:** Page shows Home with count. Click "+1" to increment. Navigate to About — count value persists. Navigate back — count is still updated.
+
+## AI Verification
+
+To verify all AI-facing contracts are consistent, run:
+```sh
+bun run verify:ax
+```
+This runs the build, all unit tests (including manifest schema validation), and a JSON parse check on `agent-manifest.json`.
+
 ## Troubleshooting (Quick)
 - Event not firing: use `@click="handler"` or `@click="() => ..."` (not raw expressions)
 - Props undefined in child: use `:prop="value"` without `ctx.`
@@ -1927,6 +2465,7 @@ app.use(Router, {
 - Plugin System: https://elevajs.com/plugin-system
 - Best Practices: https://elevajs.com/best-practices
 - Examples: https://elevajs.com/examples/
+- Golden AI Examples: https://elevajs.com/examples/ai/
 - API Reference: https://elevajs.com/api/
 - Migration from React: https://elevajs.com/migration/from-react
 - Migration from Vue: https://elevajs.com/migration/from-vue

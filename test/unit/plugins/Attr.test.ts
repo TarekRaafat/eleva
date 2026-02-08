@@ -2,7 +2,15 @@
  * @fileoverview Tests for the Attr Plugin
  */
 
-import { describe, test, expect, beforeEach, afterEach, mock, spyOn } from "bun:test";
+import {
+  describe,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  mock,
+  spyOn,
+} from "bun:test";
 import Eleva from "../../../src/index.js";
 import { AttrPlugin } from "../../../src/plugins/Attr.js";
 import { cleanupFixtures } from "../../utils.js";
@@ -420,7 +428,10 @@ describe("AttrPlugin", () => {
 
       app.updateElementAttributes(oldEl, newEl);
 
-      expect(setAttributeSpy).not.toHaveBeenCalledWith("same-attr", "same-value");
+      expect(setAttributeSpy).not.toHaveBeenCalledWith(
+        "same-attr",
+        "same-value"
+      );
       setAttributeSpy.mockRestore();
     });
 
@@ -977,8 +988,12 @@ describe("AttrPlugin", () => {
 
       app.updateElementAttributes(oldEl, newEl);
 
-      expect((oldEl as HTMLImageElement).srcset).toBe("small.jpg 500w, large.jpg 1000w");
-      expect((oldEl as HTMLImageElement).sizes).toBe("(max-width: 600px) 500px, 1000px");
+      expect((oldEl as HTMLImageElement).srcset).toBe(
+        "small.jpg 500w, large.jpg 1000w"
+      );
+      expect((oldEl as HTMLImageElement).sizes).toBe(
+        "(max-width: 600px) 500px, 1000px"
+      );
     });
   });
 
@@ -1052,7 +1067,9 @@ describe("AttrPlugin", () => {
       app.component("DynamicAttrComponent", {
         setup({ signal }: any) {
           const status = signal("inactive");
-          updateFn = () => { status.value = "active"; };
+          updateFn = () => {
+            status.value = "active";
+          };
           return { status };
         },
         template: (ctx: any) => `
@@ -1067,7 +1084,7 @@ describe("AttrPlugin", () => {
       expect(div.dataset.status).toBe("inactive");
 
       updateFn();
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise((resolve) => setTimeout(resolve, 50));
 
       div = container.querySelector("div")!;
       expect(div.dataset.status).toBe("active");

@@ -1,4 +1,4 @@
-/*! Eleva v1.1.1 | MIT License | https://elevajs.com */
+/*! Eleva v1.2.0 | MIT License | https://elevajs.com */
 /**
  * @module eleva/template-engine
  * @fileoverview Expression evaluator for directive attributes and property bindings.

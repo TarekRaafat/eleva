@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Comprehensive guide to Eleva best practices - component structure, setup patterns, signals, lifecycle hooks, and general guidelines.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -553,6 +553,7 @@ store.dispatch("setUser", newUser);  // Correct
 7. **Use Store Sparingly:** Only for truly global state, not for local component data.
 8. **Testing:** Write tests for components and plugins.
 9. **Documentation:** Maintain clear documentation for your application.
+10. **Agent Experience (AX):** For AI-powered features, use the Agent plugin to register callable actions, dispatch commands, and maintain audit trails — keeping AI logic decoupled from component internals.
 
 ---
 

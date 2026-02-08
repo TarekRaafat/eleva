@@ -44,7 +44,7 @@ description: Master Eleva.js signals. Build counters, toggle states, and compute
 
 # State Management Examples
 
-> **Version:** 1.1.1 | Reactive state, computed values, and complex state patterns.
+> **Version:** 1.2.0 | Reactive state, computed values, and complex state patterns.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Eleva.js Plugin System
-description: Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.
+description: Extend Eleva with plugins. Create custom plugins or use official Router, Store, Attr, and Agent (AX) plugins. Tree-shakeable, typed, and zero-config.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -10,7 +10,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/plugin-system.html">
 <meta property="og:title" content="Plugin System - Eleva.js">
-<meta property="og:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.">
+<meta property="og:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, Attr, and Agent (AX) plugins. Tree-shakeable, typed, and zero-config.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/plugin-system.html">
 <meta name="twitter:title" content="Plugin System - Eleva.js">
-<meta name="twitter:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, and Attr plugins. Tree-shakeable, typed, and zero-config.">
+<meta name="twitter:description" content="Extend Eleva with plugins. Create custom plugins or use official Router, Store, Attr, and Agent (AX) plugins. Tree-shakeable, typed, and zero-config.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Learn how to create, install, and use plugins in Eleva. Covers plugin structure, capabilities, lifecycle, and built-in plugins.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -79,7 +79,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 > **Core Docs** | Creating, installing, and using plugins.
 
-The Plugin System provides a powerful way to extend the framework's functionality. Plugins can add new features, modify existing behavior, or integrate with external libraries.
+The Plugin System provides a powerful way to extend the framework's functionality. Plugins can add new features, modify existing behavior, or integrate with external libraries — including the built-in Agent plugin for AI/LLM integration (AX).
 
 ---
 
@@ -534,13 +534,14 @@ This ensures type safety when developing plugins in TypeScript.
 
 ## Built-in Plugins
 
-Eleva comes with three powerful built-in plugins:
+Eleva comes with four powerful built-in plugins:
 
 | Plugin | Purpose | Size (gzipped) | Docs |
 |--------|---------|----------------|------|
-| **Attr** | ARIA, data-*, boolean attributes | ~1KB | [View →](./plugins/attr/) |
-| **Router** | Client-side routing & guards | ~5KB | [View →](./plugins/router/) |
-| **Store** | Global state management | ~2KB | [View →](./plugins/store/) |
+| **Attr** | ARIA, data-*, boolean attributes | ~1.0KB | [View →](./plugins/attr/) |
+| **Router** | Client-side routing & guards | ~4.6KB | [View →](./plugins/router/) |
+| **Store** | Global state management | ~2.0KB | [View →](./plugins/store/) |
+| **Agent** | AI/agent integration & audit log | ~3.5KB | [View →](./plugins/agent/) |
 
 ### Attr Plugin
 
@@ -617,11 +618,33 @@ app.use(Store, {
 
 [Full Store Documentation →](./plugins/store/)
 
+### Agent Plugin
+
+AI and agent integration with action registry, command bus, and audit logging:
+
+```javascript
+import { Agent } from 'eleva/plugins';
+
+app.use(Agent, {
+  actions: { ping: () => "pong" },
+  permissions: { "ui-agent": { actions: ["ping"] } },
+  emitterEvents: ["router:", "store:"]
+});
+```
+
+**Features:**
+- Action Registry - Register and execute callable actions with typed schemas
+- Command Bus - Structured agent-to-component communication
+- Audit Log - Automatic recording of actions, commands, and emitter events
+- Permissions - Capability-based access control per scope
+
+[Full Agent Documentation →](./plugins/agent/)
+
 ### Plugin Installation
 
 ```javascript
 import Eleva from 'eleva';
-import { Attr, Router, Store } from 'eleva/plugins';
+import { Attr, Router, Store, Agent } from 'eleva/plugins';
 
 const app = new Eleva("MyApp");
 
@@ -629,6 +652,7 @@ const app = new Eleva("MyApp");
 app.use(Attr);
 app.use(Store, { state: {} });
 app.use(Router, { routes: [] });
+app.use(Agent, { actions: {} });
 ```
 
 ### Built-in Plugin Cleanup
@@ -640,6 +664,7 @@ All built-in plugins implement proper `uninstall()` methods:
 | **Attr** | Restores `renderer._patchNode()`, removes `updateElementAttributes` |
 | **Store** | Restores `mount()` and `_mountComponents()`, removes `store`, `dispatch`, `getState`, `subscribe`, `createAction` |
 | **Router** | Calls `router.destroy()`, removes `router`, `navigate`, `getCurrentRoute`, `getRouteParams`, `getRouteQuery` |
+| **Agent** | Restores `mount()` and `_mountComponents()`, destroys agent instance, removes `agent`, `agentExecute`, `agentDispatch` |
 
 **Router's `destroy()` method additionally:**
 - Calls `destroy()` on any router-level plugins
@@ -652,9 +677,11 @@ All built-in plugins implement proper `uninstall()` methods:
 app.use(Attr);
 app.use(Store, { state: {} });
 app.use(Router, { routes: [] });
+app.use(Agent, { actions: {} });
 
 // Later, to uninstall all plugins:
-await Router.uninstall(app);  // Last installed, first uninstalled
+Agent.uninstall(app);            // Last installed, first uninstalled
+await Router.uninstall(app);
 Store.uninstall(app);
 Attr.uninstall(app);
 ```
@@ -663,10 +690,11 @@ Attr.uninstall(app);
 
 | Plugin | Minified | Gzipped |
 |--------|----------|---------|
-| Core | ~6KB | ~2.5KB |
-| Attr | ~2.2KB | ~1KB |
-| Router | ~15KB | ~5KB |
-| Store | ~6KB | ~2KB |
+| Core | ~6.0KB | ~2.4KB |
+| Attr | ~2.2KB | ~1.0KB |
+| Router | ~14.9KB | ~4.6KB |
+| Store | ~6.2KB | ~2.0KB |
+| Agent | ~11.2KB | ~3.5KB |
 
 ---
 

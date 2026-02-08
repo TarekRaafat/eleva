@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Eleva.js Router plugin for SPA navigation with hash/history modes, navigation guards, lazy loading, and layouts. 15KB.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -355,7 +355,7 @@ const { Router } = require("eleva/plugins");
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
 <script>
   const app = new Eleva("MyApp");
-  app.use(ElevaRouterPlugin, { /* options */ });
+  app.use(ElevaRouter, { /* options */ });
 </script>
 ```
 

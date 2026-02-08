@@ -1,6 +1,6 @@
 ---
-title: Best DX for Building the Best UX
-description: Eleva.js (elevajs/eleva) - Best DX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.
+title: Best DX + AX for Building the Best UX
+description: Eleva.js (elevajs/eleva) - Best DX + AX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience (DX) and Agent Experience (AX). Vanilla JavaScript, elevated with signals for reactivity, components for structure, and built-in AI agent support. Zero dependencies, TypeScript support.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -9,16 +9,16 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://elevajs.com/">
-<meta property="og:title" content="Eleva.js - Best DX for Building the Best UX">
-<meta property="og:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta property="og:title" content="Eleva.js - Best DX + AX for Building the Best UX">
+<meta property="og:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative with built-in AI agent support (AX). Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/">
-<meta name="twitter:title" content="Eleva.js - Best DX for Building the Best UX">
-<meta name="twitter:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative. Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
+<meta name="twitter:title" content="Eleva.js - Best DX + AX for Building the Best UX">
+<meta name="twitter:description" content="A lightweight (~2.5KB gzipped) React/Vue/Angular alternative with built-in AI agent support (AX). Vanilla JavaScript elevated with signals for reactivity and components for structure. Zero dependencies.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -36,13 +36,14 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "@type": "SoftwareApplication",
   "name": "Eleva.js",
   "alternateName": ["Eleva", "ElevaJS", "eleva.js", "elevajs"],
-  "description": "Best DX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "description": "Best DX + AX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience (DX) and Agent Experience (AX). Vanilla JavaScript, elevated with signals for reactivity, components for structure, and built-in AI agent support. Zero dependencies, TypeScript support.",
   "url": "https://elevajs.com",
   "applicationCategory": "DeveloperApplication",
   "applicationSubCategory": "JavaScript Framework",
   "operatingSystem": "Cross-platform (Web Browser)",
-  "softwareVersion": "1.1.1",
+  "softwareVersion": "1.2.0",
   "datePublished": "2026-01-12",
+  "dateModified": "2026-02-08T00:00:00Z",
   "releaseNotes": "First official stable release with production-ready API",
   "downloadUrl": "https://www.npmjs.com/package/eleva",
   "installUrl": "https://www.npmjs.com/package/eleva",
@@ -58,7 +59,9 @@ image: /imgs/eleva.js%20Full%20Logo.png
     "Built-in TypeScript support",
     "Component-based architecture",
     "Direct DOM manipulation",
-    "Plugin system (Router, Store, Attr)",
+    "Plugin system (Router, Store, Attr, Agent)",
+    "Built-in AI Agent plugin for LLM integration (AX)",
+    "Agent action registry with permissions and audit logging",
     "Lifecycle hooks",
     "Event handling",
     "Template literals"
@@ -89,7 +92,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
     "name": "JavaScript"
   },
   "runtimePlatform": "Web Browser",
-  "keywords": "eleva, elevajs, eleva.js, javascript framework, frontend framework, react alternative, vue alternative, angular alternative, signal-based reactivity, lightweight framework, vanilla javascript elevated, minimalist js framework",
+  "keywords": "eleva, elevajs, eleva.js, javascript framework, frontend framework, react alternative, vue alternative, angular alternative, signal-based reactivity, lightweight framework, vanilla javascript elevated, minimalist js framework, agent experience, AX, AI agent, LLM framework, agent-ready",
   "sameAs": [
     "https://www.npmjs.com/package/eleva",
     "https://github.com/TarekRaafat/eleva",
@@ -165,7 +168,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What plugins are available with Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva comes with three powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), and Store (reactive state management with persistence and namespacing)."
+        "text": "Eleva comes with four powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), Store (reactive state management with persistence and namespacing), and Agent (AI/LLM integration with action registry, audit logging, and permissions)."
       }
     },
     {
@@ -213,7 +216,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
+        "text": "Yes! Eleva v1.2.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1530+ tests)."
       }
     },
     {
@@ -238,6 +241,22 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes! Eleva has a simple plugin API. Plugins are objects with an install(eleva, options) method that receives the Eleva instance and can extend it with new functionality."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Agent Experience (AX) in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Agent Experience (AX) is the developer experience of building AI-agent-powered applications. Eleva's built-in Agent plugin provides a first-class integration surface for LLMs and AI agents, including an action registry, command bus, audit logging, schema validation, and scoped permissions — all in ~3.5KB gzipped."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva support AI and LLM integration?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva includes a built-in Agent plugin that provides AI/LLM integration out of the box. It features an action registry for registering functions agents can call, a command bus for dispatching structured commands, audit logging for traceability, schema validation, and scoped permissions per component. No other ~2.5KB framework offers built-in agent support."
       }
     },
     {
@@ -272,9 +291,9 @@ image: /imgs/eleva.js%20Full%20Logo.png
 }
 </script>
 
-# Eleva.js - Best DX for Building the Best UX
+# Eleva.js - Best DX + AX for Building the Best UX
 
-> **Version:** `1.1.1` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
+> **Version:** `1.2.0` | **Bundle Size:** ~6KB minified (~2.5KB gzipped) | **Dependencies:** Zero | **Language:** Pure Vanilla JavaScript | **TypeScript:** Built-in declarations included
 
 [![Eleva.js MIT License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Eleva.js GitHub Version](https://img.shields.io/github/package-json/v/tarekraafat/eleva?label=github)](https://github.com/TarekRaafat/eleva)
@@ -306,7 +325,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 ## What is Eleva?
 
-**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI).
+**Eleva** is a minimalist, lightweight (~2.5KB gzipped), pure vanilla JavaScript frontend framework crafted for **exceptional Developer Experience (DX)** and **Agent Experience (AX)**. When developers enjoy building, users enjoy using — Eleva makes it effortless to create beautiful, responsive, and performant User Interfaces (UI).
 
 Unlike React, Vue, or Angular, Eleva:
 - **Has zero dependencies** - No node_modules bloat
@@ -314,9 +333,10 @@ Unlike React, Vue, or Angular, Eleva:
 - **Uses real DOM** - No virtual DOM overhead for simple apps
 - **Provides signal-based reactivity** - Fine-grained updates like Solid.js
 - **Includes TypeScript support** - Built-in type declarations
+- **Is AI-agent-ready** - Built-in Agent plugin for LLM integration, action registry, and audit logging
 - **Is just JavaScript** - If it works in vanilla JS, it works in Eleva
 
-Eleva is ideal for developers building performance-critical applications, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler alternative to React, Vue, or Angular.
+Eleva is ideal for developers building performance-critical applications, AI-agent-powered interfaces, data-intensive dashboards (10K+ rows), micro-frontends, or anyone seeking a simpler, AI-ready alternative to React, Vue, or Angular.
 
 ### Core Philosophy
 
@@ -324,9 +344,9 @@ Eleva is ideal for developers building performance-critical applications, data-i
 
 Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. Components for structure. Your JS knowledge stays front and center, not hidden behind abstractions. **If it works in vanilla JS, it works in Eleva.**
 
-> _"The best UX comes from developers who love their tools."_ — Eleva's DX philosophy
+> _"The best UX comes from developers who love their tools — and agents that speak their framework's language."_ — Eleva's DX + AX philosophy
 
-> **Stable Release**: This is the official documentation for Eleva v1.1.1. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
+> **Stable Release**: This is the official documentation for Eleva v1.2.0. The framework is production-ready with a stable API. We welcome your feedback and contributions to make Eleva even better.
 
 ---
 
@@ -363,7 +383,7 @@ app.mount(document.getElementById("app"), "Counter");
 | **CDN (jsDelivr)** | `<script src="https://cdn.jsdelivr.net/npm/eleva"></script>` |
 | **CDN (unpkg)** | `<script src="https://unpkg.com/eleva"></script>` |
 | **ESM Import** | `import Eleva from "eleva"` |
-| **Plugin Import** | `import { Router, Store } from "eleva/plugins"` |
+| **Plugin Import** | `import { Router, Store, Agent } from "eleva/plugins"` |
 
 ### API Cheatsheet
 
@@ -417,11 +437,13 @@ app.mount(document.getElementById("app"), "Counter");
 | **Attr** | ARIA, data-*, boolean attributes | [View →](./plugins/attr/) |
 | **Router** | Client-side routing & guards | [View →](./plugins/router/) |
 | **Store** | Global state management | [View →](./plugins/store/) |
+| **Agent** | AI/LLM integration (AX) | [View →](./plugins/agent/) |
 
 **Plugin Deep Dive:**
 - Attr: [Features](./plugins/attr/features.md) · [Patterns](./plugins/attr/patterns.md) · [API](./plugins/attr/api.md)
 - Router: [Configuration](./plugins/router/configuration.md) · [Navigation](./plugins/router/navigation.md) · [Guards](./plugins/router/guards.md) · [Lazy Loading](./plugins/router/lazy-loading.md) · [API](./plugins/router/api.md)
 - Store: [Core Concepts](./plugins/store/core-concepts.md) · [Configuration](./plugins/store/configuration.md) · [Patterns](./plugins/store/patterns.md) · [Advanced](./plugins/store/advanced.md) · [API](./plugins/store/api.md)
+- Agent: [Features](./plugins/agent/features.md) · [API](./plugins/agent/api.md) · [Patterns](./plugins/agent/patterns.md)
 
 ### Examples & Patterns
 
@@ -462,6 +484,7 @@ How does Eleva compare to popular JavaScript frameworks?
 | **Build Required** | No | Yes | Optional | Yes | Yes | Optional | Yes |
 | **Learning Curve** | Low | Medium | Medium | Low | Medium | Low | High |
 | **Component Model** | Object-based | JSX/Functional | SFC/Options | SFC | JSX/Functional | JSX/Functional | Decorators |
+| **AI/Agent Support** | Built-in | No | No | No | No | No | No |
 
 _*Svelte compiles away, so runtime is minimal but build step is required._
 
@@ -470,9 +493,10 @@ _*Svelte compiles away, so runtime is minimal but build step is required._
 **Choose Eleva when you need:**
 - High performance without complexity (~2.5KB gzipped, 240fps capable, handles 10K+ rows)
 - Zero build tooling—works directly in browsers via CDN
+- AI-agent-powered UIs with built-in action registry, command bus, and audit logging
 - Micro-frontends, embedded widgets, or progressive enhancement
 - Data-intensive UIs where bundle size and render speed matter
-- A simpler, lightweight alternative to React or Vue
+- A simpler, lightweight, AI-ready alternative to React or Vue
 
 **Consider other frameworks when you need:**
 - Extensive ecosystem with mature tooling (React, Vue)
@@ -482,9 +506,9 @@ _*Svelte compiles away, so runtime is minimal but build step is required._
 
 ---
 
-## Developer Experience (DX)
+## Developer Experience (DX) & Agent Experience (AX)
 
-Eleva is built on a simple principle: **great DX leads to great UX**. When developers have intuitive tools, they build better interfaces.
+Eleva is built on a simple principle: **great DX + AX leads to great UX**. When developers have intuitive tools — and agents have a first-class integration surface — they build better interfaces.
 
 ### Why Eleva's DX Stands Out
 
@@ -497,6 +521,7 @@ Eleva is built on a simple principle: **great DX leads to great UX**. When devel
 | **TypeScript Built-in** | Full autocomplete and type safety out of the box |
 | **Tiny Bundle** | ~2.5KB gzipped means instant page loads for your users |
 | **No Hidden Magic** | Debug easily with transparent, predictable behavior |
+| **Agent-Ready (AX)** | Built-in Agent plugin for AI/LLM integration with action registry, audit logging, and permissions |
 
 ### DX-First Design Principles
 

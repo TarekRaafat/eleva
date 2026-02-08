@@ -1649,15 +1649,17 @@ describe("Renderer", () => {
 
   test("should handle large list (100 items) reordering", () => {
     const oldParent = document.createElement("div");
-    const items = Array.from({ length: 100 }, (_, i) =>
-      `<div key="${i}">${i}</div>`
+    const items = Array.from(
+      { length: 100 },
+      (_, i) => `<div key="${i}">${i}</div>`
     ).join("");
     oldParent.innerHTML = items;
 
     // Reverse the list
     const newParent = document.createElement("div");
-    const reversedItems = Array.from({ length: 100 }, (_, i) =>
-      `<div key="${99 - i}">${99 - i}</div>`
+    const reversedItems = Array.from(
+      { length: 100 },
+      (_, i) => `<div key="${99 - i}">${99 - i}</div>`
     ).join("");
     newParent.innerHTML = reversedItems;
 
@@ -1680,15 +1682,17 @@ describe("Renderer", () => {
   test("should handle large list with interleaved changes", () => {
     const oldParent = document.createElement("div");
     // Create list: 0, 1, 2, 3, ..., 49
-    const items = Array.from({ length: 50 }, (_, i) =>
-      `<div key="${i}">${i}</div>`
+    const items = Array.from(
+      { length: 50 },
+      (_, i) => `<div key="${i}">${i}</div>`
     ).join("");
     oldParent.innerHTML = items;
 
     // Change to: 0, 2, 4, 6, ..., 98 (even numbers 0-98)
     const newParent = document.createElement("div");
-    const newItems = Array.from({ length: 50 }, (_, i) =>
-      `<div key="${i * 2}">${i * 2}</div>`
+    const newItems = Array.from(
+      { length: 50 },
+      (_, i) => `<div key="${i * 2}">${i * 2}</div>`
     ).join("");
     newParent.innerHTML = newItems;
 
@@ -2221,7 +2225,11 @@ Line 4</pre>`;
     const oldParent = document.createElement("div");
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     const use = document.createElementNS("http://www.w3.org/2000/svg", "use");
-    use.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", "#old-icon");
+    use.setAttributeNS(
+      "http://www.w3.org/1999/xlink",
+      "xlink:href",
+      "#old-icon"
+    );
     svg.appendChild(use);
     oldParent.appendChild(svg);
 
@@ -2277,7 +2285,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("svg")?.getAttribute("viewBox")).toBe("0 0 200 200");
+    expect(oldParent.querySelector("svg")?.getAttribute("viewBox")).toBe(
+      "0 0 200 200"
+    );
     expect(oldParent.querySelectorAll("use").length).toBe(2);
   });
 
@@ -2314,8 +2324,12 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("user-profile-card")?.getAttribute("name")).toBe("Jane");
-    expect(oldParent.querySelector("app-navigation")?.getAttribute("active")).toBe("settings");
+    expect(
+      oldParent.querySelector("user-profile-card")?.getAttribute("name")
+    ).toBe("Jane");
+    expect(
+      oldParent.querySelector("app-navigation")?.getAttribute("active")
+    ).toBe("settings");
   });
 
   test("should handle keyed custom elements", () => {
@@ -2365,8 +2379,12 @@ Line 4</pre>`;
 
     const slots = oldParent.querySelectorAll("[slot]");
     expect(slots.length).toBe(3);
-    expect(oldParent.querySelector("[slot='header']")?.textContent).toBe("New Header");
-    expect(oldParent.querySelector("[slot='footer']")?.textContent).toBe("New Footer");
+    expect(oldParent.querySelector("[slot='header']")?.textContent).toBe(
+      "New Header"
+    );
+    expect(oldParent.querySelector("[slot='footer']")?.textContent).toBe(
+      "New Footer"
+    );
   });
 
   test("should handle custom element type change", () => {
@@ -2531,7 +2549,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("iframe")?.getAttribute("loading")).toBe("lazy");
+    expect(oldParent.querySelector("iframe")?.getAttribute("loading")).toBe(
+      "lazy"
+    );
   });
 
   // ============================================================================
@@ -2621,7 +2641,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("input")?.getAttribute("placeholder")).toBe("New placeholder");
+    expect(oldParent.querySelector("input")?.getAttribute("placeholder")).toBe(
+      "New placeholder"
+    );
   });
 
   test("should handle textarea value as content (not attribute)", () => {
@@ -2723,8 +2745,12 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("div[contenteditable] i")?.textContent).toBe("Italic");
-    expect(oldParent.querySelector("div[contenteditable] b")?.textContent).toBe("bold");
+    expect(oldParent.querySelector("div[contenteditable] i")?.textContent).toBe(
+      "Italic"
+    );
+    expect(oldParent.querySelector("div[contenteditable] b")?.textContent).toBe(
+      "bold"
+    );
   });
 
   // ============================================================================
@@ -2812,10 +2838,14 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("ul")?.getAttribute("data-list")).toBe("updated-items");
+    expect(oldParent.querySelector("ul")?.getAttribute("data-list")).toBe(
+      "updated-items"
+    );
     expect(oldParent.querySelector("ul")?.getAttribute("data-count")).toBe("3");
     expect(oldParent.querySelectorAll("li").length).toBe(3);
-    expect(oldParent.querySelector("li")?.getAttribute("data-new")).toBe("true");
+    expect(oldParent.querySelector("li")?.getAttribute("data-new")).toBe(
+      "true"
+    );
   });
 
   // ============================================================================
@@ -2843,7 +2873,9 @@ Line 4</pre>`;
 
     const details = oldParent.querySelector("details");
     expect(details?.hasAttribute("open")).toBe(true);
-    expect(oldParent.querySelector("summary")?.textContent).toBe("Click to collapse");
+    expect(oldParent.querySelector("summary")?.textContent).toBe(
+      "Click to collapse"
+    );
     expect(oldParent.querySelector("p")?.textContent).toBe("Visible content");
   });
 
@@ -2856,7 +2888,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("details")?.hasAttribute("open")).toBe(false);
+    expect(oldParent.querySelector("details")?.hasAttribute("open")).toBe(
+      false
+    );
   });
 
   test("should handle dialog element with open attribute", () => {
@@ -3013,7 +3047,9 @@ Line 4</pre>`;
     const sources = oldParent.querySelectorAll("source");
     expect(sources.length).toBe(2);
     expect(sources[0].getAttribute("media")).toBe("(min-width: 1200px)");
-    expect(oldParent.querySelector("img")?.getAttribute("alt")).toBe("Updated Image");
+    expect(oldParent.querySelector("img")?.getAttribute("alt")).toBe(
+      "Updated Image"
+    );
   });
 
   test("should handle picture source with type attribute", () => {
@@ -3111,7 +3147,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    const keys = Array.from(oldParent.children).map((c) => c.getAttribute("key"));
+    const keys = Array.from(oldParent.children).map((c) =>
+      c.getAttribute("key")
+    );
     expect(keys).toEqual(["ITEM", "Item", "item"]);
   });
 
@@ -3207,7 +3245,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("div")?.getAttribute("aria-hidden")).toBe("true");
+    expect(oldParent.querySelector("div")?.getAttribute("aria-hidden")).toBe(
+      "true"
+    );
   });
 
   test("should handle aria-expanded attribute", () => {
@@ -3219,7 +3259,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.getAttribute("aria-expanded")).toBe("true");
+    expect(
+      oldParent.querySelector("button")?.getAttribute("aria-expanded")
+    ).toBe("true");
   });
 
   test("should handle multiple ARIA attributes", () => {
@@ -3310,7 +3352,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.getAttribute("formaction")).toBe("/new-action");
+    expect(oldParent.querySelector("button")?.getAttribute("formaction")).toBe(
+      "/new-action"
+    );
   });
 
   test("should handle formmethod attribute", () => {
@@ -3322,7 +3366,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.getAttribute("formmethod")).toBe("post");
+    expect(oldParent.querySelector("button")?.getAttribute("formmethod")).toBe(
+      "post"
+    );
   });
 
   test("should handle formtarget attribute", () => {
@@ -3334,7 +3380,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.getAttribute("formtarget")).toBe("_blank");
+    expect(oldParent.querySelector("button")?.getAttribute("formtarget")).toBe(
+      "_blank"
+    );
   });
 
   test("should handle formenctype attribute", () => {
@@ -3346,7 +3394,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.getAttribute("formenctype")).toBe("multipart/form-data");
+    expect(oldParent.querySelector("button")?.getAttribute("formenctype")).toBe(
+      "multipart/form-data"
+    );
   });
 
   test("should handle formnovalidate attribute", () => {
@@ -3358,7 +3408,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("button")?.hasAttribute("formnovalidate")).toBe(true);
+    expect(
+      oldParent.querySelector("button")?.hasAttribute("formnovalidate")
+    ).toBe(true);
   });
 
   test("should handle form attribute (associate input with form)", () => {
@@ -3370,7 +3422,9 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    expect(oldParent.querySelector("input")?.getAttribute("form")).toBe("form2");
+    expect(oldParent.querySelector("input")?.getAttribute("form")).toBe(
+      "form2"
+    );
   });
 
   test("should handle multiple form-related attributes together", () => {
@@ -3484,7 +3538,8 @@ Line 4</pre>`;
   // ============================================================================
 
   test("should handle base64 encoded image in src attribute", () => {
-    const base64Short = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+    const base64Short =
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
     const base64Long = "data:image/png;base64," + "A".repeat(1000);
 
     const oldParent = document.createElement("div");
@@ -3522,7 +3577,9 @@ Line 4</pre>`;
   });
 
   test("should handle long class attribute with many classes", () => {
-    const manyClasses = Array.from({ length: 50 }, (_, i) => `class-${i}`).join(" ");
+    const manyClasses = Array.from({ length: 50 }, (_, i) => `class-${i}`).join(
+      " "
+    );
 
     const oldParent = document.createElement("div");
     oldParent.innerHTML = `<div class="simple">Content</div>`;
@@ -3538,8 +3595,9 @@ Line 4</pre>`;
   });
 
   test("should handle long inline style attribute", () => {
-    const longStyle = Array.from({ length: 20 }, (_, i) =>
-      `--custom-prop-${i}: value${i}`
+    const longStyle = Array.from(
+      { length: 20 },
+      (_, i) => `--custom-prop-${i}: value${i}`
     ).join("; ");
 
     const oldParent = document.createElement("div");
@@ -3555,9 +3613,12 @@ Line 4</pre>`;
   });
 
   test("should handle long SVG path data", () => {
-    const longPath = "M0 0 " + Array.from({ length: 100 }, (_, i) =>
-      `L${i * 10} ${Math.sin(i) * 50 + 50}`
-    ).join(" ");
+    const longPath =
+      "M0 0 " +
+      Array.from(
+        { length: 100 },
+        (_, i) => `L${i * 10} ${Math.sin(i) * 50 + 50}`
+      ).join(" ");
 
     const oldParent = document.createElement("div");
     oldParent.innerHTML = `<svg><path d="M0 0 L10 10"></path></svg>`;
@@ -3572,8 +3633,9 @@ Line 4</pre>`;
   });
 
   test("should handle long href with query parameters", () => {
-    const longQuery = Array.from({ length: 30 }, (_, i) =>
-      `param${i}=value${i}`
+    const longQuery = Array.from(
+      { length: 30 },
+      (_, i) => `param${i}=value${i}`
     ).join("&");
     const longHref = `https://example.com/path?${longQuery}`;
 
@@ -3628,8 +3690,8 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    const keys = Array.from(oldParent.querySelectorAll("div")).map(
-      (el) => el.getAttribute("key")
+    const keys = Array.from(oldParent.querySelectorAll("div")).map((el) =>
+      el.getAttribute("key")
     );
     expect(keys).toEqual(["c", "a", "b"]);
   });
@@ -3860,7 +3922,9 @@ Line 4</pre>`;
 
     // Rocket should be moved to first position, preserving identity
     expect(oldParent.querySelectorAll("div")[0]).toBe(originalRocket);
-    expect(oldParent.querySelectorAll("div")[0].textContent).toBe("Rocket First");
+    expect(oldParent.querySelectorAll("div")[0].textContent).toBe(
+      "Rocket First"
+    );
   });
 
   test("should handle Unicode keys (CJK characters)", () => {
@@ -3902,7 +3966,9 @@ Line 4</pre>`;
 
     // Should preserve identity with very long key
     expect(oldParent.querySelector("div")).toBe(originalDiv);
-    expect(oldParent.querySelector("div")?.textContent).toBe("Updated long key");
+    expect(oldParent.querySelector("div")?.textContent).toBe(
+      "Updated long key"
+    );
   });
 
   test("should handle keys with newlines and tabs", () => {
@@ -4233,8 +4299,8 @@ Line 4</pre>`;
 
     (renderer as any)._diff(oldParent, newParent);
 
-    const keys = Array.from(oldParent.querySelectorAll("div")).map(
-      (el) => el.getAttribute("key")
+    const keys = Array.from(oldParent.querySelectorAll("div")).map((el) =>
+      el.getAttribute("key")
     );
     expect(keys).toEqual(["x", "y", "a", "z"]);
   });
@@ -4285,8 +4351,12 @@ Line 4</pre>`;
     // Component div should not be modified
     expect(componentDiv.innerHTML).toBe("<span>Managed by Eleva</span>");
     // Other divs should be updated
-    expect(oldParent.querySelector('[key="before"]')?.textContent).toBe("Before Updated");
-    expect(oldParent.querySelector('[key="after"]')?.textContent).toBe("After Updated");
+    expect(oldParent.querySelector('[key="before"]')?.textContent).toBe(
+      "Before Updated"
+    );
+    expect(oldParent.querySelector('[key="after"]')?.textContent).toBe(
+      "After Updated"
+    );
   });
 
   // ============================================================================
@@ -4349,8 +4419,8 @@ Line 4</pre>`;
     expect(oldParent.querySelectorAll("input")[0]).toBe(secondInput);
     expect(secondInput.getAttribute("placeholder")).toBe("Second - Now First");
     // Key order should be correct
-    const keys = Array.from(oldParent.querySelectorAll("input")).map(
-      (el) => el.getAttribute("key")
+    const keys = Array.from(oldParent.querySelectorAll("input")).map((el) =>
+      el.getAttribute("key")
     );
     expect(keys).toEqual(["input2", "input1", "input3"]);
 
@@ -5011,7 +5081,9 @@ Line 4</pre>`;
     (renderer as any)._diff(oldParent, newParent);
 
     const path = oldParent.querySelector("path")!;
-    expect(path.getAttribute("d")).toBe("M0 0 C20 20, 40 20, 50 10 S80 0, 100 10");
+    expect(path.getAttribute("d")).toBe(
+      "M0 0 C20 20, 40 20, 50 10 S80 0, 100 10"
+    );
     expect(path.getAttribute("stroke")).toBe("red");
   });
 

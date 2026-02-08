@@ -6,6 +6,114 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## v1.2.0 ✨ (08-02-2026)
+
+### ✨ New
+
+- **Agent Plugin** — New core plugin for AI/agent integration (~3.5KB gzipped)
+  - **Action Registry**: Register, unregister, execute, and introspect named actions with optional typed schemas (`describeAction`)
+  - **Command Bus**: Dispatch structured commands (`{ type, target?, payload? }`) to multiple handlers with `onCommand`/`dispatch`
+  - **Audit Logging**: Automatic log entries for every action, command, and captured emitter event, with configurable rotation (`maxLogSize`) and filtering by type, action name, or timestamp
+  - **Capability-Based Permissions**: Define per-scope allow-lists for actions and commands; supports permissive (default) and strict modes via `strictPermissions`
+  - **Emitter Event Capture**: Configure `emitterEvents` prefixes (e.g., `["router:", "store:"]`) to intercept and log events from other plugins via the shared `eleva.emitter`
+  - **State Inspection**: `inspect()`, `snapshot()`, and `diff()` methods for component registry introspection (opt-out via `enableInspection: false`)
+  - **Component Integration**: `ctx.agent` injected into every component's `setup()` context, including child components
+  - **Idempotent Install**: Warns and no-ops on double install; full `uninstall()` support restoring original `mount`/`_mountComponents`
+  - **Full documentation**: Overview, Patterns (15 examples), and API Reference pages
+
+- **Store Plugin — Emitter Events** for cross-plugin observability
+  - `store:dispatch` emitted before action execution (payload: mutation object)
+  - `store:mutate` emitted after successful execution (payload: mutation object)
+  - `store:error` emitted on action failure (payload: `{ action, error, timestamp }`)
+  - `store:register` emitted when a namespaced module is registered
+  - `store:unregister` emitted when a namespaced module is unregistered
+  - All events fire via the shared `eleva.emitter`, enabling the Agent plugin (and any observer) to capture Store activity natively without manual bridge code
+  - 15 new unit tests covering all 5 event types, ordering guarantees, and edge cases
+
+- **AX (Agent Experience) Verification System** — Automated validation for AI-facing artifacts
+  - `bun run verify:ax` — One-command pipeline that chains build, unit tests, and manifest JSON validation
+  - [Docs/Source Parity Test](test/unit/plugins/agent-docs-parity.test.ts) — Verifies `agent-manifest.json` stays in sync with Agent plugin source and type definitions (error codes, methods, types, configuration, and structural integrity)
+  - [AX CI Workflow](.github/workflows/ax.yml) — GitHub Actions workflow triggered on PRs to master when AI-facing files change
+  - Added `contractVersion` and `lastVerified` metadata to `agent-manifest.json` for API surface versioning and freshness tracking
+
+- **Golden AI Examples** — Minimal, self-contained codegen reference patterns in `examples/ai/`
+  - [Counter](examples/ai/counter/) — Reactive `signal(0)`, increment handler, `@click` binding (~15 lines)
+  - [Todo App](examples/ai/todo-app/) — Signal array, add/remove/toggle, list rendering with `key`, `onUnmount` cleanup (~40 lines)
+  - [Agent Actions](examples/ai/agent-actions/) — Agent plugin action registry, schema, execute with payload, audit log display (~50 lines)
+  - [README](examples/ai/README.md) — Index of golden examples with purpose and usage
+  - All examples use UMD builds with relative paths, compatible with `bun run serve`
+
+- **Agent Plugin — Emitter Events** for cross-plugin observability
+  - `agent:register` / `agent:unregister` — after action registration/removal
+  - `agent:execute` / `agent:execute:error` — after successful/failed action execution
+  - `agent:dispatch` — after command dispatch
+  - All events fire via `eleva.emitter`, enabling other plugins and components to observe agent activity
+
+- **Agent Plugin — Reactive Signals** for template-driven monitoring
+  - `agent.actionCount` — `Signal<number>` updates on register/unregister
+  - `agent.lastActivity` — `Signal<AgentLogEntry|null>` updates on every audit log addition
+  - Both exposed on `ctx.agent` for direct use in templates
+
+- **Agent Plugin — Auto-cleanup on Unmount**
+  - Actions registered via `ctx.agent.register()` in a component's `setup()` are automatically unregistered when the component unmounts
+  - Command handlers registered via `ctx.agent.onCommand()` are automatically unsubscribed on unmount
+  - Original `onUnmount` callbacks are preserved and called before cleanup
+
+### ⚠️ Breaking Changes
+
+- **CDN Individual Plugin UMD Globals** — Simplified from namespace objects to direct globals
+  - `app.use(ElevaAgentPlugin.Agent)` → `app.use(ElevaAgent)`
+  - `app.use(ElevaRouterPlugin.Router, {...})` → `app.use(ElevaRouter, {...})`
+  - `app.use(ElevaStorePlugin.Store, {...})` → `app.use(ElevaStore, {...})`
+  - `app.use(ElevaAttrPlugin.Attr)` → `app.use(ElevaAttr)`
+  - **Migration**: Replace the old namespace access with the direct global name
+  - ESM, CJS, and CDN bundled (`ElevaPlugins.Agent`) imports are **unchanged**
+  - The old namespace globals (`ElevaAgentPlugin`, etc.) no longer exist
+
+### 📦 Build & Packaging
+
+- **Individual Plugin UMD Builds** — Each plugin now exports a direct default global instead of a namespace object
+  - Added UMD entry files (`src/plugins/umd/*.js`) that re-export each plugin as a default export
+  - Split `createIndividualPluginConfig` into ESM/CJS and UMD configs in `rollup.config.js`
+  - ESM/CJS builds are unchanged (named exports preserved)
+
+- **Agent Plugin Exports** — Added `eleva/plugins/agent` subpath with ESM, CJS, UMD, and TypeScript declarations
+
+### 📝 Documentation
+
+- **Agent Plugin Documentation** — Three new pages
+  - [Overview](docs/plugins/agent/index.md) — Installation, configuration, permission modes, emitter event capture, data flow diagram
+  - [Patterns](docs/plugins/agent/patterns.md) — 15 usage patterns including LLM-powered agent, multi-agent coordination, audit dashboard, and cross-component messaging
+  - [API Reference](docs/plugins/agent/api.md) — Complete method reference, TypeScript types, FAQ schema, and troubleshooting guide
+
+- **Store Plugin Documentation** — Updated for emitter events
+  - New "Emitter Events" section in API Reference with event table, payloads, and example code
+  - Updated `dispatch()`, `registerModule()`, and `unregisterModule()` method docs
+
+- **Plugin Index** — Updated compatibility example showing Agent + Store + Router working together with `emitterEvents: ["router:", "store:"]`
+
+- **CDN Usage** — Fixed all individual plugin CDN examples across 7 documentation files to use simplified direct globals
+
+- **Navigation** — Added Agent Plugin to sidebar navigation (JSON and YAML configs)
+
+- **LLM Documentation** — Enhanced AI-optimized docs for better codegen accuracy
+  - `docs/llms.txt` — Added contract metadata block (`contract-version`, `last-verified`, `checksum-sha256`), compact Do/Don't table, and golden AI examples link
+  - `docs/llms-full.txt` — Added contract metadata block, AI Recipes section (4 task-oriented recipes: Counter, Parent-Child Communication, Agent Actions, SPA Page), AI Verification section, and golden examples link
+
+- **CONTRIBUTING.md** — Added "AI & Agent Experience (AX)" section with file update guidance, `verify:ax` process, and golden example requirements
+
+### 📦 Version Updates
+
+| Component | Version | Change |
+|-----------|---------|--------|
+| Eleva (core) | 1.2.0 | New release |
+| Store Plugin | 1.2.0 | Added emitter events |
+| Agent Plugin | 1.0.0 | New plugin |
+| Router Plugin | 1.1.1 | Unchanged |
+| Attr Plugin | 1.1.1 | Unchanged |
+
+---
+
 ## v1.1.1 (29-01-2026)
 
 ### 🐛 Fixed

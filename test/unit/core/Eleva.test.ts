@@ -391,27 +391,39 @@ describe("Children Components & Passing Props", () => {
 
 describe("Eleva Constructor", () => {
   test("should throw error when name is empty string", () => {
-    expect(() => new Eleva("")).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva("")).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should throw error when name is null", () => {
-    expect(() => new Eleva(null as any)).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva(null as any)).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should throw error when name is undefined", () => {
-    expect(() => new Eleva(undefined as any)).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva(undefined as any)).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should throw error when name is a number", () => {
-    expect(() => new Eleva(123 as any)).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva(123 as any)).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should throw error when name is an object", () => {
-    expect(() => new Eleva({} as any)).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva({} as any)).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should throw error when name is an array", () => {
-    expect(() => new Eleva([] as any)).toThrow("Eleva: name must be a non-empty string");
+    expect(() => new Eleva([] as any)).toThrow(
+      "Eleva: name must be a non-empty string"
+    );
   });
 
   test("should store name property correctly", () => {
@@ -486,20 +498,28 @@ describe("Eleva Plugin System", () => {
 
   test("should throw error when plugin has no install function", () => {
     const invalidPlugin = { name: "invalid" };
-    expect(() => app.use(invalidPlugin)).toThrow("Eleva: plugin must have an install function");
+    expect(() => app.use(invalidPlugin)).toThrow(
+      "Eleva: plugin must have an install function"
+    );
   });
 
   test("should throw error when plugin install is not a function", () => {
     const invalidPlugin = { name: "invalid", install: "not a function" };
-    expect(() => app.use(invalidPlugin)).toThrow("Eleva: plugin must have an install function");
+    expect(() => app.use(invalidPlugin)).toThrow(
+      "Eleva: plugin must have an install function"
+    );
   });
 
   test("should throw error when plugin is null", () => {
-    expect(() => app.use(null)).toThrow("Eleva: plugin must have an install function");
+    expect(() => app.use(null)).toThrow(
+      "Eleva: plugin must have an install function"
+    );
   });
 
   test("should throw error when plugin is undefined", () => {
-    expect(() => app.use(undefined)).toThrow("Eleva: plugin must have an install function");
+    expect(() => app.use(undefined)).toThrow(
+      "Eleva: plugin must have an install function"
+    );
   });
 
   test("should store plugin in _plugins Map by name", () => {
@@ -656,9 +676,9 @@ describe("Eleva Component Registration", () => {
   });
 
   test("should throw error when component name is a number", () => {
-    expect(() => app.component(123 as any, { template: "<div></div>" })).toThrow(
-      "Eleva: component name must be a non-empty string"
-    );
+    expect(() =>
+      app.component(123 as any, { template: "<div></div>" })
+    ).toThrow("Eleva: component name must be a non-empty string");
   });
 
   test("should throw error when definition has no template", () => {
@@ -712,14 +732,18 @@ describe("Eleva Component Registration", () => {
   test("should accept string template", () => {
     const definition = { template: "<div>Static</div>" };
     app.component("static-comp", definition);
-    expect((app as any)._components.get("static-comp").template).toBe("<div>Static</div>");
+    expect((app as any)._components.get("static-comp").template).toBe(
+      "<div>Static</div>"
+    );
   });
 
   test("should accept function template", () => {
     const templateFn = () => "<div>Dynamic</div>";
     const definition = { template: templateFn };
     app.component("dynamic-comp", definition);
-    expect((app as any)._components.get("dynamic-comp").template).toBe(templateFn);
+    expect((app as any)._components.get("dynamic-comp").template).toBe(
+      templateFn
+    );
   });
 
   test("should accept component with all properties", () => {
@@ -799,7 +823,7 @@ describe("Eleva Mount Variations", () => {
   test("should mount with async setup function", async () => {
     const component = {
       setup: async ({ signal }: any) => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         return { message: signal("Async Setup") };
       },
       template: (ctx: any) => `<div>${ctx.message.value}</div>`,
@@ -813,7 +837,7 @@ describe("Eleva Mount Variations", () => {
   test("should mount with async template function", async () => {
     const component = {
       template: async () => {
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
         return "<div>Async Template</div>";
       },
     };
@@ -828,7 +852,9 @@ describe("Eleva Mount Variations", () => {
       template: (ctx: any) => `<div>${ctx.props.message}</div>`,
     };
     app.component("props-comp", component);
-    const instance = await app.mount(container, "props-comp", { message: "Hello Props" });
+    const instance = await app.mount(container, "props-comp", {
+      message: "Hello Props",
+    });
     expect(container.innerHTML).toContain("Hello Props");
     await instance.unmount();
   });
@@ -963,7 +989,7 @@ describe("Eleva Render Batching", () => {
     countSignal.value = 3;
 
     // Wait for batched render
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     // Should have batched all updates into one render
     expect(renderCount).toBe(1);
@@ -997,8 +1023,8 @@ describe("Eleva Render Batching", () => {
     expect(container.innerHTML).toContain("0");
 
     // Wait for microtask
-    await new Promise(resolve => queueMicrotask(resolve));
-    await new Promise(resolve => setTimeout(resolve, 10));
+    await new Promise((resolve) => queueMicrotask(resolve));
+    await new Promise((resolve) => setTimeout(resolve, 10));
 
     expect(container.innerHTML).toContain("1");
   });
@@ -1026,7 +1052,7 @@ describe("Eleva Render Batching", () => {
       countSignal.value = i;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     // Should batch into minimal renders
     expect(updateCount).toBeLessThan(10);
@@ -1049,7 +1075,8 @@ describe("Eleva Render Batching", () => {
           onUpdate: () => updateCount++,
         };
       },
-      template: (ctx: any) => `<div>${ctx.s1.value}-${ctx.s2.value}-${ctx.s3.value}</div>`,
+      template: (ctx: any) =>
+        `<div>${ctx.s1.value}-${ctx.s2.value}-${ctx.s3.value}</div>`,
     };
 
     app.component("multi-signal", component);
@@ -1060,7 +1087,7 @@ describe("Eleva Render Batching", () => {
     signal2.value = "y";
     signal3.value = "z";
 
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(updateCount).toBe(1);
     expect(container.innerHTML).toContain("x-y-z");
@@ -1125,7 +1152,9 @@ describe("Eleva Event Processing", () => {
     expect(clickHandler).toHaveBeenCalledTimes(1);
 
     // Test input event
-    const textInput = container.querySelector("#text-input")! as HTMLInputElement;
+    const textInput = container.querySelector(
+      "#text-input"
+    )! as HTMLInputElement;
     textInput.value = "test";
     textInput.dispatchEvent(new Event("input", { bubbles: true }));
     expect(inputHandler).toHaveBeenCalledTimes(1);
@@ -1329,7 +1358,8 @@ describe("Eleva Event Processing", () => {
           submitted = true;
         },
       }),
-      template: () => `<form @submit="handleSubmit"><button type="submit">Submit</button></form>`,
+      template: () =>
+        `<form @submit="handleSubmit"><button type="submit">Submit</button></form>`,
     };
 
     app.component("submit-event", component);
@@ -1412,7 +1442,7 @@ describe("Eleva Style Injection", () => {
 
     // Trigger re-render
     instance.data.count.value = 1;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     // Style should be unchanged
     expect(styleEl!.textContent).toBe(originalStyle);
@@ -1436,7 +1466,7 @@ describe("Eleva Style Injection", () => {
     expect(styleEl!.textContent).toContain("red");
 
     colorSignal.value = "blue";
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     styleEl = container.querySelector("style[data-e-style]");
     expect(styleEl!.textContent).toContain("blue");
@@ -1449,7 +1479,8 @@ describe("Eleva Style Injection", () => {
         weight: "bold",
       }),
       template: () => "<div>Test</div>",
-      style: (ctx: any) => `.test { font-size: ${ctx.size}; font-weight: ${ctx.weight}; }`,
+      style: (ctx: any) =>
+        `.test { font-size: ${ctx.size}; font-weight: ${ctx.weight}; }`,
     };
 
     app.component("expr-style", component);
@@ -1489,7 +1520,7 @@ describe("Eleva Style Injection", () => {
     const styleEl1 = container.querySelector("style[data-e-style]");
 
     countSignal.value = 1;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     const styleEl2 = container.querySelector("style[data-e-style]");
 
@@ -1591,7 +1622,10 @@ describe("Eleva Props Extraction", () => {
   });
 
   test("should return empty object for element with no props", async () => {
-    const result = (app as any)._extractProps(document.createElement("div"), {});
+    const result = (app as any)._extractProps(
+      document.createElement("div"),
+      {}
+    );
     expect(result).toEqual({});
   });
 
@@ -1702,7 +1736,8 @@ describe("Eleva Children Mounting", () => {
     // This is hard to test directly, but we can verify it doesn't throw
     const Child = { template: () => "<span>Child</span>" };
     const Parent = {
-      template: () => `<div><!-- comment --><child-el></child-el>Text node</div>`,
+      template: () =>
+        `<div><!-- comment --><child-el></child-el>Text node</div>`,
       children: { "child-el": Child },
     };
 
@@ -1851,7 +1886,7 @@ describe("Eleva Unmount Behavior", () => {
     // Signal change after unmount should not trigger re-render
     const contentBefore = container.innerHTML;
     signalRef.value = 100;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     // Container should be empty after unmount
     expect(container.innerHTML).toBe("");
@@ -1915,9 +1950,7 @@ describe("Eleva Unmount Behavior", () => {
         return { show };
       },
       template: (ctx: any) =>
-        ctx.show.value
-          ? `<child-comp></child-comp>`
-          : `<div>No child</div>`,
+        ctx.show.value ? `<child-comp></child-comp>` : `<div>No child</div>`,
       children: { "child-comp": Child },
     };
 
@@ -1959,9 +1992,7 @@ describe("Eleva Unmount Behavior", () => {
         return { show };
       },
       template: (ctx: any) =>
-        ctx.show.value
-          ? `<child-comp></child-comp>`
-          : `<div>No child</div>`,
+        ctx.show.value ? `<child-comp></child-comp>` : `<div>No child</div>`,
       children: { "child-comp": Child },
     };
 
@@ -2009,7 +2040,7 @@ describe("Eleva Unmount Behavior", () => {
     const component = {
       setup: () => ({
         onUnmount: async () => {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           order.push("unmount");
         },
       }),
@@ -2034,7 +2065,8 @@ describe("Eleva Unmount Behavior", () => {
         s3 = signal(3);
         return { a: s1, b: s2, c: s3 };
       },
-      template: (ctx: any) => `<div>${ctx.a.value}-${ctx.b.value}-${ctx.c.value}</div>`,
+      template: (ctx: any) =>
+        `<div>${ctx.a.value}-${ctx.b.value}-${ctx.c.value}</div>`,
     };
 
     app.component("multi-watcher", component);
@@ -2046,7 +2078,7 @@ describe("Eleva Unmount Behavior", () => {
     s1.value = 10;
     s2.value = 20;
     s3.value = 30;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(container.innerHTML).toBe("");
   });
@@ -2127,7 +2159,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
     const component = {
       setup: () => ({
         onBeforeMount: async () => {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           order.push("beforeMount");
         },
         onMount: () => {
@@ -2148,7 +2180,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
     const component = {
       setup: () => ({
         onMount: async () => {
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise((resolve) => setTimeout(resolve, 10));
           mountCompleted = true;
         },
       }),
@@ -2171,7 +2203,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
         return {
           count: countSignal,
           onBeforeUpdate: async () => {
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
             order.push("beforeUpdate");
           },
           onUpdate: () => {
@@ -2186,7 +2218,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
     await app.mount(container, "async-before-update");
 
     countSignal.value = 1;
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(order).toEqual(["beforeUpdate", "update"]);
   });
@@ -2201,7 +2233,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
         return {
           count: countSignal,
           onUpdate: async () => {
-            await new Promise(resolve => setTimeout(resolve, 10));
+            await new Promise((resolve) => setTimeout(resolve, 10));
             updateCompleted = true;
           },
         };
@@ -2213,7 +2245,7 @@ describe("Eleva Async Lifecycle Hooks", () => {
     await app.mount(container, "async-update");
 
     countSignal.value = 1;
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(updateCompleted).toBe(true);
   });
@@ -2228,23 +2260,23 @@ describe("Eleva Async Lifecycle Hooks", () => {
         return {
           count: countSignal,
           onBeforeMount: async () => {
-            await new Promise(resolve => setTimeout(resolve, 5));
+            await new Promise((resolve) => setTimeout(resolve, 5));
             order.push("beforeMount");
           },
           onMount: async () => {
-            await new Promise(resolve => setTimeout(resolve, 5));
+            await new Promise((resolve) => setTimeout(resolve, 5));
             order.push("mount");
           },
           onBeforeUpdate: async () => {
-            await new Promise(resolve => setTimeout(resolve, 5));
+            await new Promise((resolve) => setTimeout(resolve, 5));
             order.push("beforeUpdate");
           },
           onUpdate: async () => {
-            await new Promise(resolve => setTimeout(resolve, 5));
+            await new Promise((resolve) => setTimeout(resolve, 5));
             order.push("update");
           },
           onUnmount: async () => {
-            await new Promise(resolve => setTimeout(resolve, 5));
+            await new Promise((resolve) => setTimeout(resolve, 5));
             order.push("unmount");
           },
         };
@@ -2258,13 +2290,19 @@ describe("Eleva Async Lifecycle Hooks", () => {
     expect(order).toEqual(["beforeMount", "mount"]);
 
     countSignal.value = 1;
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
 
     expect(order).toEqual(["beforeMount", "mount", "beforeUpdate", "update"]);
 
     await instance.unmount();
 
-    expect(order).toEqual(["beforeMount", "mount", "beforeUpdate", "update", "unmount"]);
+    expect(order).toEqual([
+      "beforeMount",
+      "mount",
+      "beforeUpdate",
+      "update",
+      "unmount",
+    ]);
   });
 });
 
@@ -2339,7 +2377,7 @@ describe("Eleva Edge Cases", () => {
 
     // Each should have independent state
     instance1.data.count.value = 10;
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(container1.innerHTML).toContain("10");
     expect(container2.innerHTML).toContain("0");
@@ -2417,7 +2455,8 @@ describe("Eleva Edge Cases", () => {
 
     const component = {
       setup: ({ signal }: any) => ({ data: signal(complexObj) }),
-      template: (ctx: any) => `<div>${JSON.stringify(ctx.data.value.nested.array)}</div>`,
+      template: (ctx: any) =>
+        `<div>${JSON.stringify(ctx.data.value.nested.array)}</div>`,
     };
 
     app.component("complex-signal", component);
@@ -2487,7 +2526,7 @@ describe("Eleva Edge Cases", () => {
 
     // Click button
     container.querySelector("button")!.click();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise((resolve) => setTimeout(resolve, 50));
 
     expect(container.innerHTML).toContain("Count: 1");
     expect(lifecycleOrder).toContain("beforeUpdate");
@@ -2511,7 +2550,8 @@ describe("Eleva Edge Cases", () => {
   test("should handle unicode in various places", async () => {
     const component = {
       setup: () => ({ message: "你好世界" }),
-      template: (ctx: any) => `<div class="unicode-test" data-label="日本語">${ctx.message}</div>`,
+      template: (ctx: any) =>
+        `<div class="unicode-test" data-label="日本語">${ctx.message}</div>`,
       style: `.unicode-test { content: "한국어"; }`,
     };
     app.component("unicode", component);

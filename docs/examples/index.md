@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Copy-paste ready Eleva.js code examples. UI patterns for forms, lists, async data. Complete apps and plugin development guide.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -77,7 +77,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Code Examples
 
-> **Version:** 1.1.1 | Comprehensive, real-world examples to copy and adapt for your projects.
+> **Version:** 1.2.0 | Comprehensive, real-world examples to copy and adapt for your projects.
 
 ---
 

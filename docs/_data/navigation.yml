@@ -86,6 +86,13 @@ sidebar:
             url: /plugins/store/advanced
           - title: "API Reference"
             url: /plugins/store/api
+      - title: "Agent Plugin"
+        url: /plugins/agent/
+        children:
+          - title: "Patterns"
+            url: /plugins/agent/patterns
+          - title: "API Reference"
+            url: /plugins/agent/api
 
   # Examples Section
   - title: "Examples"

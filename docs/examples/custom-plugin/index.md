@@ -105,7 +105,7 @@ description: Build your own Eleva.js plugin. Learn plugin architecture, install/
   "description": "Complete guide to building Eleva.js plugins. Learn plugin architecture, registration, and the basics of extending Eleva.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -145,7 +145,7 @@ description: Build your own Eleva.js plugin. Learn plugin architecture, install/
 
 # Creating a Custom Plugin for Eleva
 
-> **Version:** 1.1.1 | Complete guide to creating, testing, and publishing Eleva plugins.
+> **Version:** 1.2.0 | Complete guide to creating, testing, and publishing Eleva plugins.
 
 ---
 

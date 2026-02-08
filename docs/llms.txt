@@ -1,6 +1,9 @@
-# Eleva.js v1.1.1 (LLM Quick Reference)
+# Eleva.js v1.2.0 (LLM Quick Reference)
 
-> Lightweight (~2.5KB gzipped) JavaScript framework. Compact rules and patterns for generating correct Eleva.js code. Zero dependencies. For full details, see `https://elevajs.com/llms-full.txt`.
+<!-- contract-version: 1.0.0 -->
+<!-- last-verified: 2026-02-08 -->
+
+> Lightweight (~2.5KB gzipped) JavaScript framework with built-in AI agent support (AX). Compact rules and patterns for generating correct Eleva.js code. Zero dependencies. Agent plugin for LLM/AI integration. For full details, see `https://elevajs.com/llms-full.txt`.
 
 ## LLM Contract (Strict Summary)
 > **Sync note:** This file is curated by maintainers; keep it aligned with core docs and release notes.
@@ -12,7 +15,18 @@
 - Must clean up timers/listeners in `onUnmount`; parent-removal unmount is synchronous (old cleanup completes before new mount)
 - Must namespace styles manually; no auto-scoping
 - Must use stable `key` in lists; avoid heavy logic in templates
-- If using Router/Store, install via `app.use()` and access via injected context (`router`, `store`)
+- If using Router/Store/Agent, install via `app.use()` and access via injected context (`router`, `store`, `agent`)
+
+## Do / Don't (Quick)
+
+| Do | Don't |
+|----|-------|
+| `signal()` for all state | Direct DOM mutation |
+| `@click="handler"` | `onclick="..."` or raw expressions |
+| `:prop="value"` (no `ctx.`) | `ctx.prop` in bindings |
+| `key` on every list item | Index-based or missing keys |
+| Cleanup in `onUnmount` | Leak timers/listeners |
+| `app.use(Plugin)` for plugins | Direct plugin instantiation |
 
 ## Environment Requirements
 
@@ -34,6 +48,7 @@
 | `eleva/plugins/attr` | ESM/CJS/UMD | Attr plugin (tree-shakable) |
 | `eleva/plugins/router` | ESM/CJS/UMD | Router plugin (tree-shakable) |
 | `eleva/plugins/store` | ESM/CJS/UMD | Store plugin (tree-shakable) |
+| `eleva/plugins/agent` | ESM/CJS/UMD | Agent plugin (tree-shakable) |
 | `eleva/browser` | UMD | Browser `<script>` tags only |
 | `eleva/plugins/browser` | UMD | All plugins for `<script>` tags |
 
@@ -42,7 +57,7 @@
 ```javascript
 // Standard imports
 import Eleva from 'eleva';
-import { Router, Store } from 'eleva/plugins';
+import { Router, Store, Agent } from 'eleva/plugins';
 
 // CommonJS
 const Eleva = require('eleva');
@@ -53,20 +68,22 @@ const Eleva = require('eleva');
 <script src="https://cdn.jsdelivr.net/npm/eleva"></script>
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/eleva-plugins.umd.min.js"></script>
 
-<!-- CDN: Individual plugins -->
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>
+<!-- CDN: Individual plugins (each exposes a single global) -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>    <!-- → ElevaAttr -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/router.umd.min.js"></script>  <!-- → ElevaRouter -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/store.umd.min.js"></script>   <!-- → ElevaStore -->
+<script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/agent.umd.min.js"></script>   <!-- → ElevaAgent -->
 ```
 
 ### Plugin Usage by Import Method
 
 | Method | Import/Include | Usage |
 |--------|----------------|-------|
-| ES Modules | `import { Router, Store } from "eleva/plugins"` | `app.use(Router, {...})` |
+| ES Modules | `import { Router, Store, Agent } from "eleva/plugins"` | `app.use(Router, {...})` |
 | CDN Bundled | `eleva-plugins.umd.min.js` | `app.use(ElevaPlugins.Router, {...})` |
-| CDN Individual | `plugins/router.umd.min.js` | `app.use(ElevaRouterPlugin, {...})` |
+| CDN Individual | `plugins/<name>.umd.min.js` | `app.use(ElevaRouter, {...})` / `app.use(ElevaStore, {...})` / `app.use(ElevaAgent, {...})` / `app.use(ElevaAttr, {...})` |
 
-> Use bundled for 2+ plugins (simpler). Individual for 1 plugin (smaller bundle).
+> Use bundled for 2+ plugins (simpler). Individual for 1 plugin (smaller bundle). UMD global pattern: `Eleva<Name>` (e.g., `ElevaRouter`, `ElevaStore`, `ElevaAgent`, `ElevaAttr`).
 
 ## Core Concepts
 
@@ -305,6 +322,72 @@ setup: ({ store }) => ({
 
 > For guards, namespaces, persistence, and more, see `https://elevajs.com/llms-full.txt`.
 
+### Agent
+
+**Method contract** (all methods on `ctx.agent` inside `setup()`):
+```
+register(name, handler, schema?)        → void          | throws AGENT_HANDLER_NOT_FUNCTION
+unregister(name)                        → void          | warns if not found
+execute(name, payload?, scope?)         → Promise<any>  | throws AGENT_PERMISSION_DENIED | AGENT_ACTION_NOT_FOUND | AGENT_SCHEMA_VIOLATION | AGENT_HANDLER_ERROR
+executeBatch(actions[], scope?)         → Promise<any[]> | parallel execution, rejects on first error
+executeSequence(actions[], scope?)      → Promise<any>  | sequential, pipes result → next payload
+hasAction(name)                         → boolean       |
+describeAction(name)                    → descriptor|null|
+listActions()                           → descriptor[]  |
+describe(scope?)                        → manifest      | full capability manifest for scope
+dispatch(command, scope?)               → Promise<void> | throws AGENT_COMMAND_INVALID_TYPE | AGENT_PERMISSION_DENIED
+onCommand(type, handler)                → () => void    | throws AGENT_HANDLER_NOT_FUNCTION
+getLog(filter?)                         → LogEntry[]    | filter by type, since, action, status ("ok"|"error")
+clearLog()                              → void          |
+inspect()                               → object        | only if enableInspection: true
+snapshot()                              → Snapshot       | only if enableInspection: true
+diff(snapA, snapB)                      → DiffResult    | only if enableInspection: true
+```
+
+**Handler receives payload only:** `(payload) => result` — NOT `(ctx, name)`.
+**Permissions are scope objects:** `{ "scopeName": { actions: [...], commands: [...] } }` — NOT arrays.
+**All errors have `error.code`** — machine-readable codes for programmatic handling.
+**Audit log records outcomes:** entries include `result`, `error`, `durationMs` after handler completion.
+**Schema validation is opt-in:** set `validateSchemas: true` in options to enforce `schema.input` on execute.
+**Agent emits events:** `agent:register`, `agent:unregister`, `agent:execute`, `agent:execute:error`, `agent:dispatch` via `eleva.emitter`.
+**Reactive signals:** `agent.actionCount` (Signal\<number\>) and `agent.lastActivity` (Signal\<AgentLogEntry|null\>) on `ctx.agent`.
+**Auto-cleanup on unmount:** Actions registered and commands subscribed via `ctx.agent` in `setup()` are automatically cleaned up when the component unmounts.
+
+```javascript
+import { Agent } from "eleva/plugins";
+app.use(Agent, {
+  actions: {
+    greet: (payload) => `Hello, ${payload.name}!`,
+    fetchUser: async (payload) => {
+      const res = await fetch(`/api/users/${payload.id}`);
+      return res.json();
+    }
+  },
+  permissions: {
+    "ui-agent": { actions: ["greet", "fetchUser"], commands: ["REFRESH"] }
+  },
+  strictPermissions: false
+});
+
+// In component: access via setup({ agent })
+setup: ({ agent }) => ({
+  run: async () => {
+    const result = await agent.execute("greet", { name: "World" });
+    const log = agent.getLog();
+    const tools = agent.listActions();
+    const desc = agent.describeAction("greet");
+  }
+})
+
+// Command bus
+const unsub = agent.onCommand("REFRESH", (cmd) => console.log(cmd.payload));
+await agent.dispatch({ type: "REFRESH", payload: { force: true } });
+unsub(); // Cleanup
+```
+
+> For full type definitions, error catalog, permission logic, and state inspection, see `https://elevajs.com/llms-full.txt`.
+> **Machine-readable manifest:** `https://elevajs.com/agent-manifest.json` (JSON, for tool-calling integrations).
+
 ## Troubleshooting (Quick)
 - Event not firing: use `@click="handler"` or `@click="() => ..."` (not raw expressions)
 - Props undefined in child: use `:prop="value"` without `ctx.`
@@ -327,5 +410,6 @@ template: (ctx) => `<h1>${ctx.name.value}</h1>`
 - Plugin System: https://elevajs.com/plugin-system
 - Best Practices: https://elevajs.com/best-practices
 - Examples: https://elevajs.com/examples/
+- Golden AI Examples: https://elevajs.com/examples/ai/
 - API Reference: https://elevajs.com/api/
 - FAQ: https://elevajs.com/faq

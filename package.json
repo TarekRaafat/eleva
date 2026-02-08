@@ -1,7 +1,7 @@
 {
   "name": "eleva",
-  "version": "1.1.1",
-  "description": "Eleva.js - Best DX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience. Vanilla JavaScript, elevated with signals for reactivity and components for structure. Zero dependencies, TypeScript support.",
+  "version": "1.2.0",
+  "description": "Eleva.js - Best DX + AX for Building the Best UX. A lightweight (~2.5KB gzipped) React/Vue/Angular alternative designed for exceptional Developer Experience (DX) and Agent Experience (AX). Vanilla JavaScript, elevated with signals for reactivity, components for structure, and built-in AI agent support. Zero dependencies, TypeScript support.",
   "type": "module",
   "private": false,
   "license": "MIT",
@@ -152,6 +152,18 @@
       "browser": "./dist/plugins/store.umd.min.js",
       "default": "./dist/plugins/store.js"
     },
+    "./plugins/agent": {
+      "import": {
+        "types": "./dist/plugins/agent.d.ts",
+        "default": "./dist/plugins/agent.js"
+      },
+      "require": {
+        "types": "./dist/plugins/agent.d.cts",
+        "default": "./dist/plugins/agent.cjs"
+      },
+      "browser": "./dist/plugins/agent.umd.min.js",
+      "default": "./dist/plugins/agent.js"
+    },
     "./package.json": "./package.json"
   },
   "files": [
@@ -161,13 +173,13 @@
   ],
   "sideEffects": false,
   "devDependencies": {
-    "@babel/core": "^7.28.6",
-    "@babel/preset-env": "^7.28.6",
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.0",
     "@codecov/rollup-plugin": "^1.9.1",
-    "@happy-dom/global-registrator": "^20.4.0",
+    "@happy-dom/global-registrator": "^20.5.0",
     "@rollup/plugin-node-resolve": "^16.0.3",
     "@swc/core": "^1.15.11",
-    "@types/bun": "^1.3.7",
+    "@types/bun": "^1.3.8",
     "babel-jest": "^30.2.0",
     "eslint": "^9.39.2",
     "eslint-plugin-prettier": "^5.5.5",
@@ -180,7 +192,7 @@
     "lint-staged": "^16.2.7",
     "prettier": "^3.8.1",
     "rimraf": "^6.1.2",
-    "rollup": "^4.57.0",
+    "rollup": "^4.57.1",
     "rollup-plugin-dts": "^6.3.0",
     "rollup-plugin-swc3": "^0.12.1",
     "typescript": "^5.9.3"
@@ -189,8 +201,9 @@
     "dev": "rollup -c -w",
     "build": "rollup -c",
     "build:types": "tsc",
+    "build:types:augment": "bun scripts/augment-agent-types.js",
     "build:types:bundle": "rollup -c rollup.dts.config.js",
-    "build:all": "bun run clean && bun run build && bun run build:types && bun run build:types:bundle",
+    "build:all": "bun run clean && bun run build && bun run build:types && bun run build:types:augment && bun run build:types:bundle",
     "docs:api": "jsdoc -c jsdoc.json",
     "docs:generate": "bun run docs:api",
     "test": "bun test ./test/unit ./test/performance",
@@ -201,16 +214,20 @@
     "test:metrics": "bun test ./test/performance/documentation-metrics.test.ts",
     "test:benchmark": "bun test ./test/performance/js-framework-benchmark.test.ts",
     "test:fps": "bun test ./test/performance/fps-benchmark.test.ts",
-    "test:integration": "bun test ./test/integration",
+    "test:integration": "bun run build && bun test ./test/integration",
     "test:all": "bun test",
     "test:coverage": "bun test --coverage ./test/unit/core ./test/unit/modules ./test/unit/plugins/Attr.test.ts ./test/unit/plugins/Props.test.ts ./test/unit/plugins/Store.test.ts ./test/integration",
     "test:watch": "bun test --watch",
     "codecov": "npx codecov",
     "lint": "eslint src/**/*.js",
-    "format": "npx prettier \"src/**/*\" \"types/**/*\" --write",
+    "format": "npx prettier \"src/**/*\" \"types/**/*\" --write --no-error-on-unmatched-pattern",
     "clean": "rimraf dist types test/coverage",
     "serve": "bunx serve . -l 3000",
-    "validate": "npx publint; npx @arethetypeswrong/cli --pack . || echo '\n⚠️  Type validation warnings (non-blocking)'",
+    "verify:ax": "bun run build:all && bun run test:unit && bun -e \"JSON.parse(require('fs').readFileSync('docs/agent-manifest.json','utf8'));console.log('✓ agent-manifest.json valid')\" && echo '✓ All AX checks passed'",
+    "validate:publint": "TMPDIR=.tmp BUN_INSTALL_CACHE_DIR=.bun-cache bun x publint",
+    "validate:types": "TMPDIR=.tmp BUN_INSTALL_CACHE_DIR=.bun-cache bun x @arethetypeswrong/cli --pack .",
+    "validate": "bun run validate:publint || (echo '⚠️ publint unavailable in current env (non-blocking)' && true); bun run validate:types || (echo '⚠️ arethetypeswrong unavailable in current env (non-blocking)' && true)",
+    "validate:ci": "bun run validate:publint && bun run validate:types",
     "prepublishOnly": "bun run format && bun run lint && bun run build:all && bun run test:coverage && bun run validate",
     "prepare": "bun run build:all"
   },
@@ -298,7 +315,13 @@
     "web development framework",
     "web development tools",
     "micro frontends",
-    "render batching"
+    "render batching",
+    "agent experience",
+    "AX",
+    "AI agent",
+    "AI integration",
+    "LLM integration",
+    "agent-ready framework"
   ],
   "funding": [
     {

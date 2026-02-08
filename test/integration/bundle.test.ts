@@ -192,7 +192,9 @@ describe("Eleva.js Bundle Integration", () => {
       });
 
       await app.mount(container, "dynamic-test");
-      expect(container.querySelector("#msg")!.textContent!.trim()).toBe("Hello World!");
+      expect(container.querySelector("#msg")!.textContent!.trim()).toBe(
+        "Hello World!"
+      );
     });
 
     test("renders lists", async () => {

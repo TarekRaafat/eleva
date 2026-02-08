@@ -108,7 +108,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
         greeting: "Hello",
         capitalize: (str: string) => str.toUpperCase(),
       };
-      expect(TemplateEngine.evaluate("capitalize(greeting)", data)).toBe("HELLO");
+      expect(TemplateEngine.evaluate("capitalize(greeting)", data)).toBe(
+        "HELLO"
+      );
     });
 
     test("should handle method calls on objects", () => {
@@ -127,22 +129,34 @@ describe("TemplateEngine Complex Expression Handling", () => {
         transform: (v: number) => v * 2,
         value: 5,
       };
-      expect(TemplateEngine.evaluate("process(transform(value))", data)).toBe(11);
+      expect(TemplateEngine.evaluate("process(transform(value))", data)).toBe(
+        11
+      );
     });
 
     test("simple function call", () => {
-      expect(TemplateEngine.evaluate("greet()", { greet: () => "Hello" })).toBe("Hello");
+      expect(TemplateEngine.evaluate("greet()", { greet: () => "Hello" })).toBe(
+        "Hello"
+      );
     });
 
     test("function with argument", () => {
-      expect(TemplateEngine.evaluate("double(x)", { double: (n: number) => n * 2, x: 5 })).toBe(10);
+      expect(
+        TemplateEngine.evaluate("double(x)", {
+          double: (n: number) => n * 2,
+          x: 5,
+        })
+      ).toBe(10);
     });
 
     test("function with multiple arguments", () => {
-      expect(TemplateEngine.evaluate(
-        "add(a, b)",
-        { add: (x: number, y: number) => x + y, a: 3, b: 4 }
-      )).toBe(7);
+      expect(
+        TemplateEngine.evaluate("add(a, b)", {
+          add: (x: number, y: number) => x + y,
+          a: 3,
+          b: 4,
+        })
+      ).toBe(7);
     });
   });
 
@@ -161,7 +175,10 @@ describe("TemplateEngine Complex Expression Handling", () => {
 
     test("multiplication", () => {
       expect(
-        TemplateEngine.evaluate("price * quantity", { price: 9.99, quantity: 3 })
+        TemplateEngine.evaluate("price * quantity", {
+          price: 9.99,
+          quantity: 3,
+        })
       ).toBe(29.97);
     });
 
@@ -192,7 +209,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("exponentiation operator", () => {
-      expect(TemplateEngine.evaluate("base ** exp", { base: 2, exp: 3 })).toBe(8);
+      expect(TemplateEngine.evaluate("base ** exp", { base: 2, exp: 3 })).toBe(
+        8
+      );
     });
   });
 
@@ -216,11 +235,18 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("less than or equal", () => {
-      expect(TemplateEngine.evaluate("score <= 100", { score: 100 })).toBe(true);
+      expect(TemplateEngine.evaluate("score <= 100", { score: 100 })).toBe(
+        true
+      );
     });
 
     test("greater than or equal", () => {
-      expect(TemplateEngine.evaluate("value >= threshold", { value: 50, threshold: 50 })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("value >= threshold", {
+          value: 50,
+          threshold: 50,
+        })
+      ).toBe(true);
     });
   });
 
@@ -230,14 +256,18 @@ describe("TemplateEngine Complex Expression Handling", () => {
 
   describe("Logical Operators", () => {
     test("AND operator", () => {
-      expect(TemplateEngine.evaluate("a && b", { a: true, b: true })).toBe(true);
+      expect(TemplateEngine.evaluate("a && b", { a: true, b: true })).toBe(
+        true
+      );
       expect(TemplateEngine.evaluate("a && b", { a: true, b: false })).toBe(
         false
       );
     });
 
     test("OR operator", () => {
-      expect(TemplateEngine.evaluate("a || b", { a: false, b: true })).toBe(true);
+      expect(TemplateEngine.evaluate("a || b", { a: false, b: true })).toBe(
+        true
+      );
       expect(TemplateEngine.evaluate("a || b", { a: false, b: false })).toBe(
         false
       );
@@ -249,8 +279,12 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("complex logical", () => {
-      expect(TemplateEngine.evaluate("(a && b) || c", { a: true, b: false, c: true })).toBe(true);
-      expect(TemplateEngine.evaluate("a && (b || c)", { a: true, b: false, c: true })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("(a && b) || c", { a: true, b: false, c: true })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("a && (b || c)", { a: true, b: false, c: true })
+      ).toBe(true);
     });
 
     test("short-circuit evaluation", () => {
@@ -291,10 +325,11 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("ternary with property access", () => {
-      expect(TemplateEngine.evaluate(
-        "user.isAdmin ? user.adminName : user.name",
-        { user: { isAdmin: true, adminName: "Admin", name: "User" } }
-      )).toBe("Admin");
+      expect(
+        TemplateEngine.evaluate("user.isAdmin ? user.adminName : user.name", {
+          user: { isAdmin: true, adminName: "Admin", name: "User" },
+        })
+      ).toBe("Admin");
     });
   });
 
@@ -305,39 +340,47 @@ describe("TemplateEngine Complex Expression Handling", () => {
   describe("String Operations", () => {
     test("string concatenation", () => {
       expect(
-        TemplateEngine.evaluate("first + ' ' + last", { first: "John", last: "Doe" })
+        TemplateEngine.evaluate("first + ' ' + last", {
+          first: "John",
+          last: "Doe",
+        })
       ).toBe("John Doe");
     });
 
     test("template literal style (using concatenation)", () => {
-      expect(TemplateEngine.evaluate(
-        "'Hello, ' + name + '!'",
-        { name: "World" }
-      )).toBe("Hello, World!");
+      expect(
+        TemplateEngine.evaluate("'Hello, ' + name + '!'", { name: "World" })
+      ).toBe("Hello, World!");
     });
 
     test("string method - toUpperCase", () => {
-      expect(TemplateEngine.evaluate("name.toUpperCase()", { name: "john" })).toBe(
-        "JOHN"
-      );
+      expect(
+        TemplateEngine.evaluate("name.toUpperCase()", { name: "john" })
+      ).toBe("JOHN");
     });
 
     test("string method - toLowerCase", () => {
-      expect(TemplateEngine.evaluate("name.toLowerCase()", { name: "JANE" })).toBe("jane");
+      expect(
+        TemplateEngine.evaluate("name.toLowerCase()", { name: "JANE" })
+      ).toBe("jane");
     });
 
     test("string method - trim", () => {
-      expect(TemplateEngine.evaluate("text.trim()", { text: "  hello  " })).toBe(
-        "hello"
-      );
+      expect(
+        TemplateEngine.evaluate("text.trim()", { text: "  hello  " })
+      ).toBe("hello");
     });
 
     test("string method - substring", () => {
-      expect(TemplateEngine.evaluate("text.substring(0, 5)", { text: "Hello World" })).toBe("Hello");
+      expect(
+        TemplateEngine.evaluate("text.substring(0, 5)", { text: "Hello World" })
+      ).toBe("Hello");
     });
 
     test("string method - split", () => {
-      expect(TemplateEngine.evaluate("text.split(',').length", { text: "a,b,c" })).toBe(3);
+      expect(
+        TemplateEngine.evaluate("text.split(',').length", { text: "a,b,c" })
+      ).toBe(3);
     });
 
     test("string length", () => {
@@ -384,22 +427,24 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("array some", () => {
-      expect(TemplateEngine.evaluate(
-        "items.some(x => x > 5)",
-        { items: [1, 2, 3, 6] }
-      )).toBe(true);
+      expect(
+        TemplateEngine.evaluate("items.some(x => x > 5)", {
+          items: [1, 2, 3, 6],
+        })
+      ).toBe(true);
     });
 
     test("array every", () => {
-      expect(TemplateEngine.evaluate(
-        "items.every(x => x > 0)",
-        { items: [1, 2, 3] }
-      )).toBe(true);
+      expect(
+        TemplateEngine.evaluate("items.every(x => x > 0)", { items: [1, 2, 3] })
+      ).toBe(true);
     });
 
     test("array includes", () => {
       expect(
-        TemplateEngine.evaluate("items.includes('b')", { items: ["a", "b", "c"] })
+        TemplateEngine.evaluate("items.includes('b')", {
+          items: ["a", "b", "c"],
+        })
       ).toBe(true);
     });
 
@@ -424,16 +469,18 @@ describe("TemplateEngine Complex Expression Handling", () => {
 
   describe("Modern JavaScript Features", () => {
     test("nullish coalescing (??)", () => {
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: null })).toBe(
-        "default"
-      );
+      expect(
+        TemplateEngine.evaluate("value ?? 'default'", { value: null })
+      ).toBe("default");
       expect(
         TemplateEngine.evaluate("value ?? 'default'", { value: undefined })
       ).toBe("default");
       expect(
         TemplateEngine.evaluate("value ?? 'default'", { value: "exists" })
       ).toBe("exists");
-      expect(TemplateEngine.evaluate("value ?? 'default'", { value: 0 })).toBe(0);
+      expect(TemplateEngine.evaluate("value ?? 'default'", { value: 0 })).toBe(
+        0
+      );
     });
 
     test("optional chaining (?.)", () => {
@@ -467,18 +514,16 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("spread in object literal", () => {
-      const result = TemplateEngine.evaluate(
-        "({...obj, c: 3})",
-        { obj: { a: 1, b: 2 } }
-      );
+      const result = TemplateEngine.evaluate("({...obj, c: 3})", {
+        obj: { a: 1, b: 2 },
+      });
       expect(result).toEqual({ a: 1, b: 2, c: 3 });
     });
 
     test("destructuring in arrow function", () => {
-      const result = TemplateEngine.evaluate(
-        "items.map(({ name }) => name)",
-        { items: [{ name: "A" }, { name: "B" }] }
-      );
+      const result = TemplateEngine.evaluate("items.map(({ name }) => name)", {
+        items: [{ name: "A" }, { name: "B" }],
+      });
       expect(result).toEqual(["A", "B"]);
     });
   });
@@ -503,10 +548,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("Object.entries", () => {
-      const result = TemplateEngine.evaluate(
-        "Object.entries(obj)",
-        { obj: { a: 1 } }
-      );
+      const result = TemplateEngine.evaluate("Object.entries(obj)", {
+        obj: { a: 1 },
+      });
       expect(result).toEqual([["a", 1]]);
     });
 
@@ -538,7 +582,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("Math.ceil", () => {
-      expect(TemplateEngine.evaluate("Math.ceil(value)", { value: 4.1 })).toBe(5);
+      expect(TemplateEngine.evaluate("Math.ceil(value)", { value: 4.1 })).toBe(
+        5
+      );
     });
 
     test("Math.abs", () => {
@@ -546,17 +592,21 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("Math.max", () => {
-      expect(TemplateEngine.evaluate("Math.max(a, b, c)", { a: 1, b: 5, c: 3 })).toBe(
-        5
-      );
+      expect(
+        TemplateEngine.evaluate("Math.max(a, b, c)", { a: 1, b: 5, c: 3 })
+      ).toBe(5);
     });
 
     test("Math.min", () => {
-      expect(TemplateEngine.evaluate("Math.min(a, b, c)", { a: 1, b: 5, c: 3 })).toBe(1);
+      expect(
+        TemplateEngine.evaluate("Math.min(a, b, c)", { a: 1, b: 5, c: 3 })
+      ).toBe(1);
     });
 
     test("Math.pow", () => {
-      expect(TemplateEngine.evaluate("Math.pow(base, exp)", { base: 2, exp: 3 })).toBe(8);
+      expect(
+        TemplateEngine.evaluate("Math.pow(base, exp)", { base: 2, exp: 3 })
+      ).toBe(8);
     });
   });
 
@@ -566,28 +616,42 @@ describe("TemplateEngine Complex Expression Handling", () => {
 
   describe("Type Conversions", () => {
     test("Number conversion", () => {
-      expect(TemplateEngine.evaluate("Number(value)", { value: "42" })).toBe(42);
+      expect(TemplateEngine.evaluate("Number(value)", { value: "42" })).toBe(
+        42
+      );
     });
 
     test("String conversion", () => {
-      expect(TemplateEngine.evaluate("String(value)", { value: 42 })).toBe("42");
+      expect(TemplateEngine.evaluate("String(value)", { value: 42 })).toBe(
+        "42"
+      );
     });
 
     test("Boolean conversion", () => {
-      expect(TemplateEngine.evaluate("Boolean(value)", { value: 1 })).toBe(true);
-      expect(TemplateEngine.evaluate("Boolean(value)", { value: 0 })).toBe(false);
+      expect(TemplateEngine.evaluate("Boolean(value)", { value: 1 })).toBe(
+        true
+      );
+      expect(TemplateEngine.evaluate("Boolean(value)", { value: 0 })).toBe(
+        false
+      );
     });
 
     test("parseInt", () => {
-      expect(TemplateEngine.evaluate("parseInt(value, 10)", { value: "42px" })).toBe(42);
+      expect(
+        TemplateEngine.evaluate("parseInt(value, 10)", { value: "42px" })
+      ).toBe(42);
     });
 
     test("parseFloat", () => {
-      expect(TemplateEngine.evaluate("parseFloat(value)", { value: "3.14" })).toBe(3.14);
+      expect(
+        TemplateEngine.evaluate("parseFloat(value)", { value: "3.14" })
+      ).toBe(3.14);
     });
 
     test("toFixed", () => {
-      expect(TemplateEngine.evaluate("value.toFixed(2)", { value: 3.14159 })).toBe("3.14");
+      expect(
+        TemplateEngine.evaluate("value.toFixed(2)", { value: 3.14159 })
+      ).toBe("3.14");
     });
   });
 
@@ -598,17 +662,21 @@ describe("TemplateEngine Complex Expression Handling", () => {
   describe("Date Operations", () => {
     test("Date method calls", () => {
       const date = new Date("2024-06-15T10:30:00");
-      expect(TemplateEngine.evaluate("date.getFullYear()", { date })).toBe(2024);
+      expect(TemplateEngine.evaluate("date.getFullYear()", { date })).toBe(
+        2024
+      );
       expect(TemplateEngine.evaluate("date.getMonth()", { date })).toBe(5); // 0-indexed
       expect(TemplateEngine.evaluate("date.getDate()", { date })).toBe(15);
     });
 
     test("Date formatting with function", () => {
       const formatDate = (d: Date) => d.toISOString().split("T")[0];
-      expect(TemplateEngine.evaluate(
-        "formatDate(date)",
-        { formatDate, date: new Date("2024-06-15") }
-      )).toBe("2024-06-15");
+      expect(
+        TemplateEngine.evaluate("formatDate(date)", {
+          formatDate,
+          date: new Date("2024-06-15"),
+        })
+      ).toBe("2024-06-15");
     });
   });
 
@@ -710,7 +778,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("expression with special characters in strings", () => {
-      expect(TemplateEngine.evaluate("text", { text: "Hello's \"World\"" })).toBe("Hello's \"World\"");
+      expect(
+        TemplateEngine.evaluate("text", { text: 'Hello\'s "World"' })
+      ).toBe('Hello\'s "World"');
     });
   });
 
@@ -743,7 +813,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
 
     test("returns numbers as numbers", () => {
       expect(TemplateEngine.evaluate("count", { count: 42 })).toBe(42);
-      expect(typeof TemplateEngine.evaluate("count", { count: 42 })).toBe("number");
+      expect(typeof TemplateEngine.evaluate("count", { count: 42 })).toBe(
+        "number"
+      );
     });
 
     test("returns booleans as booleans", () => {
@@ -754,7 +826,9 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("Symbol result", () => {
-      const result = TemplateEngine.evaluate("value", { value: Symbol("test") });
+      const result = TemplateEngine.evaluate("value", {
+        value: Symbol("test"),
+      });
       expect(typeof result).toBe("symbol");
     });
 
@@ -770,11 +844,15 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("BigInt result", () => {
-      expect(TemplateEngine.evaluate("value", { value: BigInt(9007199254740991) })).toBe(BigInt(9007199254740991));
+      expect(
+        TemplateEngine.evaluate("value", { value: BigInt(9007199254740991) })
+      ).toBe(BigInt(9007199254740991));
     });
 
     test("BigInt arithmetic", () => {
-      expect(TemplateEngine.evaluate("a + b", { a: BigInt(1), b: BigInt(2) })).toBe(BigInt(3));
+      expect(
+        TemplateEngine.evaluate("a + b", { a: BigInt(1), b: BigInt(2) })
+      ).toBe(BigInt(3));
     });
   });
 
@@ -829,46 +907,60 @@ describe("TemplateEngine Complex Expression Handling", () => {
     });
 
     test("status badge class", () => {
-      expect(TemplateEngine.evaluate(
-        "status === 'active' ? 'badge-success' : status === 'pending' ? 'badge-warning' : 'badge-error'",
-        { status: "active" }
-      )).toBe("badge-success");
+      expect(
+        TemplateEngine.evaluate(
+          "status === 'active' ? 'badge-success' : status === 'pending' ? 'badge-warning' : 'badge-error'",
+          { status: "active" }
+        )
+      ).toBe("badge-success");
     });
 
     test("pluralization", () => {
       expect(
-        TemplateEngine.evaluate("count + ' ' + (count === 1 ? 'item' : 'items')", {
-          count: 1,
-        })
+        TemplateEngine.evaluate(
+          "count + ' ' + (count === 1 ? 'item' : 'items')",
+          {
+            count: 1,
+          }
+        )
       ).toBe("1 item");
 
       expect(
-        TemplateEngine.evaluate("count + ' ' + (count === 1 ? 'item' : 'items')", {
-          count: 5,
-        })
+        TemplateEngine.evaluate(
+          "count + ' ' + (count === 1 ? 'item' : 'items')",
+          {
+            count: 5,
+          }
+        )
       ).toBe("5 items");
     });
 
     test("conditional rendering data", () => {
-      expect(TemplateEngine.evaluate(
-        "isLoading ? 'Loading...' : error ? 'Error: ' + error : 'Data: ' + data",
-        { isLoading: false, error: null, data: "Success" }
-      )).toBe("Data: Success");
+      expect(
+        TemplateEngine.evaluate(
+          "isLoading ? 'Loading...' : error ? 'Error: ' + error : 'Data: ' + data",
+          { isLoading: false, error: null, data: "Success" }
+        )
+      ).toBe("Data: Success");
     });
 
     test("safe property access with fallback", () => {
       expect(
-        TemplateEngine.evaluate("user?.profile?.avatar ?? '/default-avatar.png'", {
-          user: { profile: {} },
-        })
+        TemplateEngine.evaluate(
+          "user?.profile?.avatar ?? '/default-avatar.png'",
+          {
+            user: { profile: {} },
+          }
+        )
       ).toBe("/default-avatar.png");
     });
 
     test("filter and count", () => {
-      expect(TemplateEngine.evaluate(
-        "items.filter(i => i.active).length",
-        { items: [{ active: true }, { active: false }, { active: true }] }
-      )).toBe(2);
+      expect(
+        TemplateEngine.evaluate("items.filter(i => i.active).length", {
+          items: [{ active: true }, { active: false }, { active: true }],
+        })
+      ).toBe(2);
     });
 
     test("complex sorting expression", () => {
@@ -876,8 +968,8 @@ describe("TemplateEngine Complex Expression Handling", () => {
         users: [
           { name: "Charlie", age: 30 },
           { name: "Alice", age: 25 },
-          { name: "Bob", age: 35 }
-        ]
+          { name: "Bob", age: 35 },
+        ],
       };
       const result = TemplateEngine.evaluate(
         "users.slice().sort((a, b) => a.name.localeCompare(b.name))",
@@ -901,25 +993,53 @@ describe("TemplateEngine Corner Cases", () => {
 
   describe("Additional Operators", () => {
     test("typeof operator", () => {
-      expect(TemplateEngine.evaluate("typeof value", { value: "hello" })).toBe("string");
-      expect(TemplateEngine.evaluate("typeof value", { value: 42 })).toBe("number");
-      expect(TemplateEngine.evaluate("typeof value", { value: true })).toBe("boolean");
-      expect(TemplateEngine.evaluate("typeof value", { value: {} })).toBe("object");
-      expect(TemplateEngine.evaluate("typeof value", { value: [] })).toBe("object");
-      expect(TemplateEngine.evaluate("typeof value", { value: null })).toBe("object");
-      expect(TemplateEngine.evaluate("typeof value", { value: undefined })).toBe("undefined");
-      expect(TemplateEngine.evaluate("typeof value", { value: () => { } })).toBe("function");
+      expect(TemplateEngine.evaluate("typeof value", { value: "hello" })).toBe(
+        "string"
+      );
+      expect(TemplateEngine.evaluate("typeof value", { value: 42 })).toBe(
+        "number"
+      );
+      expect(TemplateEngine.evaluate("typeof value", { value: true })).toBe(
+        "boolean"
+      );
+      expect(TemplateEngine.evaluate("typeof value", { value: {} })).toBe(
+        "object"
+      );
+      expect(TemplateEngine.evaluate("typeof value", { value: [] })).toBe(
+        "object"
+      );
+      expect(TemplateEngine.evaluate("typeof value", { value: null })).toBe(
+        "object"
+      );
+      expect(
+        TemplateEngine.evaluate("typeof value", { value: undefined })
+      ).toBe("undefined");
+      expect(TemplateEngine.evaluate("typeof value", { value: () => {} })).toBe(
+        "function"
+      );
     });
 
     test("instanceof operator", () => {
-      expect(TemplateEngine.evaluate("value instanceof Array", { value: [1, 2, 3] })).toBe(true);
-      expect(TemplateEngine.evaluate("value instanceof Array", { value: "not array" })).toBe(false);
-      expect(TemplateEngine.evaluate("value instanceof Date", { value: new Date() })).toBe(true);
-      expect(TemplateEngine.evaluate("value instanceof Object", { value: {} })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("value instanceof Array", { value: [1, 2, 3] })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("value instanceof Array", {
+          value: "not array",
+        })
+      ).toBe(false);
+      expect(
+        TemplateEngine.evaluate("value instanceof Date", { value: new Date() })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("value instanceof Object", { value: {} })
+      ).toBe(true);
     });
 
     test("new operator", () => {
-      expect(TemplateEngine.evaluate("new Date('2024-01-01').getFullYear()", {})).toBe(2024);
+      expect(
+        TemplateEngine.evaluate("new Date('2024-01-01').getFullYear()", {})
+      ).toBe(2024);
       expect(TemplateEngine.evaluate("new Array(3).length", {})).toBe(3);
     });
 
@@ -961,17 +1081,25 @@ describe("TemplateEngine Corner Cases", () => {
     });
 
     test("regex test", () => {
-      expect(TemplateEngine.evaluate("/hello/.test(str)", { str: "hello world" })).toBe(true);
-      expect(TemplateEngine.evaluate("/hello/.test(str)", { str: "goodbye" })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("/hello/.test(str)", { str: "hello world" })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("/hello/.test(str)", { str: "goodbye" })
+      ).toBe(false);
     });
 
     test("regex match", () => {
-      const result = TemplateEngine.evaluate("str.match(/\\d+/)", { str: "abc123def" });
+      const result = TemplateEngine.evaluate("str.match(/\\d+/)", {
+        str: "abc123def",
+      });
       expect(result?.[0]).toBe("123");
     });
 
     test("regex replace", () => {
-      expect(TemplateEngine.evaluate("str.replace(/o/g, '0')", { str: "hello" })).toBe("hell0");
+      expect(
+        TemplateEngine.evaluate("str.replace(/o/g, '0')", { str: "hello" })
+      ).toBe("hell0");
     });
   });
 
@@ -986,7 +1114,9 @@ describe("TemplateEngine Corner Cases", () => {
     });
 
     test("constructor access", () => {
-      const result = TemplateEngine.evaluate("obj.constructor.name", { obj: {} });
+      const result = TemplateEngine.evaluate("obj.constructor.name", {
+        obj: {},
+      });
       expect(result).toBe("Object");
     });
 
@@ -1027,27 +1157,39 @@ describe("TemplateEngine Corner Cases", () => {
 
   describe("Unicode and Special Characters", () => {
     test("emoji in string value", () => {
-      expect(TemplateEngine.evaluate("emoji", { emoji: "Hello 👋 World 🌍" })).toBe("Hello 👋 World 🌍");
+      expect(
+        TemplateEngine.evaluate("emoji", { emoji: "Hello 👋 World 🌍" })
+      ).toBe("Hello 👋 World 🌍");
     });
 
     test("unicode variable name", () => {
-      expect(TemplateEngine.evaluate("名前", { "名前": "テスト" })).toBe("テスト");
+      expect(TemplateEngine.evaluate("名前", { 名前: "テスト" })).toBe(
+        "テスト"
+      );
     });
 
     test("unicode property access", () => {
-      expect(TemplateEngine.evaluate("obj.名前", { obj: { "名前": "テスト" } })).toBe("テスト");
+      expect(
+        TemplateEngine.evaluate("obj.名前", { obj: { 名前: "テスト" } })
+      ).toBe("テスト");
     });
 
     test("special characters in string", () => {
-      expect(TemplateEngine.evaluate("text", { text: "Line1\nLine2\tTabbed" })).toBe("Line1\nLine2\tTabbed");
+      expect(
+        TemplateEngine.evaluate("text", { text: "Line1\nLine2\tTabbed" })
+      ).toBe("Line1\nLine2\tTabbed");
     });
 
     test("backslash in string", () => {
-      expect(TemplateEngine.evaluate("path", { path: "C:\\Users\\Test" })).toBe("C:\\Users\\Test");
+      expect(TemplateEngine.evaluate("path", { path: "C:\\Users\\Test" })).toBe(
+        "C:\\Users\\Test"
+      );
     });
 
     test("quotes in string", () => {
-      expect(TemplateEngine.evaluate("text", { text: 'He said "Hello"' })).toBe('He said "Hello"');
+      expect(TemplateEngine.evaluate("text", { text: 'He said "Hello"' })).toBe(
+        'He said "Hello"'
+      );
     });
   });
 
@@ -1059,7 +1201,9 @@ describe("TemplateEngine Corner Cases", () => {
     test("getter property", () => {
       const obj = {
         _value: 42,
-        get value() { return this._value * 2; }
+        get value() {
+          return this._value * 2;
+        },
       };
       expect(TemplateEngine.evaluate("obj.value", { obj })).toBe(84);
     });
@@ -1067,8 +1211,12 @@ describe("TemplateEngine Corner Cases", () => {
     test("setter property (read)", () => {
       const obj = {
         _name: "test",
-        get name() { return this._name.toUpperCase(); },
-        set name(v) { this._name = v; }
+        get name() {
+          return this._name.toUpperCase();
+        },
+        set name(v) {
+          this._name = v;
+        },
       };
       expect(TemplateEngine.evaluate("obj.name", { obj })).toBe("TEST");
     });
@@ -1095,7 +1243,7 @@ describe("TemplateEngine Corner Cases", () => {
         get(t, prop) {
           if (prop === "value") return t.value * 2;
           return t[prop as keyof typeof t];
-        }
+        },
       });
       expect(TemplateEngine.evaluate("obj.value", { obj: proxy })).toBe(20);
     });
@@ -1127,7 +1275,9 @@ describe("TemplateEngine Corner Cases", () => {
 
     test("array-like object", () => {
       const arrayLike = { 0: "a", 1: "b", length: 2 };
-      expect(TemplateEngine.evaluate("Array.from(obj).join(',')", { obj: arrayLike })).toBe("a,b");
+      expect(
+        TemplateEngine.evaluate("Array.from(obj).join(',')", { obj: arrayLike })
+      ).toBe("a,b");
     });
 
     test("circular reference (access non-circular part)", () => {
@@ -1158,7 +1308,10 @@ describe("TemplateEngine Corner Cases", () => {
     });
 
     test("object literal with computed property", () => {
-      const result = TemplateEngine.evaluate("({[key]: value})", { key: "name", value: "test" });
+      const result = TemplateEngine.evaluate("({[key]: value})", {
+        key: "name",
+        value: "test",
+      });
       expect(result).toEqual({ name: "test" });
     });
 
@@ -1184,7 +1337,10 @@ describe("TemplateEngine Corner Cases", () => {
     });
 
     test("generator function expression", () => {
-      const result = TemplateEngine.evaluate("(function* () { yield 1; yield 2; })()", {});
+      const result = TemplateEngine.evaluate(
+        "(function* () { yield 1; yield 2; })()",
+        {}
+      );
       expect(typeof result.next).toBe("function");
     });
 
@@ -1200,51 +1356,59 @@ describe("TemplateEngine Corner Cases", () => {
 
   describe("Template Literals Inside Expressions", () => {
     test("basic template literal", () => {
-      expect(TemplateEngine.evaluate("`Hello ${name}`", { name: "World" })).toBe("Hello World");
+      expect(
+        TemplateEngine.evaluate("`Hello ${name}`", { name: "World" })
+      ).toBe("Hello World");
     });
 
     test("template literal with expression", () => {
-      expect(TemplateEngine.evaluate("`Sum: ${a + b}`", { a: 2, b: 3 })).toBe("Sum: 5");
+      expect(TemplateEngine.evaluate("`Sum: ${a + b}`", { a: 2, b: 3 })).toBe(
+        "Sum: 5"
+      );
     });
 
     test("template literal with multiple interpolations", () => {
-      expect(TemplateEngine.evaluate(
-        "`${greeting}, ${name}! You have ${count} messages.`",
-        { greeting: "Hello", name: "User", count: 5 }
-      )).toBe("Hello, User! You have 5 messages.");
+      expect(
+        TemplateEngine.evaluate(
+          "`${greeting}, ${name}! You have ${count} messages.`",
+          { greeting: "Hello", name: "User", count: 5 }
+        )
+      ).toBe("Hello, User! You have 5 messages.");
     });
 
     test("nested template literal", () => {
-      expect(TemplateEngine.evaluate(
-        "`Outer ${`Inner ${value}`}`",
-        { value: "test" }
-      )).toBe("Outer Inner test");
+      expect(
+        TemplateEngine.evaluate("`Outer ${`Inner ${value}`}`", {
+          value: "test",
+        })
+      ).toBe("Outer Inner test");
     });
 
     test("template literal with ternary", () => {
-      expect(TemplateEngine.evaluate(
-        "`Status: ${active ? 'Online' : 'Offline'}`",
-        { active: true }
-      )).toBe("Status: Online");
+      expect(
+        TemplateEngine.evaluate("`Status: ${active ? 'Online' : 'Offline'}`", {
+          active: true,
+        })
+      ).toBe("Status: Online");
     });
 
     test("template literal with method call", () => {
-      expect(TemplateEngine.evaluate(
-        "`Name: ${name.toUpperCase()}`",
-        { name: "john" }
-      )).toBe("Name: JOHN");
+      expect(
+        TemplateEngine.evaluate("`Name: ${name.toUpperCase()}`", {
+          name: "john",
+        })
+      ).toBe("Name: JOHN");
     });
 
     test("multiline template literal", () => {
-      const result = TemplateEngine.evaluate(
-        "`Line 1\nLine 2\nLine 3`",
-        {}
-      );
+      const result = TemplateEngine.evaluate("`Line 1\nLine 2\nLine 3`", {});
       expect(result).toBe("Line 1\nLine 2\nLine 3");
     });
 
     test("template literal with backtick escape", () => {
-      expect(TemplateEngine.evaluate("`Value: \\`${value}\\``", { value: "test" })).toBe("Value: `test`");
+      expect(
+        TemplateEngine.evaluate("`Value: \\`${value}\\``", { value: "test" })
+      ).toBe("Value: `test`");
     });
   });
 
@@ -1254,22 +1418,42 @@ describe("TemplateEngine Corner Cases", () => {
 
   describe("Logical Assignment Operators", () => {
     test("nullish assignment (??=) concept", () => {
-      expect(TemplateEngine.evaluate("a ?? (a = b, a)", { a: null, b: 10 })).toBe(10);
+      expect(
+        TemplateEngine.evaluate("a ?? (a = b, a)", { a: null, b: 10 })
+      ).toBe(10);
     });
 
     test("nullish coalescing with assignment simulation", () => {
-      expect(TemplateEngine.evaluate("value ?? defaultValue", { value: null, defaultValue: "default" })).toBe("default");
-      expect(TemplateEngine.evaluate("value ?? defaultValue", { value: "exists", defaultValue: "default" })).toBe("exists");
+      expect(
+        TemplateEngine.evaluate("value ?? defaultValue", {
+          value: null,
+          defaultValue: "default",
+        })
+      ).toBe("default");
+      expect(
+        TemplateEngine.evaluate("value ?? defaultValue", {
+          value: "exists",
+          defaultValue: "default",
+        })
+      ).toBe("exists");
     });
 
     test("OR assignment (||=) concept", () => {
-      expect(TemplateEngine.evaluate("a || b", { a: "", b: "fallback" })).toBe("fallback");
-      expect(TemplateEngine.evaluate("a || b", { a: "value", b: "fallback" })).toBe("value");
+      expect(TemplateEngine.evaluate("a || b", { a: "", b: "fallback" })).toBe(
+        "fallback"
+      );
+      expect(
+        TemplateEngine.evaluate("a || b", { a: "value", b: "fallback" })
+      ).toBe("value");
     });
 
     test("AND assignment (&&=) concept", () => {
-      expect(TemplateEngine.evaluate("a && b", { a: true, b: "value" })).toBe("value");
-      expect(TemplateEngine.evaluate("a && b", { a: false, b: "value" })).toBe(false);
+      expect(TemplateEngine.evaluate("a && b", { a: true, b: "value" })).toBe(
+        "value"
+      );
+      expect(TemplateEngine.evaluate("a && b", { a: false, b: "value" })).toBe(
+        false
+      );
     });
   });
 });
@@ -1285,35 +1469,51 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Numeric Edge Cases", () => {
     test("Number.MAX_SAFE_INTEGER", () => {
-      expect(TemplateEngine.evaluate("Number.MAX_SAFE_INTEGER", {})).toBe(9007199254740991);
+      expect(TemplateEngine.evaluate("Number.MAX_SAFE_INTEGER", {})).toBe(
+        9007199254740991
+      );
     });
 
     test("Number.MIN_SAFE_INTEGER", () => {
-      expect(TemplateEngine.evaluate("Number.MIN_SAFE_INTEGER", {})).toBe(-9007199254740991);
+      expect(TemplateEngine.evaluate("Number.MIN_SAFE_INTEGER", {})).toBe(
+        -9007199254740991
+      );
     });
 
     test("Number.MAX_VALUE", () => {
-      expect(TemplateEngine.evaluate("Number.MAX_VALUE", {})).toBe(Number.MAX_VALUE);
+      expect(TemplateEngine.evaluate("Number.MAX_VALUE", {})).toBe(
+        Number.MAX_VALUE
+      );
     });
 
     test("Number.MIN_VALUE", () => {
-      expect(TemplateEngine.evaluate("Number.MIN_VALUE", {})).toBe(Number.MIN_VALUE);
+      expect(TemplateEngine.evaluate("Number.MIN_VALUE", {})).toBe(
+        Number.MIN_VALUE
+      );
     });
 
     test("Number.EPSILON", () => {
-      expect(TemplateEngine.evaluate("Number.EPSILON", {})).toBe(Number.EPSILON);
+      expect(TemplateEngine.evaluate("Number.EPSILON", {})).toBe(
+        Number.EPSILON
+      );
     });
 
     test("Number.POSITIVE_INFINITY", () => {
-      expect(TemplateEngine.evaluate("Number.POSITIVE_INFINITY", {})).toBe(Infinity);
+      expect(TemplateEngine.evaluate("Number.POSITIVE_INFINITY", {})).toBe(
+        Infinity
+      );
     });
 
     test("Number.NEGATIVE_INFINITY", () => {
-      expect(TemplateEngine.evaluate("Number.NEGATIVE_INFINITY", {})).toBe(-Infinity);
+      expect(TemplateEngine.evaluate("Number.NEGATIVE_INFINITY", {})).toBe(
+        -Infinity
+      );
     });
 
     test("Number.NaN", () => {
-      expect(TemplateEngine.evaluate("Number.isNaN(Number.NaN)", {})).toBe(true);
+      expect(TemplateEngine.evaluate("Number.isNaN(Number.NaN)", {})).toBe(
+        true
+      );
     });
 
     test("numeric separator (1_000_000)", () => {
@@ -1334,7 +1534,9 @@ describe("TemplateEngine Remaining Cases", () => {
 
     test("Number.isFinite", () => {
       expect(TemplateEngine.evaluate("Number.isFinite(42)", {})).toBe(true);
-      expect(TemplateEngine.evaluate("Number.isFinite(Infinity)", {})).toBe(false);
+      expect(TemplateEngine.evaluate("Number.isFinite(Infinity)", {})).toBe(
+        false
+      );
       expect(TemplateEngine.evaluate("Number.isFinite(NaN)", {})).toBe(false);
     });
 
@@ -1350,20 +1552,30 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("Number.isSafeInteger", () => {
-      expect(TemplateEngine.evaluate("Number.isSafeInteger(42)", {})).toBe(true);
-      expect(TemplateEngine.evaluate("Number.isSafeInteger(9007199254740992)", {})).toBe(false);
+      expect(TemplateEngine.evaluate("Number.isSafeInteger(42)", {})).toBe(
+        true
+      );
+      expect(
+        TemplateEngine.evaluate("Number.isSafeInteger(9007199254740992)", {})
+      ).toBe(false);
     });
 
     test("NaN result", () => {
-      expect(TemplateEngine.evaluate("Number.isNaN(value)", { value: NaN })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("Number.isNaN(value)", { value: NaN })
+      ).toBe(true);
     });
 
     test("Infinity result", () => {
-      expect(TemplateEngine.evaluate("value", { value: Infinity })).toBe(Infinity);
+      expect(TemplateEngine.evaluate("value", { value: Infinity })).toBe(
+        Infinity
+      );
     });
 
     test("negative Infinity result", () => {
-      expect(TemplateEngine.evaluate("value", { value: -Infinity })).toBe(-Infinity);
+      expect(TemplateEngine.evaluate("value", { value: -Infinity })).toBe(
+        -Infinity
+      );
     });
   });
 
@@ -1373,37 +1585,63 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Built-in Methods", () => {
     test("JSON.parse", () => {
-      expect(TemplateEngine.evaluate('JSON.parse(\'{"a":1}\')', {})).toEqual({ a: 1 });
+      expect(TemplateEngine.evaluate("JSON.parse('{\"a\":1}')", {})).toEqual({
+        a: 1,
+      });
     });
 
     test("JSON.stringify", () => {
-      expect(TemplateEngine.evaluate("JSON.stringify(obj)", { obj: { a: 1 } })).toBe('{"a":1}');
+      expect(
+        TemplateEngine.evaluate("JSON.stringify(obj)", { obj: { a: 1 } })
+      ).toBe('{"a":1}');
     });
 
     test("JSON.stringify with formatting", () => {
-      expect(TemplateEngine.evaluate("JSON.stringify(obj, null, 2)", { obj: { a: 1 } })).toBe('{\n  "a": 1\n}');
+      expect(
+        TemplateEngine.evaluate("JSON.stringify(obj, null, 2)", {
+          obj: { a: 1 },
+        })
+      ).toBe('{\n  "a": 1\n}');
     });
 
     test("Array.isArray", () => {
-      expect(TemplateEngine.evaluate("Array.isArray(value)", { value: [1, 2, 3] })).toBe(true);
-      expect(TemplateEngine.evaluate("Array.isArray(value)", { value: "not array" })).toBe(false);
-      expect(TemplateEngine.evaluate("Array.isArray(value)", { value: { length: 1 } })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("Array.isArray(value)", { value: [1, 2, 3] })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("Array.isArray(value)", { value: "not array" })
+      ).toBe(false);
+      expect(
+        TemplateEngine.evaluate("Array.isArray(value)", {
+          value: { length: 1 },
+        })
+      ).toBe(false);
     });
 
     test("Array.from", () => {
-      expect(TemplateEngine.evaluate("Array.from('abc')", {})).toEqual(["a", "b", "c"]);
-      expect(TemplateEngine.evaluate("Array.from({length: 3}, (_, i) => i)", {})).toEqual([0, 1, 2]);
+      expect(TemplateEngine.evaluate("Array.from('abc')", {})).toEqual([
+        "a",
+        "b",
+        "c",
+      ]);
+      expect(
+        TemplateEngine.evaluate("Array.from({length: 3}, (_, i) => i)", {})
+      ).toEqual([0, 1, 2]);
     });
 
     test("Array.of", () => {
-      expect(TemplateEngine.evaluate("Array.of(1, 2, 3)", {})).toEqual([1, 2, 3]);
+      expect(TemplateEngine.evaluate("Array.of(1, 2, 3)", {})).toEqual([
+        1, 2, 3,
+      ]);
     });
 
     test("Object.assign", () => {
-      expect(TemplateEngine.evaluate(
-        "Object.assign({}, a, b)",
-        { a: { x: 1 }, b: { y: 2 } }
-      )).toEqual({ x: 1, y: 2 });
+      expect(
+        TemplateEngine.evaluate("Object.assign({}, a, b)", {
+          a: { x: 1 },
+          b: { y: 2 },
+        })
+      ).toEqual({ x: 1, y: 2 });
     });
 
     test("Object.freeze (read frozen object)", () => {
@@ -1415,28 +1653,42 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("Object.fromEntries", () => {
-      expect(TemplateEngine.evaluate(
-        "Object.fromEntries([['a', 1], ['b', 2]])",
-        {}
-      )).toEqual({ a: 1, b: 2 });
+      expect(
+        TemplateEngine.evaluate("Object.fromEntries([['a', 1], ['b', 2]])", {})
+      ).toEqual({ a: 1, b: 2 });
     });
 
     test("Object.hasOwn", () => {
-      expect(TemplateEngine.evaluate("Object.hasOwn(obj, 'a')", { obj: { a: 1 } })).toBe(true);
-      expect(TemplateEngine.evaluate("Object.hasOwn(obj, 'b')", { obj: { a: 1 } })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("Object.hasOwn(obj, 'a')", { obj: { a: 1 } })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("Object.hasOwn(obj, 'b')", { obj: { a: 1 } })
+      ).toBe(false);
     });
 
     test("encodeURIComponent", () => {
-      expect(TemplateEngine.evaluate("encodeURIComponent(str)", { str: "hello world" })).toBe("hello%20world");
+      expect(
+        TemplateEngine.evaluate("encodeURIComponent(str)", {
+          str: "hello world",
+        })
+      ).toBe("hello%20world");
     });
 
     test("decodeURIComponent", () => {
-      expect(TemplateEngine.evaluate("decodeURIComponent(str)", { str: "hello%20world" })).toBe("hello world");
+      expect(
+        TemplateEngine.evaluate("decodeURIComponent(str)", {
+          str: "hello%20world",
+        })
+      ).toBe("hello world");
     });
 
     test("encodeURI / decodeURI", () => {
-      expect(TemplateEngine.evaluate("encodeURI(url)", { url: "https://example.com/path?q=hello world" }))
-        .toBe("https://example.com/path?q=hello%20world");
+      expect(
+        TemplateEngine.evaluate("encodeURI(url)", {
+          url: "https://example.com/path?q=hello world",
+        })
+      ).toBe("https://example.com/path?q=hello%20world");
     });
 
     test("atob / btoa", () => {
@@ -1451,17 +1703,18 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Arrow Function Features", () => {
     test("rest parameters", () => {
-      expect(TemplateEngine.evaluate(
-        "((...args) => args.length)(1, 2, 3, 4, 5)",
-        {}
-      )).toBe(5);
+      expect(
+        TemplateEngine.evaluate("((...args) => args.length)(1, 2, 3, 4, 5)", {})
+      ).toBe(5);
     });
 
     test("rest parameters with array spread", () => {
-      expect(TemplateEngine.evaluate(
-        "((...args) => args.reduce((a, b) => a + b, 0))(...nums)",
-        { nums: [1, 2, 3, 4, 5] }
-      )).toBe(15);
+      expect(
+        TemplateEngine.evaluate(
+          "((...args) => args.reduce((a, b) => a + b, 0))(...nums)",
+          { nums: [1, 2, 3, 4, 5] }
+        )
+      ).toBe(15);
     });
 
     test("default parameters", () => {
@@ -1470,52 +1723,46 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("default parameters with expression", () => {
-      expect(TemplateEngine.evaluate(
-        "((a = 1, b = a * 2) => a + b)()",
-        {}
-      )).toBe(3);
+      expect(
+        TemplateEngine.evaluate("((a = 1, b = a * 2) => a + b)()", {})
+      ).toBe(3);
     });
 
     test("destructuring in arrow params - array", () => {
-      expect(TemplateEngine.evaluate(
-        "(([a, b]) => a + b)([1, 2])",
-        {}
-      )).toBe(3);
+      expect(TemplateEngine.evaluate("(([a, b]) => a + b)([1, 2])", {})).toBe(
+        3
+      );
     });
 
     test("destructuring in arrow params - object", () => {
-      expect(TemplateEngine.evaluate(
-        "(({x, y}) => x + y)({x: 10, y: 20})",
-        {}
-      )).toBe(30);
+      expect(
+        TemplateEngine.evaluate("(({x, y}) => x + y)({x: 10, y: 20})", {})
+      ).toBe(30);
     });
 
     test("destructuring with default", () => {
-      expect(TemplateEngine.evaluate(
-        "(({x = 5}) => x)({})",
-        {}
-      )).toBe(5);
+      expect(TemplateEngine.evaluate("(({x = 5}) => x)({})", {})).toBe(5);
     });
 
     test("destructuring with rename", () => {
-      expect(TemplateEngine.evaluate(
-        "(({x: renamed}) => renamed)({x: 42})",
-        {}
-      )).toBe(42);
+      expect(
+        TemplateEngine.evaluate("(({x: renamed}) => renamed)({x: 42})", {})
+      ).toBe(42);
     });
 
     test("nested destructuring", () => {
-      expect(TemplateEngine.evaluate(
-        "(({a: {b}}) => b)({a: {b: 'nested'}})",
-        {}
-      )).toBe("nested");
+      expect(
+        TemplateEngine.evaluate("(({a: {b}}) => b)({a: {b: 'nested'}})", {})
+      ).toBe("nested");
     });
 
     test("mixed rest and destructuring", () => {
-      expect(TemplateEngine.evaluate(
-        "(([first, ...rest]) => rest.length)([1, 2, 3, 4])",
-        {}
-      )).toBe(3);
+      expect(
+        TemplateEngine.evaluate(
+          "(([first, ...rest]) => rest.length)([1, 2, 3, 4])",
+          {}
+        )
+      ).toBe(3);
     });
   });
 
@@ -1530,7 +1777,10 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("Promise.reject", () => {
-      const result = TemplateEngine.evaluate("Promise.reject('error').catch(e => e)", {});
+      const result = TemplateEngine.evaluate(
+        "Promise.reject('error').catch(e => e)",
+        {}
+      );
       expect(result instanceof Promise).toBe(true);
     });
 
@@ -1581,46 +1831,82 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("String Methods (Additional)", () => {
     test("startsWith", () => {
-      expect(TemplateEngine.evaluate("str.startsWith('Hello')", { str: "Hello World" })).toBe(true);
-      expect(TemplateEngine.evaluate("str.startsWith('World')", { str: "Hello World" })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("str.startsWith('Hello')", {
+          str: "Hello World",
+        })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("str.startsWith('World')", {
+          str: "Hello World",
+        })
+      ).toBe(false);
     });
 
     test("startsWith with position", () => {
-      expect(TemplateEngine.evaluate("str.startsWith('World', 6)", { str: "Hello World" })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("str.startsWith('World', 6)", {
+          str: "Hello World",
+        })
+      ).toBe(true);
     });
 
     test("endsWith", () => {
-      expect(TemplateEngine.evaluate("str.endsWith('World')", { str: "Hello World" })).toBe(true);
-      expect(TemplateEngine.evaluate("str.endsWith('Hello')", { str: "Hello World" })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("str.endsWith('World')", { str: "Hello World" })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("str.endsWith('Hello')", { str: "Hello World" })
+      ).toBe(false);
     });
 
     test("endsWith with length", () => {
-      expect(TemplateEngine.evaluate("str.endsWith('Hello', 5)", { str: "Hello World" })).toBe(true);
+      expect(
+        TemplateEngine.evaluate("str.endsWith('Hello', 5)", {
+          str: "Hello World",
+        })
+      ).toBe(true);
     });
 
     test("includes", () => {
-      expect(TemplateEngine.evaluate("str.includes('lo Wo')", { str: "Hello World" })).toBe(true);
-      expect(TemplateEngine.evaluate("str.includes('xyz')", { str: "Hello World" })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("str.includes('lo Wo')", { str: "Hello World" })
+      ).toBe(true);
+      expect(
+        TemplateEngine.evaluate("str.includes('xyz')", { str: "Hello World" })
+      ).toBe(false);
     });
 
     test("includes with position", () => {
-      expect(TemplateEngine.evaluate("str.includes('Hello', 1)", { str: "Hello World" })).toBe(false);
+      expect(
+        TemplateEngine.evaluate("str.includes('Hello', 1)", {
+          str: "Hello World",
+        })
+      ).toBe(false);
     });
 
     test("padStart", () => {
-      expect(TemplateEngine.evaluate("str.padStart(10, '0')", { str: "123" })).toBe("0000000123");
+      expect(
+        TemplateEngine.evaluate("str.padStart(10, '0')", { str: "123" })
+      ).toBe("0000000123");
     });
 
     test("padStart default padding", () => {
-      expect(TemplateEngine.evaluate("str.padStart(10)", { str: "123" })).toBe("       123");
+      expect(TemplateEngine.evaluate("str.padStart(10)", { str: "123" })).toBe(
+        "       123"
+      );
     });
 
     test("padEnd", () => {
-      expect(TemplateEngine.evaluate("str.padEnd(10, '.')", { str: "123" })).toBe("123.......");
+      expect(
+        TemplateEngine.evaluate("str.padEnd(10, '.')", { str: "123" })
+      ).toBe("123.......");
     });
 
     test("repeat", () => {
-      expect(TemplateEngine.evaluate("str.repeat(3)", { str: "ab" })).toBe("ababab");
+      expect(TemplateEngine.evaluate("str.repeat(3)", { str: "ab" })).toBe(
+        "ababab"
+      );
     });
 
     test("repeat zero times", () => {
@@ -1628,8 +1914,12 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("trimStart / trimEnd", () => {
-      expect(TemplateEngine.evaluate("str.trimStart()", { str: "  hello  " })).toBe("hello  ");
-      expect(TemplateEngine.evaluate("str.trimEnd()", { str: "  hello  " })).toBe("  hello");
+      expect(
+        TemplateEngine.evaluate("str.trimStart()", { str: "  hello  " })
+      ).toBe("hello  ");
+      expect(
+        TemplateEngine.evaluate("str.trimEnd()", { str: "  hello  " })
+      ).toBe("  hello");
     });
 
     test("at (string)", () => {
@@ -1638,41 +1928,65 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("charAt", () => {
-      expect(TemplateEngine.evaluate("str.charAt(1)", { str: "hello" })).toBe("e");
+      expect(TemplateEngine.evaluate("str.charAt(1)", { str: "hello" })).toBe(
+        "e"
+      );
     });
 
     test("charCodeAt", () => {
-      expect(TemplateEngine.evaluate("str.charCodeAt(0)", { str: "A" })).toBe(65);
+      expect(TemplateEngine.evaluate("str.charCodeAt(0)", { str: "A" })).toBe(
+        65
+      );
     });
 
     test("codePointAt", () => {
-      expect(TemplateEngine.evaluate("str.codePointAt(0)", { str: "😀" })).toBe(128512);
+      expect(TemplateEngine.evaluate("str.codePointAt(0)", { str: "😀" })).toBe(
+        128512
+      );
     });
 
     test("String.fromCharCode", () => {
-      expect(TemplateEngine.evaluate("String.fromCharCode(65, 66, 67)", {})).toBe("ABC");
+      expect(
+        TemplateEngine.evaluate("String.fromCharCode(65, 66, 67)", {})
+      ).toBe("ABC");
     });
 
     test("String.fromCodePoint", () => {
-      expect(TemplateEngine.evaluate("String.fromCodePoint(128512)", {})).toBe("😀");
+      expect(TemplateEngine.evaluate("String.fromCodePoint(128512)", {})).toBe(
+        "😀"
+      );
     });
 
     test("normalize", () => {
-      expect(TemplateEngine.evaluate("str.normalize('NFC')", { str: "café" })).toBe("café");
+      expect(
+        TemplateEngine.evaluate("str.normalize('NFC')", { str: "café" })
+      ).toBe("café");
     });
 
     test("localeCompare", () => {
-      expect(TemplateEngine.evaluate("'a'.localeCompare('b')", {})).toBeLessThan(0);
-      expect(TemplateEngine.evaluate("'b'.localeCompare('a')", {})).toBeGreaterThan(0);
+      expect(
+        TemplateEngine.evaluate("'a'.localeCompare('b')", {})
+      ).toBeLessThan(0);
+      expect(
+        TemplateEngine.evaluate("'b'.localeCompare('a')", {})
+      ).toBeGreaterThan(0);
     });
 
     test("replaceAll", () => {
-      expect(TemplateEngine.evaluate("str.replaceAll('o', '0')", { str: "hello world" })).toBe("hell0 w0rld");
+      expect(
+        TemplateEngine.evaluate("str.replaceAll('o', '0')", {
+          str: "hello world",
+        })
+      ).toBe("hell0 w0rld");
     });
 
     test("slice", () => {
-      expect(TemplateEngine.evaluate("str.slice(1, 4)", { str: "hello" })).toBe("ell");
-      expect(TemplateEngine.evaluate("str.slice(-3)", { str: "hello" })).toBe("llo");
+      expect(TemplateEngine.evaluate("str.slice(1, 4)", { str: "hello" })).toBe(
+        "ell"
+      );
+      expect(TemplateEngine.evaluate("str.slice(-3)", { str: "hello" })).toBe(
+        "llo"
+      );
     });
   });
 
@@ -1682,68 +1996,113 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Array Methods (Additional)", () => {
     test("array index access", () => {
-      expect(TemplateEngine.evaluate("items[0]", { items: ["first", "second"] })).toBe("first");
+      expect(
+        TemplateEngine.evaluate("items[0]", { items: ["first", "second"] })
+      ).toBe("first");
     });
 
     test("array length", () => {
-      expect(TemplateEngine.evaluate("items.length", { items: [1, 2, 3] })).toBe(3);
+      expect(
+        TemplateEngine.evaluate("items.length", { items: [1, 2, 3] })
+      ).toBe(3);
     });
 
     test("flat", () => {
-      expect(TemplateEngine.evaluate("arr.flat()", { arr: [1, [2, [3]]] })).toEqual([1, 2, [3]]);
+      expect(
+        TemplateEngine.evaluate("arr.flat()", { arr: [1, [2, [3]]] })
+      ).toEqual([1, 2, [3]]);
     });
 
     test("flat with depth", () => {
-      expect(TemplateEngine.evaluate("arr.flat(2)", { arr: [1, [2, [3]]] })).toEqual([1, 2, 3]);
+      expect(
+        TemplateEngine.evaluate("arr.flat(2)", { arr: [1, [2, [3]]] })
+      ).toEqual([1, 2, 3]);
     });
 
     test("flat Infinity", () => {
-      expect(TemplateEngine.evaluate("arr.flat(Infinity)", { arr: [1, [2, [3, [4]]]] })).toEqual([1, 2, 3, 4]);
+      expect(
+        TemplateEngine.evaluate("arr.flat(Infinity)", {
+          arr: [1, [2, [3, [4]]]],
+        })
+      ).toEqual([1, 2, 3, 4]);
     });
 
     test("flatMap", () => {
-      expect(TemplateEngine.evaluate(
-        "arr.flatMap(x => [x, x * 2])",
-        { arr: [1, 2, 3] }
-      )).toEqual([1, 2, 2, 4, 3, 6]);
+      expect(
+        TemplateEngine.evaluate("arr.flatMap(x => [x, x * 2])", {
+          arr: [1, 2, 3],
+        })
+      ).toEqual([1, 2, 2, 4, 3, 6]);
     });
 
     test("findIndex", () => {
-      expect(TemplateEngine.evaluate("arr.findIndex(x => x > 2)", { arr: [1, 2, 3, 4] })).toBe(2);
-      expect(TemplateEngine.evaluate("arr.findIndex(x => x > 10)", { arr: [1, 2, 3] })).toBe(-1);
+      expect(
+        TemplateEngine.evaluate("arr.findIndex(x => x > 2)", {
+          arr: [1, 2, 3, 4],
+        })
+      ).toBe(2);
+      expect(
+        TemplateEngine.evaluate("arr.findIndex(x => x > 10)", {
+          arr: [1, 2, 3],
+        })
+      ).toBe(-1);
     });
 
     test("findLast", () => {
-      expect(TemplateEngine.evaluate("arr.findLast(x => x > 2)", { arr: [1, 2, 3, 4] })).toBe(4);
+      expect(
+        TemplateEngine.evaluate("arr.findLast(x => x > 2)", {
+          arr: [1, 2, 3, 4],
+        })
+      ).toBe(4);
     });
 
     test("findLastIndex", () => {
-      expect(TemplateEngine.evaluate("arr.findLastIndex(x => x > 2)", { arr: [1, 2, 3, 4] })).toBe(3);
+      expect(
+        TemplateEngine.evaluate("arr.findLastIndex(x => x > 2)", {
+          arr: [1, 2, 3, 4],
+        })
+      ).toBe(3);
     });
 
     test("indexOf", () => {
-      expect(TemplateEngine.evaluate("arr.indexOf('b')", { arr: ["a", "b", "c"] })).toBe(1);
-      expect(TemplateEngine.evaluate("arr.indexOf('x')", { arr: ["a", "b", "c"] })).toBe(-1);
+      expect(
+        TemplateEngine.evaluate("arr.indexOf('b')", { arr: ["a", "b", "c"] })
+      ).toBe(1);
+      expect(
+        TemplateEngine.evaluate("arr.indexOf('x')", { arr: ["a", "b", "c"] })
+      ).toBe(-1);
     });
 
     test("lastIndexOf", () => {
-      expect(TemplateEngine.evaluate("arr.lastIndexOf('b')", { arr: ["a", "b", "c", "b"] })).toBe(3);
+      expect(
+        TemplateEngine.evaluate("arr.lastIndexOf('b')", {
+          arr: ["a", "b", "c", "b"],
+        })
+      ).toBe(3);
     });
 
     test("concat", () => {
-      expect(TemplateEngine.evaluate("arr.concat([4, 5])", { arr: [1, 2, 3] })).toEqual([1, 2, 3, 4, 5]);
+      expect(
+        TemplateEngine.evaluate("arr.concat([4, 5])", { arr: [1, 2, 3] })
+      ).toEqual([1, 2, 3, 4, 5]);
     });
 
     test("concat multiple", () => {
-      expect(TemplateEngine.evaluate("arr.concat([4], [5, 6])", { arr: [1, 2, 3] })).toEqual([1, 2, 3, 4, 5, 6]);
+      expect(
+        TemplateEngine.evaluate("arr.concat([4], [5, 6])", { arr: [1, 2, 3] })
+      ).toEqual([1, 2, 3, 4, 5, 6]);
     });
 
     test("slice", () => {
-      expect(TemplateEngine.evaluate("arr.slice(1, 3)", { arr: [1, 2, 3, 4, 5] })).toEqual([2, 3]);
+      expect(
+        TemplateEngine.evaluate("arr.slice(1, 3)", { arr: [1, 2, 3, 4, 5] })
+      ).toEqual([2, 3]);
     });
 
     test("slice negative", () => {
-      expect(TemplateEngine.evaluate("arr.slice(-2)", { arr: [1, 2, 3, 4, 5] })).toEqual([4, 5]);
+      expect(
+        TemplateEngine.evaluate("arr.slice(-2)", { arr: [1, 2, 3, 4, 5] })
+      ).toEqual([4, 5]);
     });
 
     test("at (array)", () => {
@@ -1752,58 +2111,84 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("fill", () => {
-      expect(TemplateEngine.evaluate("Array(3).fill(0)", {})).toEqual([0, 0, 0]);
-      expect(TemplateEngine.evaluate("[1, 2, 3, 4].fill(0, 1, 3)", {})).toEqual([1, 0, 0, 4]);
+      expect(TemplateEngine.evaluate("Array(3).fill(0)", {})).toEqual([
+        0, 0, 0,
+      ]);
+      expect(TemplateEngine.evaluate("[1, 2, 3, 4].fill(0, 1, 3)", {})).toEqual(
+        [1, 0, 0, 4]
+      );
     });
 
     test("copyWithin", () => {
-      expect(TemplateEngine.evaluate("[1, 2, 3, 4, 5].copyWithin(0, 3)", {})).toEqual([4, 5, 3, 4, 5]);
+      expect(
+        TemplateEngine.evaluate("[1, 2, 3, 4, 5].copyWithin(0, 3)", {})
+      ).toEqual([4, 5, 3, 4, 5]);
     });
 
     test("entries", () => {
-      const result = TemplateEngine.evaluate("Array.from(arr.entries())", { arr: ["a", "b"] });
-      expect(result).toEqual([[0, "a"], [1, "b"]]);
+      const result = TemplateEngine.evaluate("Array.from(arr.entries())", {
+        arr: ["a", "b"],
+      });
+      expect(result).toEqual([
+        [0, "a"],
+        [1, "b"],
+      ]);
     });
 
     test("keys", () => {
-      const result = TemplateEngine.evaluate("Array.from(arr.keys())", { arr: ["a", "b", "c"] });
+      const result = TemplateEngine.evaluate("Array.from(arr.keys())", {
+        arr: ["a", "b", "c"],
+      });
       expect(result).toEqual([0, 1, 2]);
     });
 
     test("values", () => {
-      const result = TemplateEngine.evaluate("Array.from(arr.values())", { arr: ["a", "b"] });
+      const result = TemplateEngine.evaluate("Array.from(arr.values())", {
+        arr: ["a", "b"],
+      });
       expect(result).toEqual(["a", "b"]);
     });
 
     test("toReversed (non-mutating)", () => {
       const arr = [1, 2, 3];
-      expect(TemplateEngine.evaluate("arr.toReversed()", { arr })).toEqual([3, 2, 1]);
+      expect(TemplateEngine.evaluate("arr.toReversed()", { arr })).toEqual([
+        3, 2, 1,
+      ]);
       expect(arr).toEqual([1, 2, 3]); // Original unchanged
     });
 
     test("toSorted (non-mutating)", () => {
       const arr = [3, 1, 2];
-      expect(TemplateEngine.evaluate("arr.toSorted()", { arr })).toEqual([1, 2, 3]);
+      expect(TemplateEngine.evaluate("arr.toSorted()", { arr })).toEqual([
+        1, 2, 3,
+      ]);
       expect(arr).toEqual([3, 1, 2]); // Original unchanged
     });
 
     test("toSpliced (non-mutating)", () => {
       const arr = [1, 2, 3, 4];
-      expect(TemplateEngine.evaluate("arr.toSpliced(1, 2, 'a', 'b')", { arr })).toEqual([1, "a", "b", 4]);
+      expect(
+        TemplateEngine.evaluate("arr.toSpliced(1, 2, 'a', 'b')", { arr })
+      ).toEqual([1, "a", "b", 4]);
       expect(arr).toEqual([1, 2, 3, 4]); // Original unchanged
     });
 
     test("with (non-mutating)", () => {
       const arr = [1, 2, 3];
-      expect(TemplateEngine.evaluate("arr.with(1, 'x')", { arr })).toEqual([1, "x", 3]);
+      expect(TemplateEngine.evaluate("arr.with(1, 'x')", { arr })).toEqual([
+        1,
+        "x",
+        3,
+      ]);
       expect(arr).toEqual([1, 2, 3]); // Original unchanged
     });
 
     test("reduceRight", () => {
-      expect(TemplateEngine.evaluate(
-        "arr.reduceRight((acc, x) => acc + x, '')",
-        { arr: ["a", "b", "c"] }
-      )).toBe("cba");
+      expect(
+        TemplateEngine.evaluate("arr.reduceRight((acc, x) => acc + x, '')", {
+          arr: ["a", "b", "c"],
+        })
+      ).toBe("cba");
     });
   });
 
@@ -1819,8 +2204,12 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("Error properties", () => {
-      expect(TemplateEngine.evaluate("new Error('test').message", {})).toBe("test");
-      expect(TemplateEngine.evaluate("new Error('test').name", {})).toBe("Error");
+      expect(TemplateEngine.evaluate("new Error('test').message", {})).toBe(
+        "test"
+      );
+      expect(TemplateEngine.evaluate("new Error('test').name", {})).toBe(
+        "Error"
+      );
     });
 
     test("TypeError", () => {
@@ -1829,17 +2218,26 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("RangeError", () => {
-      const result = TemplateEngine.evaluate("new RangeError('range error')", {});
+      const result = TemplateEngine.evaluate(
+        "new RangeError('range error')",
+        {}
+      );
       expect(result instanceof RangeError).toBe(true);
     });
 
     test("SyntaxError", () => {
-      const result = TemplateEngine.evaluate("new SyntaxError('syntax error')", {});
+      const result = TemplateEngine.evaluate(
+        "new SyntaxError('syntax error')",
+        {}
+      );
       expect(result instanceof SyntaxError).toBe(true);
     });
 
     test("ReferenceError", () => {
-      const result = TemplateEngine.evaluate("new ReferenceError('ref error')", {});
+      const result = TemplateEngine.evaluate(
+        "new ReferenceError('ref error')",
+        {}
+      );
       expect(result instanceof ReferenceError).toBe(true);
     });
 
@@ -1867,13 +2265,21 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Console Methods", () => {
     test("console.log returns undefined", () => {
-      expect(TemplateEngine.evaluate("typeof console.log", {})).toBe("function");
+      expect(TemplateEngine.evaluate("typeof console.log", {})).toBe(
+        "function"
+      );
     });
 
     test("console methods exist", () => {
-      expect(TemplateEngine.evaluate("typeof console.error", {})).toBe("function");
-      expect(TemplateEngine.evaluate("typeof console.warn", {})).toBe("function");
-      expect(TemplateEngine.evaluate("typeof console.info", {})).toBe("function");
+      expect(TemplateEngine.evaluate("typeof console.error", {})).toBe(
+        "function"
+      );
+      expect(TemplateEngine.evaluate("typeof console.warn", {})).toBe(
+        "function"
+      );
+      expect(TemplateEngine.evaluate("typeof console.info", {})).toBe(
+        "function"
+      );
     });
   });
 
@@ -1883,10 +2289,12 @@ describe("TemplateEngine Remaining Cases", () => {
 
   describe("Additional Global Objects", () => {
     test("Intl.NumberFormat", () => {
-      expect(TemplateEngine.evaluate(
-        "new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(1234.56)",
-        {}
-      )).toBe("$1,234.56");
+      expect(
+        TemplateEngine.evaluate(
+          "new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(1234.56)",
+          {}
+        )
+      ).toBe("$1,234.56");
     });
 
     test("Intl.DateTimeFormat", () => {
@@ -1898,31 +2306,36 @@ describe("TemplateEngine Remaining Cases", () => {
     });
 
     test("URL object", () => {
-      expect(TemplateEngine.evaluate(
-        "new URL('https://example.com/path?q=test').hostname",
-        {}
-      )).toBe("example.com");
+      expect(
+        TemplateEngine.evaluate(
+          "new URL('https://example.com/path?q=test').hostname",
+          {}
+        )
+      ).toBe("example.com");
     });
 
     test("URL searchParams", () => {
-      expect(TemplateEngine.evaluate(
-        "new URL('https://example.com?q=test').searchParams.get('q')",
-        {}
-      )).toBe("test");
+      expect(
+        TemplateEngine.evaluate(
+          "new URL('https://example.com?q=test').searchParams.get('q')",
+          {}
+        )
+      ).toBe("test");
     });
 
     test("URLSearchParams", () => {
-      expect(TemplateEngine.evaluate(
-        "new URLSearchParams('a=1&b=2').get('b')",
-        {}
-      )).toBe("2");
+      expect(
+        TemplateEngine.evaluate("new URLSearchParams('a=1&b=2').get('b')", {})
+      ).toBe("2");
     });
 
     test("TextEncoder / TextDecoder", () => {
-      expect(TemplateEngine.evaluate(
-        "new TextDecoder().decode(new TextEncoder().encode('hello'))",
-        {}
-      )).toBe("hello");
+      expect(
+        TemplateEngine.evaluate(
+          "new TextDecoder().decode(new TextEncoder().encode('hello'))",
+          {}
+        )
+      ).toBe("hello");
     });
   });
 
@@ -1939,7 +2352,20 @@ describe("TemplateEngine Remaining Cases", () => {
 
     test("expression with many different operators", () => {
       const expr = "a + b - c * d / e % f ** g & h | i ^ j << k >> l";
-      const data = { a: 100, b: 50, c: 10, d: 4, e: 2, f: 7, g: 2, h: 15, i: 8, j: 3, k: 1, l: 1 };
+      const data = {
+        a: 100,
+        b: 50,
+        c: 10,
+        d: 4,
+        e: 2,
+        f: 7,
+        g: 2,
+        h: 15,
+        i: 8,
+        j: 3,
+        k: 1,
+        l: 1,
+      };
       const result = TemplateEngine.evaluate(expr, data);
       expect(typeof result).toBe("number");
     });

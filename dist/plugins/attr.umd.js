@@ -1,9 +1,9 @@
 /*! Eleva Attr Plugin v1.1.1 | MIT License | https://elevajs.com */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaAttrPlugin = {}));
-})(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.ElevaAttr = factory());
+})(this, (function () { 'use strict';
 
   /**
    * @module eleva/plugins/attr
@@ -278,8 +278,7 @@
       }
   };
 
-  exports.Attr = AttrPlugin;
-  exports.AttrPlugin = AttrPlugin;
+  return AttrPlugin;
 
 }));
 //# sourceMappingURL=attr.umd.js.map

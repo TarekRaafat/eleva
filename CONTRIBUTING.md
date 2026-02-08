@@ -124,6 +124,30 @@ Not a coder? You can still help Eleva thrive:
 
 [View sponsorship tiers →](https://github.com/TarekRaafat/eleva#sponsor-eleva)
 
+## AI & Agent Experience (AX)
+
+Eleva maintains machine-readable documentation for AI/LLM integration. When contributing, please keep these artifacts in sync:
+
+### Files to Update
+
+| Change | Files to Update |
+|--------|----------------|
+| New/changed public API | `docs/llms.txt`, `docs/llms-full.txt`, `docs/agent-manifest.json` |
+| New Agent method/error | `docs/agent-manifest.json`, `docs/plugins/agent/api.md` |
+| New plugin | `docs/llms.txt` (minimal), `docs/llms-full.txt` (full) |
+| New example pattern | `examples/ai/` (golden example), `docs/llms-full.txt` (recipe) |
+
+### Verification
+
+Run `bun run verify:ax` before submitting PRs that touch AI-facing artifacts.
+
+### Golden Examples
+
+Examples in `examples/ai/` are designed for AI codegen validation. Keep them:
+- Minimal (fewest lines to demonstrate the pattern)
+- Self-contained (no external dependencies beyond Eleva)
+- Correct (they must work with `bun run serve`)
+
 ## License
 
 By contributing to Eleva, you agree that your contributions will be licensed under the project's MIT License.

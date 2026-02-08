@@ -37,7 +37,7 @@ description: Eleva Store API reference. All methods (dispatch, subscribe, getSta
   "description": "Complete API reference for Eleva Store plugin including methods, TypeScript support, troubleshooting, and migration guide.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-02-03T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -172,6 +172,11 @@ Executes an action to mutate state.
 
 > **Note:** Always returns a Promise regardless of whether the action is sync or async. Subscriber callbacks that throw are caught and passed to the `onError` handler.
 
+Emits the following events via `eleva.emitter`:
+- `store:dispatch` — before action execution (with `{ type, payload, timestamp }`)
+- `store:mutate` — after successful execution (with `{ type, payload, timestamp }`)
+- `store:error` — on failure (with `{ action, error, timestamp }`)
+
 ```javascript
 // Signature
 store.dispatch(actionName: string, payload?: any): Promise<any>
@@ -242,7 +247,7 @@ store.replaceState({
 
 ### registerModule(namespace, module)
 
-Dynamically registers a new namespaced module.
+Dynamically registers a new namespaced module. Emits `store:register` via `eleva.emitter` with `{ namespace, timestamp }`.
 
 ```javascript
 // Signature
@@ -270,7 +275,7 @@ store.dispatch("wishlist.addItem", { id: 1, name: "Product" });
 
 ### unregisterModule(namespace)
 
-Removes a dynamically registered module.
+Removes a dynamically registered module. Emits `store:unregister` via `eleva.emitter` with `{ namespace, timestamp }`.
 
 ```javascript
 // Signature
@@ -350,6 +355,32 @@ store.clearPersistedState(): void
 // Example
 store.clearPersistedState();
 // localStorage/sessionStorage entry is removed
+```
+
+---
+
+## Emitter Events
+
+The Store plugin emits events via `eleva.emitter` for cross-plugin observability. These events can be captured by the Agent plugin's `emitterEvents` option or any custom listener.
+
+| Event | Fired When | Payload |
+|-------|-----------|---------|
+| `store:dispatch` | Before action execution | `{ type, payload, timestamp }` |
+| `store:mutate` | After successful action execution | `{ type, payload, timestamp }` |
+| `store:error` | When an action throws | `{ action, error, timestamp }` |
+| `store:register` | Namespace module registered | `{ namespace, timestamp }` |
+| `store:unregister` | Namespace module unregistered | `{ namespace, timestamp }` |
+
+```javascript
+// Listen for Store events directly
+app.emitter.on("store:mutate", (mutation) => {
+  console.log(`State changed: ${mutation.type}`);
+});
+
+// Or capture in Agent audit log
+app.use(Agent, {
+  emitterEvents: ["store:"]
+});
 ```
 
 ---

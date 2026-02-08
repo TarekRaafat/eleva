@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Eleva.js Attr plugin for ARIA accessibility, data attributes, boolean attributes, and dynamic property binding. 2.2KB, zero-config.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -274,7 +274,7 @@ bun add eleva
 <script src="https://cdn.jsdelivr.net/npm/eleva/dist/plugins/attr.umd.min.js"></script>
 <script>
   const app = new Eleva("MyApp");
-  app.use(ElevaAttrPlugin);
+  app.use(ElevaAttr);
 </script>
 ```
 

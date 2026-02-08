@@ -3,7 +3,14 @@
  * Measures rendering throughput under various scenarios
  */
 
-import { describe, test, expect, beforeEach, afterEach, afterAll } from "bun:test";
+import {
+  describe,
+  test,
+  expect,
+  beforeEach,
+  afterEach,
+  afterAll,
+} from "bun:test";
 import { Window } from "happy-dom";
 
 // Save original globals to restore after tests
@@ -70,7 +77,11 @@ describe("FPS Benchmark", () => {
     updateFn: () => void,
     iterations: number,
     warmupIterations: number = 10
-  ): Promise<{ totalTime: number; opsPerSecond: number; avgOpTime: number }> => {
+  ): Promise<{
+    totalTime: number;
+    opsPerSecond: number;
+    avgOpTime: number;
+  }> => {
     // Warm up
     for (let i = 0; i < warmupIterations; i++) {
       updateFn();
@@ -98,7 +109,12 @@ describe("FPS Benchmark", () => {
     runs: number = 5,
     warmupRuns: number = 2,
     outlierThreshold: number = 2
-  ): Promise<{ totalTime: number; opsPerSecond: number; avgOpTime: number; runs: number }> => {
+  ): Promise<{
+    totalTime: number;
+    opsPerSecond: number;
+    avgOpTime: number;
+    runs: number;
+  }> => {
     const warmupIterations = Math.min(iterations, 200);
     for (let i = 0; i < warmupRuns; i++) {
       await measureThroughput(updateFn, warmupIterations, 10);
@@ -153,7 +169,9 @@ describe("FPS Benchmark", () => {
     console.log(`   Ops/Second (median): ${result.opsPerSecond.toFixed(0)}`);
     console.log(`   Avg Op Time (median): ${result.avgOpTime.toFixed(3)}ms`);
     console.log(`   Runs: ${result.runs}`);
-    console.log(`   Max FPS potential: ${Math.min(result.opsPerSecond, 1000 / 16.67).toFixed(0)} (at 60fps budget)`);
+    console.log(
+      `   Max FPS potential: ${Math.min(result.opsPerSecond, 1000 / 16.67).toFixed(0)} (at 60fps budget)`
+    );
 
     expect(result.opsPerSecond).toBeGreaterThan(500);
     await instance.unmount();
@@ -243,13 +261,19 @@ describe("FPS Benchmark", () => {
   test("Throughput: List with 100 items", async () => {
     const component = {
       setup: ({ signal }: any) => ({
-        items: signal(Array.from({ length: 100 }, (_, i) => ({ id: i, value: 0 }))),
+        items: signal(
+          Array.from({ length: 100 }, (_, i) => ({ id: i, value: 0 }))
+        ),
       }),
       template: ({ items }: any) => `
         <ul>
-          ${items.value.map((item: any) => `
+          ${items.value
+            .map(
+              (item: any) => `
             <li key="${item.id}">Item ${item.id}: ${item.value}</li>
-          `).join("")}
+          `
+            )
+            .join("")}
         </ul>
       `,
     };
@@ -325,12 +349,16 @@ describe("FPS Benchmark", () => {
             <h2>${data.value.header.subtitle}</h2>
           </header>
           <main>
-            ${data.value.stats.map((stat: any, i: number) => `
+            ${data.value.stats
+              .map(
+                (stat: any, i: number) => `
               <div key="${i}" class="stat-card">
                 <span class="label">${stat.label}</span>
                 <span class="value">${stat.value}</span>
               </div>
-            `).join("")}
+            `
+              )
+              .join("")}
           </main>
           <footer>
             <p>${data.value.footer.text}: ${data.value.footer.time}</p>
@@ -407,7 +435,9 @@ describe("FPS Benchmark", () => {
     console.log(`   Theoretical Max FPS: ${potentialFPS.toFixed(0)}`);
     console.log("");
     console.log("   60fps budget: 16.67ms per frame");
-    console.log(`   Renders possible per frame: ${Math.floor(16.67 / medianRenderTime)}`);
+    console.log(
+      `   Renders possible per frame: ${Math.floor(16.67 / medianRenderTime)}`
+    );
     console.log("");
     console.log("   ✅ Framework does NOT limit FPS");
     console.log("   ✅ Batching reduces unnecessary renders");

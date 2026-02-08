@@ -22,6 +22,10 @@ Thumbs.db
 *.log
 npm-debug.log*
 
+# Local temp/cache for validation tooling
+.tmp/
+.bun-cache/
+
 # Coverage reports
 coverage/
 test/coverage/

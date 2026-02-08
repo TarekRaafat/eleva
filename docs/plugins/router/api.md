@@ -37,7 +37,7 @@ description: Eleva Router API reference. All methods, properties, events, and Ty
   "description": "Complete API reference for Eleva Router including methods, properties, plugins, TypeScript support, and troubleshooting.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-02-03T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",

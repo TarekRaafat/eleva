@@ -41,6 +41,20 @@ export function cleanupFixtures(): void {
       el.parentNode.removeChild(el);
     }
   });
+
+  const agentTests = document.querySelectorAll('[id^="agent-test"]');
+  agentTests.forEach((el) => {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
+  });
+
+  const collisionTests = document.querySelectorAll('[id^="collision-"]');
+  collisionTests.forEach((el) => {
+    if (el.parentNode) {
+      el.parentNode.removeChild(el);
+    }
+  });
 }
 
 /**
@@ -55,13 +69,15 @@ export async function flushPromises(): Promise<void> {
  * @param options - Component options
  * @returns The component fixture
  */
-export function createComponentFixture(options: {
-  name?: string;
-  setup?: (ctx: any) => any;
-  template?: (ctx: any) => string;
-  style?: (ctx: any) => string;
-  [key: string]: any;
-} = {}) {
+export function createComponentFixture(
+  options: {
+    name?: string;
+    setup?: (ctx: any) => any;
+    template?: (ctx: any) => string;
+    style?: (ctx: any) => string;
+    [key: string]: any;
+  } = {}
+) {
   return {
     name: options.name || "test-component",
     setup: options.setup || (() => ({})),

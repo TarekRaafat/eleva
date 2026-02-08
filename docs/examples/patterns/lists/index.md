@@ -44,7 +44,7 @@ description: Render dynamic lists in Eleva.js. Array.map() for rendering, event 
 
 # List Operations - Basics
 
-> **Version:** 1.1.1 | Learn how to render dynamic lists, bind events, and choose keys for optimal performance.
+> **Version:** 1.2.0 | Learn how to render dynamic lists, bind events, and choose keys for optimal performance.
 
 ---
 

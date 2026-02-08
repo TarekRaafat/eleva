@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Step-by-step migration guides from React, Vue, Alpine.js, and jQuery to Eleva.js. Concept mapping and code comparisons.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -101,7 +101,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What do I gain by migrating to Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Simplicity (~2.5KB gzipped, no build step, no virtual DOM), Performance (240+ FPS rendering, batched DOM updates), and Developer Experience (familiar patterns from React/Vue, TypeScript support, simple mental model)."
+        "text": "Simplicity (~2.5KB gzipped, no build step, no virtual DOM), Performance (240+ FPS rendering, batched DOM updates), Developer Experience (familiar patterns from React/Vue, TypeScript support, simple mental model), and Agent Experience (AX) — a built-in Agent plugin for AI/LLM integration with action registry, audit logging, and permissions."
       }
     },
     {
@@ -118,9 +118,9 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 # Migration Guides
 
-> **Version:** 1.1.1 | Comprehensive guides for migrating to Eleva from other frameworks
+> **Version:** 1.2.0 | Comprehensive guides for migrating to Eleva from other frameworks
 
-Welcome to the Eleva migration guides. These guides help you transition from popular frameworks to Eleva while leveraging your existing knowledge.
+Welcome to the Eleva migration guides. These guides help you transition from popular frameworks to Eleva while leveraging your existing knowledge. Along with exceptional Developer Experience (DX), Eleva is the only ~2.5KB framework with built-in Agent Experience (AX) — a first-class AI/LLM integration layer.
 
 ---
 

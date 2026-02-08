@@ -92,9 +92,7 @@ const removeOutliers = (values: number[], threshold: number): number[] => {
     values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
   const stdDev = Math.sqrt(variance);
 
-  return values.filter(
-    (v) => Math.abs(v - mean) <= threshold * stdDev
-  );
+  return values.filter((v) => Math.abs(v - mean) <= threshold * stdDev);
 };
 
 /**
@@ -109,11 +107,7 @@ export const runBenchmark = (
   fn: () => unknown,
   options: BenchmarkOptions = {}
 ): BenchmarkMetrics => {
-  const {
-    runs = 10,
-    warmupRuns = 3,
-    outlierThreshold = 2,
-  } = options;
+  const { runs = 10, warmupRuns = 3, outlierThreshold = 2 } = options;
 
   // Warm-up phase (results discarded)
   for (let i = 0; i < warmupRuns; i++) {
@@ -158,11 +152,7 @@ export const runBenchmarkAsync = async (
   fn: () => Promise<unknown>,
   options: BenchmarkOptions = {}
 ): Promise<BenchmarkMetrics> => {
-  const {
-    runs = 10,
-    warmupRuns = 3,
-    outlierThreshold = 2,
-  } = options;
+  const { runs = 10, warmupRuns = 3, outlierThreshold = 2 } = options;
 
   // Warm-up phase
   for (let i = 0; i < warmupRuns; i++) {
@@ -228,7 +218,9 @@ export const logBenchmarkMetrics = (
   console.log(`  Median: ${formatDuration(metrics.median)}`);
   console.log(`  Mean:   ${formatDuration(metrics.mean)}`);
   console.log(`  StdDev: ${formatDuration(metrics.stdDev)}`);
-  console.log(`  Range:  ${formatDuration(metrics.min)} - ${formatDuration(metrics.max)}`);
+  console.log(
+    `  Range:  ${formatDuration(metrics.min)} - ${formatDuration(metrics.max)}`
+  );
   console.log(`  CV:     ${(metrics.cv * 100).toFixed(1)}%`);
   console.log(`  Runs:   ${metrics.runs}`);
 };

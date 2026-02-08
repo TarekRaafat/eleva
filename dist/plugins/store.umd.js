@@ -1,9 +1,9 @@
-/*! Eleva Store Plugin v1.1.1 | MIT License | https://elevajs.com */
+/*! Eleva Store Plugin v1.2.0 | MIT License | https://elevajs.com */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-  typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ElevaStorePlugin = {}));
-})(this, (function (exports) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.ElevaStore = factory());
+})(this, (function () { 'use strict';
 
   /**
    * @module eleva/plugins/store
@@ -206,6 +206,7 @@
    * - Built-in persistence with localStorage/sessionStorage support
    * - Action-based state mutations with validation
    * - Subscription system for reactive updates
+   * - Emitter events for cross-plugin observability (store:dispatch, store:mutate, store:error, store:register, store:unregister)
    * - DevTools integration for debugging
    * - Plugin architecture for extensibility
    *
@@ -255,7 +256,7 @@
       /**
      * Plugin version
      * @type {string}
-     */ version: "1.1.1",
+     */ version: "1.2.0",
       /**
      * Plugin description
      * @type {string}
@@ -504,10 +505,14 @@
          * Execution flow:
          * 1. Retrieves the action function (supports namespaced actions like "auth.login")
          * 2. Records mutation for devtools/history (keeps last 100 mutations)
-         * 3. Executes action with await (actions can be sync or async)
-         * 4. Saves state if persistence is enabled
-         * 5. Notifies all subscribers with (mutation, state)
-         * 6. Notifies devtools if enabled
+         * 3. Emits `store:dispatch` via shared emitter (before execution)
+         * 4. Executes action with await (actions can be sync or async)
+         * 5. Saves state if persistence is enabled
+         * 6. Notifies all subscribers with (mutation, state)
+         * 7. Emits `store:mutate` via shared emitter (after successful execution)
+         * 8. Notifies devtools if enabled
+         *
+         * On error, emits `store:error` via shared emitter before rethrowing.
          *
          * @note Always returns a Promise regardless of whether the action is sync or async.
          * Subscriber callbacks that throw are caught and passed to onError handler.
@@ -539,6 +544,10 @@
                       if (this.mutations.length > 100) {
                           this.mutations.shift(); // Keep only last 100 mutations
                       }
+                      // Emit dispatch event via shared emitter
+                      if (eleva.emitter) {
+                          eleva.emitter.emit("store:dispatch", mutation);
+                      }
                       // Execute the action
                       const result = await action.call(null, this.state, payload);
                       // Save state if persistence is enabled
@@ -553,12 +562,24 @@
                               }
                           }
                       });
+                      // Emit mutate event via shared emitter (after successful execution)
+                      if (eleva.emitter) {
+                          eleva.emitter.emit("store:mutate", mutation);
+                      }
                       // Notify devtools
                       if (this.devTools && typeof window !== "undefined" && window.__ELEVA_DEVTOOLS__) {
                           window.__ELEVA_DEVTOOLS__.notifyMutation(mutation, this.state);
                       }
                       return result;
                   } catch (error) {
+                      // Emit error event via shared emitter
+                      if (eleva.emitter) {
+                          eleva.emitter.emit("store:error", {
+                              action: actionName,
+                              error,
+                              timestamp: Date.now()
+                          });
+                      }
                       if (this.onError) {
                           this.onError(error, `Action dispatch failed: ${actionName}`);
                       }
@@ -668,6 +689,13 @@
                   };
                   this._initializeNamespaces(namespaces);
                   this._saveState();
+                  // Emit register event via shared emitter
+                  if (eleva.emitter) {
+                      eleva.emitter.emit("store:register", {
+                          namespace,
+                          timestamp: Date.now()
+                      });
+                  }
               }
               /**
          * Unregisters a namespaced module.
@@ -683,6 +711,13 @@
                   delete this.state[namespace];
                   delete this.actions[namespace];
                   this._saveState();
+                  // Emit unregister event via shared emitter
+                  if (eleva.emitter) {
+                      eleva.emitter.emit("store:unregister", {
+                          namespace,
+                          timestamp: Date.now()
+                      });
+                  }
               }
               /**
          * Creates a new reactive state property at runtime.
@@ -919,8 +954,7 @@
       }
   };
 
-  exports.Store = StorePlugin;
-  exports.StorePlugin = StorePlugin;
+  return StorePlugin;
 
 }));
 //# sourceMappingURL=store.umd.js.map

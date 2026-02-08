@@ -560,7 +560,9 @@ describe("RouterPlugin", () => {
       router.addRoute({ path: "/new", component: NewPage });
 
       const wildcardIndex = router.routes.findIndex((r: any) => r.path === "*");
-      const newRouteIndex = router.routes.findIndex((r: any) => r.path === "/new");
+      const newRouteIndex = router.routes.findIndex(
+        (r: any) => r.path === "/new"
+      );
 
       expect(newRouteIndex).toBeLessThan(wildcardIndex);
     });
@@ -752,7 +754,11 @@ describe("RouterPlugin", () => {
         autoStart: false,
         routes: [
           { path: "/", component: HomePage },
-          { path: "/about", component: AboutPage, beforeLeave: beforeLeaveGuard },
+          {
+            path: "/about",
+            component: AboutPage,
+            beforeLeave: beforeLeaveGuard,
+          },
           { path: "/contact", component: ContactPage },
         ],
       });
@@ -989,7 +995,9 @@ describe("RouterPlugin", () => {
       await router.start();
       await router.start();
 
-      expect(warnCalls.some((call) => call[0].includes("already started"))).toBe(true);
+      expect(
+        warnCalls.some((call) => call[0].includes("already started"))
+      ).toBe(true);
       console.warn = originalWarn;
     });
 
@@ -1160,7 +1168,9 @@ describe("RouterPlugin", () => {
 
       router.setErrorHandler({ invalid: true });
 
-      expect(warnCalls.some((call) => call[0].includes("Invalid error handler"))).toBe(true);
+      expect(
+        warnCalls.some((call) => call[0].includes("Invalid error handler"))
+      ).toBe(true);
       console.warn = originalWarn;
     });
   });
@@ -1487,7 +1497,9 @@ describe("RouterPlugin", () => {
 
       await router.start();
 
-      expect(warnCalls.some((call) => call[0].includes("not found"))).toBe(true);
+      expect(warnCalls.some((call) => call[0].includes("not found"))).toBe(
+        true
+      );
       console.warn = originalWarn;
     });
   });
@@ -1549,9 +1561,7 @@ describe("RouterPlugin", () => {
       router = app.use(RouterPlugin, {
         mount: "#app",
         autoStart: false,
-        routes: [
-          { path: "/home", component: HomePage, name: "home" },
-        ],
+        routes: [{ path: "/home", component: HomePage, name: "home" }],
       });
 
       await router.start();
@@ -1616,7 +1626,9 @@ describe("RouterPlugin", () => {
   describe("Lazy Loading Components", () => {
     test("should support async component functions", async () => {
       const HomePage = { template: () => "<h1>Home</h1>" };
-      const LazyPage = async () => ({ default: { template: () => "<h1>Lazy</h1>" } });
+      const LazyPage = async () => ({
+        default: { template: () => "<h1>Lazy</h1>" },
+      });
 
       router = app.use(RouterPlugin, {
         mount: "#app",

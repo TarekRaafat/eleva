@@ -102,7 +102,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Learn how to install and create your first Eleva.js application. Step-by-step tutorial covering installation, components, signals, and basic patterns.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -176,7 +176,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 ## Introduction
 
-Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript. Its goal is to empower developers who value simplicity, performance, and full control over their application to build modular and high-performance apps without the overhead of larger frameworks.
+Eleva is designed to offer a simple yet powerful way to build frontend applications using pure vanilla JavaScript — including AI-agent-powered experiences. Its goal is to empower developers who value simplicity, performance, and full control over their application to build modular and high-performance apps without the overhead of larger frameworks. With the built-in Agent plugin, Eleva also delivers exceptional **Agent Experience (AX)** for LLM and AI integration.
 
 ---
 
@@ -268,14 +268,16 @@ const app = new Eleva("MyApp");
 **With Individual Plugins (Optional):**
 ```javascript
 import Eleva from 'eleva';
-import { Attr } from 'eleva/plugins/attr';      // ~2.2KB
-import { Router } from 'eleva/plugins/router';  // ~15KB
-import { Store } from 'eleva/plugins/store';    // ~6KB
+import { Attr } from 'eleva/plugins/attr';      // ~2.2KB min (~1.0KB gz)
+import { Router } from 'eleva/plugins/router';  // ~14.9KB min (~4.6KB gz)
+import { Store } from 'eleva/plugins/store';    // ~6.2KB min (~2.0KB gz)
+import { Agent } from 'eleva/plugins/agent';    // ~11.2KB min (~3.5KB gz)
 
 const app = new Eleva("MyApp");
 app.use(Attr);    // Only if needed
 app.use(Router);  // Only if needed
 app.use(Store);   // Only if needed
+app.use(Agent);   // Only if needed
 ```
 
 ### Named Exports

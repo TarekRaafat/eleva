@@ -19,8 +19,13 @@
  */
 
 import { describe, test, expect } from "bun:test";
-import Eleva, { Signal, Emitter, Renderer, TemplateEngine } from "../../dist/eleva.js";
-import { Attr, Router, Store } from "../../dist/eleva-plugins.js";
+import Eleva, {
+  Signal,
+  Emitter,
+  Renderer,
+  TemplateEngine,
+} from "../../dist/eleva.js";
+import { Attr, Router, Store, Agent } from "../../dist/eleva-plugins.js";
 
 describe("TypeScript Type Definitions", () => {
   describe("Core Named Exports", () => {
@@ -110,6 +115,14 @@ describe("TypeScript Type Definitions", () => {
       expect(typeof Store).toBe("object");
       expect(Store.name).toBe("store");
       expect(typeof Store.install).toBe("function");
+    });
+
+    test("Agent plugin is exported", () => {
+      expect(Agent).toBeDefined();
+      expect(typeof Agent).toBe("object");
+      expect(Agent.name).toBe("agent");
+      expect(typeof Agent.install).toBe("function");
+      expect(typeof Agent.uninstall).toBe("function");
     });
   });
 
@@ -204,6 +217,69 @@ describe("TypeScript Type Definitions", () => {
           },
         });
       }).not.toThrow();
+    });
+
+    test("app.use accepts Agent plugin", () => {
+      const app = new Eleva("AgentPluginTest");
+      expect(() => {
+        app.use(Agent, {
+          maxLogSize: 50,
+          enableInspection: true,
+          actions: { ping: () => "pong" },
+          permissions: { "test-scope": { actions: ["ping"] } },
+          strictPermissions: false,
+        });
+      }).not.toThrow();
+      expect(app.agent).toBeDefined();
+    });
+
+    test("Agent module augmentation exposes typed app.agent* properties", () => {
+      const app = new Eleva("AgentAugmentTest");
+      app.use(Agent);
+
+      // These access patterns rely on module augmentation in Agent.d.ts.
+      // If augmentation is missing, TypeScript will error on these lines.
+      expect(app.agent).toBeDefined();
+      expect(typeof app.agent.register).toBe("function");
+      expect(typeof app.agent.execute).toBe("function");
+      expect(typeof app.agent.dispatch).toBe("function");
+      expect(typeof app.agentExecute).toBe("function");
+      expect(typeof app.agentDispatch).toBe("function");
+    });
+
+    test("ctx.agent is available with typed API in component setup", async () => {
+      const app = new Eleva("AgentCtxTest");
+      app.use(Agent);
+
+      let ctxAgent: typeof app.agent | undefined;
+
+      app.component("TypedComp", {
+        setup(ctx) {
+          // ctx.agent relies on ComponentContext augmentation.
+          // Without augmentation, TypeScript would require `(ctx as any).agent`.
+          ctxAgent = ctx.agent;
+          if (ctx.agent) {
+            ctx.agent.register("typed-action", () => "typed");
+          }
+          return {};
+        },
+        template: () => "<div>typed</div>",
+      });
+
+      const container = document.createElement("div");
+      container.id = "agent-ctx-type-test";
+      document.body.appendChild(container);
+
+      await app.mount(container, "TypedComp");
+
+      expect(ctxAgent).toBeDefined();
+      expect(typeof ctxAgent!.register).toBe("function");
+      expect(typeof ctxAgent!.execute).toBe("function");
+      expect(typeof ctxAgent!.dispatch).toBe("function");
+      expect(typeof ctxAgent!.onCommand).toBe("function");
+      expect(app.agent.hasAction("typed-action")).toBe(true);
+
+      container.remove();
     });
   });
 });

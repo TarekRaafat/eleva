@@ -96,7 +96,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "What plugins are available with Eleva?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Eleva comes with three powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), and Store (reactive state management with persistence)."
+        "text": "Eleva comes with four powerful built-in plugins: Attr (ARIA, data attributes, boolean attributes), Router (client-side routing with guards and reactive state), Store (reactive state management with persistence), and Agent (AI/LLM integration with action registry, audit logging, and permissions)."
       }
     },
     {
@@ -144,7 +144,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "name": "Is Eleva production-ready?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1300+ tests)."
+        "text": "Yes! Eleva v1.2.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage (1530+ tests)."
       }
     },
     {
@@ -177,6 +177,22 @@ image: /imgs/eleva.js%20Full%20Logo.png
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "No. Nested route definitions (routes with a children property) are not supported. All routes must be defined as a flat array. To achieve similar functionality, use shared layouts with flat routes."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is Agent Experience (AX) in Eleva?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Agent Experience (AX) is the developer experience of building AI-agent-powered applications. Eleva's built-in Agent plugin provides a first-class integration surface for LLMs and AI agents, including an action registry, command bus, audit logging, schema validation, and scoped permissions — all in ~3.5KB gzipped."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Eleva support AI and LLM integration?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes! Eleva includes a built-in Agent plugin that provides AI/LLM integration out of the box. It features an action registry for registering functions agents can call, a command bus for dispatching structured commands, audit logging for traceability, schema validation, and scoped permissions per component. No other ~2.5KB framework offers built-in agent support."
       }
     },
     {
@@ -247,7 +263,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Frequently asked questions, testing guide, troubleshooting tips, and community resources for Eleva.js.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-28T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -306,7 +322,7 @@ Eleva takes plain vanilla JavaScript to the next level. Signals for reactivity. 
 
 **Q: Is Eleva production-ready?**
 
-Yes! Eleva v1.1.1 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
+Yes! Eleva v1.2.0 is the latest stable release. The framework is production-ready with a stable API and comprehensive test coverage. We continue to welcome feedback and contributions.
 
 **Q: How do I report issues or request features?**
 
@@ -381,10 +397,19 @@ Yes! Eleva includes a powerful Router plugin that provides client-side routing w
 
 **Q: What plugins are available with Eleva?**
 
-Eleva comes with three powerful built-in plugins:
+Eleva comes with four powerful built-in plugins:
 - **Attr** - ARIA, data attributes, boolean attributes
 - **Router** - Client-side routing with guards and reactive state
 - **Store** - Reactive state management with persistence
+- **Agent** - AI/agent integration with action registry, command bus, audit logging, and permissions
+
+**Q: What is Agent Experience (AX)?**
+
+Agent Experience (AX) is the developer experience of building AI-agent-powered applications. Eleva's built-in Agent plugin provides a first-class integration surface for LLMs and AI agents — including an action registry, command bus, audit logging, schema validation, and scoped permissions — all in ~3.5KB gzipped.
+
+**Q: Does Eleva support AI and LLM integration?**
+
+Yes! Eleva includes a built-in [Agent plugin](./plugins/agent/) that provides AI/LLM integration out of the box. It features an action registry, a structured command bus, audit logging, schema validation, and scoped permissions per component. No other ~2.5KB framework offers built-in agent support.
 
 **Q: Can I create custom plugins for Eleva?**
 
@@ -449,7 +474,7 @@ Eleva has a comprehensive test suite ensuring reliability and stability.
 
 | Metric | Value |
 |--------|-------|
-| **Total Tests** | 1,335 |
+| **Total Tests** | 1,624 |
 | **Line Coverage** | 100% |
 | **Function Coverage** | 100% (core) |
 | **Test Runner** | Bun |
@@ -486,6 +511,7 @@ test/
 │   │   ├── Signal.test.ts
 │   │   └── TemplateEngine.test.ts
 │   └── plugins/            # Plugin tests
+│       ├── Agent.test.ts
 │       ├── Attr.test.ts
 │       ├── Router.test.ts
 │       └── Store.test.ts

@@ -1,0 +1,37 @@
+name: AX (Agent Experience) Verification
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'docs/agent-manifest.json'
+      - 'docs/llms.txt'
+      - 'docs/llms-full.txt'
+      - 'src/plugins/Agent.js'
+      - 'types/plugins/Agent.d.ts'
+      - 'examples/ai/**'
+      - 'test/unit/plugins/agent-docs-parity.test.ts'
+      - 'CONTRIBUTING.md'
+      - 'package.json'
+      - '.github/workflows/ax.yml'
+
+jobs:
+  verify-ax:
+    name: Verify AX Artifacts
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Run AX verification
+        run: bun run verify:ax

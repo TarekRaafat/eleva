@@ -86,4 +86,21 @@ export default [
     ],
     plugins: [dts()],
   },
+  // Individual plugin types - Agent
+  {
+    input: "types/plugins/Agent.d.ts",
+    output: [
+      {
+        file: "dist/plugins/agent.d.ts",
+        format: "es",
+        sourcemap: true,
+      },
+      {
+        file: "dist/plugins/agent.d.cts",
+        format: "es",
+        sourcemap: true,
+      },
+    ],
+    plugins: [dts()],
+  },
 ];

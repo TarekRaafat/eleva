@@ -433,7 +433,7 @@ export type ChildrenMap = Record<string, ComponentDefinition | string>;
 /**
  * Context passed to component setup function.
  */
-export type ComponentContext = {
+export interface ComponentContext {
     /**
      *           Component properties passed during mounting.
      */
@@ -446,7 +446,7 @@ export type ComponentContext = {
      *           Factory function to create reactive Signal instances.
      */
     signal: SignalFactory;
-};
+}
 /**
  * Properties passed to a component during mounting.
  */

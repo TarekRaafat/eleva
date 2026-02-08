@@ -107,7 +107,7 @@ description: Migrate from React to Eleva.js. useState â†’ signal(), useEffect â†
   "description": "React to Eleva.js migration guide. Learn how useState maps to signals, useEffect to watchers, and JSX to template strings.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",

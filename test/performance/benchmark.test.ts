@@ -73,7 +73,7 @@ const ARCHIVE_DIR = path.join(RESULTS_DIR, "archive");
 const HISTORY_FILE = path.join(RESULTS_DIR, "benchmark-history.json");
 const REPORT_FILE = path.join(RESULTS_DIR, "BENCHMARKS.md");
 
-const CHANGE_THRESHOLD = 0.10; // 10% change is considered significant
+const CHANGE_THRESHOLD = 0.1; // 10% change is considered significant
 const MAX_HISTORY_VERSIONS = 10; // Number of versions to show in history table (initial always included)
 
 // ============================================================================
@@ -112,7 +112,10 @@ function archiveVersion(version: string, history: BenchmarkHistory): void {
   // Generate a mini-report for the archived version
   const results = versionData.results;
   const benchmarkRows = Object.values(results)
-    .map((r) => `| ${r.name} | ${formatDuration(r.median)} | ${r.passed ? "✓" : "✗"} |`)
+    .map(
+      (r) =>
+        `| ${r.name} | ${formatDuration(r.median)} | ${r.passed ? "✓" : "✗"} |`
+    )
     .join("\n");
 
   const avgMedian =
@@ -171,7 +174,14 @@ function compareSemver(a: string, b: string): number {
       }
     }
 
-    return { major, minor, patch, prereleaseTag, prereleaseNum, hasPrerelease: !!prerelease };
+    return {
+      major,
+      minor,
+      patch,
+      prereleaseTag,
+      prereleaseNum,
+      hasPrerelease: !!prerelease,
+    };
   };
 
   const va = parseVersion(a);
@@ -258,12 +268,24 @@ function getTrend(
   const absChange = Math.abs(changePercent);
 
   if (absChange < CHANGE_THRESHOLD * 100) {
-    return { symbol: "→", change: `${changePercent >= 0 ? "+" : ""}${changePercent.toFixed(1)}%`, class: "stable" };
+    return {
+      symbol: "→",
+      change: `${changePercent >= 0 ? "+" : ""}${changePercent.toFixed(1)}%`,
+      class: "stable",
+    };
   } else if (changePercent < 0) {
     // Lower is better for performance
-    return { symbol: "↑", change: `${changePercent.toFixed(1)}%`, class: "improved" };
+    return {
+      symbol: "↑",
+      change: `${changePercent.toFixed(1)}%`,
+      class: "improved",
+    };
   } else {
-    return { symbol: "↓", change: `+${changePercent.toFixed(1)}%`, class: "degraded" };
+    return {
+      symbol: "↓",
+      change: `+${changePercent.toFixed(1)}%`,
+      class: "degraded",
+    };
   }
 }
 
@@ -338,8 +360,15 @@ function generateReport(history: BenchmarkHistory): string {
   let versionsToShow = sortedVersions.slice(0, MAX_HISTORY_VERSIONS);
 
   // Ensure initial version is always included
-  if (initial && !versionsToShow.includes(initial) && history.versions[initial]) {
-    versionsToShow = [...versionsToShow.slice(0, MAX_HISTORY_VERSIONS - 1), initial];
+  if (
+    initial &&
+    !versionsToShow.includes(initial) &&
+    history.versions[initial]
+  ) {
+    versionsToShow = [
+      ...versionsToShow.slice(0, MAX_HISTORY_VERSIONS - 1),
+      initial,
+    ];
   }
 
   let versionHistory = "";
@@ -368,9 +397,10 @@ function generateReport(history: BenchmarkHistory): string {
           ? "Fair"
           : "Needs Attention";
 
-  const legacyNote = initialData?.methodology === "legacy"
-    ? `\n> **Note:** Initial baseline (${initial}) used legacy methodology (single run, Jest/Node.js). Current tests use improved methodology (10 runs, warm-up, outlier removal).`
-    : "";
+  const legacyNote =
+    initialData?.methodology === "legacy"
+      ? `\n> **Note:** Initial baseline (${initial}) used legacy methodology (single run, Jest/Node.js). Current tests use improved methodology (10 runs, warm-up, outlier removal).`
+      : "";
 
   return `# Eleva.js Performance Benchmarks
 
@@ -586,7 +616,9 @@ describe("Eleva.js Performance Benchmarks", () => {
     app.component("list-bench", {
       setup({ signal }: any) {
         itemsSignal = signal(
-          Array(500).fill(0).map((_, i) => ({ id: i, value: Math.random() }))
+          Array(500)
+            .fill(0)
+            .map((_, i) => ({ id: i, value: Math.random() }))
         );
         return { items: itemsSignal };
       },
@@ -616,22 +648,30 @@ describe("Eleva.js Performance Benchmarks", () => {
     app.component("complex-bench", {
       setup({ signal }: any) {
         dataSignal = signal({
-          items: Array(50).fill(0).map((_, i) => ({
-            id: i,
-            name: `Item ${i}`,
-            children: Array(5).fill(0).map((_, j) => ({ id: j, value: Math.random() })),
-          })),
+          items: Array(50)
+            .fill(0)
+            .map((_, i) => ({
+              id: i,
+              name: `Item ${i}`,
+              children: Array(5)
+                .fill(0)
+                .map((_, j) => ({ id: j, value: Math.random() })),
+            })),
         });
         return { data: dataSignal };
       },
       template: (ctx: any) => `
         <div class="complex">
-          ${ctx.data.value.items.map((item: any) => `
+          ${ctx.data.value.items
+            .map(
+              (item: any) => `
             <div class="item">
               <h3>${item.name}</h3>
               <ul>${item.children.map((c: any) => `<li>${c.id}: ${c.value.toFixed(2)}</li>`).join("")}</ul>
             </div>
-          `).join("")}
+          `
+            )
+            .join("")}
         </div>
       `,
     });
@@ -643,7 +683,10 @@ describe("Eleva.js Performance Benchmarks", () => {
       dataSignal.value = {
         items: dataSignal.value.items.map((item: any) => ({
           ...item,
-          children: item.children.map((c: any) => ({ ...c, value: Math.random() })),
+          children: item.children.map((c: any) => ({
+            ...c,
+            value: Math.random(),
+          })),
         })),
       };
     });

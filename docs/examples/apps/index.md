@@ -43,7 +43,7 @@ description: Complete Eleva.js apps with source code. Task manager, weather dash
 
 # Complete Application Examples
 
-> **Version:** 1.1.1 | Full mini-applications demonstrating Eleva features.
+> **Version:** 1.2.0 | Full mini-applications demonstrating Eleva features.
 
 ---
 

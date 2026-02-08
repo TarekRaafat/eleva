@@ -1,6 +1,6 @@
 ---
 title: Eleva.js Architecture & Data Flow
-description: Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.
+description: Explore Eleva's lightweight architecture. See how signals, renderer, components, and the Agent plugin (AX) work together. Visual diagrams explain the ~2.5KB gzipped framework internals.
 image: /imgs/eleva.js%20Full%20Logo.png
 ---
 
@@ -10,7 +10,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://elevajs.com/architecture.html">
 <meta property="og:title" content="Architecture & Data Flow - Eleva.js">
-<meta property="og:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
+<meta property="og:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, components, and the Agent plugin (AX) work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
 <meta property="og:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 <meta property="og:site_name" content="Eleva.js">
 
@@ -18,7 +18,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:url" content="https://elevajs.com/architecture.html">
 <meta name="twitter:title" content="Architecture & Data Flow - Eleva.js">
-<meta name="twitter:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, and components work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
+<meta name="twitter:description" content="Explore Eleva's lightweight architecture. See how signals, renderer, components, and the Agent plugin (AX) work together. Visual diagrams explain the ~2.5KB gzipped framework internals.">
 <meta name="twitter:image" content="https://elevajs.com/imgs/eleva.js%20Full%20Logo.png">
 
 <!-- Google Analytics -->
@@ -38,7 +38,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
   "description": "Understand Eleva's internal architecture, data flow patterns, and how components interact. Visual diagrams and detailed explanations.",
   "image": "https://elevajs.com/imgs/eleva.js%20Full%20Logo.png",
   "datePublished": "2026-01-01T00:00:00Z",
-  "dateModified": "2026-01-17T00:00:00Z",
+  "dateModified": "2026-02-08T00:00:00Z",
   "author": {
     "@type": "Person",
     "name": "Tarek Raafat",
@@ -79,7 +79,7 @@ image: /imgs/eleva.js%20Full%20Logo.png
 
 > **Core Docs** | Data flow, component interaction, and internal architecture.
 
-Eleva's design emphasizes clarity, modularity, and performance.
+Eleva's design emphasizes clarity, modularity, performance, and agent-readiness (AX).
 
 ---
 
