@@ -3,6 +3,15 @@ title: List Patterns - Drag-Drop, CRUD & Grouped
 description: Advanced list patterns in Eleva.js. Drag-and-drop reordering, CRUD operations (create, read, update, delete), and grouped/categorized lists with full code.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/patterns/lists/patterns.html">
 
 <!-- Open Graph -->

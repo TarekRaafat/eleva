@@ -3,6 +3,15 @@ title: Plugin Best Practices
 description: Publish quality Eleva.js plugins. Error handling, edge cases, TypeScript/JSDoc types, npm packaging, and documentation. Make your plugin production-ready.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/custom-plugin/best-practices.html">
 
 <!-- Open Graph -->

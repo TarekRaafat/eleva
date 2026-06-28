@@ -3,6 +3,15 @@ title: Local Storage - Persistence & Caching
 description: Persist data in Eleva.js. localStorage, sessionStorage, caching strategies, and auto-save patterns. Keep user preferences and data across browser sessions.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/patterns/storage.html">
 
 <!-- Open Graph -->

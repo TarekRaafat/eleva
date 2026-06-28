@@ -3,6 +3,15 @@ title: Agent API Reference
 description: Eleva Agent API reference. All methods (execute, dispatch, getLog, snapshot), TypeScript types, troubleshooting, and permission configuration guide.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/plugins/agent/api.html">
 
 <!-- Open Graph -->

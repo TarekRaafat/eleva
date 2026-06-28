@@ -3,6 +3,15 @@ title: Store Configuration
 description: Configure Eleva Store. Set up localStorage/sessionStorage persistence, enable DevTools integration, and customize error handling for production apps.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/plugins/store/configuration.html">
 
 <!-- Open Graph -->

@@ -3,6 +3,15 @@ title: Task Manager App
 description: Build a full-featured task manager with Eleva.js. Filtering, sorting, priorities, due dates, and localStorage persistence. Complete source code included.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/apps/task-manager.html">
 
 <!-- Open Graph -->

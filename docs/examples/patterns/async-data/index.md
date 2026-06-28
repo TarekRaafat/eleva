@@ -3,6 +3,15 @@ title: Async Data Fetching
 description: Fetch data in Eleva.js. API calls with loading/error states, pagination, infinite scroll, and debounced search. Clean async patterns without useEffect.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/patterns/async-data/">
 
 <!-- Open Graph -->

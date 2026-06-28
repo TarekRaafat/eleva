@@ -3,6 +3,15 @@ title: Store Core Concepts
 description: Understand Eleva Store fundamentals. Learn reactive state with signals, predictable mutations with actions, and modular organization with namespaces.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/plugins/store/core-concepts.html">
 
 <!-- Open Graph -->

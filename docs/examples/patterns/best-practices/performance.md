@@ -3,6 +3,15 @@ title: Performance Optimization
 description: Optimize Eleva.js performance. Prevent unnecessary re-renders, handle 10K+ row lists, debounce/throttle updates, and achieve 60fps with virtual scrolling.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/patterns/best-practices/performance.html">
 
 <!-- Open Graph -->

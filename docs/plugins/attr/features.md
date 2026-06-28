@@ -3,6 +3,15 @@ title: Attr Plugin Features
 description: Eleva Attr features explained. Auto-sync ARIA for screen readers, bind data-* attributes, toggle booleans like disabled/checked, and set DOM properties.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/plugins/attr/features.html">
 
 <!-- Open Graph -->

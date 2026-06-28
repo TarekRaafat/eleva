@@ -3,6 +3,15 @@ title: Store Usage Patterns
 description: Eleva Store patterns with full code. Build a counter, todo list, auth system, and shopping cart. Copy-paste examples for common state management needs.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/plugins/store/patterns.html">
 
 <!-- Open Graph -->

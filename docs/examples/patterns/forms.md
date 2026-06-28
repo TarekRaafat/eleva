@@ -3,6 +3,15 @@ title: Form Handling - Input Binding & Validation
 description: Build reactive forms with Eleva.js. Two-way binding, real-time validation, error handling, and accessible form patterns. Works without a form library.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/examples/patterns/forms.html">
 
 <!-- Open Graph -->

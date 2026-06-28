@@ -3,6 +3,15 @@ title: Migrate from jQuery
 description: Migrate from jQuery to Eleva.js. Replace DOM manipulation with reactive components, $.ajax with fetch + signals. ~2.5KB vs ~30KB gzipped, modern architecture.
 ---
 
+<!-- REVU Analytics -->
+<script async src="https://cdn.revu.ai/behavior"></script>
+<script>
+  window.revu = window.revu || new Proxy({q:[]}, {
+    get: (t, m) => m in t ? t[m] : (...a) => t.q.push([m, ...a]),
+  });
+  revu.init({ apiKey: "revu_pk_prod_KFdyizGp4I0cWia36eNmWg" });
+</script>
+
 <link rel="canonical" href="https://elevajs.com/migration/from-jquery.html">
 
 <!-- Open Graph -->
